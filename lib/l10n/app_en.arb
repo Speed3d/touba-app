@@ -1,0 +1,14 @@
+{
+  "appTitle": "Tooba",
+  "tournaments": "Tournaments",
+  "teams": "Teams",
+  "matches": "Matches",
+  "profile": "Profile",
+  "createTeam": "Create Team",
+  "addPlayer": "Add Player",
+  "enterScore": "Enter Score",
+  "standings": "Standings",
+  "home": "Home",
+  "settings": "Settings",
+  "welcomeMessage": "Welcome to Tooba, the amateur football platform"
+}

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الشروط والأحكام — حرفي العراق | Terms & Conditions</title>
+  <meta name="description" content="الشروط والأحكام لاستخدام منصة حرفي العراق">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Theme Colors */
+      --primary: #10B981; /* Emerald Green */
+      --secondary: #3B82F6; /* Blue */
+      --accent: #8B5CF6; /* Purple for depth */
+      
+      --bg-dark: #0f172a;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+      
+      /* Glassmorphism settings */
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px);
+      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --radius: 20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Background Orbs */
+    .orbs-wrapper {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; overflow: hidden; pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -200px; left: -100px; animation-delay: -5s; }
+    .orb-3 { width: 300px; height: 300px; background: var(--accent); top: 40%; left: 30%; animation-duration: 25s; opacity: 0.3; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 150px) scale(1.2); }
+    }
+
+    /* Lang Toggle */
+    .lang-bar {
+      position: absolute; top: 20px; right: 20px;
+      display: flex; gap: 8px; z-index: 10;
+    }
+    body.en .lang-bar { right: auto; left: 20px; }
+    
+    .lang-btn {
+      padding: 8px 16px; border-radius: 12px;
+      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border); color: var(--text-main);
+      cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.2s;
+    }
+    .lang-btn.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+
+    /* Layout */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 16px 80px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Logo */
+    .logo {
+      width: 140px; height: 140px; 
+      margin: 0 auto 30px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      /* Pulse Animation */
+      animation: pulse 3s infinite alternate;
+    }
+    .logo img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-back {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 24px; border-radius: 22px; margin-bottom: 20px;
+      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border); color: white;
+      text-decoration: none; font-size: 1rem; transition: all 0.3s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
+    body.en .btn-back:hover { transform: translateX(-5px); }
+
+    /* Content Card */
+    .content-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+      line-height: 1.8;
+      color: var(--text-sub);
+    }
+    .content-card h2 {
+      font-size: 1.5rem; color: white; margin-top: 30px; margin-bottom: 15px; font-weight: 700;
+    }
+    .content-card h2:first-child { margin-top: 0; }
+    .content-card p { margin-bottom: 15px; }
+    .content-card ul { margin-bottom: 15px; padding-right: 20px; }
+    body.en .content-card ul { padding-right: 0; padding-left: 20px; }
+    .content-card li { margin-bottom: 8px; }
+
+    /* Footer */
+    footer {
+      background: rgba(0,0,0,0.3); text-align: center; padding: 30px 24px;
+      color: var(--text-sub); font-size: 0.9rem; border-top: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      margin-top: auto;
+    }
+
+    body.en { direction: ltr; text-align: left; }
+  </style>
+</head>
+<body class="ar" id="body">
+
+  <!-- Animated Background -->
+  <div class="orbs-wrapper">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+  </div>
+
+  <div class="container">
+    <a href="https://iraqicraftsman.com/" class="btn-back" data-ar="→ العودة للرئيسية" data-en="← Back to Home">→ العودة للرئيسية</a>
+    
+    <header>
+      <div class="logo"><img src="logo.png" alt="حرفي العراق"></div>
+      <h1 data-ar="الشروط والأحكام" data-en="Terms & Conditions">الشروط والأحكام</h1>
+    </header>
+
+    <div class="content-card">
+      <h2 data-ar="1. قبول الشروط" data-en="1. Acceptance of Terms">1. قبول الشروط</h2>
+      <ul>
+        <li data-ar='باستخدامك لتطبيق "حرفي العراق"، فإنك تقر بقراءة والموافقة التامة والالتزام بهذه الشروط والأحكام.' data-en='By using "Iraqi Craftsman", you confirm that you have read and agree to these Terms and Conditions.'>باستخدامك لتطبيق "حرفي العراق"، فإنك تقر بقراءة والموافقة التامة والالتزام بهذه الشروط والأحكام.</li>
+        <li data-ar="إذا كنت لا توافق على أي من هذه الشروط، يرجى إزالة التثبيت والتوقف عن استخدام التطبيق فوراً." data-en="If you do not agree with any part of these terms, please stop using the app and uninstall it.">إذا كنت لا توافق على أي من هذه الشروط، يرجى إزالة التثبيت والتوقف عن استخدام التطبيق فوراً.</li>
+      </ul>
+
+      <h2 data-ar="2. وصف الخدمة" data-en="2. Service Description">2. وصف الخدمة</h2>
+      <ul>
+        <li data-ar='يُقدّم تطبيق "حرفي العراق" منصة إلكترونية صممت بحرفية لربط الزبائن بالحرفيين المحترفين في جميع أرجاء العراق.' data-en='"Iraqi Craftsman" is an online platform designed to connect customers with professional craftsmen across Iraq.'>يُقدّم تطبيق "حرفي العراق" منصة إلكترونية صممت بحرفية لربط الزبائن بالحرفيين المحترفين في جميع أرجاء العراق.</li>
+        <li data-ar="يقتصر دور التطبيق على كونه وسيط رقمي — ولا يتحمل إدارة التطبيق المسؤولية المباشرة ولا غير المباشرة عن نوعية وجودة الخدمات أو المعاملات المبرمة خارج التطبيق." data-en="The app acts as an intermediary only — we are not a party to any agreement made between customers and craftsmen, and we are not responsible for the quality of services provided.">يقتصر دور التطبيق على كونه وسيط رقمي — ولا يتحمل إدارة التطبيق المسؤولية المباشرة ولا غير المباشرة عن نوعية وجودة الخدمات أو المعاملات المبرمة خارج التطبيق.</li>
+      </ul>
+
+      <h2 data-ar="3. حسابات المستخدمين" data-en="3. User Accounts">3. حسابات المستخدمين</h2>
+      <ul>
+        <li data-ar="يجب أن تكون المعلومات المقدمة عند التسجيل (الاسم والرقم) دقيقة وصحيحة وموثوقة." data-en="You must provide accurate and truthful information when registering (name, phone number, etc.).">يجب أن تكون المعلومات المقدمة عند التسجيل (الاسم والرقم) دقيقة وصحيحة وموثوقة.</li>
+        <li data-ar="أنت وحدك المسؤول عن الحفاظ على سرية بيانات تسجيل دخولك والمحافظة على جهازك لتجنب الاختراق." data-en="You are solely responsible for keeping your login credentials confidential and your device secure.">أنت وحدك المسؤول عن الحفاظ على سرية بيانات تسجيل دخولك والمحافظة على جهازك لتجنب الاختراق.</li>
+        <li data-ar="يُحظر كلياً اختلاق أو إنشاء حسابات متعددة لنفس الشخص بقصد التحايل والمراوغة على المنظومة." data-en="Creating multiple accounts for the same person is strictly prohibited.">يُحظر كلياً اختلاق أو إنشاء حسابات متعددة لنفس الشخص بقصد التحايل والمراوغة على المنظومة.</li>
+        <li data-ar="نحتفظ وبشدة بحق إيقاف، تقييد، أو إلغاء الحسابات التي تنتهك هذه الشروط فوراً، دون سابق إنذار." data-en="We reserve the right to suspend or permanently delete any account that violates these terms without prior notice.">نحتفظ وبشدة بحق إيقاف، تقييد، أو إلغاء الحسابات التي تنتهك هذه الشروط فوراً، دون سابق إنذار.</li>
+      </ul>
+
+      <h2 data-ar="4. سلوك المستخدمين" data-en="4. User Conduct">4. سلوك المستخدمين</h2>
+      <ul>
+        <li data-ar="الاحترام المهني والمتبادل شرط أساسي لاستمرارية كلا الطرفين، والإساءة اللفظية تؤدي للطرد." data-en="Mutual respect and professional behavior are required from all users at all times.">الاحترام المهني والمتبادل شرط أساسي لاستمرارية كلا الطرفين، والإساءة اللفظية تؤدي للطرد.</li>
+        <li data-ar="يُحظر نشر محتوى مسيء، إباحي، مضلل، محرض أو ينتهك أي حقوق عامة داخل معرض الصور ومعلومات الحرفي." data-en="Posting offensive, pornographic, misleading, or rights-violating content in profiles or photo galleries is strictly prohibited.">يُحظر نشر محتوى مسيء، إباحي، مضلل، محرض أو ينتهك أي حقوق عامة داخل معرض الصور ومعلومات الحرفي.</li>
+        <li data-ar="يُحظر أي ممارسات تعتمد على الفيروسات، اختراق التطبيق أو إرسال طلبات زائدة للتأثير على خوادمنا." data-en="Any attempt to hack, exploit, or disrupt our servers or app infrastructure is strictly prohibited.">يُحظر أي ممارسات تعتمد على الفيروسات، اختراق التطبيق أو إرسال طلبات زائدة للتأثير على خوادمنا.</li>
+        <li data-ar="استخدام التطبيق لأي غرض غير قانوني أو ضار سيؤدي إلى إزالة الحساب نهائياً." data-en="Using the app for any illegal or harmful purpose will result in permanent account removal.">استخدام التطبيق لأي غرض غير قانوني أو ضار سيؤدي إلى إزالة الحساب نهائياً.</li>
+      </ul>
+
+      <h2 data-ar="5. رسوم العضوية المهنية" data-en="5. Professional Membership Fees">5. رسوم العضوية المهنية</h2>
+      <ul>
+        <li data-ar="تطبيق حرفي العراق هو منصة وساطة لخدمات حقيقية. رسوم العضوية تُمثل رسوم تسجيل الحرفي في المنصة للوصول إلى طلبات العمل الحقيقية من الزبائن في مختلف محافظات العراق." data-en="Iraqi Craftsman is a real-world service marketplace. Membership fees represent the craftsman's registration fee to access real customer service requests across Iraqi provinces.">تطبيق حرفي العراق هو منصة وساطة لخدمات حقيقية. رسوم العضوية تُمثل رسوم تسجيل الحرفي في المنصة للوصول إلى طلبات العمل الحقيقية من الزبائن في مختلف محافظات العراق.</li>
+        <li data-ar="يخضع انضمام الحرفيين إلى المنصة لآلية التسجيل والتفعيل المعتمدة وفق قواعد وإجراءات إدارة التطبيق حصرياً." data-en="Professional membership for craftsmen is subject to the registration and activation process approved by platform management.">يخضع انضمام الحرفيين إلى المنصة لآلية التسجيل والتفعيل المعتمدة وفق قواعد وإجراءات إدارة التطبيق حصرياً.</li>
+        <li data-ar="رسوم العضوية المدفوعة عبر القنوات الرسمية المعتمدة غير قابلة للاسترداد بعد تفعيل حساب الحرفي المهني بشكل سليم." data-en="Membership fees paid through official channels are non-refundable once the craftsman's professional account has been activated.">رسوم العضوية المدفوعة عبر القنوات الرسمية المعتمدة غير قابلة للاسترداد بعد تفعيل حساب الحرفي المهني بشكل سليم.</li>
+        <li data-ar="نحتفظ بحق تعديل رسوم العضوية مستقبلاً مع ضمان الإشعار المسبق للأعضاء." data-en="We reserve the right to update membership fees in the future with prior notice to members.">نحتفظ بحق تعديل رسوم العضوية مستقبلاً مع ضمان الإشعار المسبق للأعضاء.</li>
+      </ul>
+
+      <h2 data-ar="6. حقوق الملكية الفكرية" data-en="6. Intellectual Property">6. حقوق الملكية الفكرية</h2>
+      <ul>
+        <li data-ar='العلامة التجارية وشعار "حرفي العراق"، فضلاً عن جميع الأكواد، التصاميم الجرافيكية وواجهات المستخدم (UI/UX) هي ملكية حصرية وحقوق محجوزة قانوناً.' data-en='The "Iraqi Craftsman" brand, logo, codebase, UI/UX designs, and all related content are exclusively owned by us and protected by law.'>العلامة التجارية وشعار "حرفي العراق"، فضلاً عن جميع الأكواد، التصاميم الجرافيكية وواجهات المستخدم (UI/UX) هي ملكية حصرية وحقوق محجوزة قانوناً.</li>
+        <li data-ar="لا يُسمح أبداً لأي فرد بتسويقها تجارياً، الهندسة العكسية، النقل، أو الاستغلال المادي والمجاني خارج الرعايات الرسمية." data-en="Copying, reverse-engineering, redistributing, or commercially exploiting any part of the app without written permission is strictly prohibited.">لا يُسمح أبداً لأي فرد بتسويقها تجارياً، الهندسة العكسية، النقل، أو الاستغلال المادي والمجاني خارج الرعايات الرسمية.</li>
+      </ul>
+
+      <h2 data-ar="7. تحديد المسؤولية" data-en="7. Limitation of Liability">7. تحديد المسؤولية</h2>
+      <ul>
+        <li data-ar="يقر الزبون والحرفي بأن استخدامهم للتطبيق يعكس تحملهم للمطالبات والخسائر الناتجة عن تعاملاتهم خارج التطبيق." data-en="We are not responsible for any losses, disputes, or damages resulting from interactions between customers and craftsmen outside the app.">يقر الزبون والحرفي بأن استخدامهم للتطبيق يعكس تحملهم للمطالبات والخسائر الناتجة عن تعاملاتهم خارج التطبيق.</li>
+        <li data-ar='الخدمة مقدمة "كما هي" دون أي ضمانات أو وعود خفية أخرى خلاف المرجو بالتطبيق.' data-en='The service is provided "as is" without any express or implied warranties beyond what is stated in these terms.'>الخدمة مقدمة "كما هي" دون أي ضمانات أو وعود خفية أخرى خلاف المرجو بالتطبيق.</li>
+      </ul>
+
+      <h2 data-ar="8. التعديلات والقانون المطبق" data-en="8. Amendments &amp; Applicable Law">8. التعديلات والقانون المطبق</h2>
+      <ul>
+        <li data-ar="نحتفظ بحق التحديث لهذه الوثيقة بين الفينة والأخرى. استمرارك في استخدام التطبيق بعد التعديلات يعني قبولك للشروط المحدَّثة." data-en="We may update these Terms from time to time. Continued use of the app after changes means you accept the updated terms.">نحتفظ بحق التحديث لهذه الوثيقة بين الفينة والأخرى. استمرارك في استخدام التطبيق بعد التعديلات يعني قبولك للشروط المحدَّثة.</li>
+        <li data-ar="تخضع هذه الشروط وتفسر بناءً على أحكام قوانين جمهورية العراق. تُعقد النزاعات لدى محاكم ومراكز التحكيم العراقية النافذة." data-en="These Terms are governed by the laws of the Republic of Iraq. Any disputes will be resolved under applicable Iraqi legislation.">تخضع هذه الشروط وتفسر بناءً على أحكام قوانين جمهورية العراق. تُعقد النزاعات لدى محاكم ومراكز التحكيم العراقية النافذة.</li>
+      </ul>
+
+      <h2 data-ar="9. برنامج الإحالة" data-en="9. Referral Program">9. برنامج الإحالة</h2>
+      <ul>
+        <li data-ar="يمنح التطبيق لكل مستخدم رمز إحالة فريد يمكن مشاركته مع الآخرين." data-en="The app provides each user with a unique referral code that can be shared with others.">يمنح التطبيق لكل مستخدم رمز إحالة فريد يمكن مشاركته مع الآخرين.</li>
+        <li data-ar="عند تسجيل حرفي جديد باستخدام رمز إحالة، قد يحصل كلا الطرفين على مكافآت وفق الإعدادات المعتمدة في المنصة." data-en="When a new craftsman registers using a referral code, both parties may receive rewards according to the platform's current settings.">عند تسجيل حرفي جديد باستخدام رمز إحالة، قد يحصل كلا الطرفين على مكافآت وفق الإعدادات المعتمدة في المنصة.</li>
+        <li data-ar="المكافآت (الأيام المجانية، الشارات، تحسين التقييم) تحكمها إدارة التطبيق وقابلة للتعديل في أي وقت." data-en="Rewards (free days, badges, rating boosts) are governed by platform management and may be adjusted at any time.">المكافآت (الأيام المجانية، الشارات، تحسين التقييم) تحكمها إدارة التطبيق وقابلة للتعديل في أي وقت.</li>
+        <li data-ar="يُحظر إساءة استخدام برنامج الإحالة أو إنشاء حسابات وهمية بهدف الحصول على مكافآت." data-en="Abusing the referral program or creating fake accounts to gain rewards is strictly prohibited.">يُحظر إساءة استخدام برنامج الإحالة أو إنشاء حسابات وهمية بهدف الحصول على مكافآت.</li>
+        <li data-ar="نحتفظ بحق إلغاء أي مكافأة مكتسبة عبر ممارسات غير مشروعة أو احتيالية." data-en="We reserve the right to revoke any rewards obtained through fraudulent or abusive practices.">نحتفظ بحق إلغاء أي مكافأة مكتسبة عبر ممارسات غير مشروعة أو احتيالية.</li>
+      </ul>
+
+      <p style="margin-top:20px; color: var(--text-sub);"><small data-ar="آخر تحديث: أبريل 2026" data-en="Last updated: April 2026">آخر تحديث: أبريل 2026</small></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>
+      © 2026 حرفي العراق — Iraqi Craftsman. <span data-ar="جميع الحقوق محفوظة." data-en="All Rights Reserved.">جميع الحقوق محفوظة.</span>
+    </p>
+  </footer>
+
+  <script>
+    window.setLang = function(lang) {
+      localStorage.setItem('preferredLang', lang);
+      const body = document.getElementById('body');
+      body.className = lang;
+      body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      
+      document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', (lang === 'ar' && i === 0) || (lang === 'en' && i === 1));
+      });
+
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = lang === 'ar' ? el.dataset.ar : (el.dataset.en || el.dataset.ar);
+      });
+    };
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'preferredLang' && e.newValue) {
+        setLang(e.newValue);
+      }
+    });
+
+    window.onload = function() {
+      const savedLang = localStorage.getItem('preferredLang') || 'ar';
+      setLang(savedLang);
+    };
+  </script>
+</body>
+</html>

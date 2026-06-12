@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حرفي العراق — Iraqi Craftsman</title>
+  <meta name="description" content="منصة حرفي العراق — تربط الزبائن بأمهر الحرفيين المحترفين في جميع أرجاء العراق">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <style>
+    :root {
+      /* Theme Colors */
+      --primary: #10B981;
+      /* Emerald Green */
+      --secondary: #3B82F6;
+      /* Blue */
+      --accent: #8B5CF6;
+      /* Purple for depth */
+
+      --bg-dark: #0f172a;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+
+      /* Glassmorphism settings */
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px);
+      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --radius: 20px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ─── Animated Background Orbs ─── */
+    .orbs-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: var(--primary);
+      top: -100px;
+      right: -100px;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: var(--secondary);
+      bottom: -200px;
+      left: -100px;
+      animation-delay: -5s;
+    }
+
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: var(--accent);
+      top: 40%;
+      left: 30%;
+      animation-duration: 25s;
+      opacity: 0.3;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(100px, 150px) scale(1.2);
+      }
+    }
+
+    /* ─── Layout ─── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+      width: 100%;
+    }
+
+    /* ─── HEADER (Hero Section) ─── */
+    header {
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 30px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      /* Pulse Animation */
+      animation: pulse 3s infinite alternate;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Fallback emoji if no logo found temporarily */
+    .logo-text {
+      font-size: 4rem;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+      }
+
+      100% {
+        box-shadow: 0 0 0 30px rgba(16, 185, 129, 0);
+      }
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p.tagline {
+      font-size: 1.2rem;
+      color: var(--text-sub);
+      max-width: 600px;
+      margin: 0 auto 30px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 14px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+      font-family: inherit;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-primary svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(20px);
+      color: var(--text-main);
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s, border-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: inherit;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.13);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-web {
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-web:hover {
+      box-shadow: 0 15px 25px rgba(59, 130, 246, 0.5);
+    }
+
+    /* ─── LANG TOGGLE ─── */
+    .lang-bar {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    body.en .lang-bar {
+      right: auto;
+      left: 20px;
+    }
+
+    .lang-btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+
+    .stat-item {
+      padding: 24px 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .stat-item+.stat-item::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 25%;
+      height: 50%;
+      border-right: 1px solid var(--glass-border);
+    }
+
+    .stat-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+      color: var(--primary);
+    }
+
+    .stat-lbl {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      margin-top: 8px;
+      display: block;
+    }
+
+    /* ─── SECTIONS ─── */
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .section-sub {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--text-sub);
+      margin-bottom: 40px;
+    }
+
+    /* ─── GLASS CARDS ─── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 30px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s, background 0.3s, border-color 0.3s;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      display: block;
+      filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
+    }
+
+    .glass-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .glass-card p {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
+    }
+
+    /* ─── REVIEWS SECTION ─── */
+    .reviews-carousel {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) transparent;
+      margin-bottom: 60px;
+    }
+
+    .reviews-carousel::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .reviews-carousel::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    .review-card {
+      min-width: 300px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    body.en .review-card {
+      text-align: left;
+    }
+
+    .review-stars {
+      color: #FBBF24;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .review-text {
+      font-size: 1rem;
+      color: var(--text-sub);
+      font-style: italic;
+      margin-bottom: 15px;
+    }
+
+    .review-name {
+      font-weight: 700;
+      color: white;
+    }
+
+    /* ─── FAQ SECTION ─── */
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto 80px;
+    }
+
+    .faq-item {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .faq-btn {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 20px;
+      font-size: 1.1rem;
+      font-family: inherit;
+      font-weight: 600;
+      text-align: right;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    body.en .faq-btn {
+      text-align: left;
+    }
+
+    .faq-icon {
+      transition: transform 0.3s;
+      color: var(--primary);
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-item.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 0 20px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .faq-item.active .faq-content {
+      max-height: 300px;
+      padding-bottom: 20px;
+    }
+
+    /* ─── GALLERY ─── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 80px;
+    }
+
+    .gallery-img {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .gallery-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+
+    .gallery-img:hover img {
+      transform: scale(1.1);
+    }
+
+    /* ─── DIVIDER ─── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin: 40px 0;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+
+    .section-divider span {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
+    }
+
+    /* ─── SOCIAL & LEGAL ─── */
+    .social-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      color: white;
+      text-decoration: none;
+      font-size: 1.3rem;
+      transition: all 0.3s;
+    }
+
+    .social-btn i {
+      pointer-events: none;
+    }
+
+    .social-btn:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+      border-color: var(--primary);
+    }
+
+    .links-section {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .link-btn {
+      display: inline-block;
+      padding: 10px 24px;
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .link-btn:hover {
+      color: white;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: rgba(0, 0, 0, 0.3);
+      text-align: center;
+      padding: 30px 24px;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+    }
+
+    /* ─── PLANS SECTION ─── */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin-bottom: 80px;
+    }
+
+    .plan-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(16, 185, 129, 0.35);
+      box-shadow: 0 24px 48px rgba(16, 185, 129, 0.15);
+    }
+
+    .plan-card:hover::before {
+      opacity: 1;
+    }
+
+    .plan-icon {
+      font-size: 2.8rem;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.5));
+    }
+
+    .plan-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+    }
+
+    .plan-desc {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      min-height: 38px;
+    }
+
+    .plan-price-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.10));
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 16px;
+    }
+
+    .plan-amount {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--primary);
+      display: block;
+      line-height: 1;
+      direction: ltr;
+    }
+
+    .plan-unit {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: 6px;
+      display: block;
+    }
+
+    .plan-duration {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .plan-duration strong {
+      color: var(--secondary);
+      font-size: 1.05rem;
+    }
+
+    .plan-features-list {
+      list-style: none;
+      text-align: right;
+      margin-bottom: 28px;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 16px;
+    }
+
+    body.en .plan-features-list {
+      text-align: left;
+    }
+
+    .plan-feature {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      padding: 8px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .plan-feature::before {
+      content: '✓';
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .plan-contact-btn {
+      width: 100%;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.28);
+    }
+
+    .plan-contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(37, 211, 102, 0.45);
+    }
+
+    .plan-contact-btn:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .plans-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .plan-amount {
+        font-size: 1.9rem;
+      }
+    }
+
+    /* ─── ANIMATION CLASSES (Intersection Observer) ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RTL / LTR ─── */
+    body.en {
+      direction: ltr;
+      text-align: left;
+    }
+
+    body.en .stat-item+.stat-item::before {
+      right: auto;
+      left: 0;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      .stat-num {
+        font-size: 1.6rem;
+      }
+
+      .stat-item {
+        padding: 20px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="ar" id="body">
+
+  <!-- Animated Background -->
+  <div class="orbs-wrapper">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+  </div>
+
+  <header class="fade-up">
+    <div class="hero-content">
+      <div class="logo"><img src="logo.png" alt="حرفي العراق"></div>
+      <h1>حرفي العراق</h1>
+      <p class="tagline" id="tagline-ar">المنصة الأذكى والأسرع لربط الزبائن بأمهر الحرفيين المحترفين في العراق.</p>
+      <p class="tagline" id="tagline-en" style="display:none">The smartest and fastest platform connecting customers
+        with professional craftsmen across Iraq.</p>
+
+      <div class="hero-actions">
+
+        <a href="https://app.iraqicraftsman.com" id="web-login-btn" class="btn-primary btn-web" target="_blank"
+          rel="noopener">
+          <i class="fas fa-sign-in-alt"></i>
+          <span data-ar="تسجيل دخول" data-en="Sign In">تسجيل دخول</span>
+        </a>
+
+        <a href="https://iraqicraftsman.com/get" id="download-btn" class="btn-primary" target="_blank" rel="noopener">
+          <i class="fas fa-download"></i>
+          <span data-ar="تحميل التطبيق" data-en="Download App">تحميل التطبيق</span>
+        </a>
+
+      </div>
+    </div>
+    </div>
+  </header>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar fade-up" id="stats-bar">
+    <div class="stat-item"><span class="stat-num count-up" id="stat-governorates" data-val="18">0</span><span
+        class="stat-lbl" data-ar="محافظة" data-en="Governorates">محافظة</span></div>
+    <div class="stat-item"><span class="stat-num count-up" id="stat-crafts" data-val="80">0</span><span class="stat-lbl"
+        data-ar="حرفة" data-en="Crafts">حرفة</span></div>
+    <div class="stat-item"><span class="stat-num count-up" id="stat-users" data-val="0">0</span><span class="stat-lbl"
+        data-ar="زبون مستفيد" data-en="Happy Customers">زبون مستفيد</span></div>
+    <div class="stat-item"><span class="stat-num count-up" id="stat-craftsmen" data-val="0">0</span><span
+        class="stat-lbl" data-ar="حرفي محترف" data-en="Pro Craftsmen">حرفي محترف</span></div>
+  </div>
+
+  <div class="container">
+
+    <!-- ── Customer Features ── -->
+    <div class="fade-up">
+      <h2 class="section-title" data-ar="مزايا للزبائن" data-en="For Customers">مزايا للزبائن</h2>
+      <p class="section-sub" data-ar="كل ما تحتاجه بأسهل طريقة وبتجربة مستخدم مذهلة"
+        data-en="Everything you need, the easiest way with amazing UI">كل ما تحتاجه بأسهل طريقة وبتجربة مستخدم مذهلة</p>
+      <div class="cards" id="customer-cards">
+        <div class="glass-card">
+          <div class="skeleton" style="height:50px;margin-bottom:12px;"></div>
+          <div class="skeleton" style="height:16px;margin-bottom:8px;"></div>
+          <div class="skeleton" style="height:12px;"></div>
+        </div>
+        <div class="glass-card">
+          <div class="skeleton" style="height:50px;margin-bottom:12px;"></div>
+          <div class="skeleton" style="height:16px;margin-bottom:8px;"></div>
+          <div class="skeleton" style="height:12px;"></div>
+        </div>
+        <div class="glass-card">
+          <div class="skeleton" style="height:50px;margin-bottom:12px;"></div>
+          <div class="skeleton" style="height:16px;margin-bottom:8px;"></div>
+          <div class="skeleton" style="height:12px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Craftsman Features ── -->
+    <div class="fade-up">
+      <div class="section-divider">
+        <span data-ar="للحرفيين المحترفين" data-en="For Craftsmen">للحرفيين المحترفين</span>
+      </div>
+      <p class="section-sub" data-ar="وسّع عملك، استقبل الطلبات، وضاعف أرباحك"
+        data-en="Grow your business, receive requests, and multiply your profit">وسّع عملك، استقبل الطلبات، وضاعف أرباحك
+      </p>
+      <div class="cards" id="craftsman-cards">
+        <div class="glass-card">
+          <div class="skeleton" style="height:50px;margin-bottom:12px;"></div>
+          <div class="skeleton" style="height:16px;margin-bottom:8px;"></div>
+          <div class="skeleton" style="height:12px;"></div>
+        </div>
+        <div class="glass-card">
+          <div class="skeleton" style="height:50px;margin-bottom:12px;"></div>
+          <div class="skeleton" style="height:16px;margin-bottom:8px;"></div>
+          <div class="skeleton" style="height:12px;"></div>
+        </div>
+        <div class="glass-card">
+          <div class="skeleton" style="height:50px;margin-bottom:12px;"></div>
+          <div class="skeleton" style="height:16px;margin-bottom:8px;"></div>
+          <div class="skeleton" style="height:12px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Membership Plans ── -->
+    <div class="fade-up" id="plans-section" style="display:none">
+      <div class="section-divider">
+        <span data-ar="عضوية الحرفيين المحترفين" data-en="Professional Membership">عضوية الحرفيين المحترفين</span>
+      </div>
+      <p class="section-sub" data-ar="انضم إلى المنصة وابدأ استقبال طلبات العمل الحقيقية من زبائن في مدينتك"
+        data-en="Join the platform and start receiving real work requests from customers in your city">انضم إلى المنصة
+        وابدأ استقبال طلبات العمل الحقيقية من زبائن في مدينتك</p>
+      <div class="plans-grid" id="plans-container"></div>
+    </div>
+
+    <!-- ── Reviews ── -->
+    <div class="fade-up" id="reviews-section" style="display:none">
+      <h2 class="section-title" data-ar="ماذا يقول عملاؤنا؟" data-en="What our users say?">ماذا يقول عملاؤنا؟</h2>
+      <p class="section-sub" data-ar="تجارب حقيقية من مستخدمي منصة حرفي العراق"
+        data-en="Real experiences from Iraqi Craftsman platform users">تجارب حقيقية من مستخدمي منصة حرفي العراق</p>
+      <div class="reviews-carousel" id="reviews-container"></div>
+    </div>
+
+    <!-- ── FAQ ── -->
+    <div class="fade-up" id="faq-section" style="display:none">
+      <div class="section-divider">
+        <span data-ar="الأسئلة الشائعة" data-en="FAQ">الأسئلة الشائعة</span>
+      </div>
+      <div class="faq-container" id="faq-container"></div>
+    </div>
+
+    <!-- ── Gallery ── -->
+    <div class="fade-up" id="gallery-section" style="display:none">
+      <h2 class="section-title" data-ar="واجهة التطبيق" data-en="App Interface">واجهة التطبيق</h2>
+      <p class="section-sub" data-ar="تصميم عصري يضع تجربة المستخدم أولاً"
+        data-en="Modern design putting user experience first">تصميم عصري يضع تجربة المستخدم أولاً</p>
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </div>
+
+    <!-- ── Footer Links ── -->
+    <div class="fade-up">
+      <div class="social-bar" id="social-bar"></div>
+      <div class="links-section">
+        <a href="privacy-policy.html" class="link-btn">🔒 <span data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة
+            الخصوصية</span></a>
+        <a href="terms.html" class="link-btn">📋 <span data-ar="الشروط والأحكام" data-en="Terms & Conditions">الشروط
+            والأحكام</span></a>
+        <a href="data-deletion.html" class="link-btn">🗑️ <span data-ar="تعليمات حذف الحساب"
+            data-en="Account Deletion">تعليمات
+            حذف الحساب</span></a>
+        <button onclick="openContactModal()" class="link-btn"
+          style="cursor:pointer;background:none;border:1px solid var(--glass-border);">✉️ <span data-ar="تواصل معنا"
+            data-en="Contact Us">تواصل معنا</span></button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Contact Modal ── -->
+  <div id="contact-modal"
+    style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+    <div
+      style="background:#1e293b;border:1px solid var(--glass-border);border-radius:20px;padding:32px;max-width:420px;width:90%;position:relative;">
+      <button onclick="closeContactModal()"
+        style="position:absolute;top:14px;left:14px;background:none;border:none;color:var(--text-sub);font-size:1.4rem;cursor:pointer;">✕</button>
+      <h2 style="text-align:center;margin-bottom:8px;font-size:1.4rem;" data-ar="تواصل معنا" data-en="Contact Us">تواصل
+        معنا</h2>
+      <p style="text-align:center;color:var(--text-sub);font-size:0.9rem;margin-bottom:24px;"
+        data-ar="نحن هنا للمساعدة — تواصل معنا عبر:" data-en="We're here to help — reach us via:">نحن هنا للمساعدة —
+        تواصل معنا عبر:</p>
+      <div id="contact-items" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>
+      © 2026 حرفي العراق — Iraqi Craftsman. جميع الحقوق محفوظة.
+    </p>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════
+       Firebase JS SDK v10 (compat / modular CDN)
+       ═══════════════════════════════════════════════════════ -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, doc, collection, getDoc, getDocs, query, where, orderBy }
+      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const app = initializeApp({
+      apiKey: 'AIzaSyA0gmbfdO9Muq8_59IpIWQK8-curnLoD-8',
+      authDomain: 'craftsman-iraq-v2.firebaseapp.com',
+      projectId: 'craftsman-iraq-v2',
+      storageBucket: 'craftsman-iraq-v2.firebasestorage.app',
+      messagingSenderId: '58400456364',
+      appId: '1:58400456364:web:7b215afaa14ed86e2c2909',
+    });
+    const db = getFirestore(app);
+
+    let currentLang = 'ar';
+    let adminWhatsAppNumber = '9647700270555'; // رقم احتياطي — يُحدَّث من landing_config
+    let contactEmail1 = '';
+    let contactEmail2 = '';
+
+    // ── Intersection Observer for Scroll Animations ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+
+          // Trigger CountUp if it's the stats bar
+          if (entry.target.id === 'stats-bar') {
+            document.querySelectorAll('.count-up').forEach(el => {
+              if (el.dataset.animated) return;
+              el.dataset.animated = 'true';
+              const target = parseInt(el.dataset.val) || 0;
+              let current = 0;
+              const increment = Math.max(1, Math.ceil(target / 40));
+              const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                  current = target;
+                  clearInterval(timer);
+                }
+                el.textContent = current.toLocaleString();
+              }, 40);
+            });
+          }
+        }
+      });
+    }, { threshold: 0.1 });
+
+    // We will initialize observing after config is loaded to ensure dataset.val has the loaded values
+    function initObservers() {
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+    // ── Load Config ──
+    async function loadConfig() {
+      try {
+        const snap = await getDoc(doc(db, 'landing_config', 'main'));
+        if (!snap.exists()) return;
+        const d = snap.data();
+
+        if (d.taglineAr) document.getElementById('tagline-ar').textContent = d.taglineAr;
+        if (d.taglineEn) document.getElementById('tagline-en').textContent = d.taglineEn;
+
+        if (d.playStoreUrl && d.playStoreUrl !== '#') {
+          const btn = document.getElementById('play-btn') || document.getElementById('download-btn');
+          if (btn) btn.href = d.playStoreUrl;
+        }
+
+        const stats = d.stats || {};
+
+        function updateStat(id, val) {
+          if (val == null) return;
+          const el = document.getElementById(id);
+          el.dataset.val = val;
+          if (el.dataset.animated === 'true') {
+            // If already animated (e.g. visible on load before Firebase), animate again to new target
+            const target = parseInt(val) || 0;
+            let current = parseInt(el.textContent.replace(/\D/g, '')) || 0;
+            if (current < target) {
+              const increment = Math.max(1, Math.ceil((target - current) / 20));
+              const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                  current = target;
+                  clearInterval(timer);
+                }
+                el.textContent = current.toLocaleString();
+              }, 40);
+            } else {
+              el.textContent = target.toLocaleString();
+            }
+          }
+        }
+
+        updateStat('stat-governorates', stats.governorates);
+        updateStat('stat-crafts', stats.crafts);
+        updateStat('stat-users', stats.users);
+        updateStat('stat-craftsmen', stats.craftsmen);
+
+        const social = d.socialLinks || {};
+        const bar = document.getElementById('social-bar');
+        bar.innerHTML = '';
+        const icons = {
+          facebook: 'fa-brands fa-facebook',
+          instagram: 'fa-brands fa-instagram',
+          youtube: 'fa-brands fa-youtube',
+          tiktok: 'fa-brands fa-tiktok',
+          whatsapp: 'fa-brands fa-whatsapp',
+        };
+        Object.entries(social).forEach(([key, url]) => {
+          if (!url) return;
+          const href = key === 'whatsapp' ? `https://wa.me/${url.replace(/\D/g, '')}` : url;
+          const a = document.createElement('a');
+          a.href = href; a.target = '_blank'; a.rel = 'noopener';
+          a.className = 'social-btn';
+          const iconClass = icons[key] || 'fa-solid fa-link';
+          a.innerHTML = `<i class="${iconClass}"></i>`;
+          bar.appendChild(a);
+        });
+
+        // التقاط رقم الواتساب لاستخدامه في أزرار الباقات
+        if (social.whatsapp) {
+          let num = social.whatsapp.replace(/\D/g, '');
+          if (num.startsWith('0')) num = '964' + num.slice(1);
+          if (num && !num.startsWith('964')) num = '964' + num;
+          if (num) adminWhatsAppNumber = num;
+        }
+
+        // تخزين إيميلات التواصل
+        if (d.contactEmail1) contactEmail1 = d.contactEmail1;
+        if (d.contactEmail2) contactEmail2 = d.contactEmail2;
+      } catch (e) {
+        console.warn('loadConfig:', e);
+      }
+    }
+
+    // ── Contact Modal ──
+    window.openContactModal = function () {
+      const modal = document.getElementById('contact-modal');
+      const container = document.getElementById('contact-items');
+      const isAr = currentLang === 'ar';
+      container.innerHTML = '';
+
+      const btnStyle = 'display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:white;text-decoration:none;font-family:inherit;font-size:1rem;transition:background 0.2s;';
+
+      // واتساب
+      if (adminWhatsAppNumber) {
+        const waMsg = encodeURIComponent(isAr ? 'مرحباً، أريد التواصل معكم' : 'Hello, I would like to contact you');
+        const a = document.createElement('a');
+        a.href = `https://wa.me/${adminWhatsAppNumber}?text=${waMsg}`;
+        a.target = '_blank'; a.rel = 'noopener';
+        a.setAttribute('style', btnStyle);
+        a.innerHTML = `<i class="fa-brands fa-whatsapp" style="font-size:1.4rem;color:#25D366;"></i><span>${isAr ? 'تواصل عبر واتساب' : 'Contact via WhatsApp'}</span>`;
+        container.appendChild(a);
+      }
+
+      // إيميل 1
+      if (contactEmail1) {
+        const a = document.createElement('a');
+        a.href = `mailto:${contactEmail1}`;
+        a.setAttribute('style', btnStyle);
+        a.innerHTML = `<i class="fa-solid fa-envelope" style="font-size:1.3rem;color:#60a5fa;"></i><span>${contactEmail1}</span>`;
+        container.appendChild(a);
+      }
+
+      // إيميل 2
+      if (contactEmail2) {
+        const a = document.createElement('a');
+        a.href = `mailto:${contactEmail2}`;
+        a.setAttribute('style', btnStyle);
+        a.innerHTML = `<i class="fa-solid fa-envelope" style="font-size:1.3rem;color:#60a5fa;"></i><span>${contactEmail2}</span>`;
+        container.appendChild(a);
+      }
+
+      if (container.children.length === 0) {
+        container.innerHTML = `<p style="text-align:center;color:var(--text-sub);">${isAr ? 'لا توجد معلومات تواصل متاحة حالياً' : 'No contact info available yet'}</p>`;
+      }
+
+      modal.style.display = 'flex';
+    };
+
+    window.closeContactModal = function () {
+      document.getElementById('contact-modal').style.display = 'none';
+    };
+
+    // إغلاق عند الضغط خارج الـ modal
+    document.getElementById('contact-modal').addEventListener('click', function (e) {
+      if (e.target === this) closeContactModal();
+    });
+
+    // ── Load Features ──
+    async function loadFeatures(type, containerId) {
+      const container = document.getElementById(containerId);
+      try {
+        const q = query(collection(db, 'landing_features'), where('type', '==', type), orderBy('order'));
+        const snap = await getDocs(q);
+        if (snap.empty) { container.innerHTML = defaultFeatures(type); return; }
+
+        container.innerHTML = '';
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          if (d.active === false) return; // Local filter
+          const title = currentLang === 'ar' ? (d.titleAr || '') : (d.titleEn || d.titleAr || '');
+          const desc = currentLang === 'ar' ? (d.descAr || '') : (d.descEn || d.descAr || '');
+          const div = document.createElement('div');
+          div.className = 'glass-card';
+          div.dataset.titleAr = d.titleAr || '';
+          div.dataset.titleEn = d.titleEn || '';
+          div.dataset.descAr = d.descAr || '';
+          div.dataset.descEn = d.descEn || '';
+          div.innerHTML = `<span class="card-icon">${d.icon || '⭐'}</span><h3 class="card-title">${title}</h3><p class="card-desc">${desc}</p>`;
+          container.appendChild(div);
+        });
+      } catch (e) {
+        container.innerHTML = defaultFeatures(type);
+      }
+    }
+
+    // ── Load FAQs ──
+    async function loadFaqs() {
+      try {
+        const q = query(collection(db, 'landing_faq'), orderBy('order'));
+        const snap = await getDocs(q);
+        if (snap.empty) return;
+
+        const container = document.getElementById('faq-container');
+        document.getElementById('faq-section').style.display = 'block';
+        container.innerHTML = '';
+
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          if (d.active === false) return; // Local filter
+          const qText = currentLang === 'ar' ? (d.questionAr || '') : (d.questionEn || d.questionAr || '');
+          const aText = currentLang === 'ar' ? (d.answerAr || '') : (d.answerEn || d.answerAr || '');
+
+          const div = document.createElement('div');
+          div.className = 'faq-item';
+          div.dataset.qAr = d.questionAr || '';
+          div.dataset.qEn = d.questionEn || '';
+          div.dataset.aAr = d.answerAr || '';
+          div.dataset.aEn = d.answerEn || '';
+
+          div.innerHTML = `
+            <button class="faq-btn" onclick="this.parentElement.classList.toggle('active')">
+              <span class="faq-q">${qText}</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-content"><p class="faq-a">${aText}</p></div>
+          `;
+          container.appendChild(div);
+        });
+      } catch (e) { console.warn('loadFaqs:', e); }
+    }
+
+    // ── Load Reviews ──
+    async function loadReviews() {
+      try {
+        const q = query(collection(db, 'landing_reviews'), orderBy('order'));
+        const snap = await getDocs(q);
+        if (snap.empty) return;
+
+        const container = document.getElementById('reviews-container');
+        document.getElementById('reviews-section').style.display = 'block';
+        container.innerHTML = '';
+
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          if (d.active === false) return; // Local filter
+          const name = currentLang === 'ar' ? (d.nameAr || '') : (d.nameEn || d.nameAr || '');
+          const text = currentLang === 'ar' ? (d.textAr || '') : (d.textEn || d.textAr || '');
+          const stars = '⭐'.repeat(d.stars || 5);
+
+          const div = document.createElement('div');
+          div.className = 'glass-card review-card';
+          div.dataset.nameAr = d.nameAr || '';
+          div.dataset.nameEn = d.nameEn || '';
+          div.dataset.textAr = d.textAr || '';
+          div.dataset.textEn = d.textEn || '';
+
+          div.innerHTML = `
+            <div class="review-stars">${stars}</div>
+            <p class="review-text">"${text}"</p>
+            <p class="review-name">— ${name}</p>
+          `;
+          container.appendChild(div);
+        });
+      } catch (e) { console.warn('loadReviews:', e); }
+    }
+
+    // ── Load Gallery ──
+    async function loadGallery() {
+      try {
+        const q = query(collection(db, 'landing_gallery'), orderBy('order'));
+        const snap = await getDocs(q);
+        if (snap.empty) return;
+
+        const grid = document.getElementById('gallery-grid');
+        document.getElementById('gallery-section').style.display = 'block';
+        grid.innerHTML = '';
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          if (d.active === false) return; // Local filter
+          if (!d.url) return;
+          const div = document.createElement('div');
+          div.className = 'gallery-img';
+          div.innerHTML = `<img src="${d.url}" alt="" loading="lazy">`;
+          grid.appendChild(div);
+        });
+      } catch (e) { }
+    }
+
+    // ── Load Plans ──
+    async function loadPlans() {
+      try {
+        const q = query(
+          collection(db, 'subscription_plans'),
+          where('isActive', '==', true),
+          orderBy('price')
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) return;
+
+        const planIcons = ['⭐', '🌟', '💎', '🏆'];
+        const container = document.getElementById('plans-container');
+        document.getElementById('plans-section').style.display = 'block';
+        container.innerHTML = '';
+        let idx = 0;
+
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          const icon = planIcons[Math.min(idx, planIcons.length - 1)];
+          const rawPrice = d.price || 0;
+          const formatted = rawPrice.toLocaleString('ar-IQ');
+          const days = d.durationDays || 30;
+          const title = d.title || '';
+          const safeTitle = title.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+          const featureItems = (d.features || [])
+            .map(f => `<li class="plan-feature">${f}</li>`)
+            .join('');
+
+          const div = document.createElement('div');
+          div.className = 'plan-card';
+          div.innerHTML = `
+            <span class="plan-icon">${icon}</span>
+            <h3 class="plan-name">${title}</h3>
+            ${d.description ? `<p class="plan-desc">${d.description}</p>` : '<p class="plan-desc"></p>'}
+            <div class="plan-price-box">
+              <span class="plan-amount">${formatted}</span>
+              <span class="plan-unit">
+                <span data-ar="دينار عراقي" data-en="Iraqi Dinar (IQD)">دينار عراقي</span>
+              </span>
+            </div>
+            <div class="plan-duration">
+              <span>⏱️</span>
+              <strong>${days}</strong>
+              <span data-ar="يوم" data-en="days">يوم</span>
+            </div>
+            ${featureItems ? `<ul class="plan-features-list">${featureItems}</ul>` : ''}
+            <button class="plan-contact-btn" onclick="contactForPlan('${safeTitle}', ${days})">
+              💬 <span data-ar="تواصل معنا للتفعيل" data-en="Contact Us to Activate">تواصل معنا للتفعيل</span>
+            </button>
+          `;
+          container.appendChild(div);
+          idx++;
+        });
+      } catch (e) {
+        console.warn('loadPlans:', e);
+      }
+    }
+
+    window.contactForPlan = function (planTitle, planDays) {
+      const isAr = currentLang === 'ar';
+      const msg = isAr
+        ? `مرحباً، أريد الاستفسار عن عضوية "${planTitle}" لمدة ${planDays} يوم في منصة حرفي العراق`
+        : `Hello, I would like to inquire about the "${planTitle}" membership (${planDays} days) on Iraqi Craftsman platform`;
+      const wa = adminWhatsAppNumber || '9647700270555';
+      window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+    };
+
+    function defaultFeatures(type) {
+      if (type === 'customer') return `<div class="glass-card"><span class="card-icon">🔍</span><h3 class="card-title" data-ar="ابحث عن حرفي" data-en="Find a Craftsman">ابحث عن حرفي</h3><p class="card-desc" data-ar="تصفّح مئات الحرفيين المحترفين في مدينتك" data-en="Browse hundreds of professional craftsmen in your city">تصفّح مئات الحرفيين المحترفين في مدينتك</p></div>`;
+      return `<div class="glass-card"><span class="card-icon">📱</span><h3 class="card-title" data-ar="حساب مجاني" data-en="Free Profile">حساب مجاني</h3><p class="card-desc" data-ar="أنشئ حسابك واعرض أعمالك بسهولة" data-en="Create an account and showcase your work easily">أنشئ حسابك واعرض أعمالك بسهولة</p></div>`;
+    }
+
+    window.setLang = function (lang) {
+      currentLang = lang;
+      localStorage.setItem('preferredLang', lang);
+      const body = document.getElementById('body');
+      body.className = lang;
+      body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
+      document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', (lang === 'ar' && i === 0) || (lang === 'en' && i === 1));
+      });
+
+      document.getElementById('tagline-ar').style.display = lang === 'ar' ? '' : 'none';
+      document.getElementById('tagline-en').style.display = lang === 'en' ? '' : 'none';
+
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = lang === 'ar' ? el.dataset.ar : (el.dataset.en || el.dataset.ar);
+      });
+
+      ['.card-title', '.card-desc', '.faq-q', '.faq-a', '.review-text', '.review-name'].forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          const type = selector.includes('title') || selector.includes('q') || selector.includes('name') ? 'title' : 'desc';
+          const pre = selector.includes('faq') ? 'q' : (selector.includes('review-') ? (type === 'title' ? 'name' : 'text') : type);
+          const post = selector.includes('faq-a') ? 'a' : pre;
+          const d = el.closest('[data-' + post + '-ar]')?.dataset;
+          if (d) {
+            const valAr = d[post + 'Ar'];
+            const valEn = d[post + 'En'];
+            let text = lang === 'ar' ? valAr : (valEn || valAr);
+            if (selector.includes('review-text')) text = `"${text}"`;
+            if (selector.includes('review-name')) text = `— ${text}`;
+            el.textContent = text;
+          }
+        });
+      });
+    };
+
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'preferredLang' && e.newValue) {
+        setLang(e.newValue);
+      }
+    });
+
+    (async () => {
+      await Promise.all([
+        loadConfig(),
+        loadFeatures('customer', 'customer-cards'),
+        loadFeatures('craftsman', 'craftsman-cards'),
+        loadFaqs(),
+        loadReviews(),
+        loadGallery(),
+        loadPlans(),
+      ]);
+      const savedLang = localStorage.getItem('preferredLang') || 'ar';
+      setLang(savedLang);
+      initObservers();
+    })();
+  </script>
+</body>
+
+</html>

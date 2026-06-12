@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- يرجى استبدال YOUR_FACEBOOK_APP_ID بمعرف تطبيق فيسبوك الخاص بك -->
+    <string name="facebook_app_id">1481873260000375</string>
+    <!-- يرجى استبدال YOUR_FACEBOOK_CLIENT_TOKEN برمز العميل الخاص بك -->
+    <string name="facebook_client_token">7db2a348021405e73165b61fd789175c</string>
+    
+    <!-- هذه القيمة تكون FB متبوعة بمعرف التطبيق، مثلا: fb1234567890 -->
+    <string name="fb_login_protocol_scheme">fb1481873260000375</string>
+    <!-- اسم التطبيق كما يظهر في شاشة تسجيل الدخول لفيسبوك -->
+    <string name="app_name">حرفي العراق</string>
+</resources>

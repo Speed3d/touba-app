@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سياسة الخصوصية — حرفي العراق | Privacy Policy</title>
+  <meta name="description" content="سياسة الخصوصية لمنصة حرفي العراق">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Theme Colors */
+      --primary: #10B981; /* Emerald Green */
+      --secondary: #3B82F6; /* Blue */
+      --accent: #8B5CF6; /* Purple for depth */
+      
+      --bg-dark: #0f172a;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+      
+      /* Glassmorphism settings */
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px);
+      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --radius: 20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Background Orbs */
+    .orbs-wrapper {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; overflow: hidden; pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -200px; left: -100px; animation-delay: -5s; }
+    .orb-3 { width: 300px; height: 300px; background: var(--accent); top: 40%; left: 30%; animation-duration: 25s; opacity: 0.3; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 150px) scale(1.2); }
+    }
+
+    /* Lang Toggle */
+    .lang-bar {
+      position: absolute; top: 20px; right: 20px;
+      display: flex; gap: 8px; z-index: 10;
+    }
+    body.en .lang-bar { right: auto; left: 20px; }
+    
+    .lang-btn {
+      padding: 8px 16px; border-radius: 12px;
+      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border); color: var(--text-main);
+      cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.2s;
+    }
+    .lang-btn.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+
+    /* Layout */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 16px 80px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Logo */
+    .logo {
+      width: 140px; height: 140px; 
+      margin: 0 auto 30px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      /* Pulse Animation */
+      animation: pulse 3s infinite alternate;
+    }
+    .logo img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-back {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 24px; border-radius: 22px; margin-bottom: 20px;
+      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border); color: white;
+      text-decoration: none; font-size: 1rem; transition: all 0.3s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
+    body.en .btn-back:hover { transform: translateX(-5px); }
+
+    /* Content Card */
+    .content-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+      line-height: 1.8;
+      color: var(--text-sub);
+    }
+    .content-card h2 {
+      font-size: 1.5rem; color: white; margin-top: 30px; margin-bottom: 15px; font-weight: 700;
+    }
+    .content-card h2:first-child { margin-top: 0; }
+    .content-card p { margin-bottom: 15px; }
+    .content-card ul { margin-bottom: 15px; padding-right: 20px; }
+    body.en .content-card ul { padding-right: 0; padding-left: 20px; }
+    .content-card li { margin-bottom: 8px; }
+
+    /* Footer */
+    footer {
+      background: rgba(0,0,0,0.3); text-align: center; padding: 30px 24px;
+      color: var(--text-sub); font-size: 0.9rem; border-top: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      margin-top: auto;
+    }
+
+    body.en { direction: ltr; text-align: left; }
+  </style>
+</head>
+<body class="ar" id="body">
+
+  <!-- Animated Background -->
+  <div class="orbs-wrapper">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+  </div>
+
+  <div class="container">
+    <a href="https://iraqicraftsman.com/" class="btn-back" data-ar="→ العودة للرئيسية" data-en="← Back to Home">→ العودة للرئيسية</a>
+    
+    <header>
+      <div class="logo"><img src="logo.png" alt="حرفي العراق"></div>
+      <h1 data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة الخصوصية</h1>
+    </header>
+
+    <div class="content-card">
+      <h2 data-ar="1. المعلومات التي نجمعها" data-en="1. Information We Collect">1. المعلومات التي نجمعها</h2>
+      <ul>
+        <li data-ar="الاسم، البريد الإلكتروني، ورقم الهاتف عند التسجيل كمعرف فريد لا يمكن تكراره." data-en="Name, email address, and Phone number upon registration as a unique, non-repeatable identifier.">الاسم، البريد الإلكتروني، ورقم الهاتف عند التسجيل كمعرف فريد لا يمكن تكراره.</li>
+        <li data-ar="الموقع الجغرافي (دقيق أو تقريبي): لعرض الحرفيين القريبين (بإذنك). يمكنك منح إذن الموقع التقريبي فقط إذا كنت تفضل ذلك." data-en="Location (precise or approximate): To show nearby craftsmen (with your permission). You may grant approximate location only if you prefer.">الموقع الجغرافي (دقيق أو تقريبي): لعرض الحرفيين القريبين (بإذنك). يمكنك منح إذن الموقع التقريبي فقط إذا كنت تفضل ذلك.</li>
+        <li data-ar="الكاميرا: لالتقاط صور الملف الشخصي. معرض الصور: لإرفاق أعمال الحرفيين وصور الطلبات." data-en="Camera: For capturing profile photos. Photo gallery: For attaching craftsmen portfolio images and service request photos.">الكاميرا: لالتقاط صور الملف الشخصي. معرض الصور: لإرفاق أعمال الحرفيين وصور الطلبات.</li>
+        <li data-ar="بيانات الجهاز والأعطال (Crashlytics): تُجمع بشكل مجهول لتحسين كفاءة التطبيق." data-en="Device info & Crash logs (Crashlytics): Collected anonymously to improve performance.">بيانات الجهاز والأعطال (Crashlytics): تُجمع بشكل مجهول لتحسين كفاءة التطبيق.</li>
+        <li data-ar="رمز الإحالة الخاص بك وبيانات الإحالات (مَن أحلت ومَن سجّل برمزك) بهدف احتساب المكافآت وتتبع برنامج الإحالة." data-en="Your referral code and referral data (who you referred and who registered using your code) for reward calculation and referral program tracking.">رمز الإحالة الخاص بك وبيانات الإحالات (مَن أحلت ومَن سجّل برمزك) بهدف احتساب المكافآت وتتبع برنامج الإحالة.</li>
+      </ul>
+
+      <h2 data-ar="2. تسجيل الدخول عبر منصات خارجية" data-en="2. Social Login">2. تسجيل الدخول عبر منصات خارجية</h2>
+      <ul>
+        <li data-ar="عند التسجيل بواسطة Google أو Facebook، نصل لمعلوماتك الأساسية المرتبطة بالحساب فقط." data-en="If you log in via Google or Facebook, we only access basic info linked to those accounts.">عند التسجيل بواسطة Google أو Facebook، نصل لمعلوماتك الأساسية المرتبطة بالحساب فقط.</li>
+        <li data-ar="لا نصل ولا نخزن كلمات المرور الخاصة بك على تلك المنصات بأي شكل." data-en="We do not have access to or store your external service passwords in any way.">لا نصل ولا نخزن كلمات المرور الخاصة بك على تلك المنصات بأي شكل.</li>
+      </ul>
+
+      <h2 data-ar="3. كيف نستخدم معلوماتك" data-en="3. How We Use Information">3. كيف نستخدم معلوماتك</h2>
+      <ul>
+        <li data-ar="توفير الخدمات الأساسية في التطبيق وتسهيل التواصل." data-en="Provide core app features and facilitate communication.">توفير الخدمات الأساسية في التطبيق وتسهيل التواصل.</li>
+        <li data-ar="تحسين تجربة الاستخدام من خلال تحليل البيانات التشخيصية وتقارير الأعطال." data-en="Analyze diagnostic data to enhance user experience and app stability.">تحسين تجربة الاستخدام من خلال تحليل البيانات التشخيصية وتقارير الأعطال.</li>
+        <li data-ar="منع الاحتيال والمحافظة على أمان المنصة." data-en="Prevent fraud and ensure platform safety.">منع الاحتيال والمحافظة على أمان المنصة.</li>
+      </ul>
+
+      <h2 data-ar="4. مشاركة المعلومات وأمان البيانات" data-en="4. Information Sharing & Security">4. مشاركة المعلومات وأمان البيانات</h2>
+      <ul>
+        <li data-ar="لا نبيع أو نؤجر بياناتك الشخصية أبداً لأي أطراف ثالثة." data-en="We never sell or rent your personal data to third parties.">لا نبيع أو نؤجر بياناتك الشخصية أبداً لأي أطراف ثالثة.</li>
+        <li data-ar="نستخدم خدمات Firebase من Google لحفظ البيانات وتشفيرها (SSL/TLS)." data-en="We use Firebase (Google) to securely store and encrypt data (SSL/TLS).">نستخدم خدمات Firebase من Google لحفظ البيانات وتشفيرها (SSL/TLS).</li>
+        <li data-ar="تُخزن بيانات البصمة على جهازك المحلي فقط وتوفر حماية قصوى." data-en="Biometric login data is stored securely and locally on your device only.">تُخزن بيانات البصمة على جهازك المحلي فقط وتوفر حماية قصوى.</li>
+      </ul>
+
+      <h2 data-ar="5. حقوقك وحذف البيانات" data-en="5. Your Rights & Data Deletion">5. حقوقك وحذف البيانات</h2>
+      <ul>
+        <li data-ar="وصول وتعديل: يحق لك الاطلاع على بياناتك وإدارتها من ملفك الشخصي." data-en="Access & Modify: You can view and edit your data from your profile.">وصول وتعديل: يحق لك الاطلاع على بياناتك وإدارتها من ملفك الشخصي.</li>
+        <li data-ar="حذف البيانات: يحق لك المطالبة بحذف حسابك وكافة بياناتك نهائياً من إعدادات التطبيق." data-en="Deletion: You have the right to permanently delete your account and data from 'Settings'.">حذف البيانات: يحق لك المطالبة بحذف حسابك وكافة بياناتك نهائياً من إعدادات التطبيق.</li>
+        <li data-ar="لحذف الحساب من خارج التطبيق، يُرجى التواصل على الإيميل: support@iraqicraftsman.com" data-en="To request deletion directly, email us at: support@iraqicraftsman.com.">لحذف الحساب من خارج التطبيق، يُرجى التواصل على الإيميل: support@iraqicraftsman.com</li>
+      </ul>
+
+      <h2 data-ar="6. خصوصية الأطفال" data-en="6. Children's Privacy">6. خصوصية الأطفال</h2>
+      <ul>
+        <li data-ar="التطبيق غير موجَّه للأشخاص دون 18 سنة." data-en="The app is not intended for individuals under 18.">التطبيق غير موجَّه للأشخاص دون 18 سنة.</li>
+        <li data-ar="لا نجمع بيانات الأطفال عن قصد وتُحذف فور اكتشافها." data-en="We do not knowingly collect children's data.">لا نجمع بيانات الأطفال عن قصد وتُحذف فور اكتشافها.</li>
+      </ul>
+
+      <h2 data-ar="7. التواصل معنا" data-en="7. Contact Us">7. التواصل معنا</h2>
+      <p data-ar="إذا كان لديك أي أسئلة، يُرجى زيارة قسم الدعم أو مراسلتنا عبر الإيميل أعلاه." data-en="If you have questions, contact us via Help & Support or the email above.">إذا كان لديك أي أسئلة، يُرجى زيارة قسم الدعم أو مراسلتنا عبر الإيميل أعلاه.</p>
+      
+      <p style="margin-top:20px; color: var(--text-sub);"><small data-ar="آخر تحديث: أبريل 2026" data-en="Last updated: April 2026">آخر تحديث: أبريل 2026</small></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>
+      © 2026 حرفي العراق — Iraqi Craftsman. <span data-ar="جميع الحقوق محفوظة." data-en="All Rights Reserved.">جميع الحقوق محفوظة.</span>
+    </p>
+  </footer>
+
+  <script>
+    window.setLang = function(lang) {
+      localStorage.setItem('preferredLang', lang);
+      const body = document.getElementById('body');
+      body.className = lang;
+      body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      
+      document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', (lang === 'ar' && i === 0) || (lang === 'en' && i === 1));
+      });
+
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = lang === 'ar' ? el.dataset.ar : (el.dataset.en || el.dataset.ar);
+      });
+    };
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'preferredLang' && e.newValue) {
+        setLang(e.newValue);
+      }
+    });
+
+    window.onload = function() {
+      const savedLang = localStorage.getItem('preferredLang') || 'ar';
+      setLang(savedLang);
+    };
+  </script>
+</body>
+</html>

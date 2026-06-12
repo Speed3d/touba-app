@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تحميل حرفي العراق — Iraqi Craftsman</title>
+  <meta name="description" content="حمّل تطبيق حرفي العراق على هاتفك الآن — المنصة الأذكى لربط الزبائن بالحرفيين في العراق">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="حرفي العراق — حمّل التطبيق">
+  <meta property="og:description" content="المنصة الأذكى لربط الزبائن بأمهر الحرفيين في العراق">
+  <meta property="og:image" content="https://iraqicraftsman.com/logo.png">
+  <meta property="og:url" content="https://iraqicraftsman.com/get">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/png" href="../logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <style>
+    :root {
+      --primary: #10B981;
+      --secondary: #3B82F6;
+      --accent: #8B5CF6;
+      --bg-dark: #0f172a;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px);
+      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --radius: 20px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+      padding: 80px 20px 40px;
+    }
+
+    /* ─── Background Orbs ─── */
+    .orbs-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: var(--primary);
+      top: -100px;
+      right: -100px;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: var(--secondary);
+      bottom: -200px;
+      left: -100px;
+      animation-delay: -5s;
+    }
+
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: var(--accent);
+      top: 40%;
+      left: 30%;
+      animation-duration: 25s;
+      opacity: 0.3;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 150px) scale(1.2); }
+    }
+
+    /* ─── Lang Bar ─── */
+    .lang-bar {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    body.en .lang-bar {
+      right: auto;
+      left: 16px;
+    }
+
+    .lang-btn {
+      padding: 6px 14px;
+      border-radius: 10px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ─── Card ─── */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 48px 36px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Logo ─── */
+    .logo {
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: pulse 3s infinite alternate;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      100% { box-shadow: 0 0 0 24px rgba(16, 185, 129, 0); }
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* ─── OS Badge ─── */
+    .os-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--primary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    /* ─── Countdown ─── */
+    .countdown-bar {
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .countdown-text {
+      color: var(--text-sub);
+      font-size: 0.88rem;
+      margin-bottom: 10px;
+    }
+
+    .progress-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+      transition: width 0.05s linear;
+    }
+
+    /* ─── Store Buttons ─── */
+    .btn-store {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 16px 22px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 12px;
+      color: white;
+    }
+
+    .btn-android {
+      background: linear-gradient(135deg, #34D058, #2EA84D);
+      box-shadow: 0 8px 20px rgba(52, 208, 88, 0.28);
+    }
+
+    .btn-android:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(52, 208, 88, 0.45);
+    }
+
+    .btn-ios-disabled {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: default;
+      opacity: 0.55;
+    }
+
+    .btn-ios-active {
+      background: linear-gradient(135deg, #1c1c2e, #2c2c4e);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn-ios-active:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+      width: 36px;
+      text-align: center;
+    }
+
+    .btn-text {
+      flex: 1;
+      text-align: right;
+    }
+
+    body.en .btn-text {
+      text-align: left;
+    }
+
+    .btn-sub {
+      font-size: 0.72rem;
+      font-weight: 400;
+      opacity: 0.8;
+      display: block;
+    }
+
+    .btn-main {
+      font-size: 1rem;
+      font-weight: 800;
+      display: block;
+      line-height: 1.3;
+    }
+
+    .badge-soon {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+
+    /* Cancel redirect button */
+    .btn-cancel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: rgba(248, 113, 113, 0.06);
+      border: 1px solid rgba(248, 113, 113, 0.25);
+      color: #f87171;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+
+    .btn-cancel:hover {
+      background: rgba(248, 113, 113, 0.12);
+    }
+
+    /* ─── Divider ─── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0 16px;
+      color: var(--text-sub);
+      font-size: 0.82rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+
+    /* ─── Web Button ─── */
+    .btn-web {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      color: var(--text-sub);
+      text-decoration: none;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.25s;
+    }
+
+    .btn-web:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    /* ─── Back Link ─── */
+    .back-link {
+      margin-top: 20px;
+      color: var(--text-sub);
+      font-size: 0.82rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 36px 20px; }
+      h1 { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+
+<body class="ar" id="body">
+
+  <!-- Background -->
+  <div class="orbs-wrapper">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Language Toggle -->
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+  </div>
+
+  <div class="card">
+    <div class="logo">
+      <img src="../logo.png" alt="حرفي العراق">
+    </div>
+
+    <h1>حرفي العراق</h1>
+    <p class="subtitle" id="el-subtitle"></p>
+
+    <div class="os-badge" id="el-os-badge">
+      <i id="el-os-icon" class="fas fa-mobile-alt"></i>
+      <span id="el-os-label"></span>
+    </div>
+
+    <div class="countdown-bar" id="el-countdown">
+      <p class="countdown-text" id="el-countdown-text"></p>
+      <div class="progress-track">
+        <div class="progress-fill" id="el-progress" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="el-buttons"></div>
+
+    <div class="divider"><span id="el-divider"></span></div>
+
+    <a href="https://app.iraqicraftsman.com" class="btn-web" target="_blank" rel="noopener">
+      <i class="fas fa-globe"></i>
+      <span id="el-web"></span>
+    </a>
+
+    <a href="https://iraqicraftsman.com" class="back-link">
+      <i id="el-back-icon" class="fas fa-arrow-right"></i>
+      <span id="el-back"></span>
+    </a>
+  </div>
+
+  <script>
+    const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.craftsmaniraq.craftsman_iraq';
+    const PLAY_MARKET = 'market://details?id=com.craftsmaniraq.craftsman_iraq';
+    const APP_STORE_URL = null; // set to App Store URL when published
+
+    const ua = navigator.userAgent || '';
+    const isAndroid = /android/i.test(ua);
+    const isIOS = /ipad|iphone|ipod/i.test(ua) && !window.MSStream;
+
+    const T = {
+      ar: {
+        subtitle: 'المنصة الأذكى والأسرع لربط الزبائن بأمهر الحرفيين في العراق',
+        badgeAndroid: 'تم الكشف عن جهاز Android',
+        badgeIOS: 'تم الكشف عن جهاز iPhone / iPad',
+        badgeDesktop: 'اختر منصتك',
+        countdownTpl: 'جاري التوجيه إلى Google Play خلال {n} ثوانٍ...',
+        andSub: 'تحميل من',
+        andMain: 'Google Play',
+        iosSub: 'تحميل من',
+        iosMain: 'App Store',
+        iosSoon: 'قريباً',
+        cancel: 'إلغاء التوجيه التلقائي',
+        divider: 'أو',
+        web: 'افتح من المتصفح',
+        back: 'العودة للموقع الرئيسي',
+      },
+      en: {
+        subtitle: 'The smartest and fastest platform connecting customers with professional craftsmen across Iraq',
+        badgeAndroid: 'Android device detected',
+        badgeIOS: 'iPhone / iPad detected',
+        badgeDesktop: 'Choose your platform',
+        countdownTpl: 'Redirecting to Google Play in {n} seconds...',
+        andSub: 'Get it on',
+        andMain: 'Google Play',
+        iosSub: 'Download on the',
+        iosMain: 'App Store',
+        iosSoon: 'Coming Soon',
+        cancel: 'Cancel auto-redirect',
+        divider: 'or',
+        web: 'Open in Browser',
+        back: 'Back to main website',
+      },
+    };
+
+    let lang = localStorage.getItem('preferredLang') || 'ar';
+    let countdownInterval = null;
+    let redirectCancelled = false;
+
+    function t(key) { return T[lang][key] || T.ar[key]; }
+
+    // يحاول فتح تطبيق المتجر أولاً، يتراجع للمتصفح إذا لم يكن مثبتاً
+    function openPlayStore(e) {
+      e.preventDefault();
+      window.location.href = PLAY_MARKET;
+      setTimeout(function () { window.location.href = PLAY_URL; }, 600);
+    }
+
+    function androidBtn() {
+      return `<a href="${PLAY_URL}" onclick="openPlayStore(event)" class="btn-store btn-android">
+        <span class="btn-icon"><i class="fab fa-google-play"></i></span>
+        <span class="btn-text">
+          <span class="btn-sub">${t('andSub')}</span>
+          <span class="btn-main">${t('andMain')}</span>
+        </span>
+      </a>`;
+    }
+
+    function iosBtn() {
+      if (APP_STORE_URL) {
+        return `<a href="${APP_STORE_URL}" class="btn-store btn-ios-active" target="_blank" rel="noopener">
+          <span class="btn-icon"><i class="fab fa-apple"></i></span>
+          <span class="btn-text">
+            <span class="btn-sub">${t('iosSub')}</span>
+            <span class="btn-main">${t('iosMain')}</span>
+          </span>
+        </a>`;
+      }
+      return `<div class="btn-store btn-ios-disabled">
+        <span class="btn-icon"><i class="fab fa-apple"></i></span>
+        <span class="btn-text">
+          <span class="btn-sub">${t('iosSub')}</span>
+          <span class="btn-main">${t('iosMain')}</span>
+          <span class="badge-soon">${t('iosSoon')}</span>
+        </span>
+      </div>`;
+    }
+
+    function cancelBtn() {
+      return `<button class="btn-cancel" onclick="cancelRedirect()">
+        <i class="fas fa-times"></i> ${t('cancel')}
+      </button>`;
+    }
+
+    function startCountdown() {
+      const el = document.getElementById('el-countdown');
+      const fill = document.getElementById('el-progress');
+      const textEl = document.getElementById('el-countdown-text');
+      el.style.display = 'block';
+
+      const totalMs = 3000;
+      const start = Date.now();
+
+      countdownInterval = setInterval(() => {
+        if (redirectCancelled) {
+          clearInterval(countdownInterval);
+          el.style.display = 'none';
+          return;
+        }
+        const elapsed = Date.now() - start;
+        const pct = Math.min((elapsed / totalMs) * 100, 100);
+        fill.style.width = pct + '%';
+        const remaining = Math.max(0, Math.ceil((totalMs - elapsed) / 1000));
+        textEl.textContent = t('countdownTpl').replace('{n}', remaining);
+        if (elapsed >= totalMs && !redirectCancelled) {
+          clearInterval(countdownInterval);
+          // market:// يفتح تطبيق المتجر مباشرة، مع fallback للمتصفح بعد 600ms
+          window.location.href = PLAY_MARKET;
+          setTimeout(function () { window.location.href = PLAY_URL; }, 600);
+        }
+      }, 50);
+    }
+
+    window.cancelRedirect = function () {
+      redirectCancelled = true;
+      clearInterval(countdownInterval);
+      document.getElementById('el-countdown').style.display = 'none';
+      document.getElementById('el-buttons').innerHTML = androidBtn();
+    };
+
+    function render() {
+      document.getElementById('el-subtitle').textContent = t('subtitle');
+      document.getElementById('el-divider').textContent = t('divider');
+      document.getElementById('el-web').textContent = t('web');
+      document.getElementById('el-back').textContent = t('back');
+      document.getElementById('el-back-icon').className = lang === 'ar' ? 'fas fa-arrow-right' : 'fas fa-arrow-left';
+
+      const badge = document.getElementById('el-os-badge');
+      const osLabel = document.getElementById('el-os-label');
+      const osIcon = document.getElementById('el-os-icon');
+      const buttons = document.getElementById('el-buttons');
+
+      if (isAndroid) {
+        osLabel.textContent = t('badgeAndroid');
+        osIcon.className = 'fab fa-android';
+        badge.style.cssText = 'background:rgba(52,208,88,0.08);border-color:rgba(52,208,88,0.35);color:#34D058;';
+        buttons.innerHTML = androidBtn() + cancelBtn();
+        startCountdown();
+      } else if (isIOS) {
+        osLabel.textContent = t('badgeIOS');
+        osIcon.className = 'fab fa-apple';
+        badge.style.cssText = 'background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:#f1f5f9;';
+        buttons.innerHTML = iosBtn() + androidBtn();
+      } else {
+        osLabel.textContent = t('badgeDesktop');
+        osIcon.className = 'fas fa-desktop';
+        badge.style.cssText = 'background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.3);color:#60a5fa;';
+        buttons.innerHTML = androidBtn() + iosBtn();
+      }
+    }
+
+    window.setLang = function (lng) {
+      lang = lng;
+      localStorage.setItem('preferredLang', lng);
+      const body = document.getElementById('body');
+      body.className = lng;
+      body.setAttribute('dir', lng === 'ar' ? 'rtl' : 'ltr');
+      document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', (lng === 'ar' && i === 0) || (lng === 'en' && i === 1));
+      });
+      render();
+    };
+
+    setLang(lang);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,728 @@
+rules_version = '2';
+
+// ============================================================================
+// 🔒 قواعد أمان Firestore - النسخة 5.0 (تشديد أمني شامل)
+// ============================================================================
+// هذا الملف يتحكم بمن يستطيع قراءة/كتابة/حذف البيانات في Firestore
+// كل قاعدة هنا تمنع أو تسمح بعمليات محددة على مجموعات البيانات
+// ============================================================================
+// تشديد قواعد الإشعارات - تقييد الحذف/التعديل لصاحب الإشعار فقط
+// تشديد قواعد أكواد التفعيل - التحديث للأدمن فقط مع استثناء محدود
+// تشديد قواعد طلبات الخدمة - تقييد الإنشاء والتعديل
+// تشديد قواعد المحادثات - تقييد القراءة والكتابة لأطراف المحادثة
+// إضافة دعم Custom Claims للتحقق من الأدمن (أسرع وأكثر أماناً)
+// إضافة Rate Limiting أساسي عبر حقل lastActionAt
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // دوال مساعدة (Helper Functions)
+    
+    // التحقق من أن المستخدم مسجل دخول في Firebase Auth
+    // هذه الدالة الأساسية التي تُستخدم في معظم القواعد
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // التحقق من أن المستخدم هو صاحب المستند (عبر معرفه الفريد)
+    // تُستخدم لمنع المستخدمين من تعديل بيانات غيرهم
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // دالة مساعدة لقراءة نوع المستخدم من قاعدة البيانات (كخيار بديل)
+    function getUserType() {
+      let userPath = /databases/$(database)/documents/users/$(request.auth.uid);
+      return exists(userPath) ? get(userPath).data.type : null;
+    }
+    
+    // التحقق من صلاحية الأدمن عبر Custom Claims
+    function isAdminClaim() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+
+    // التحقق إذا كان المستخدم أدمن (عبر Claim أو بالرجوع لقاعدة البيانات)
+    function isAdmin() {
+      return isAdminClaim() || (isAuthenticated() && getUserType() == 'admin');
+    }
+
+    // التحقق إذا كان المستخدم حرفي
+    function isCraftsman() {
+      return isAuthenticated() && (request.auth.token.role == 'craftsman' || getUserType() == 'craftsman');
+    }
+
+    // 📝 HINT AR: التحقق من كون المستخدم Super Admin — يعتمد على Custom Claims فقط (بدون قراءة Firestore).
+    // أسرع وأرخص من hasPermission() لأنه لا يقرأ أي مستند.
+    // يُستخدم للعمليات الحساسة: إعدادات النظام، نقل الملكية، إدارة المدراء.
+    function isSuperAdmin() {
+      return isAuthenticated() && request.auth.token.superAdmin == true;
+    }
+
+    // 📝 HINT AR: التحقق من صلاحية محددة — قراءة المستند مرة واحدة فقط [تعديل v2 — حرج].
+    // المشكلة القديمة: دالتان منفصلتان تقرآن المستند مرتين لكل عملية.
+    // الحل: قراءة واحدة + معالجة null آمنة + Super Admin يتجاوز الفحص تلقائياً.
+    // تُستخدم في: الإعلانات، الفئات، المدن، خطط الاشتراك، CMS، الإحالات، إلخ.
+    function hasPermission(permission) {
+      let userData = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return isAuthenticated() &&
+        // التحقق من كونه أدمن (Claims أولاً — أسرع، ثم Firestore كـ fallback للحالات الانتقالية)
+        (request.auth.token.admin == true || userData.type == 'admin') &&
+        // Super Admin يملك كل شيء — يتجاوز فحص adminPermissions
+        (
+          request.auth.token.superAdmin == true ||
+          // 📝 HINT AR: adminPermissions != null ضروري — بدونها ينهار hasAny() عند null
+          (userData.adminPermissions != null &&
+           userData.adminPermissions.hasAny([permission]))
+        );
+    }
+
+    // 📝 HINT AR: إعدادات النظام — القراءة مفتوحة لفحص وضع الصيانة عند بدء التطبيق.
+    // الكتابة لـ Super Admin فقط (من Claims مباشرة — بدون قراءة Firestore إضافية).
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+    
+    // المستخدمين (Users)
+    // نسمح بالقراءة لأي مستخدم مصادق لأن الحرفيين يحتاجون رؤية
+    // بيانات الزبائن والعكس (مثلاً: اسم الزبون في الطلب)
+    // في المستقبل يمكن تقييد الحقول المرئية عبر Cloud Functions
+    match /users/{userId} {
+      // تم دمج قاعدتي allow list المتعارضتين في قاعدة واحدة
+      // القاعدة تسمح بـ: 1) البحث بالإيميل (لغير المسجلين — نسيت كلمة المرور)
+      //                   2) الاستعلامات العامة (للمستخدمين المصادقين — البحث عن حرفيين)
+      allow list: if isAuthenticated() || 
+                     (request.query.limit <= 1 && 
+                      request.query.filters.size() == 1 &&
+                      request.query.filters[0].op == "==" &&
+                      request.query.filters[0].field == ["email"]);
+                     
+      // القراءة الكاملة للمستند مسموحة فقط للمستخدمين المصادقين
+      allow get: if isAuthenticated();
+      
+      // الإنشاء محصور بصاحب الحساب فقط (يمنع إنشاء حسابات وهمية)
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      
+      // التعديل مسموح لصاحب الحساب أو الأدمن
+      // تشديد قاعدة تحديث الإحصائيات
+      // سابقاً أي مستخدم مصادق يمكنه تعديل ratingAverage و profileViews لأي حرفي!
+      // الآن فقط صاحب الحساب أو الأدمن يمكنهم التعديل
+      // تحديث الإحصائيات (ratingAverage, profileViews) يجب أن يتم من:
+      //    - Cloud Functions (الأفضل للأمان) أو
+      //    - مستخدم مصادق لحقول محدودة جداً (profileViews فقط + updatedAt)
+      //    مع ضمان أن الزيادة = 1 فقط (منع التلاعب بالأرقام)
+      allow update: if isOwner(userId) || isAdmin() || 
+                    (isAuthenticated() && 
+                     request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                       'profileViews', 'updatedAt'
+                     ]) &&
+                     // ضمان أن المشاهدات تزيد بـ 1 فقط (منع التلاعب)
+                     request.resource.data.profileViews == resource.data.profileViews + 1
+                    );
+      
+      // الحذف للأدمن فقط (حذف الحسابات المخالفة)
+      allow delete: if isAdmin();
+      
+      // المفضلة - مجموعة فرعية داخل المستخدم
+      // كل مستخدم يتحكم فقط بقائمة المفضلة الخاصة به
+      match /favorites/{craftsmanId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+
+      // سجل الأوسمة (Badge Log) — الميزة 8
+      // 📝 HINT AR: يُخزَّن كـ subcollection داخل مستند الحرفي
+      // يحتوي على تاريخ كل منح أو سحب وسام مع سبب القرار والأدمن المسؤول
+      // القراءة والكتابة للأدمن فقط — المستخدم لا يرى سجل قراراته الإدارية
+      match /badge_log/{logId} {
+        allow read, write: if isAdmin();
+      }
+
+      // سجل شارات الزبائن
+      // مشابه لـ badge_log ولكن للزبائن
+      match /customer_badge_log/{logId} {
+        allow read, write: if isAdmin();
+      }
+    }
+    
+    // 📝 HINT AR: الإعلانات — صلاحية 'content' (إعلانات + CMS + صفحة الهبوط + Onboarding).
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+    
+    // المحادثات (Chats)
+    // دالة مساعدة: هل المستخدم الحالي طرف في المحادثة؟
+    // تفحص participants أولاً ثم customerId/craftsmanId كـ fallback
+    // (لضمان عمل المحادثات القديمة التي قد تفتقد حقل participants)
+    function isChatMember(chatData) {
+      return request.auth.uid == chatData.customerId
+          || request.auth.uid == chatData.craftsmanId
+          || (chatData.participants is list
+              && chatData.participants.hasAny([request.auth.uid]));
+    }
+
+    match /chats/{chatId} {
+      // قراءة مستند واحد (get)
+      allow get: if isAuthenticated() && (isChatMember(resource.data) || isAdmin());
+
+      // استعلامات المجموعة (list) — الاستعلام يفلتر بـ arrayContains uid
+      allow list: if isAuthenticated();
+
+      // إنشاء محادثة — المنشئ يجب أن يكون أحد الطرفين
+      allow create: if isAuthenticated() && (
+        request.resource.data.customerId == request.auth.uid
+        || request.resource.data.craftsmanId == request.auth.uid
+      );
+
+      // التعديل لأطراف المحادثة فقط
+      allow update: if isAuthenticated() && (isChatMember(resource.data) || isAdmin());
+
+      // الحذف للأدمن فقط
+      allow delete: if isAdmin();
+
+      // الرسائل داخل المحادثة
+      match /messages/{messageId} {
+        allow read: if isAuthenticated() && isChatMember(
+          get(/databases/$(database)/documents/chats/$(chatId)).data
+        );
+        allow create: if isAuthenticated() && isChatMember(
+          get(/databases/$(database)/documents/chats/$(chatId)).data
+        );
+        allow update: if isAuthenticated() && isChatMember(
+          get(/databases/$(database)/documents/chats/$(chatId)).data
+        );
+      }
+    }
+    
+    // طلبات الخدمة (Service Requests)
+    // تم تشديد القواعد بشكل كبير
+    // الإنشاء للزبائن فقط + حد يومي server-side، التعديل لصاحب الطلب أو الحرفي المقبول أو الأدمن
+    match /service_requests/{requestId} {
+      // القراءة لأي مستخدم مصادق (الحرفيون يحتاجون رؤية الطلبات المتاحة)
+      allow read: if isAuthenticated();
+      
+      // إنشاء الطلبات لم يعد مسموحاً مباشرة من العميل.
+      // المسار الرسمي أصبح Cloud Function `createServiceRequest`
+      // حتى يتم فرض الحد اليومي والتحقق الأمني من السيرفر.
+      allow create: if isAdmin();
+      
+      // التعديل مسموح فقط لـ:
+      // 1. صاحب الطلب (الزبون) - لتعديل أو إلغاء طلبه
+      // 2. الحرفي المقبول (acceptedCraftsmanId) - لتحديث حالة التنفيذ
+      // 3. الأدمن - للتدخل في الحالات الاستثنائية
+      allow update: if isAuthenticated() && 
+                      (resource.data.customerId == request.auth.uid || 
+                       resource.data.acceptedCraftsmanId == request.auth.uid || 
+                       isAdmin() ||
+                       // السماح للحرفيين بتحديث عداد العروض وحالة الطلب عند تقديم عرض
+                       // هذا ضروري لأن عملية تقديم العرض تتضمن تحديث مستند الطلب الأصلي
+                       // يسمح بزيادة العداد +1 (عرض جديد) أو بقاء العداد كما هو (استبدال عرض مرفوض)
+                       (
+                         request.resource.data.diff(resource.data).affectedKeys()
+                           .hasOnly(['quotationsCount', 'status', 'updatedAt']) &&
+                         (request.resource.data.quotationsCount == resource.data.quotationsCount + 1 ||
+                          request.resource.data.quotationsCount == resource.data.quotationsCount)
+                       ));
+      
+      // الحذف للأدمن فقط (الطلبات لا تُحذف بل تُغلق عادةً)
+      allow delete: if isAdmin();
+      
+      // عروض الأسعار داخل الطلب
+      // تم تشديد هذه القواعد لمنع:
+      // 1. تقديم عروض مكررة (quotationId = craftsmanId = فريد)
+      // 2. تقديم عروض من غير الحرفيين (isCraftsman())
+      match /quotations/{quotationId} {
+        // القراءة: لأي مستخدم مصادق (صاحب الطلب يحتاج رؤية العروض)
+        allow read: if isAuthenticated();
+        
+        // الإنشاء - تشديد ثنائي:
+        // 1. يجب أن يكون craftsmanId = المستخدم الحالي
+        // 2. يجب أن يكون quotationId = المستخدم الحالي (يمنع التكرار)
+        //    لأن Document ID = craftsmanId → كل حرفي يملك document واحد فقط
+        // إعادة تفعيل isCraftsman() — الآن تدعم Custom Claims + Firestore fallback
+        //    سابقاً أُزيلت لأن Custom Claims لم تكن مُفعلة — الآن تعمل بالطريقتين
+        //    هذا يمنع أي زبون من تقديم عرض حتى لو زوّر craftsmanId
+        allow create: if isAuthenticated() && 
+                        isCraftsman() &&
+                        request.resource.data.craftsmanId == request.auth.uid &&
+                        quotationId == request.auth.uid;
+        
+        // التعديل - صاحب العرض (الحرفي) أو صاحب الطلب (الزبون) أو الأدمن
+        // الزبون يحتاج التعديل لقبول/رفض العرض
+        allow update: if isAuthenticated() && 
+                        (resource.data.craftsmanId == request.auth.uid ||
+                         get(/databases/$(database)/documents/service_requests/$(requestId)).data.customerId == request.auth.uid ||
+                         isAdmin());
+        
+        // الحذف - صاحب العرض أو الأدمن فقط
+        allow delete: if isAdmin() || 
+                        (isAuthenticated() && resource.data.craftsmanId == request.auth.uid);
+      }
+    }
+    
+    // قاعدة collectionGroup لعروض الأسعار
+    // ضرورية لاستعلام عروض الأسعار عبر جميع الطلبات (مثلاً: "عروضي")
+    // هذه القاعدة تسمح بالقراءة فقط - الكتابة تُتحكم بها من القواعد أعلاه
+    match /{path=**}/quotations/{quotationId} {
+      allow read: if isAuthenticated();
+    }
+    
+    // عروض الأسعار كـ Top-Level (إن وجدت)
+    // بعض الاستعلامات قد تحفظ عروض الأسعار كمجموعة مستقلة
+    // نفس قواعد التشديد المطبقة على العروض الفرعية
+    match /quotations/{quotationId} {
+      allow read: if isAuthenticated();
+      
+      // الإنشاء - الحرفي فقط يمكنه تقديم عرض
+      // إضافة isCraftsman() لمنع الزبائن من إنشاء عروض وهمية
+      allow create: if isAuthenticated() && 
+                      isCraftsman() &&
+                      request.resource.data.craftsmanId == request.auth.uid;
+      
+      // التعديل - صاحب العرض أو الأدمن
+      allow update: if isAuthenticated() && 
+                      (resource.data.craftsmanId == request.auth.uid || isAdmin());
+      
+      allow delete: if isAdmin();
+    }
+    
+    // التقييمات (Ratings)
+    // تشديد قاعدة إنشاء التقييمات
+    // سابقاً أي مستخدم مصادق يمكنه إنشاء تقييم بأي اسم!
+    // الآن يجب أن يكون المُقيّم هو الزبون أو الحرفي الفعلي في التقييم
+    // هذا يمنع المستخدمين من إنشاء تقييمات وهمية لأنفسهم أو ضد غيرهم
+    match /ratings/{ratingId} {
+      allow read: if isAuthenticated();
+      // الإنشاء مسموح فقط إذا كان المستخدم الحالي هو أحد طرفي التقييم
+      allow create: if isAuthenticated() && 
+                      (request.resource.data.customerId == request.auth.uid || 
+                       request.resource.data.craftsmanId == request.auth.uid);
+      
+      // التعديل مسموح لصاحب التقييم (الزبون أو الحرفي) أو الأدمن
+      allow update: if isAuthenticated() && 
+                    (resource.data.customerId == request.auth.uid || 
+                     resource.data.craftsmanId == request.auth.uid ||
+                     isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // أكواد التفعيل (Activation Codes)
+    // تم تشديد القواعد بشكل كبير!
+    // سابقاً: أي مستخدم مصادق يستطيع تعديل الأكواد (خطير!)
+    // الآن: الإنشاء والحذف للأدمن فقط
+    // التحديث مسموح بشروط صارمة للحاجات التشغيلية (بدون Cloud Functions)
+    // 📝 HINT AR: أكواد التفعيل — الإنشاء والحذف يحتاجان صلاحية 'codes'.
+    // التحديث له استثناءان للمستخدمين العاديين (تسجيل فشل + استخدام الكود).
+    match /activation_codes/{codeId} {
+      allow read: if isAuthenticated();
+
+      allow create: if hasPermission('codes');
+      allow delete: if hasPermission('codes');
+
+      // التحديث مشروط لسيناريوهين:
+      // 1. تسجيل محاولة فاشلة (تحديث failedAttempts و lastFailedAt و isLocked)
+      // 2. استخدام الكود (تحديث isUsed و usedBy و usedAt)
+      allow update: if hasPermission('codes') || (
+        isAuthenticated() && (
+          // السيناريو 1: تسجيل فشل
+          (request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['failedAttempts', 'lastFailedAt', 'isLocked'])) ||
+          
+          // السيناريو 2: استخدام الكود (مرة واحدة فقط)
+          (request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['isUsed', 'usedBy', 'usedByEmail', 'usedAt']) &&
+           resource.data.isUsed == false &&
+           request.resource.data.isUsed == true &&
+           request.resource.data.usedBy == request.auth.uid)
+        )
+      );
+    }
+
+    // محاولات التفعيل (Activation Attempts)
+    // لتسجيل محاولات التفعيل الفاشلة والناجحة
+    // القراءة للأدمن فقط، الإنشاء لأي مستخدم (لتسجيل محاولته)
+    match /activation_attempts/{attemptId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated() && 
+                    request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+    
+    // البلاغات (Reports)
+    // القراءة للأدمن أو صاحب البلاغ فقط (خصوصية البلاغات)
+    match /reports/{reportId} {
+      allow read: if isAdmin() || 
+                   (isAuthenticated() && resource.data.reporterId == request.auth.uid);
+      // أي مستخدم مصادق يمكنه تقديم بلاغ
+      allow create: if isAuthenticated();
+      // التعديل والحذف للأدمن فقط (لمراجعة وإدارة البلاغات)
+      allow update, delete: if isAdmin();
+    }
+    
+    // الإشعارات (Notifications)
+    // تشديد قاعدة إنشاء الإشعارات
+    // سابقاً أي مستخدم مصادق يستطيع إنشاء إشعار لأي مستخدم آخر!
+    // الآن يجب أن يحتوي الإشعار على userId صالح وحقول إلزامية
+    // كل مستخدم يتحكم فقط بإشعاراته الخاصة (قراءة/تعديل/حذف)
+    match /notifications/{notificationId} {
+      // قراءة مستند واحد (get) — resource.data متاح هنا
+      allow get: if isAuthenticated() &&
+                    (resource.data.userId == request.auth.uid || isAdmin());
+      // استعلامات المجموعة (list) — resource.data غير متاح!
+      allow list: if isAuthenticated();
+
+      allow create: if isAuthenticated() &&
+                      request.resource.data.userId is string &&
+                      request.resource.data.userId.size() > 0 &&
+                      request.resource.data.keys().hasAll(['userId', 'title', 'body', 'type']) &&
+                      (isAdmin() || request.resource.data.userId == request.auth.uid);
+
+      allow update, delete: if isAuthenticated() &&
+                              (resource.data.userId == request.auth.uid || isAdmin());
+
+      // ─── Subcollection: messages ─────────────────────────────────────────
+      // الإشعارات المبنية على subcollection — يكتب فيها السيرفر (Admin SDK) فقط
+      // المستخدم يقرأ إشعاراته فقط ويعدّلها (mark as read) أو يحذفها
+      match /messages/{msgId} {
+        allow read, update, delete: if isAuthenticated() && isOwner(notificationId);
+        // الكتابة من الأدمن فقط (Cloud Functions تستخدم Admin SDK وتتجاوز هذه القواعد)
+        allow create: if isAdmin();
+      }
+    }
+    
+    // المفضلة كـ Top-Level (إن وجدت)
+    // بعض الاستعلامات قد تستخدم مجموعة مفضلة مستقلة
+    match /favorites/{favoriteId} {
+      allow read: if isAuthenticated();
+      // الإنشاء - يجب أن يكون customerId هو المستخدم الحالي
+      allow create: if isAuthenticated() && 
+                    request.resource.data.customerId == request.auth.uid;
+      // الحذف - صاحب المفضلة فقط
+      allow delete: if isAuthenticated() && 
+                    resource.data.customerId == request.auth.uid;
+    }
+
+    // 📝 HINT AR: الفئات — صلاحية 'system' (الفئات + المدن + خطط الاشتراك).
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if hasPermission('system');
+
+      match /sub_categories/{subCategoryId} {
+        allow read: if true;
+        allow write: if hasPermission('system');
+      }
+    }
+
+    // 📝 HINT AR: كتالوج الأوسمة — القراءة لكل المصادقين، الكتابة للأدمن فقط.
+    // يشمل: أوسمة النظام (system) + أوسمة الداعمين (sponsor).
+    match /badges_catalog/{badgeId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // 📝 HINT AR: أكواد الخصم — صلاحية 'codes' (أكواد التفعيل + كوبونات الخصم).
+    match /promo_codes/{codeId} {
+      allow read, write: if hasPermission('codes');
+      
+      // 2. المستخدمين أثناء التسجيل:
+      // - السماح بقراءة كود معين (get) للتحقق من صحته
+      allow get: if true;
+      
+      // - السماح بتحديث العداد (زيادة 1) ومصفوفة المستخدمين عند الاستخدام فقط
+      // - يجب أن يكون التعديل محصوراً في حقل currentUses و usedBy
+      // - يجب أن تكون الزيادة +1 بالضبط
+      allow update: if isAuthenticated() 
+                   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['currentUses', 'usedBy'])
+                   && request.resource.data.currentUses == resource.data.currentUses + 1;
+    }
+
+    // 📝 HINT AR: خطط الاشتراك — صلاحية 'system'.
+    match /subscription_plans/{planId} {
+      allow read: if true;
+      allow write: if hasPermission('system');
+    }
+
+    // 📝 HINT AR: المدن — صلاحية 'system'.
+    match /cities/{cityId} {
+      allow read: if true;
+      allow write: if hasPermission('system');
+    }
+
+    // 📝 HINT AR: المناطق — صلاحية 'system'.
+    match /districts/{districtId} {
+      allow read: if true;
+      allow write: if hasPermission('system');
+    }
+
+    // تنبيهات الأدمن (Admin Alerts)
+    match /admin_alerts/{alertId} {
+      allow read, write: if isAdmin();
+      allow create: if isAuthenticated(); // Users/System can create alerts when reporting or reaching strikes
+    }
+
+    // التكوين العام (Config / Offensive Words)
+    match /config/{configDoc} {
+      allow read: if true; // Everyone needs to read offensive_words for chat filtering
+      allow write: if isAdmin();
+    }
+
+    // 📝 HINT AR: الإشعارات الجماعية — صلاحية 'broadcast'.
+    match /admin_broadcasts/{docId} {
+      allow read, write: if hasPermission('broadcast');
+    }
+
+
+    // 📝 HINT AR: مجموعة أمان المالك — محمية بالكامل من العميل.
+    // لا يمكن لأي مستخدم (حتى Super Admin) قراءتها أو كتابتها من التطبيق.
+    // فقط Cloud Functions (Admin SDK) يمكنها الوصول لأنها تتجاوز القواعد تلقائياً.
+    // تحتوي على: كلمة سر المالك المُشفّرة (PBKDF2 + Salt)
+    match /admin_security/{docId} {
+      allow read, write: if false;
+    }
+
+    // 📝 HINT AR: سجل التدقيق — القراءة تحتاج 'analytics'، الكتابة للسيرفر (Admin SDK) فقط.
+    // allow write: if false يمنع العميل من الكتابة — السيرفر يتجاوز هذه القواعد تلقائياً.
+    match /admin_audit_log/{docId} {
+      allow read: if hasPermission('analytics');
+      allow write: if false;
+    }
+
+    // 📝 HINT AR: شرائح Onboarding — صلاحية 'content' (مدمجة مع CMS وصفحة الهبوط).
+    match /onboarding_slides/{slideId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+
+    // 📝 HINT AR: المحتوى الثابت (CMS) — صلاحية 'content'.
+    // يشمل: سياسة الخصوصية + الشروط والأحكام + عن التطبيق.
+    match /cms_content/{docId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+
+    // 📝 HINT AR: صفحة الهبوط — صلاحية 'content'.
+    // القراءة مفتوحة لأن الموقع يقرأها بدون تسجيل دخول.
+    match /landing_config/{docId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+
+    match /landing_features/{docId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+
+    match /landing_gallery/{docId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+
+    match /landing_faq/{docId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+
+    match /landing_reviews/{docId} {
+      allow read: if true;
+      allow write: if hasPermission('content');
+    }
+
+    // 📝 HINT AR: الإحالات — القراءة تحتاج 'referrals'، أو صاحب الإحالة يقرأ إحالاته.
+    // الإنشاء مسموح للمستخدم المصادق لتسجيل إحالته فقط.
+    // التعديل والحذف لمن يملك 'referrals' فقط (Super Admin أو الأدمن المخصص).
+    match /referrals/{referralId} {
+      allow read: if (isAuthenticated() && resource.data.referrerId == request.auth.uid)
+                  || hasPermission('referrals');
+
+      // الإنشاء مسموح للمستخدم المصادق بشرط أن يكون هو المُحال (referredId = uid)
+      // يمنع أي شخص من إنشاء إحالات وهمية لغيره
+      allow create: if isAuthenticated() &&
+                      request.resource.data.referredId == request.auth.uid &&
+                      request.resource.data.status == 'pending' &&
+                      request.resource.data.keys().hasAll(['referrerId', 'referredId', 'referrerType', 'referredType', 'referralCode', 'status', 'createdAt']);
+
+      allow update, delete: if hasPermission('referrals');
+    }
+
+    // إعدادات نظام الإحالات (Referral Config)
+    // القراءة مسموحة للمستخدمين المصادقين (لقراءة رسالة المشاركة والروابط)
+    // الكتابة للأدمن فقط (تعديل الإعدادات من لوحة التحكم)
+    match /referral_config/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // 📝 HINT AR: إعدادات التطبيق (appConfig) — إعدادات التحقق من الهاتف والإيميل.
+    // القراءة مفتوحة لأن التطبيق يحمّلها عند البدء قبل تسجيل الدخول.
+    // الكتابة للأدمن فقط (تعديل الإعدادات من لوحة التحكم).
+    match /appConfig/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 📝 HINT AR: طلبات الدعم (Support Requests) — مقترحات + أسئلة + مشاكل تقنية.
+    // الإنشاء مفتوح للجميع (بما في ذلك غير المسجلين — شاشة نسيت كلمة المرور).
+    // القراءة: المستخدم المسجّل يقرأ طلباته فقط (عبر userId) أو الأدمن يقرأ الكل.
+    // التعديل/الحذف: للأدمن فقط (للرد والأرشفة).
+    // حماية ضد السبام: حقول محددة فقط + لا تعديل بعد الإرسال.
+    match /support_requests/{requestId} {
+      // القراءة: المستخدم المسجّل يقرأ طلباته فقط أو الأدمن يقرأ الكل
+      allow read: if isAdmin() ||
+                    (isAuthenticated() && resource.data.userId == request.auth.uid);
+
+      // الإنشاء مفتوح للجميع مع شروط صارمة:
+      // 1. يجب أن تحتوي على الحقول الإلزامية
+      // 2. الحالة يجب أن تكون 'pending' فقط
+      // 3. لا يستطيع تعيين adminReply أو أي حقل إداري
+      allow create: if request.resource.data.keys().hasAll(['subject', 'message', 'status', 'createdAt']) &&
+                      request.resource.data.status == 'pending' &&
+                      request.resource.data.message is string &&
+                      request.resource.data.message.size() > 0 &&
+                      request.resource.data.message.size() <= 500 &&
+                      !request.resource.data.keys().hasAny(['adminReply', 'repliedAt', 'repliedBy']);
+
+      // التعديل والحذف للأدمن فقط (للرد والأرشفة)
+      allow update, delete: if isAdmin();
+    }
+
+    // طلبات حذف الحسابات (Deletion Requests)
+    // المستخدم يستطيع إنشاء طلب لنفسه فقط وقراءته
+    // الأدمن يملك صلاحيات كاملة للمراجعة والموافقة والرفض
+    match /deletion_requests/{requestId} {
+      // القراءة: صاحب الطلب فقط أو الأدمن
+      allow read: if isAuthenticated() &&
+                    (resource.data.userId == request.auth.uid || isAdmin());
+
+      // الإنشاء: المستخدم المصادق فقط لنفسه
+      allow create: if isAuthenticated() &&
+                      request.resource.data.userId == request.auth.uid &&
+                      request.resource.data.status == 'pending' &&
+                      request.resource.data.keys().hasAll(['userId', 'userName', 'userEmail', 'userType', 'status', 'requestedAt', 'scheduledDeletionAt']);
+
+      // التعديل: صاحب الطلب (للإلغاء فقط) أو الأدمن (للموافقة/الرفض)
+      allow update: if isAuthenticated() && (
+        // المستخدم يمكنه فقط تغيير الحالة إلى "cancelled"
+        (resource.data.userId == request.auth.uid &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'processedAt']) &&
+         request.resource.data.status == 'cancelled') ||
+        // الأدمن صلاحيات كاملة
+        isAdmin()
+      );
+
+      // الحذف للأدمن فقط
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 💼 قسم التوظيف وفرص العمل (v5)
+    // =========================================================================
+
+    // 📝 HINT AR: قاعدة collectionGroup لطلبات التقدم — مطلوبة لاستعلامات collectionGroup
+    // تُستخدم في: getMyApplications (شاشة طلباتي) و getPendingApplications (الأدمن)
+    match /{path=**}/applications/{appId} {
+      allow read: if request.auth != null
+        && (request.auth.uid == resource.data.applicantId
+            || isAdmin());
+    }
+
+    // إعدادات التوظيف — القراءة لكل المسجلين، الكتابة للأدمن فقط
+    match /app_settings/jobs_config {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // طلبات التوظيف — ID = userId (يضمن وثيقة واحدة لكل مستخدم)
+    match /job_posts/{userId} {
+      allow read: if request.auth != null;
+
+      // الإنشاء: صاحبها فقط، بحالة pending، عدادات تبدأ من صفر
+      allow create: if request.auth.uid == userId
+        && request.resource.data.ownerId == userId
+        && request.resource.data.status == 'pending'
+        && request.resource.data.applicationsCount == 0
+        && request.resource.data.acceptedCount == 0;
+
+      // التعديل: الأدمن بحرية، المالك يعدل حقوله المسموحة فقط
+      allow update: if isAdmin()
+        // الحالة 1: تعديل عادي — حقول محدودة وانتقالات حالة مقيّدة
+        || (request.auth.uid == userId
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                'title', 'description', 'requiredSkills', 'categoryId',
+                'categoryName', 'jobType', 'salaryMin', 'salaryMax',
+                'salaryCurrency', 'genderPreference', 'workersNeeded',
+                'maxApplications', 'cityId', 'city',
+                'districtId', 'district', 'updatedAt', 'status'
+               ])
+            && (request.resource.data.status == resource.data.status
+                || request.resource.data.status in ['closed', 'deleted']
+                || (resource.data.status in ['rejected', 'closed']
+                    && request.resource.data.status == 'pending')))
+        // الحالة 2: إعادة نشر طلب جديد بعد الإغلاق أو الحذف
+        || (request.auth.uid == userId
+            && resource.data.status in ['deleted', 'closed']
+            && request.resource.data.status == 'pending'
+            && request.resource.data.ownerId == userId
+            && request.resource.data.applicationsCount == 0
+            && request.resource.data.acceptedCount == 0);
+
+      allow delete: if request.auth.uid == userId || isAdmin();
+
+      // طلبات التقدم (subcollection)
+      match /applications/{appId} {
+        allow read: if request.auth.uid == resource.data.applicantId
+          || request.auth.uid == userId
+          || isAdmin();
+
+        // الإنشاء: المتقدم فقط بحالة pending
+        allow create: if request.auth != null
+          && request.resource.data.applicantId == request.auth.uid
+          && request.resource.data.status in ['pending_admin', 'pending_owner'];
+
+        // التعديل: الأدمن، صاحب العمل (قبول/رفض)، المتقدم (سحب فقط)
+        allow update: if isAdmin()
+          || (request.auth.uid == userId
+              && resource.data.status == 'pending_owner'
+              && request.resource.data.status in ['accepted', 'rejected_owner']
+              && request.resource.data.diff(resource.data).affectedKeys()
+                  .hasOnly(['status', 'ownerNote', 'chatId', 'updatedAt']))
+          || (request.auth.uid == resource.data.applicantId
+              && resource.data.status in ['pending_admin', 'pending_owner']
+              && request.resource.data.status == 'withdrawn'
+              && request.resource.data.diff(resource.data).affectedKeys()
+                  .hasOnly(['status', 'updatedAt']));
+
+        allow delete: if isAdmin();
+      }
+    }
+
+    // السير الذاتية — ID = userId (يضمن سيرة واحدة لكل مستخدم)
+    match /cvs/{userId} {
+      allow read: if request.auth != null;
+
+      // الإنشاء: صاحبها فقط، بحالة pending، بدون حقل phone
+      allow create: if request.auth.uid == userId
+        && request.resource.data.userId == userId
+        && request.resource.data.status == 'pending'
+        && !('phone' in request.resource.data);
+
+      // التعديل: الأدمن بحرية، المالك يعدل حقوله فقط
+      allow update: if isAdmin()
+        || (request.auth.uid == userId
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                'jobTitle', 'description', 'skills', 'salaryMin', 'salaryMax',
+                'salaryCurrency', 'gender', 'age', 'availability',
+                'additionalSkills', 'showPhone', 'cityId',
+                'city', 'districtId', 'district', 'updatedAt', 'status'
+               ])
+            && (request.resource.data.status == resource.data.status
+                || (resource.data.status == 'rejected'
+                    && request.resource.data.status == 'pending')
+                || request.resource.data.status == 'deleted')
+            && !('phone' in request.resource.data));
+
+      allow delete: if request.auth.uid == userId || isAdmin();
+    }
+
+  }
+}

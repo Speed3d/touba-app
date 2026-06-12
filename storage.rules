@@ -1,0 +1,184 @@
+rules_version = '2';
+
+// =========================================
+// قواعد أمان Firebase Storage - حرفي العراق
+// النسخة 2.0 (تشديد أمني)
+// =========================================
+// تم التحديث: 13 فبراير 2026
+// إزالة Fallback Rule الواسعة التي كانت تسمح بالكتابة لأي مسار
+// إضافة مسار الإعلانات (Banners) للأدمن
+// إضافة تعليمي لكل قاعدة
+// هذه القواعد ضرورية لمنع رفع ملفات ضارة أو كبيرة الحجم
+// =========================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // دوال مساعدة 
+    
+    // التحقق من أن الملف المرفوع هو صورة فقط
+    // يمنع رفع ملفات تنفيذية أو ضارة
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // التحقق من أن حجم الملف لا يتجاوز 2 ميغابايت
+    // يجب أن يتطابق هذا الحد مع AppConstants.maxImageSizeMB في التطبيق
+    // سابقاً كان 1MB وهذا يتعارض مع حد التطبيق (2MB) مما يسبب رفض رفع الصور
+    // تم توحيد الحد إلى 2MB لمنع رفض الصور الصالحة
+    function isValidSize() {
+      return request.resource.size < 2 * 1024 * 1024;
+    }
+    
+    // التحقق من أن المستخدم مسجل دخول
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // التحقق من صلاحية الأدمن عبر Custom Claims أو Firestore
+    // يُستخدم لتقييد رفع صور الإعلانات والأقسام للأدمن فقط
+    function isAdminClaim() {
+      // نتحقق أولاً من التوكن (Custom Claims) ثم عبر مستند المستخدم في Firestore (قيمة type)
+      return request.auth.token.admin == true || 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.type == 'admin';
+    }
+    
+    // صور الملف الشخصي (Profile Images)
+    // صور البروفايل مرئية للجميع لعرضها في التطبيق
+    // الكتابة محصورة بصاحب الحساب فقط
+    match /users/{userId}/profile/{fileName} {
+      allow read: if true;
+      
+      // صاحب الحساب فقط + يجب أن يكون الملف صورة + حجم مناسب
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImage()
+                   && isValidSize();
+    }
+    
+    // صور أعمال الحرفي (Work Images)
+    // معرض أعمال الحرفي - مرئي للجميع لجذب الزبائن
+    match /users/{userId}/works/{fileName} {
+      allow read: if true;
+      
+      // صاحب الحساب فقط يرفع صور أعماله
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImage()
+                   && isValidSize();
+    }
+    
+    // صور الهوية (ID Images - حساسة!)
+    // صور الهوية حساسة جداً - القراءة محصورة بصاحبها والأدمن
+    // تُستخدم لتوثيق هوية الحرفي عند التسجيل
+    match /users/{userId}/id/{fileName} {
+      // القراءة لصاحب الحساب أو الأدمن فقط (عبر Custom Claims)
+      allow read: if isAuthenticated()
+                  && (request.auth.uid == userId || isAdminClaim());
+      
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImage()
+                   && isValidSize();
+    }
+    
+    // صور طلبات الخدمة (Service Request Images)
+    // الزبون يرفق صور مع طلب الخدمة لوصف المشكلة
+    // القراءة لأي مستخدم مسجل (الحرفيون يحتاجون رؤية صور الطلب)
+    //  تم تغيير المسار ليشمل userId لتقييد الكتابة لصاحب الصور فقط
+    // سابقاً: أي مستخدم مصادق يمكنه رفع صور لأي طلب!
+    // الآن: فقط صاحب الصور يستطيع الرفع (request.auth.uid == userId)
+    // المسار الفعلي في التطبيق: requests/{userId}/{fileName}
+    match /requests/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      
+      //  فقط صاحب الصور + صورة + حجم مناسب
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImage()
+                   && isValidSize();
+    }
+    
+    // صور المحادثات (Chat Images)
+    // سابقاً: المسار كان chats/{chatId}/{fileName} — أي مصادق يستطيع الكتابة
+    // الآن: أضفنا {userId} في المسار لتقييد الكتابة لصاحب الصورة فقط
+    // القراءة لا تزال مفتوحة للمصادقين لأن:
+    // 1. أسماء الملفات UUIDs عشوائية (لا يمكن التخمين)
+    // 2. لاحقاً يمكن استخدام Signed URLs عبر Cloud Functions لتقييد أكثر
+    match /chats/{chatId}/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      // الكتابة مقيدة: فقط صاحب الهوية يستطيع رفع الصور
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImage()
+                   && isValidSize();
+    }
+    
+    // صور شاشات الترحيب (Onboarding Images) — CMS
+    // 📝 HINT AR: صور شرائح دليل الاستخدام المرفوعة من الأدمن
+    // القراءة مفتوحة للجميع (الصور تُحمَّل في شاشة الترحيب بدون auth)
+    // الكتابة للأدمن فقط — صيغة PNG للتوافق مع الصور المدمجة في التطبيق
+    match /onboarding_images/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+                   && isAdminClaim()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // صور الإعلانات (Banner Images)
+    // صور الإعلانات التي تظهر في Carousel
+    // القراءة للجميع، الكتابة للأدمن فقط
+    match /banners/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+                   && isAdminClaim()
+                   && isImage()
+                   && isValidSize();
+    }
+    
+    // صور الأقسام والفروع (Category Images)
+    // هذا المسار خاص بصور وأيقونات الأقسام المرفوعة من الإدارة
+    match /categories/{categoryId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+                   && isAdminClaim()
+                   // لم نستخدم isImage() لأن ضاغط الصور قد يزيل الـ contentType أحياناً
+                   && isValidSize();
+    }
+    
+    // لدعم الرفع المباشر في المجلد الرئيسي أيضا
+    match /categories/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+                   && isAdminClaim()
+                   && isValidSize();
+    }
+    
+    // صور صفحة الهبوط (Landing Page Gallery / Assets)
+    match /landing_page/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+                   && isAdminClaim()
+                   && isValidSize();
+    }
+    
+    // صور الأوسمة (Badge Icons) — رفع من الأدمن فقط، قراءة للجميع
+    match /badges/{badgeId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+                   && isAdminClaim()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // القاعدة الافتراضية (رفض الوصول)
+    // أي مسار غير محدد أعلاه يتم رفض الوصول إليه تلقائياً
+    // سابقاً: كانت هناك قاعدة fallback تسمح بالكتابة لأي مسار (خطير!)
+    // الآن: تم استبدالها بقاعدة رفض صريحة لمنع أي وصول غير مُحدد
+    match /{allPaths=**} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}

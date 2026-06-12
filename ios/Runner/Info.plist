@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- أذونات الموقع الجغرافي — مطلوبة لمشاركة الموقع في المحادثة -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>يستخدم التطبيق موقعك لمشاركته في المحادثة مع الحرفي</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>يستخدم التطبيق موقعك لمشاركته في المحادثة مع الحرفي</string>
+
+	<!-- أذونات الكاميرا — مطلوبة لالتقاط صور الأعمال وصورة الملف الشخصي -->
+	<key>NSCameraUsageDescription</key>
+	<string>يستخدم التطبيق الكاميرا لالتقاط صور الأعمال وصورة الملف الشخصي</string>
+
+	<!-- أذونات مكتبة الصور — مطلوبة لاختيار الصور من الجهاز -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>يستخدم التطبيق مكتبة الصور لاختيار صور الأعمال وصورة الملف الشخصي</string>
+
+	<!-- إذن حفظ الصور في مكتبة الصور -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>يحتاج التطبيق إذنك لحفظ الصور في مكتبة الصور</string>
+
+	<!-- أذونات Face ID — مطلوبة لتسجيل الدخول السريع بالبصمة -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>يستخدم التطبيق Face ID لتسجيل الدخول بشكل سريع وآمن</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>طوبة</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>طوبة</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+
+	<!-- إعلان عدم استخدام تشفير مخصص — مطلوب من Apple -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+
+	<!-- معرف iOS OAuth Client — مطلوب لـ Google Sign-In على iOS -->
+	<key>GIDClientID</key>
+	<string>58400456364-62eaiuqegh8joflj2o5qprhbtlfcntq9.apps.googleusercontent.com</string>
+
+	<!-- URL Schemes مطلوبة لـ Google Sign-In على iOS -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.58400456364-62eaiuqegh8joflj2o5qprhbtlfcntq9</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- مطلوب لاستقبال إشعارات FCM في الخلفية على iOS -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+</dict>
+</plist>

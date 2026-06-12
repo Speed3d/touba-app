@@ -1,0 +1,47 @@
+workflows:
+  ios-release:
+    name: iOS App Store Release
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: Codemagic API Key
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.craftsmaniraq.craftsmanIraq
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Disable Swift Package Manager
+        script: flutter config --no-enable-swift-package-manager
+
+      - name: Set up code signing
+        script: xcode-project use-profiles
+
+      - name: Build Flutter IPA
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=$HOME/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
+      email:
+        recipients:
+          - senanxsh@gmail.com
+        notify:
+          success: true
+          failure: true

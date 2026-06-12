@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>باركود حرفي العراق — QR Code</title>
+  <link rel="icon" type="image/png" href="../logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <style>
+    :root {
+      --primary: #10B981;
+      --secondary: #3B82F6;
+      --accent: #8B5CF6;
+      --bg-dark: #0f172a;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px);
+      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --radius: 20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+      padding: 40px 20px;
+    }
+
+    .orbs-wrapper {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; overflow: hidden; pointer-events: none;
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(100px);
+      opacity: 0.45; animation: float 20s infinite ease-in-out alternate;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -200px; left: -100px; animation-delay: -5s; }
+    .orb-3 { width: 300px; height: 300px; background: var(--accent); top: 40%; left: 30%; animation-duration: 25s; opacity: 0.25; }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 150px) scale(1.2); }
+    }
+
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.6s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 32px; }
+
+    /* QR preview */
+    .qr-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
+      margin-bottom: 10px;
+    }
+    .qr-wrapper img {
+      width: 260px;
+      height: 260px;
+      display: block;
+    }
+
+    .qr-url {
+      color: var(--text-sub); font-size: 0.82rem;
+      margin-top: 10px; margin-bottom: 28px; direction: ltr;
+    }
+    .qr-url span { color: var(--primary); font-weight: 700; }
+
+    /* Size selector */
+    .size-selector {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .size-label { color: var(--text-sub); font-size: 0.88rem; }
+    .size-btns { display: flex; gap: 8px; }
+    .size-btn {
+      padding: 6px 14px; border-radius: 8px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      color: var(--text-sub); font-family: inherit; font-size: 0.82rem;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .size-btn.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: var(--primary);
+    }
+
+    /* Download buttons */
+    .download-row {
+      display: flex; gap: 12px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .btn-dl {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 24px; border-radius: 12px; font-family: inherit;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      border: none; transition: transform 0.25s, box-shadow 0.25s;
+      text-decoration: none;
+    }
+    .btn-png {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+    .btn-png:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(16, 185, 129, 0.45); }
+    .btn-svg {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--glass-border); color: var(--text-main);
+    }
+    .btn-svg:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.11); border-color: rgba(255, 255, 255, 0.25); }
+
+    /* Info */
+    .info-box {
+      background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 12px; padding: 14px 18px; font-size: 0.82rem;
+      color: var(--text-sub); line-height: 1.7; text-align: right; margin-bottom: 20px;
+    }
+    .info-box strong { color: var(--primary); }
+
+    .back-link {
+      color: var(--text-sub); font-size: 0.82rem; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--primary); }
+
+    @media (max-width: 480px) {
+      .card { padding: 32px 20px; }
+      h1 { font-size: 1.5rem; }
+      .download-row { flex-direction: column; align-items: stretch; }
+      .btn-dl { justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="orbs-wrapper">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="card">
+    <h1>باركود حرفي العراق</h1>
+    <p class="subtitle">امسح الكود لتحميل التطبيق — يعمل على Android و iOS</p>
+
+    <!-- QR preview — ملف SVG محلي، لا CDN -->
+    <div class="qr-wrapper">
+      <img src="code.svg" alt="QR Code — iraqicraftsman.com/get">
+    </div>
+
+    <p class="qr-url">يشير إلى: <span>iraqicraftsman.com/get</span></p>
+
+    <!-- Size selector -->
+    <div class="size-selector">
+      <span class="size-label">دقة التحميل:</span>
+      <div class="size-btns">
+        <button class="size-btn"       data-file="code-500.png"  onclick="setSize(this)">500px</button>
+        <button class="size-btn"       data-file="code-1000.png" onclick="setSize(this)">1000px</button>
+        <button class="size-btn active" data-file="code-2000.png" onclick="setSize(this)">2000px</button>
+        <button class="size-btn"       data-file="code-3000.png" onclick="setSize(this)">3000px</button>
+      </div>
+    </div>
+
+    <!-- Download buttons -->
+    <div class="download-row">
+      <a id="btn-png" href="code-2000.png" download="craftsman-iraq-qr-2000px.png" class="btn-dl btn-png">
+        <i class="fas fa-download"></i> تحميل PNG عالي الدقة
+      </a>
+      <a href="code.svg" download="craftsman-iraq-qr.svg" class="btn-dl btn-svg">
+        <i class="fas fa-vector-square"></i> تحميل SVG للطباعة
+      </a>
+    </div>
+
+    <div class="info-box">
+      <strong>✅ هذا الباركود خاص بك تماماً</strong> — لا يعتمد على أي موقع خارجي.<br>
+      يشفّر رابط موقعك المملوك لك، ويعمل للأبد طالما نطاقك نشط.<br>
+      <strong>SVG</strong> أفضل للطباعة — يمكن تكبيره بلا حدود بدون تشويه.
+    </div>
+
+    <a href="https://iraqicraftsman.com" class="back-link">
+      <i class="fas fa-arrow-right"></i>
+      العودة للموقع الرئيسي
+    </a>
+  </div>
+
+  <script>
+    function setSize(btn) {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const file = btn.dataset.file;
+      const size = file.replace('code-', '').replace('.png', '');
+      const a = document.getElementById('btn-png');
+      a.href = file;
+      a.download = 'craftsman-iraq-qr-' + size + '.png';
+    }
+  </script>
+
+</body>
+
+</html>
