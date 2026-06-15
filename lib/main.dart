@@ -3,12 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 
-import 'presentation/screens/main/main_screen.dart';
+
 import 'presentation/cubits/theme_cubit.dart';
 import 'presentation/cubits/locale_cubit.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'data/services/auth/auth_service.dart';
+import 'data/repositories/user_repository.dart';
+import 'presentation/cubits/auth/auth_cubit.dart';
+import 'presentation/screens/auth/auth_wrapper.dart';
+import 'data/repositories/team_repository.dart';
+import 'presentation/cubits/team/team_cubit.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const PopularFootballApp());
 }
 
@@ -21,6 +30,15 @@ class PopularFootballApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => LocaleCubit()),
+        BlocProvider(
+          create: (_) => AuthCubit(
+            authService: AuthService(),
+            userRepository: UserRepository(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => TeamCubit(TeamRepository(), UserRepository())..fetchTeams(),
+        ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
         builder: (context, theme) {
@@ -41,7 +59,7 @@ class PopularFootballApp extends StatelessWidget {
                   Locale('ar'),
                   Locale('en'),
                 ],
-                home: const MainScreen(),
+                home: const AuthWrapper(),
               );
             },
           );

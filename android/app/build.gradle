@@ -59,7 +59,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.iraq.popular_football"
+        applicationId "com.speed3d.touba"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
