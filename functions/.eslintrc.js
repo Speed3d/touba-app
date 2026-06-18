@@ -22,6 +22,12 @@ module.exports = {
     "no-trailing-spaces": 0,
     "object-curly-spacing": 0,
     "indent": ["error", 2],
+    // 📝 HINT AR: لا نفرض JSDoc على كل دالة (نوثّق بتعليقات عربية بدلاً منه)
+    "require-jsdoc": 0,
+    "valid-jsdoc": 0,
+    "camelcase": 0,
+    "new-cap": 0,
+    "guard-for-in": 0,
   },
   overrides: [
     {

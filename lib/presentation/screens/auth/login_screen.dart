@@ -4,6 +4,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import 'register_screen.dart';
 import 'forgot_password_screen.dart';
+import '../../../app/router/tooba_route.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -140,9 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const ForgotPasswordScreen(),
-                          ),
+                          ToobaRoute.to(const ForgotPasswordScreen()),
                         );
                       },
                       child: const Text('نسيت كلمة المرور؟'),
@@ -189,9 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => const RegisterScreen(),
-                            ),
+                            ToobaRoute.to(const RegisterScreen()),
                           );
                         },
                         child: const Text('إنشاء حساب جديد'),

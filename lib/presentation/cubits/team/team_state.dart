@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../data/models/team_model.dart';
-import '../../../data/models/user_model.dart';
+import '../../../data/models/player_model.dart';
 
 abstract class TeamState extends Equatable {
   const TeamState();
@@ -24,7 +24,7 @@ class TeamsLoaded extends TeamState {
 
 class TeamDetailsLoaded extends TeamState {
   final TeamModel team;
-  final List<UserModel> players; // Details of players in the team
+  final List<PlayerModel> players; // سجلات لاعبي الفريق
 
   const TeamDetailsLoaded(this.team, this.players);
 

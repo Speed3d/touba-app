@@ -10,7 +10,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.craftsmaniraq.craftsmanIraq
+        bundle_identifier: com.speed3d.touba
       flutter: stable
       xcode: latest
       cocoapods: default

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'manage_locations_screen.dart';
+import 'manage_roles_screen.dart';
+import 'admin_reports_screen.dart';
+import 'admin_banners_screen.dart';
+import 'admin_news_screen.dart';
+import '../../../app/router/tooba_route.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -18,28 +23,60 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: LucideIcons.mapPin,
-            title: 'إدارة المحافظات والمناطق',
-            subtitle: 'تفعيل وتعديل أسماء المناطق الجغرافية',
+            title: 'إدارة المواقع',
+            subtitle: 'المحافظات والمناطق المسموح باللعب فيها',
             color: Colors.teal,
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const ManageLocationsScreen()));
+              Navigator.push(context, ToobaRoute.to(const ManageLocationsScreen()));
             },
           ),
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.sliders,
-            title: 'إعدادات المنصة المركزية',
-            subtitle: 'إيقاف وتشغيل الأقسام (البطولات، إلخ)',
+            icon: LucideIcons.shieldCheck,
+            title: 'إدارة الصلاحيات',
+            subtitle: 'منح ألقاب المنظمين والحكام',
             color: Colors.blue,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, ToobaRoute.to(const ManageRolesScreen()));
+            },
           ),
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.shieldCheck,
-            title: 'إدارة توثيق الفرق',
-            subtitle: 'منح وسام التوثيق (العلامة الزرقاء)',
+            icon: LucideIcons.flag,
+            title: 'البلاغات',
+            subtitle: 'مراجعة البلاغات الواردة عن لاعبين وفرق',
+            color: Colors.red,
+            onTap: () => Navigator.push(context,
+                ToobaRoute.to(const AdminReportsScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.image,
+            title: 'إدارة الإعلانات',
+            subtitle: 'بانرات سلايدر الصفحة الرئيسية',
+            color: Colors.indigo,
+            onTap: () => Navigator.push(
+                context, ToobaRoute.to(const AdminBannersScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.newspaper,
+            title: 'إدارة الأخبار',
+            subtitle: 'نشر وتعديل أخبار الصفحة الرئيسية',
+            color: Colors.green.shade700,
+            onTap: () => Navigator.push(
+                context, ToobaRoute.to(const AdminNewsScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.checkCircle,
+            title: 'توثيق الفرق',
+            subtitle: 'قريباً...',
             color: Colors.amber.shade700,
             onTap: () {},
           ),
@@ -66,7 +103,7 @@ class AdminDashboard extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color),

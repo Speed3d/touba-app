@@ -2,8 +2,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/team_model.dart';
-import '../models/user_model.dart';
+import '../models/join_request_model.dart';
 
+/// 📝 HINT AR: التعامل مع مجموعة الفرق و رفع الشعارات وطلبات الانضمام.
 class TeamRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -11,31 +12,42 @@ class TeamRepository {
   Future<void> createTeam(TeamModel team) async {
     try {
       await _firestore.collection('teams').doc(team.id).set(team.toJson());
-      // Update the captain's teamId
-      await _firestore.collection('users').doc(team.captainId).update({
-        'teamId': team.id,
-      });
     } catch (e) {
       throw Exception('حدث خطأ أثناء إنشاء الفريق');
     }
   }
 
+  // 📝 HINT AR: تحديث رابط الشعار بعد رفعه (يُستدعى بعد إنشاء مستند الفريق).
+  Future<void> updateTeamLogo(String teamId, String logoUrl) async {
+    await _firestore.collection('teams').doc(teamId).update({'logoUrl': logoUrl});
+  }
+
+  // 📝 HINT AR: هل لدى هذا الكابتن فريق مسبقاً؟ (قاعدة: فريق واحد لكل كابتن).
+  Future<bool> captainHasTeam(String captainId) async {
+    final snap = await _firestore
+        .collection('teams')
+        .where('captainId', isEqualTo: captainId)
+        .limit(1)
+        .get();
+    return snap.docs.isNotEmpty;
+  }
+
+  // 📝 HINT AR: مسار الشعار يطابق قواعد Storage: teams/{teamId}/logo/...
   Future<String> uploadTeamLogo(String teamId, File imageFile) async {
     try {
-      final ref = _storage.ref().child('teams/logos/$teamId.jpg');
-      final uploadTask = await ref.putFile(imageFile);
-      return await uploadTask.ref.getDownloadURL();
+      final ref = _storage.ref().child('teams/$teamId/logo/logo.jpg');
+      final task = await ref.putFile(imageFile);
+      return await task.ref.getDownloadURL();
     } catch (e) {
       throw Exception('حدث خطأ أثناء رفع الشعار');
     }
   }
 
-  Future<List<TeamModel>> getTeams() async {
+  // 📝 HINT AR: ترقيم صفحات بسيط (limit) لترشيد الاستهلاك.
+  Future<List<TeamModel>> getTeams({int limit = 50}) async {
     try {
-      final snapshot = await _firestore.collection('teams').get();
-      return snapshot.docs
-          .map((doc) => TeamModel.fromJson(doc.data(), doc.id))
-          .toList();
+      final snap = await _firestore.collection('teams').limit(limit).get();
+      return snap.docs.map((d) => TeamModel.fromJson(d.data(), d.id)).toList();
     } catch (e) {
       throw Exception('حدث خطأ أثناء جلب الفرق');
     }
@@ -51,15 +63,25 @@ class TeamRepository {
     }
   }
 
-  // --- نظام طلبات الانضمام المبسط ---
-  
-  // اللاعب يرسل طلب انضمام
-  Future<void> requestToJoin(String teamId, String userId) async {
+  // 📝 HINT AR: جلب عدة فرق بمعرّفاتها (لعرض الترتيب/الجدول). whereIn حتى 30 معرّف.
+  Future<List<TeamModel>> getTeamsByIds(List<String> ids) async {
+    if (ids.isEmpty) return [];
+    final snap = await _firestore
+        .collection('teams')
+        .where(FieldPath.documentId, whereIn: ids)
+        .get();
+    return snap.docs.map((d) => TeamModel.fromJson(d.data(), d.id)).toList();
+  }
+
+  // 📝 HINT AR: طلب انضمام — يُنشئ مستنداً في join_requests. عند قبول الكابتن
+  // تتولّى Cloud Function `onJoinRequestAccepted` إنشاء سجل لاعب مرتبط بالحساب.
+  Future<void> requestToJoin(
+      String teamId, String userId, String userName) async {
     try {
-      // Create a request document in a subcollection or separate collection
       await _firestore.collection('join_requests').add({
         'teamId': teamId,
         'userId': userId,
+        'userName': userName,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
       });
@@ -68,32 +90,31 @@ class TeamRepository {
     }
   }
 
-  // الكابتن يضيف لاعباً مباشرة أو يوافق على طلب
-  Future<void> addPlayerToTeam(String teamId, String userId) async {
+  // 📝 HINT AR: طلبات الانضمام المعلّقة لفريق (يقرؤها كابتنه — قواعد الأمان).
+  Future<List<JoinRequestModel>> getPendingJoinRequests(String teamId) async {
     try {
-      // 1. Transaction to update both team and user atomically
-      await _firestore.runTransaction((transaction) async {
-        final teamRef = _firestore.collection('teams').doc(teamId);
-        final userRef = _firestore.collection('users').doc(userId);
-
-        final userDoc = await transaction.get(userRef);
-        if (!userDoc.exists) throw Exception('اللاعب غير موجود');
-        
-        final userData = userDoc.data()!;
-        if (userData['teamId'] != null && userData['teamId'] != '') {
-          throw Exception('اللاعب منضم لفريق آخر بالفعل');
-        }
-
-        transaction.update(teamRef, {
-          'playersIds': FieldValue.arrayUnion([userId])
-        });
-
-        transaction.update(userRef, {
-          'teamId': teamId
-        });
-      });
+      final snap = await _firestore
+          .collection('join_requests')
+          .where('teamId', isEqualTo: teamId)
+          .where('status', isEqualTo: 'pending')
+          .get();
+      return snap.docs
+          .map((d) => JoinRequestModel.fromJson(d.data(), d.id))
+          .toList();
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception('حدث خطأ أثناء جلب طلبات الانضمام');
+    }
+  }
+
+  // 📝 HINT AR: قبول/رفض طلب — القبول يُشغّل Cloud Function لإنشاء سجل اللاعب.
+  Future<void> setJoinRequestStatus(String requestId, String status) async {
+    try {
+      await _firestore
+          .collection('join_requests')
+          .doc(requestId)
+          .update({'status': status});
+    } catch (e) {
+      throw Exception('حدث خطأ أثناء تحديث الطلب');
     }
   }
 }

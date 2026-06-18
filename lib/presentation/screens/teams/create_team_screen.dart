@@ -6,6 +6,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
 import '../../cubits/team/team_state.dart';
+import '../../../core/utils/tooba_snack_bar.dart';
 
 class CreateTeamScreen extends StatefulWidget {
   const CreateTeamScreen({super.key});
@@ -17,6 +18,7 @@ class CreateTeamScreen extends StatefulWidget {
 class _CreateTeamScreenState extends State<CreateTeamScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _areaController = TextEditingController();
   String? _selectedCity;
   File? _logoFile;
   final ImagePicker _picker = ImagePicker();
@@ -29,6 +31,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _areaController.dispose();
     super.dispose();
   }
 
@@ -75,17 +78,17 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       if (_selectedCity == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('يرجى اختيار المحافظة')),
-        );
+        ToobaSnackBar.warning(context, 'يرجى اختيار المحافظة');
         return;
       }
       
       final authState = context.read<AuthCubit>().state;
       if (authState is AuthAuthenticated) {
+        final area = _areaController.text.trim();
         context.read<TeamCubit>().createTeam(
           name: _nameController.text.trim(),
           city: _selectedCity!,
+          area: area.isEmpty ? null : area,
           captainId: authState.user.id,
           logoFile: _logoFile,
         );
@@ -102,14 +105,10 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
       listener: (context, state) {
         if (state is TeamsLoaded) {
           // Because creating a team triggers fetchTeams() and then TeamsLoaded
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('تم إنشاء الفريق بنجاح!'), backgroundColor: Colors.green),
-          );
+          ToobaSnackBar.success(context, 'تم إنشاء الفريق بنجاح!');
           Navigator.pop(context);
         } else if (state is TeamError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
+          ToobaSnackBar.error(context, state.message);
         }
       },
       child: Scaffold(
@@ -204,7 +203,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
 
                       // City
                       DropdownButtonFormField<String>(
-                        value: _selectedCity,
+                        initialValue: _selectedCity,
                         decoration: InputDecoration(
                           labelText: 'المحافظة / المدينة',
                           prefixIcon: const Icon(Icons.location_on),
@@ -216,6 +215,21 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                           return DropdownMenuItem(value: city, child: Text(city));
                         }).toList(),
                         onChanged: isLoading ? null : (val) => setState(() => _selectedCity = val),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Area / District
+                      TextFormField(
+                        controller: _areaController,
+                        enabled: !isLoading,
+                        decoration: InputDecoration(
+                          labelText: 'المنطقة (اختياري)',
+                          hintText: 'مثال: حي الجامعة، الكرادة...',
+                          prefixIcon: const Icon(Icons.map_outlined),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          filled: true,
+                          fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                        ),
                       ),
                       const SizedBox(height: 32),
 

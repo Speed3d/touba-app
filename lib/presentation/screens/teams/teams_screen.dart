@@ -5,8 +5,13 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
 import '../../cubits/team/team_state.dart';
+import '../../../data/repositories/team_repository.dart';
+import '../../../data/repositories/player_repository.dart';
+import '../../widgets/core/tooba_empty_state.dart';
+import '../../widgets/core/tooba_shimmer.dart';
 import 'create_team_screen.dart';
 import 'team_details_screen.dart';
+import '../../../app/router/tooba_route.dart';
 
 class TeamsScreen extends StatefulWidget {
   const TeamsScreen({super.key});
@@ -79,21 +84,16 @@ class _TeamsScreenState extends State<TeamsScreen> {
       body: BlocBuilder<TeamCubit, TeamState>(
         builder: (context, state) {
           if (state is TeamLoading && state is! TeamsLoaded) {
-            return const Center(child: CircularProgressIndicator());
+            return const ToobaShimmerList(count: 7, tileHeight: 76);
           }
 
           if (state is TeamError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('حدث خطأ: ${state.message}'),
-                  TextButton(
-                    onPressed: () => context.read<TeamCubit>().fetchTeams(),
-                    child: const Text('إعادة المحاولة'),
-                  ),
-                ],
-              ),
+            return ToobaEmptyState(
+              icon: Icons.wifi_off_rounded,
+              title: 'تعذّر تحميل الفرق',
+              subtitle: state.message,
+              actionLabel: 'إعادة المحاولة',
+              onAction: () => context.read<TeamCubit>().fetchTeams(),
             );
           }
 
@@ -103,9 +103,21 @@ class _TeamsScreenState extends State<TeamsScreen> {
                      team.city.toLowerCase().contains(_searchQuery);
             }).toList();
 
+            if (state.teams.isEmpty) {
+              return ToobaEmptyState(
+                icon: Icons.shield_outlined,
+                title: 'لا توجد فرق مسجّلة بعد',
+                subtitle: isCaptain
+                    ? 'أسّس فريقك بزر «تأسيس فريق» أدناه'
+                    : 'لم يُسجَّل أي فريق في المنصة بعد',
+              );
+            }
+
             if (filteredTeams.isEmpty) {
-              return const Center(
-                child: Text('لا توجد فرق مطابقة للبحث'),
+              return ToobaEmptyState(
+                icon: Icons.search_off_rounded,
+                title: 'لا توجد نتائج',
+                subtitle: 'لا يوجد فريق يطابق "$_searchQuery"',
               );
             }
 
@@ -145,21 +157,34 @@ class _TeamsScreenState extends State<TeamsScreen> {
                           children: [
                             Icon(Icons.location_on, size: 14, color: theme.colorScheme.primary),
                             const SizedBox(width: 4),
-                            Text(team.city, style: const TextStyle(fontSize: 12)),
+                            Flexible(
+                              child: Text(
+                                team.area != null && team.area!.isNotEmpty
+                                    ? '${team.city} • ${team.area}'
+                                    : team.city,
+                                style: const TextStyle(fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                             const SizedBox(width: 12),
                             Icon(Icons.group, size: 14, color: theme.colorScheme.primary),
                             const SizedBox(width: 4),
-                            Text('${team.playersIds.length + 1} لاعب', style: const TextStyle(fontSize: 12)),
+                            Text('${team.playerCount} لاعب', style: const TextStyle(fontSize: 12)),
                           ],
                         ),
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: () {
+                        // 📝 HINT AR: نعزل TeamCubit لشاشة التفاصيل حتى لا تُفسد
+                        // حالة قائمة الفرق (يصلح اختفاء الفرق عند الرجوع).
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => TeamDetailsScreen(teamId: team.id),
-                          ),
+                          ToobaRoute.to(BlocProvider(
+                            create: (ctx) => TeamCubit(
+                              ctx.read<TeamRepository>(),
+                              ctx.read<PlayerRepository>(),
+                            ),
+                            child: TeamDetailsScreen(teamId: team.id),
+                          )),
                         );
                       },
                     ),
@@ -169,7 +194,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
             );
           }
 
-          return const Center(child: Text('لا توجد بيانات'));
+          return const ToobaShimmerList(count: 5, tileHeight: 76);
         },
       ),
       floatingActionButton: isCaptain
@@ -177,7 +202,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const CreateTeamScreen()),
+                  ToobaRoute.to(const CreateTeamScreen()),
                 );
               },
               icon: const Icon(Icons.add),

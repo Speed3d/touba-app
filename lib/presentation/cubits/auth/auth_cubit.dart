@@ -70,32 +70,40 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
     try {
-      // 1. Check if phone already exists in Firestore
+      // 📝 HINT AR: ننشئ حساب المصادقة أولاً ليصبح المستخدم مسجّلاً، فيُسمح
+      // بالاستعلام عن تفرّد الهاتف (قواعد users تتطلّب مصادقة لأي استعلام).
+      final userCredential = await _authService.registerWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final uid = userCredential.user?.uid;
+      if (uid == null) {
+        emit(const AuthError('تعذّر إنشاء الحساب'));
+        emit(AuthUnauthenticated());
+        return;
+      }
+
+      // التحقق من تفرّد رقم الهاتف (بعد المصادقة)
       final isPhoneUsed = await _userRepository.isPhoneNumberExists(phone);
       if (isPhoneUsed) {
+        // تراجع: حذف الحساب اليتيم الذي أنشأناه للتو
+        await userCredential.user?.delete();
         emit(const AuthError('رقم الهاتف مستخدم بالفعل لحساب آخر'));
         emit(AuthUnauthenticated());
         return;
       }
 
-      // 2. Create user in Firebase Auth
-      final userCredential = await _authService.registerWithEmailAndPassword(
+      // إنشاء مستند المستخدم ثم إصدار الحالة صراحةً (تفادي سباق المستمع
+      // الذي قد يقرأ المستند قبل إنشائه فيُبقي المستخدم خارج التطبيق).
+      final newUser = UserModel(
+        id: uid,
+        name: name,
         email: email,
-        password: password,
+        phone: phone,
+        role: role,
       );
-
-      final uid = userCredential.user?.uid;
-      if (uid != null) {
-        // 3. Create user document in Firestore
-        final newUser = UserModel(
-          id: uid,
-          name: name,
-          phone: phone,
-          role: role,
-        );
-        await _userRepository.createUser(newUser);
-        // _monitorAuthState will handle the transition to Authenticated
-      }
+      await _userRepository.createUser(newUser);
+      emit(AuthAuthenticated(newUser));
     } on AuthException catch (e) {
       emit(AuthError(e.message));
       emit(AuthUnauthenticated());
@@ -121,6 +129,12 @@ class AuthCubit extends Cubit<AuthState> {
 
   void continueAsVisitor() {
     emit(AuthVisitor());
+  }
+
+  // 📝 HINT AR: إعادة جلب بيانات المستخدم الحالي (مثلاً بعد ربط حسابه بلاعب).
+  Future<void> refreshUser() async {
+    final uid = _authService.currentUser?.uid;
+    if (uid != null) await _fetchUserData(uid);
   }
 
   Future<void> updateProfile(UserModel updatedUser) async {

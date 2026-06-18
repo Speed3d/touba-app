@@ -1,0 +1,198 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/models/notification_model.dart';
+import '../../cubits/notifications/notifications_cubit.dart';
+import '../../cubits/notifications/notifications_state.dart';
+
+class NotificationsScreen extends StatelessWidget {
+  const NotificationsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => NotificationsCubit()..startListening(),
+      child: const _NotificationsView(),
+    );
+  }
+}
+
+class _NotificationsView extends StatelessWidget {
+  const _NotificationsView();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text('الإشعارات'),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          BlocBuilder<NotificationsCubit, NotificationsState>(
+            builder: (context, state) {
+              final hasUnread = state is NotificationsLoaded &&
+                  state.notifications.any((n) => !n.isRead);
+              if (!hasUnread) return const SizedBox.shrink();
+              return TextButton(
+                onPressed: () =>
+                    context.read<NotificationsCubit>().markAllAsRead(),
+                child: const Text('قراءة الكل'),
+              );
+            },
+          ),
+        ],
+      ),
+      body: BlocBuilder<NotificationsCubit, NotificationsState>(
+        builder: (context, state) {
+          if (state is NotificationsInitial) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is NotificationsError) {
+            return Center(child: Text('خطأ: ${state.message}'));
+          }
+          if (state is NotificationsLoaded) {
+            if (state.notifications.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.notifications_none_outlined,
+                        size: 80, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text('لا توجد إشعارات بعد',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: isDark ? Colors.white54 : Colors.black45,
+                        )),
+                  ],
+                ),
+              );
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: state.notifications.length,
+              itemBuilder: (context, i) {
+                final n = state.notifications[i];
+                return _NotificationTile(notification: n);
+              },
+            );
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+    );
+  }
+}
+
+class _NotificationTile extends StatelessWidget {
+  final NotificationModel notification;
+  const _NotificationTile({required this.notification});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isUnread = !notification.isRead;
+
+    return Dismissible(
+      key: Key(notification.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        color: Colors.red,
+        child: const Icon(Icons.delete_outline, color: Colors.white),
+      ),
+      onDismissed: (_) =>
+          context.read<NotificationsCubit>().deleteNotification(notification.id),
+      child: InkWell(
+        onTap: isUnread
+            ? () => context.read<NotificationsCubit>().markAsRead(notification.id)
+            : null,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: isUnread
+                ? (isDark
+                    ? theme.colorScheme.primary.withValues(alpha: 0.12)
+                    : theme.colorScheme.primary.withValues(alpha: 0.06))
+                : (isDark ? Colors.grey[850] : Colors.white),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  notification.type.icon,
+                  style: const TextStyle(fontSize: 22),
+                ),
+              ),
+            ),
+            title: Text(
+              notification.title,
+              style: TextStyle(
+                fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
+                fontSize: 14,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 2),
+                Text(notification.body,
+                    style: const TextStyle(fontSize: 13),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 4),
+                Text(
+                  _timeAgo(notification.createdAt),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
+            ),
+            trailing: isUnread
+                ? Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                  )
+                : null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'الآن';
+    if (diff.inHours < 1) return 'منذ ${diff.inMinutes} دقيقة';
+    if (diff.inDays < 1) return 'منذ ${diff.inHours} ساعة';
+    if (diff.inDays == 1) return 'أمس';
+    return 'منذ ${diff.inDays} يوم';
+  }
+}

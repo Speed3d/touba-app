@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
+import '../../../core/utils/tooba_snack_bar.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,7 +19,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   
   bool _obscurePassword = true;
-  String _selectedRole = 'player';
+  // 📝 HINT AR: «لاعب» = حساب user عادي (يطالب بسجل لاعب لاحقاً)؛ «كابتن» = captain.
+  String _selectedRole = 'user';
 
   @override
   void dispose() {
@@ -233,7 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       isExpanded: true,
                       items: const [
                         DropdownMenuItem(
-                          value: 'player',
+                          value: 'user',
                           child: Text('لاعب (البحث عن فرق ومباريات)'),
                         ),
                         DropdownMenuItem(
@@ -260,12 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Pop back to let the AuthWrapper handle navigation
                       Navigator.of(context).pop();
                     } else if (state is AuthError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.message),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
+                      ToobaSnackBar.error(context, state.message);
                     }
                   },
                   builder: (context, state) {

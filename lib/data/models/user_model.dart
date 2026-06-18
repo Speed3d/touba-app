@@ -1,134 +1,89 @@
 import 'package:equatable/equatable.dart';
 
+/// 📝 HINT AR: حساب المستخدم الشخصي فقط (الهوية الكروية والإحصائيات في
+/// [PlayerModel]). يحتوي على بيانات الدخول والتواصل والدور والصلاحيات.
+/// عند «المطالبة» بسجل لاعب يُربط الحساب به عبر [linkedPlayerId].
 class UserModel extends Equatable {
   final String id;
   final String name;
+  final String email;
   final String phone;
   final String? profileImage;
-  final String role; // 'player', 'captain', 'admin'
-  final String? teamId;
-  
-  // Football specific fields
-  final String? position;
-  final String? preferredFoot;
-  final int? height;
-  final int? weight;
-  final String? bio;
 
-  // Stats
-  final int goals;
-  final int assists;
-  final double rating;
-  final int matchesPlayed;
+  /// الدور الأساسي: user | captain | admin
+  final String role;
+
+  /// صلاحيات إضافية يمنحها الأدمن (organizer, referee, ...) — للعرض فقط؛
+  /// الفرض الأمني يتم عبر Custom Claims في قواعد Firestore.
+  final List<String> adminPermissions;
+
+  /// سجل اللاعب المرتبط بهذا الحساب (إن طالب المستخدم بملفه).
+  final String? linkedPlayerId;
 
   const UserModel({
     required this.id,
     required this.name,
+    this.email = '',
     required this.phone,
     this.profileImage,
-    this.role = 'player',
-    this.teamId,
-    this.position,
-    this.preferredFoot,
-    this.height,
-    this.weight,
-    this.bio,
-    this.goals = 0,
-    this.assists = 0,
-    this.rating = 0.0,
-    this.matchesPlayed = 0,
+    this.role = 'user',
+    this.adminPermissions = const [],
+    this.linkedPlayerId,
   });
+
+  bool get isCaptain => role == 'captain';
+  bool get isAdmin => role == 'admin';
 
   factory UserModel.fromJson(Map<String, dynamic> json, String id) {
     return UserModel(
       id: id,
       name: json['name'] ?? '',
+      email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       profileImage: json['profileImage'],
-      role: json['role'] ?? 'player',
-      teamId: json['teamId'],
-      position: json['position'],
-      preferredFoot: json['preferredFoot'],
-      height: json['height'],
-      weight: json['weight'],
-      bio: json['bio'],
-      goals: json['goals'] ?? 0,
-      assists: json['assists'] ?? 0,
-      rating: (json['rating'] ?? 0.0).toDouble(),
-      matchesPlayed: json['matchesPlayed'] ?? 0,
+      role: json['role'] ?? 'user',
+      adminPermissions:
+          List<String>.from(json['adminPermissions'] ?? const []),
+      linkedPlayerId: json['linkedPlayerId'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
+      'email': email,
       'phone': phone,
       if (profileImage != null) 'profileImage': profileImage,
       'role': role,
-      if (teamId != null) 'teamId': teamId,
-      if (position != null) 'position': position,
-      if (preferredFoot != null) 'preferredFoot': preferredFoot,
-      if (height != null) 'height': height,
-      if (weight != null) 'weight': weight,
-      if (bio != null) 'bio': bio,
-      'goals': goals,
-      'assists': assists,
-      'rating': rating,
-      'matchesPlayed': matchesPlayed,
+      'adminPermissions': adminPermissions,
+      if (linkedPlayerId != null) 'linkedPlayerId': linkedPlayerId,
     };
   }
 
   UserModel copyWith({
     String? name,
+    String? email,
     String? phone,
     String? profileImage,
     String? role,
-    String? teamId,
-    String? position,
-    String? preferredFoot,
-    int? height,
-    int? weight,
-    String? bio,
-    int? goals,
-    int? assists,
-    double? rating,
-    int? matchesPlayed,
+    List<String>? adminPermissions,
+    String? linkedPlayerId,
   }) {
     return UserModel(
       id: id,
       name: name ?? this.name,
+      email: email ?? this.email,
       phone: phone ?? this.phone,
       profileImage: profileImage ?? this.profileImage,
       role: role ?? this.role,
-      teamId: teamId ?? this.teamId,
-      position: position ?? this.position,
-      preferredFoot: preferredFoot ?? this.preferredFoot,
-      height: height ?? this.height,
-      weight: weight ?? this.weight,
-      bio: bio ?? this.bio,
-      goals: goals ?? this.goals,
-      assists: assists ?? this.assists,
-      rating: rating ?? this.rating,
-      matchesPlayed: matchesPlayed ?? this.matchesPlayed,
+      adminPermissions: adminPermissions ?? this.adminPermissions,
+      linkedPlayerId: linkedPlayerId ?? this.linkedPlayerId,
     );
   }
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        phone,
-        profileImage,
-        role,
-        teamId,
-        position,
-        preferredFoot,
-        height,
-        weight,
-        bio,
-        goals,
-        assists,
-        rating,
-        matchesPlayed,
+        id, name, email, phone, profileImage, role, adminPermissions,
+        linkedPlayerId,
       ];
 }

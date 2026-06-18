@@ -4,6 +4,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import 'login_screen.dart';
 import '../main/main_screen.dart';
+import '../../../core/utils/tooba_snack_bar.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -13,12 +14,7 @@ class AuthWrapper extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ToobaSnackBar.error(context, state.message);
         }
       },
       builder: (context, state) {

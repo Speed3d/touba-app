@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
+import '../../../core/utils/tooba_snack_bar.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -23,12 +24,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthCubit>().resetPassword(_emailController.text.trim());
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني إذا كان مسجلاً لدينا.'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      ToobaSnackBar.success(context, 'تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني إذا كان مسجلاً لدينا.');
       Navigator.pop(context);
     }
   }
@@ -139,9 +135,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       OutlinedButton.icon(
                         onPressed: () {
                           // TODO: Implement contact admin logic (e.g. open WhatsApp or support email)
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('سيتم تفعيل هذه الميزة قريباً لفتح المحادثة مع الإدارة.')),
-                          );
+                          ToobaSnackBar.info(context, 'سيتم تفعيل هذه الميزة قريباً لفتح المحادثة مع الإدارة.');
                         },
                         icon: const Icon(Icons.support_agent),
                         label: const Text('تواصل مع الإدارة'),

@@ -4,13 +4,14 @@ import 'package:uuid/uuid.dart';
 import 'team_state.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/repositories/team_repository.dart';
-import '../../../data/repositories/user_repository.dart';
+import '../../../data/repositories/player_repository.dart';
 
 class TeamCubit extends Cubit<TeamState> {
   final TeamRepository _teamRepository;
-  final UserRepository _userRepository;
+  final PlayerRepository _playerRepository;
 
-  TeamCubit(this._teamRepository, this._userRepository) : super(TeamInitial());
+  TeamCubit(this._teamRepository, this._playerRepository)
+      : super(TeamInitial());
 
   Future<void> fetchTeams() async {
     emit(TeamLoading());
@@ -22,18 +23,12 @@ class TeamCubit extends Cubit<TeamState> {
     }
   }
 
+  // 📝 HINT AR: التشكيلة تُجلب من مجموعة players (سجلات اللاعبين) لا من users.
   Future<void> fetchTeamDetails(String teamId) async {
     emit(TeamLoading());
     try {
       final team = await _teamRepository.getTeamById(teamId);
-      
-      // We must fetch the captain too since captainId might not be in playersIds
-      List<String> userIdsToFetch = [team.captainId, ...team.playersIds];
-      // Remove duplicates just in case
-      userIdsToFetch = userIdsToFetch.toSet().toList();
-
-      final players = await _userRepository.getPlayersByIds(userIdsToFetch);
-      
+      final players = await _playerRepository.getPlayersByTeam(teamId);
       emit(TeamDetailsLoaded(team, players));
     } catch (e) {
       emit(TeamError(e.toString()));
@@ -43,30 +38,34 @@ class TeamCubit extends Cubit<TeamState> {
   Future<void> createTeam({
     required String name,
     required String city,
+    String? area,
     required String captainId,
     File? logoFile,
   }) async {
     emit(TeamLoading());
     try {
-      final teamId = const Uuid().v4();
-      String? logoUrl;
-
-      if (logoFile != null) {
-        logoUrl = await _teamRepository.uploadTeamLogo(teamId, logoFile);
+      // 📝 HINT AR: قاعدة العمل — كابتن واحد = فريق واحد. نمنع إنشاء فريق ثانٍ.
+      if (await _teamRepository.captainHasTeam(captainId)) {
+        emit(const TeamError('لا يمكنك تأسيس أكثر من فريق واحد'));
+        return;
       }
 
+      final teamId = const Uuid().v4();
+      // 📝 HINT AR: القيم المحسوبة (ratingPoints/stats) تأخذ افتراضياتها من النموذج.
       final team = TeamModel(
         id: teamId,
         name: name,
         city: city,
-        logoUrl: logoUrl,
+        area: area,
         captainId: captainId,
-        playersIds: const [], // initially empty, captain is recognized by captainId
       );
-
+      // 📝 HINT AR: نُنشئ مستند الفريق أولاً، فقاعدة Storage (isTeamCaptain)
+      // تقرأ captainId من المستند — لذا يجب أن يوجد قبل رفع الشعار.
       await _teamRepository.createTeam(team);
-      
-      // Refresh teams list
+      if (logoFile != null) {
+        final logoUrl = await _teamRepository.uploadTeamLogo(teamId, logoFile);
+        await _teamRepository.updateTeamLogo(teamId, logoUrl);
+      }
       final teams = await _teamRepository.getTeams();
       emit(TeamsLoaded(teams));
     } catch (e) {
@@ -74,13 +73,14 @@ class TeamCubit extends Cubit<TeamState> {
     }
   }
 
-  Future<void> requestToJoinTeam(String teamId, String userId) async {
+  Future<void> requestToJoinTeam(
+      String teamId, String userId, String userName) async {
     final currentState = state;
     emit(TeamLoading());
     try {
-      await _teamRepository.requestToJoin(teamId, userId);
-      emit(const TeamActionSuccess('تم إرسال طلب الانضمام بنجاح، بانتظار موافقة الكابتن'));
-      // Restore previous state after success so UI doesn't break
+      await _teamRepository.requestToJoin(teamId, userId, userName);
+      emit(const TeamActionSuccess(
+          'تم إرسال طلب الانضمام، بانتظار موافقة الكابتن'));
       if (currentState is TeamsLoaded) {
         emit(TeamsLoaded(currentState.teams));
       } else if (currentState is TeamDetailsLoaded) {

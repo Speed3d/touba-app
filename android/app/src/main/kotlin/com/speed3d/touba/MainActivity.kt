@@ -1,4 +1,4 @@
-package com.craftsmaniraq.craftsman_iraq
+package com.speed3d.touba
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

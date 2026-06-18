@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
+import '../home/home_screen.dart';
 import '../tournaments/tournaments_screen.dart';
 import '../teams/teams_screen.dart';
 import '../matches/matches_screen.dart';
-import '../profile/profile_screen.dart';
+import '../settings/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,10 +17,11 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
+    const HomeScreen(),
     const TournamentsScreen(),
     const TeamsScreen(),
     const MatchesScreen(),
-    const ProfileScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -58,50 +61,61 @@ class _MainScreenState extends State<MainScreen> {
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
             elevation: 0,
-            items: const [
+            items: [
               BottomNavigationBarItem(
-                icon: Padding(
+                icon: const Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.home_outlined),
+                ),
+                activeIcon: const Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.home),
+                ),
+                label: AppLocalizations.of(context)!.home,
+              ),
+              BottomNavigationBarItem(
+                icon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.emoji_events_outlined),
                 ),
-                activeIcon: Padding(
+                activeIcon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.emoji_events),
                 ),
-                label: 'البطولات',
+                label: AppLocalizations.of(context)!.tournaments,
               ),
               BottomNavigationBarItem(
-                icon: Padding(
+                icon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.shield_outlined),
                 ),
-                activeIcon: Padding(
+                activeIcon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.shield),
                 ),
-                label: 'الفرق',
+                label: AppLocalizations.of(context)!.teams,
               ),
               BottomNavigationBarItem(
-                icon: Padding(
+                icon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.sports_soccer_outlined),
                 ),
-                activeIcon: Padding(
+                activeIcon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.sports_soccer),
                 ),
-                label: 'المباريات',
+                label: AppLocalizations.of(context)!.matches,
               ),
               BottomNavigationBarItem(
-                icon: Padding(
+                icon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person_outline),
+                  child: Icon(Icons.settings_outlined),
                 ),
-                activeIcon: Padding(
+                activeIcon: const Padding(
                   padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person),
+                  child: Icon(Icons.settings),
                 ),
-                label: 'حسابي',
+                label: AppLocalizations.of(context)!.settings,
               ),
             ],
           ),

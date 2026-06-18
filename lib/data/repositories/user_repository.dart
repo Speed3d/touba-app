@@ -51,9 +51,12 @@ class UserRepository {
     }
   }
 
+  // 📝 HINT AR: مسار صورة البروفايل يطابق قواعد Storage: users/{uid}/profile/...
   Future<String> uploadProfileImage(String uid, File imageFile) async {
     try {
-      final ref = FirebaseStorage.instance.ref().child('users/profile_images/$uid.jpg');
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('users/$uid/profile/avatar.jpg');
       final uploadTask = await ref.putFile(imageFile);
       return await uploadTask.ref.getDownloadURL();
     } catch (e) {
@@ -61,16 +64,22 @@ class UserRepository {
     }
   }
 
-  Future<List<UserModel>> getPlayersByIds(List<String> ids) async {
-    if (ids.isEmpty) return [];
+  // ==========================================
+  // Admin Methods
+  // ==========================================
+
+  Future<List<UserModel>> searchUsersByPhone(String phoneQuery) async {
     try {
-      final snapshot = await _firestore
+      // 📝 HINT AR: في Firestore البحث النصي الجزئي صعب، لذا نبحث بتطابق البداية (Prefix)
+      final query = await _firestore
           .collection('users')
-          .where(FieldPath.documentId, whereIn: ids)
+          .where('phone', isGreaterThanOrEqualTo: phoneQuery)
+          .where('phone', isLessThanOrEqualTo: '$phoneQuery\uf8ff')
+          .limit(20)
           .get();
-      return snapshot.docs.map((doc) => UserModel.fromJson(doc.data(), doc.id)).toList();
+      return query.docs.map((d) => UserModel.fromJson(d.data(), d.id)).toList();
     } catch (e) {
-      throw Exception('حدث خطأ أثناء جلب بيانات اللاعبين');
+      throw AuthException('حدث خطأ أثناء البحث عن المستخدمين');
     }
   }
 }

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub get)",
+      "Bash(flutter pub outdated)",
+      "Bash(flutter test:*)",
+      "Bash(dart format:*)",
+      "Bash(dart fix:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(firebase deploy --only firestore:rules)",
+      "Bash(firebase deploy --only firestore:indexes)",
+      "Bash(firebase deploy --only storage)",
+      "Bash(firebase deploy --only firestore:rules,firestore:indexes,storage)",
+      "Bash(npm run lint:*)",
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "deny": [
+      "Edit(./craftsman_backup/**)",
+      "Write(./craftsman_backup/**)"
+    ],
+    "ask": [
+      "Bash(firebase deploy --only functions)",
+      "Bash(firebase deploy)",
+      "Bash(git push:*)",
+      "Bash(flutter build:*)"
+    ]
+  }
+}
