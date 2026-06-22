@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import 'team_manage_state.dart';
 import '../../../data/models/player_model.dart';
 import '../../../data/models/join_request_model.dart';
+import '../../../data/models/release_request_model.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../data/repositories/player_repository.dart';
 
@@ -24,11 +25,71 @@ class TeamManageCubit extends Cubit<TeamManageState> {
   // 📝 HINT AR: إعادة تحميل صامتة (بلا حالة Loading) بعد كل إجراء.
   Future<void> _refresh() async {
     try {
+      final team = await _teamRepo.getTeamById(teamId);
       final players = await _playerRepo.getPlayersByTeam(teamId);
       final requests = await _teamRepo.getPendingJoinRequests(teamId);
-      emit(TeamManageLoaded(requests, players));
+      final releases = await _teamRepo.getPendingReleaseRequests(teamId);
+      emit(TeamManageLoaded(team, requests, players, releaseRequests: releases));
     } catch (e) {
       emit(TeamManageError(e.toString()));
+    }
+  }
+
+  // 📝 HINT AR: حفظ خطة الفريق الأساسية (يختارها الكابتن من القوالب الثابتة).
+  Future<void> setFormation(String formation) async {
+    try {
+      await _teamRepo.setFormation(teamId, formation);
+      emit(const TeamManageActionSuccess('تم حفظ خطة الفريق'));
+      await _refresh();
+    } catch (e) {
+      emit(TeamManageError(e.toString()));
+      await _refresh();
+    }
+  }
+
+  // 📝 HINT AR: تعيين رقم قميص للاعب مع منع تكرار الرقم داخل الفريق.
+  Future<void> setShirtNumber(PlayerModel p, int? number) async {
+    final st = state;
+    if (number != null && st is TeamManageLoaded) {
+      final dup =
+          st.players.any((o) => o.id != p.id && o.shirtNumber == number);
+      if (dup) {
+        emit(TeamManageError('الرقم $number مستخدم من لاعب آخر'));
+        await _refresh();
+        return;
+      }
+    }
+    try {
+      await _playerRepo.setShirtNumber(p.id, number);
+      emit(const TeamManageActionSuccess('تم تحديث رقم اللاعب'));
+      await _refresh();
+    } catch (e) {
+      emit(TeamManageError(e.toString()));
+      await _refresh();
+    }
+  }
+
+  // 📝 HINT AR: قبول طلب خروج = فكّ ارتباط (CF يحذف السجل ويحرّر الحساب).
+  Future<void> acceptRelease(ReleaseRequestModel r) async {
+    try {
+      await _teamRepo.setReleaseRequestStatus(r.id, 'accepted');
+      emit(const TeamManageActionSuccess('تم قبول الخروج وفكّ ارتباط اللاعب'));
+      await Future.delayed(const Duration(milliseconds: 1200));
+      await _refresh();
+    } catch (e) {
+      emit(TeamManageError(e.toString()));
+      await _refresh();
+    }
+  }
+
+  Future<void> rejectRelease(ReleaseRequestModel r) async {
+    try {
+      await _teamRepo.setReleaseRequestStatus(r.id, 'rejected');
+      emit(const TeamManageActionSuccess('تم رفض طلب الخروج'));
+      await _refresh();
+    } catch (e) {
+      emit(TeamManageError(e.toString()));
+      await _refresh();
     }
   }
 
@@ -39,6 +100,15 @@ class TeamManageCubit extends Cubit<TeamManageState> {
     int? shirtNumber,
     String? preferredFoot,
   }) async {
+    // 📝 HINT AR: منع تكرار رقم القميص داخل الفريق.
+    final st = state;
+    if (shirtNumber != null &&
+        st is TeamManageLoaded &&
+        st.players.any((o) => o.shirtNumber == shirtNumber)) {
+      emit(TeamManageError('الرقم $shirtNumber مستخدم — اختر رقماً آخر'));
+      await _refresh();
+      return;
+    }
     try {
       final player = PlayerModel(
         id: const Uuid().v4(),
@@ -95,13 +165,15 @@ class TeamManageCubit extends Cubit<TeamManageState> {
     }
   }
 
-  Future<void> generateInvite(PlayerModel p) async {
+  // 📝 HINT AR: تعيين مركز اللاعب (للكابتن).
+  Future<void> setPosition(PlayerModel p, String position) async {
     try {
-      final code = await _playerRepo.createClaimInvite(p.id, teamId);
-      emit(TeamManageInviteReady(code, p.name));
+      await _playerRepo.setPosition(p.id, position);
       await _refresh();
     } catch (e) {
       emit(TeamManageError(e.toString()));
+      await _refresh();
     }
   }
+
 }

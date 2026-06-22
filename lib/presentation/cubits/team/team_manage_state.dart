@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import '../../../data/models/player_model.dart';
+import '../../../data/models/team_model.dart';
 import '../../../data/models/join_request_model.dart';
+import '../../../data/models/release_request_model.dart';
 
 abstract class TeamManageState extends Equatable {
   const TeamManageState();
@@ -11,11 +13,14 @@ abstract class TeamManageState extends Equatable {
 class TeamManageLoading extends TeamManageState {}
 
 class TeamManageLoaded extends TeamManageState {
+  final TeamModel team;
   final List<JoinRequestModel> requests;
+  final List<ReleaseRequestModel> releaseRequests;
   final List<PlayerModel> players;
-  const TeamManageLoaded(this.requests, this.players);
+  const TeamManageLoaded(this.team, this.requests, this.players,
+      {this.releaseRequests = const []});
   @override
-  List<Object?> get props => [requests, players];
+  List<Object?> get props => [team, requests, releaseRequests, players];
 }
 
 class TeamManageActionSuccess extends TeamManageState {
@@ -23,15 +28,6 @@ class TeamManageActionSuccess extends TeamManageState {
   const TeamManageActionSuccess(this.message);
   @override
   List<Object?> get props => [message];
-}
-
-/// 📝 HINT AR: حالة خاصة لعرض رمز دعوة المطالبة بعد توليده.
-class TeamManageInviteReady extends TeamManageState {
-  final String code;
-  final String playerName;
-  const TeamManageInviteReady(this.code, this.playerName);
-  @override
-  List<Object?> get props => [code, playerName];
 }
 
 class TeamManageError extends TeamManageState {

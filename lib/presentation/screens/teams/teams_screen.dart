@@ -1,18 +1,29 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
 import '../../cubits/team/team_state.dart';
+import '../../../data/models/team_model.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/models/release_request_model.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../../widgets/core/tooba_empty_state.dart';
 import '../../widgets/core/tooba_shimmer.dart';
+import '../../../core/utils/tooba_snack_bar.dart';
 import 'create_team_screen.dart';
 import 'team_details_screen.dart';
+import '../challenges/challenges_screen.dart';
+import '../chat/chats_list_screen.dart';
 import '../../../app/router/tooba_route.dart';
 
+/// 📝 HINT AR: شاشة الفرق — تبويبان: «فريقي» (فريق المستخدم) و«الفرق الشعبية»
+/// (بقية الفرق). الزائر يرى «الفرق الشعبية» فقط. زر «تأسيس فريق» يظهر فقط
+/// لكابتن لا يملك فريقاً (قاعدة فريق واحد لكل كابتن).
 class TeamsScreen extends StatefulWidget {
   const TeamsScreen({super.key});
 
@@ -23,11 +34,15 @@ class TeamsScreen extends StatefulWidget {
 class _TeamsScreenState extends State<TeamsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  final ImagePicker _picker = ImagePicker();
+
+  // 📝 HINT AR: فريق المستخدم (كابتن أو لاعب مرتبط) — يُحلّ مرة ويُعاد عند الحاجة.
+  Future<TeamModel?>? _myTeamFuture;
+  String? _resolvedForUid;
 
   @override
   void initState() {
     super.initState();
-    // Fetch teams on init if not already loaded
     final state = context.read<TeamCubit>().state;
     if (state is! TeamsLoaded) {
       context.read<TeamCubit>().fetchTeams();
@@ -40,175 +55,551 @@ class _TeamsScreenState extends State<TeamsScreen> {
     super.dispose();
   }
 
+  // 📝 HINT AR: يحلّ فريق المستخدم حسب دوره: الكابتن عبر captainId، واللاعب
+  // المرتبط عبر سجله (currentTeamId).
+  Future<TeamModel?> _resolveMyTeam(UserModel user) async {
+    final teamRepo = context.read<TeamRepository>();
+    final playerRepo = context.read<PlayerRepository>();
+    if (user.role == 'captain') {
+      return teamRepo.getTeamByCaptain(user.id);
+    }
+    if (user.linkedPlayerId != null && user.linkedPlayerId!.isNotEmpty) {
+      try {
+        final player = await playerRepo.getPlayerById(user.linkedPlayerId!);
+        if (player.currentTeamId.isEmpty) return null;
+        return teamRepo.getTeamById(player.currentTeamId);
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  Future<TeamModel?> _myTeam(UserModel user) {
+    // نُعيد الحلّ إذا تغيّر المستخدم أو لم يُحلّ بعد.
+    if (_myTeamFuture == null || _resolvedForUid != user.id) {
+      _resolvedForUid = user.id;
+      _myTeamFuture = _resolveMyTeam(user);
+    }
+    return _myTeamFuture!;
+  }
+
+  void _refreshMyTeam() {
+    setState(() => _myTeamFuture = null);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     final authState = context.watch<AuthCubit>().state;
-    final isCaptain = authState is AuthAuthenticated && authState.user.role == 'captain';
+    final user = authState is AuthAuthenticated ? authState.user : null;
+    final isVisitor = user == null;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text('الفرق الشعبية'),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (val) {
-                setState(() {
-                  _searchQuery = val.toLowerCase();
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'ابحث عن فريق...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+    final tabs = <Tab>[
+      if (!isVisitor) const Tab(text: 'فريقي'),
+      const Tab(text: 'الفرق الشعبية'),
+    ];
+
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: const Text('الفرق'),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          bottom: TabBar(
+            tabs: tabs,
+            indicatorSize: TabBarIndicatorSize.label,
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            if (!isVisitor) _myTeamTab(user, isDark),
+            _popularTeamsTab(isDark, theme, user),
+          ],
+        ),
+        // 📝 HINT AR: زر التأسيس فقط لكابتن بلا فريق.
+        floatingActionButton: (user != null && user.role == 'captain')
+            ? FutureBuilder<TeamModel?>(
+                future: _myTeam(user),
+                builder: (context, snap) {
+                  final hasTeam = snap.data != null;
+                  if (hasTeam) return const SizedBox.shrink();
+                  return FloatingActionButton.extended(
+                    onPressed: () {
+                      final teamCubit = context.read<TeamCubit>();
+                      Navigator.push(
+                        context,
+                        ToobaRoute.to(const CreateTeamScreen()),
+                      ).then((_) {
+                        _refreshMyTeam();
+                        teamCubit.fetchTeams();
+                      });
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('تأسيس فريق'),
+                  );
+                },
+              )
+            : null,
+      ),
+    );
+  }
+
+  // ── تبويب «فريقي» ──────────────────────────────────────────────────────
+  Widget _myTeamTab(UserModel user, bool isDark) {
+    return FutureBuilder<TeamModel?>(
+      future: _myTeam(user),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const ToobaShimmerList(count: 1, tileHeight: 200);
+        }
+        final team = snap.data;
+        if (team == null) {
+          return ToobaEmptyState(
+            icon: Icons.shield_outlined,
+            title: user.role == 'captain'
+                ? 'لا تملك فريقاً بعد'
+                : 'لست مسجّلاً في أي فريق',
+            subtitle: user.role == 'captain'
+                ? 'أسّس فريقك بزر «تأسيس فريق» أدناه'
+                : 'انضمّ إلى فريق من تبويب «الفرق الشعبية»',
+          );
+        }
+        return RefreshIndicator(
+          onRefresh: () async => _refreshMyTeam(),
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [_myTeamCard(team, user, isDark)],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _myTeamCard(TeamModel team, UserModel user, bool isDark) {
+    final theme = Theme.of(context);
+    final isCaptain = team.captainId == user.id;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          // الشعار — قابل للضغط لتحديثه إن كان كابتناً.
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+                backgroundImage: team.logoUrl != null
+                    ? CachedNetworkImageProvider(team.logoUrl!)
+                    : null,
+                child: team.logoUrl == null
+                    ? Icon(Icons.shield,
+                        size: 50,
+                        color: isDark ? Colors.grey[600] : Colors.grey[400])
+                    : null,
+              ),
+              if (isCaptain)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () => _updateLogo(team),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: const Icon(Icons.camera_alt,
+                          size: 16, color: Colors.white),
+                    ),
+                  ),
                 ),
-                filled: true,
-                fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
-                contentPadding: EdgeInsets.zero,
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(team.name,
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.location_on,
+                  size: 14, color: theme.colorScheme.primary),
+              const SizedBox(width: 4),
+              Text(
+                  team.area != null && team.area!.isNotEmpty
+                      ? '${team.city} • ${team.area}'
+                      : team.city,
+                  style: const TextStyle(fontSize: 13)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _miniStat('لعب', team.stats.played.toString()),
+              _miniStat('فاز', team.stats.wins.toString()),
+              _miniStat('نقاط', team.stats.points.toString()),
+              _miniStat('لاعبون', team.playerCount.toString()),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => Navigator.push(
+                context,
+                ToobaRoute.to(BlocProvider(
+                  create: (ctx) => TeamCubit(
+                    ctx.read<TeamRepository>(),
+                    ctx.read<PlayerRepository>(),
+                  ),
+                  child: TeamDetailsScreen(teamId: team.id),
+                )),
+              ).then((_) => _refreshMyTeam()),
+              icon: Icon(isCaptain ? Icons.settings : Icons.visibility),
+              label: Text(isCaptain ? 'عرض وإدارة الفريق' : 'عرض الفريق'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
+          // 📝 HINT AR: للكابتن — دخول تحدّيات الفرق ومحادثاته (المرحلة 7).
+          if (isCaptain) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => Navigator.push(
+                        context, ToobaRoute.to(const ChallengesScreen())),
+                    icon: const Icon(Icons.sports_kabaddi, size: 18),
+                    label: const Text('تحدّيات الفرق'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => Navigator.push(
+                        context, ToobaRoute.to(const ChatsListScreen())),
+                    icon: const Icon(Icons.chat, size: 18),
+                    label: const Text('محادثاتي'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          // 📝 HINT AR: للاعب (لا الكابتن) — حالة طلب خروجه إن رُفض + التصعيد.
+          if (!isCaptain &&
+              user.linkedPlayerId != null &&
+              user.linkedPlayerId!.isNotEmpty)
+            _releaseStatusInMyTeam(user.linkedPlayerId!),
+        ],
+      ),
+    );
+  }
+
+  // 📝 HINT AR: يعرض في «فريقي» تنبيه رفض الخروج + زر التصعيد للإدارة.
+  Widget _releaseStatusInMyTeam(String playerId) {
+    return FutureBuilder<ReleaseRequestModel?>(
+      future: context.read<TeamRepository>().getMyLatestReleaseRequest(playerId),
+      builder: (context, snap) {
+        final r = snap.data;
+        if (r == null) return const SizedBox.shrink();
+        if (r.status == 'pending') {
+          return _statusBox('طلب خروجك قيد مراجعة الكابتن', Icons.hourglass_top,
+              Colors.blue);
+        }
+        if (r.status == 'rejected' && r.escalated) {
+          return _statusBox('طلبك مُصعّد للإدارة — بانتظار القرار', Icons.gavel,
+              Colors.purple);
+        }
+        if (r.status == 'rejected') {
+          return Column(
+            children: [
+              _statusBox(
+                  'رفض كابتنك طلب الخروج', Icons.cancel, Colors.red),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => _escalate(r.id),
+                  icon: const Icon(Icons.gavel, color: Colors.purple),
+                  label: const Text('تصعيد الطلب للإدارة',
+                      style: TextStyle(color: Colors.purple)),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: const BorderSide(color: Colors.purple),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _statusBox(String text, IconData icon, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 18),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(text,
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: color),
+                  textAlign: TextAlign.center),
+            ),
+          ],
         ),
       ),
-      body: BlocBuilder<TeamCubit, TeamState>(
-        builder: (context, state) {
-          if (state is TeamLoading && state is! TeamsLoaded) {
-            return const ToobaShimmerList(count: 7, tileHeight: 76);
-          }
+    );
+  }
 
-          if (state is TeamError) {
-            return ToobaEmptyState(
-              icon: Icons.wifi_off_rounded,
-              title: 'تعذّر تحميل الفرق',
-              subtitle: state.message,
-              actionLabel: 'إعادة المحاولة',
-              onAction: () => context.read<TeamCubit>().fetchTeams(),
-            );
-          }
+  Future<void> _escalate(String releaseId) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await context.read<TeamRepository>().escalateReleaseRequest(releaseId);
+      messenger.showSnackBar(
+          ToobaSnackBar.buildSuccess('تم تصعيد طلبك للإدارة'));
+      _refreshMyTeam();
+    } catch (_) {
+      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر التصعيد'));
+    }
+  }
 
-          if (state is TeamsLoaded) {
-            final filteredTeams = state.teams.where((team) {
-              return team.name.toLowerCase().contains(_searchQuery) ||
-                     team.city.toLowerCase().contains(_searchQuery);
-            }).toList();
+  Widget _miniStat(String label, String value) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Text(value,
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary)),
+        const SizedBox(height: 2),
+        Text(label,
+            style: const TextStyle(fontSize: 12, color: Colors.grey)),
+      ],
+    );
+  }
 
-            if (state.teams.isEmpty) {
-              return ToobaEmptyState(
-                icon: Icons.shield_outlined,
-                title: 'لا توجد فرق مسجّلة بعد',
-                subtitle: isCaptain
-                    ? 'أسّس فريقك بزر «تأسيس فريق» أدناه'
-                    : 'لم يُسجَّل أي فريق في المنصة بعد',
-              );
-            }
+  // 📝 HINT AR: تحديث شعار الفريق (للكابتن) — اختيار مصدر ثم رفع وتحديث الرابط.
+  Future<void> _updateLogo(TeamModel team) async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('اختيار من المعرض'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('التقاط صورة'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return;
+    final picked =
+        await _picker.pickImage(source: source, imageQuality: 70, maxWidth: 800);
+    if (picked == null || !mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final teamRepo = context.read<TeamRepository>();
+    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ تحديث الشعار...'));
+    try {
+      final url = await teamRepo.uploadTeamLogo(team.id, File(picked.path));
+      await teamRepo.updateTeamLogo(team.id, url);
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم تحديث الشعار'));
+      _refreshMyTeam();
+      if (mounted) context.read<TeamCubit>().fetchTeams();
+    } catch (_) {
+      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تحديث الشعار'));
+    }
+  }
 
-            if (filteredTeams.isEmpty) {
-              return ToobaEmptyState(
-                icon: Icons.search_off_rounded,
-                title: 'لا توجد نتائج',
-                subtitle: 'لا يوجد فريق يطابق "$_searchQuery"',
-              );
-            }
-
-            return RefreshIndicator(
-              onRefresh: () => context.read<TeamCubit>().fetchTeams(),
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: filteredTeams.length,
-                itemBuilder: (context, index) {
-                  final team = filteredTeams[index];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    color: isDark ? Colors.grey[900] : Colors.white,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(12),
-                      leading: Hero(
-                        tag: 'team_logo_${team.id}',
-                        child: CircleAvatar(
-                          radius: 28,
-                          backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                          backgroundImage: team.logoUrl != null
-                              ? CachedNetworkImageProvider(team.logoUrl!)
-                              : null,
-                          child: team.logoUrl == null
-                              ? Icon(Icons.shield, color: isDark ? Colors.grey[600] : Colors.grey[400])
-                              : null,
-                        ),
-                      ),
-                      title: Text(
-                        team.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on, size: 14, color: theme.colorScheme.primary),
-                            const SizedBox(width: 4),
-                            Flexible(
-                              child: Text(
-                                team.area != null && team.area!.isNotEmpty
-                                    ? '${team.city} • ${team.area}'
-                                    : team.city,
-                                style: const TextStyle(fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Icon(Icons.group, size: 14, color: theme.colorScheme.primary),
-                            const SizedBox(width: 4),
-                            Text('${team.playerCount} لاعب', style: const TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        // 📝 HINT AR: نعزل TeamCubit لشاشة التفاصيل حتى لا تُفسد
-                        // حالة قائمة الفرق (يصلح اختفاء الفرق عند الرجوع).
-                        Navigator.push(
-                          context,
-                          ToobaRoute.to(BlocProvider(
-                            create: (ctx) => TeamCubit(
-                              ctx.read<TeamRepository>(),
-                              ctx.read<PlayerRepository>(),
-                            ),
-                            child: TeamDetailsScreen(teamId: team.id),
-                          )),
-                        );
-                      },
-                    ),
-                  );
-                },
+  // ── تبويب «الفرق الشعبية» ──────────────────────────────────────────────
+  Widget _popularTeamsTab(bool isDark, ThemeData theme, UserModel? user) {
+    return Column(
+      children: [
+        Padding(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: TextField(
+            controller: _searchController,
+            onChanged: (val) =>
+                setState(() => _searchQuery = val.toLowerCase()),
+            decoration: InputDecoration(
+              hintText: 'ابحث عن فريق...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
-            );
-          }
+              filled: true,
+              fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
+        ),
+        Expanded(
+          child: BlocBuilder<TeamCubit, TeamState>(
+            builder: (context, state) {
+              if (state is TeamLoading && state is! TeamsLoaded) {
+                return const ToobaShimmerList(count: 7, tileHeight: 76);
+              }
+              if (state is TeamError) {
+                return ToobaEmptyState(
+                  icon: Icons.wifi_off_rounded,
+                  title: 'تعذّر تحميل الفرق',
+                  subtitle: state.message,
+                  actionLabel: 'إعادة المحاولة',
+                  onAction: () => context.read<TeamCubit>().fetchTeams(),
+                );
+              }
+              if (state is TeamsLoaded) {
+                final filtered = state.teams.where((team) {
+                  return team.name.toLowerCase().contains(_searchQuery) ||
+                      team.city.toLowerCase().contains(_searchQuery);
+                }).toList();
 
-          return const ToobaShimmerList(count: 5, tileHeight: 76);
+                if (state.teams.isEmpty) {
+                  return const ToobaEmptyState(
+                    icon: Icons.shield_outlined,
+                    title: 'لا توجد فرق مسجّلة بعد',
+                    subtitle: 'لم يُسجَّل أي فريق في المنصة بعد',
+                  );
+                }
+                if (filtered.isEmpty) {
+                  return ToobaEmptyState(
+                    icon: Icons.search_off_rounded,
+                    title: 'لا توجد نتائج',
+                    subtitle: 'لا يوجد فريق يطابق "$_searchQuery"',
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => context.read<TeamCubit>().fetchTeams(),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) =>
+                        _teamTile(filtered[index], isDark, theme),
+                  ),
+                );
+              }
+              return const ToobaShimmerList(count: 5, tileHeight: 76);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _teamTile(TeamModel team, bool isDark, ThemeData theme) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: isDark ? Colors.grey[900] : Colors.white,
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(12),
+        leading: Hero(
+          tag: 'team_logo_${team.id}',
+          child: CircleAvatar(
+            radius: 28,
+            backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+            backgroundImage: team.logoUrl != null
+                ? CachedNetworkImageProvider(team.logoUrl!)
+                : null,
+            child: team.logoUrl == null
+                ? Icon(Icons.shield,
+                    color: isDark ? Colors.grey[600] : Colors.grey[400])
+                : null,
+          ),
+        ),
+        title: Text(team.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4.0),
+          child: Row(
+            children: [
+              Icon(Icons.location_on,
+                  size: 14, color: theme.colorScheme.primary),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  team.area != null && team.area!.isNotEmpty
+                      ? '${team.city} • ${team.area}'
+                      : team.city,
+                  style: const TextStyle(fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Icon(Icons.group, size: 14, color: theme.colorScheme.primary),
+              const SizedBox(width: 4),
+              Text('${team.playerCount} لاعب',
+                  style: const TextStyle(fontSize: 12)),
+            ],
+          ),
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            ToobaRoute.to(BlocProvider(
+              create: (ctx) => TeamCubit(
+                ctx.read<TeamRepository>(),
+                ctx.read<PlayerRepository>(),
+              ),
+              child: TeamDetailsScreen(teamId: team.id),
+            )),
+          ).then((_) => _refreshMyTeam());
         },
       ),
-      floatingActionButton: isCaptain
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  ToobaRoute.to(const CreateTeamScreen()),
-                );
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('تأسيس فريق'),
-            )
-          : null,
     );
   }
 }

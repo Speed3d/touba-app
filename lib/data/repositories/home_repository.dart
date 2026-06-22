@@ -39,6 +39,14 @@ class HomeRepository {
     return task.ref.getDownloadURL();
   }
 
+  // 📝 HINT AR: رفع صورة إضافية للإعلان باسم فريد (لشاشة التفاصيل).
+  Future<String> uploadBannerExtra(
+      String bannerId, File file, String name) async {
+    final ref = _storage.ref().child('banners/$bannerId/$name.jpg');
+    final task = await ref.putFile(file);
+    return task.ref.getDownloadURL();
+  }
+
   Future<void> saveBanner(BannerModel banner) async {
     await _firestore
         .collection('banners')

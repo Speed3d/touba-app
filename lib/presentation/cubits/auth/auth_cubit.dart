@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../data/services/auth/auth_service.dart';
@@ -95,12 +96,15 @@ class AuthCubit extends Cubit<AuthState> {
 
       // إنشاء مستند المستخدم ثم إصدار الحالة صراحةً (تفادي سباق المستمع
       // الذي قد يقرأ المستند قبل إنشائه فيُبقي المستخدم خارج التطبيق).
+      // 📝 HINT AR: اللاعب (role=user) يحصل على كود لاعب دائم لا يتغيّر — هويته
+      // الثابتة التي يُدخلها الكابتن لربطه/دعوته (يبقى عبر كل الانتقالات).
       final newUser = UserModel(
         id: uid,
         name: name,
         email: email,
         phone: phone,
         role: role,
+        playerCode: role == 'user' ? _generatePlayerCode() : null,
       );
       await _userRepository.createUser(newUser);
       emit(AuthAuthenticated(newUser));
@@ -111,6 +115,13 @@ class AuthCubit extends Cubit<AuthState> {
       emit(const AuthError('حدث خطأ أثناء إنشاء الحساب'));
       emit(AuthUnauthenticated());
     }
+  }
+
+  // 📝 HINT AR: كود لاعب من 8 أحرف/أرقام واضحة (بلا أحرف ملتبسة كـ O/0/I/1).
+  String _generatePlayerCode([int len = 8]) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    final r = Random.secure();
+    return List.generate(len, (_) => chars[r.nextInt(chars.length)]).join();
   }
 
   Future<void> resetPassword(String email) async {

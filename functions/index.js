@@ -38,6 +38,15 @@ function zeroCareer() {
   return {matches: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0,
     rating: 0};
 }
+// 📝 HINT AR: توكن عشوائي (لعضوية الفريق teamToken) — أحرف/أرقام واضحة.
+function genToken(len = 8) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < len; i++) {
+    s += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return s;
+}
 // 📝 HINT AR: بصمة النتيجة المؤثّرة على الإحصائيات (للمقارنة والتراجع).
 function snapshotOf(data) {
   return {
@@ -161,8 +170,10 @@ exports.onMatchResultConfirmed = onDocumentUpdated(
         playerStats[pid] = playerDocs[pid].exists ?
           (playerDocs[pid].data().careerStats || zeroCareer()) : zeroCareer();
       }
+      // 📝 HINT AR: نحسب جدول الترتيب للدوري والمجموعات (الإقصائي بلا ترتيب).
       const hasStandings = tournDoc && tournDoc.exists &&
-          tournDoc.data().type === "league";
+          (tournDoc.data().type === "league" ||
+           tournDoc.data().type === "groups");
       const standings = hasStandings ?
         (tournDoc.data().standings || []) : null;
       const rule = (tournDoc && tournDoc.exists &&
@@ -376,7 +387,100 @@ exports.claimPlayerViaInvite = onCall(async (request) => {
 });
 
 // ============================================================================
-// 4) عند قبول طلب انضمام: إنشاء سجل لاعب مرتبط بحساب صاحب الطلب
+// 3.1) ربط لاعب بكوده الدائم — الكابتن يُدخل كود اللاعب (هوية دائمة)
+// ============================================================================
+// 📝 HINT AR: الكابتن يُدخل كود اللاعب الدائم (playerCode). نُنشئ/ننقل سجل لاعب
+// دائم مرتبط بحسابه إلى فريق الكابتن، ونجدّد teamToken (توكن العضوية). الإحصائيات
+// تبقى عبر الانتقالات. يُرفض إن كان اللاعب مرتبطاً بفريق آخر (يجب خروجه أولاً).
+exports.linkPlayerByCode = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "يجب تسجيل الدخول أولاً.");
+  }
+  const captainUid = request.auth.uid;
+  const {teamId, playerCode} = request.data || {};
+  if (!teamId || !playerCode) {
+    throw new HttpsError("invalid-argument", "بيانات غير صالحة.");
+  }
+  const teamSnap = await db.collection("teams").doc(teamId).get();
+  if (!teamSnap.exists) {
+    throw new HttpsError("not-found", "الفريق غير موجود.");
+  }
+  if (teamSnap.data().captainId !== captainUid) {
+    throw new HttpsError("permission-denied", "هذه العملية لكابتن الفريق فقط.");
+  }
+
+  const code = String(playerCode).trim().toUpperCase();
+  const uq = await db.collection("users")
+    .where("playerCode", "==", code).limit(1).get();
+  if (uq.empty) {
+    throw new HttpsError("not-found", "لا يوجد لاعب بهذا الكود.");
+  }
+  const userId = uq.docs[0].id;
+  const userData = uq.docs[0].data();
+  const fv = admin.firestore.FieldValue;
+  const teamToken = genToken();
+
+  let playerId = userData.linkedPlayerId || null;
+  let playerData = null;
+  if (playerId) {
+    const pSnap = await db.collection("players").doc(playerId).get();
+    if (pSnap.exists) {
+      playerData = pSnap.data();
+    } else {
+      playerId = null;
+    }
+  }
+  if (playerData && playerData.currentTeamId &&
+      playerData.currentTeamId !== "" &&
+      playerData.currentTeamId !== teamId) {
+    throw new HttpsError("failed-precondition",
+      "اللاعب مرتبط بفريق آخر — يجب خروجه من فريقه أولاً.");
+  }
+
+  if (playerId) {
+    await db.collection("players").doc(playerId).update({
+      currentTeamId: teamId,
+      teamToken: teamToken,
+      updatedAt: fv.serverTimestamp(),
+    });
+  } else {
+    const ref = db.collection("players").doc();
+    await ref.set({
+      name: userData.name || "لاعب",
+      photoUrl: userData.profileImage || null,
+      position: "غير محدد",
+      shirtNumber: null,
+      preferredFoot: null,
+      height: null,
+      weight: null,
+      status: "active",
+      isStarter: true,
+      currentTeamId: teamId,
+      careerStats: zeroCareer(),
+      claimedByUid: userId,
+      createdByUid: captainUid,
+      teamToken: teamToken,
+      createdAt: fv.serverTimestamp(),
+      updatedAt: fv.serverTimestamp(),
+    });
+    playerId = ref.id;
+    await db.collection("users").doc(userId).set(
+      {linkedPlayerId: playerId, updatedAt: fv.serverTimestamp()},
+      {merge: true});
+  }
+
+  await _sendUserNotification(
+    userId,
+    "تمت إضافتك إلى فريق ⚽",
+    `أضافك كابتن ${teamSnap.data().name || "الفريق"} إلى تشكيلته.`,
+    "addedToTeam",
+    {teamId},
+  );
+  return {success: true, playerId};
+});
+
+// ============================================================================
+// 4) عند قبول طلب انضمام: ربط/إنشاء سجل لاعب دائم لصاحب الطلب
 // ============================================================================
 exports.onJoinRequestAccepted = onDocumentUpdated(
   "join_requests/{id}",
@@ -387,43 +491,132 @@ exports.onJoinRequestAccepted = onDocumentUpdated(
     if (before.status === after.status || after.status !== "accepted") return;
 
     const {teamId, userId, userName} = after;
+    const reqRef = event.data.after.ref;
     const teamRef = db.collection("teams").doc(teamId);
     const userRef = db.collection("users").doc(userId);
-    const playerRef = db.collection("players").doc(); // معرّف جديد
+    const fv = admin.firestore.FieldValue;
+
+    // 📝 HINT AR: حارس التعارض — إن كان اللاعب مسجّلاً بفريق آخر بالفعل، لا ننقله
+    // (أول من يقبل يفوز). نُرجع الطلب لحالة player_in_other_team ونُشعر الكابتن.
+    const userSnap = await userRef.get();
+    const existingPid =
+      userSnap.exists ? (userSnap.data().linkedPlayerId || null) : null;
+    if (existingPid) {
+      const pSnap = await db.collection("players").doc(existingPid).get();
+      if (pSnap.exists) {
+        const curTeam = pSnap.data().currentTeamId || "";
+        if (curTeam && curTeam !== teamId) {
+          const otherSnap = await db.collection("teams").doc(curTeam).get();
+          const otherName = otherSnap.exists ?
+            (otherSnap.data().name || "فريق آخر") : "فريق آخر";
+          await reqRef.update({status: "player_in_other_team"});
+          const teamSnap0 = await teamRef.get();
+          const captainId = teamSnap0.exists ?
+            teamSnap0.data().captainId : null;
+          if (captainId) {
+            await _sendUserNotification(
+              captainId,
+              "تعذّر إضافة اللاعب ⚠️",
+              `${userName || "اللاعب"} مسجّل مع فريق ${otherName} — يجب خروجه أولاً.`,
+              "joinBlockedOtherTeam",
+              {teamId},
+            );
+          }
+          return; // لا ننقل اللاعب
+        }
+      }
+    }
 
     await db.runTransaction(async (tx) => {
-      const [teamDoc, userDoc] = await Promise.all([
-        tx.get(teamRef), tx.get(userRef),
-      ]);
+      // ── كل القراءات أولاً ──
+      const teamDoc = await tx.get(teamRef);
+      const userDoc = await tx.get(userRef);
       if (!teamDoc.exists) return;
-      const fv = admin.firestore.FieldValue;
-      // 📝 HINT AR: التشكيلة (roster) و playerCount يديرهما syncRosterSummary
-      // تلقائياً عند إنشاء هذا السجل — فلا نلمسهما هنا لتجنّب التضارب.
-      tx.set(playerRef, {
-        name: userName || (userDoc.exists ? userDoc.data().name : "لاعب"),
-        photoUrl: userDoc.exists ? (userDoc.data().profileImage || null) : null,
-        position: "غير محدد",
-        shirtNumber: null,
-        preferredFoot: null,
-        height: null,
-        weight: null,
-        status: "active",
-        currentTeamId: teamId,
-        careerStats: zeroCareer(),
-        claimedByUid: userId,
-        createdByUid: teamDoc.data().captainId,
-        createdAt: fv.serverTimestamp(),
-        updatedAt: fv.serverTimestamp(),
-      });
-      if (userDoc.exists) {
-        tx.update(userRef, {linkedPlayerId: playerRef.id});
+      const pid =
+        userDoc.exists ? (userDoc.data().linkedPlayerId || null) : null;
+      let existingPlayerRef = null;
+      let existingPlayerDoc = null;
+      if (pid) {
+        existingPlayerRef = db.collection("players").doc(pid);
+        existingPlayerDoc = await tx.get(existingPlayerRef);
+      }
+
+      // ── الكتابات ──
+      const teamToken = genToken();
+      // 📝 HINT AR: هوية دائمة — إن كان للّاعب سجل دائم ننقله (نحافظ على
+      // careerStats)؛ وإلا ننشئ سجلاً جديداً. roster/playerCount يديرهما
+      // syncRosterSummary تلقائياً.
+      if (existingPlayerDoc && existingPlayerDoc.exists) {
+        tx.update(existingPlayerRef, {
+          currentTeamId: teamId,
+          teamToken: teamToken,
+          updatedAt: fv.serverTimestamp(),
+        });
+      } else {
+        const playerRef = db.collection("players").doc();
+        tx.set(playerRef, {
+          name: userName || (userDoc.exists ? userDoc.data().name : "لاعب"),
+          photoUrl:
+            userDoc.exists ? (userDoc.data().profileImage || null) : null,
+          position: "غير محدد",
+          shirtNumber: null,
+          preferredFoot: null,
+          height: null,
+          weight: null,
+          status: "active",
+          isStarter: true,
+          currentTeamId: teamId,
+          careerStats: zeroCareer(),
+          claimedByUid: userId,
+          createdByUid: teamDoc.data().captainId,
+          teamToken: teamToken,
+          createdAt: fv.serverTimestamp(),
+          updatedAt: fv.serverTimestamp(),
+        });
+        if (userDoc.exists) {
+          tx.update(userRef, {linkedPlayerId: playerRef.id});
+        }
       }
     });
 
-    // إشعار لصاحب الطلب بعد نجاح المعاملة
+    // 📝 HINT AR: إغلاق بقية طلبات اللاعب المعلّقة — انضمّ لفريق آخر (بلا إشعار
+    // رفض له؛ الكباتن يرونها «سجّل بفريق آخر»).
     const teamSnap = await teamRef.get();
     const teamName = teamSnap.exists ?
       (teamSnap.data().name || "الفريق") : "الفريق";
+    try {
+      const others = await db.collection("join_requests")
+        .where("userId", "==", userId)
+        .where("status", "==", "pending").get();
+      const batch = db.batch();
+      const notifyOps = [];
+      for (const d of others.docs) {
+        if (d.id === reqRef.id) continue;
+        batch.update(d.ref,
+          {status: "joined_elsewhere", joinedTeamName: teamName});
+        // إشعار كابتن الفريق الآخر: اللاعب سجّل بفريق آخر.
+        const otherTeamId = d.data().teamId;
+        notifyOps.push((async () => {
+          const t = await db.collection("teams").doc(otherTeamId).get();
+          const cap = t.exists ? t.data().captainId : null;
+          if (cap) {
+            await _sendUserNotification(
+              cap,
+              "لاعب سجّل مع فريق آخر ℹ️",
+              `${userName || "لاعب"} قدّم طلباً لفريقكم لكنه سجّل مع فريق ${teamName}.`,
+              "joinedElsewhere",
+              {teamId: otherTeamId},
+            );
+          }
+        })());
+      }
+      await batch.commit();
+      await Promise.all(notifyOps);
+    } catch (e) {
+      logger.warn("تعذّر إغلاق الطلبات الأخرى", {userId, error: `${e}`});
+    }
+
+    // إشعار لصاحب الطلب بعد نجاح المعاملة
     await _sendUserNotification(
       userId,
       "تم قبول طلب انضمامك ✅",
@@ -572,6 +765,188 @@ exports.onJoinRequestCreated = onDocumentCreated(
 );
 
 // ============================================================================
+// 7.2) عند إنشاء طلب خروج — إشعار كابتن الفريق
+// ============================================================================
+exports.onReleaseRequestCreated = onDocumentCreated(
+  "release_requests/{id}",
+  async (event) => {
+    const data = event.data && event.data.data();
+    if (!data || data.status !== "pending") return;
+    const {teamId, userName} = data;
+    if (!teamId) return;
+    const teamSnap = await db.collection("teams").doc(teamId).get();
+    if (!teamSnap.exists) return;
+    const captainId = teamSnap.data().captainId;
+    if (!captainId) return;
+    await _sendUserNotification(
+      captainId,
+      "طلب خروج من الفريق 🚪",
+      `${userName || "لاعب"} يطلب الخروج من فريق ${teamSnap.data().name || "فريقك"}`,
+      "releaseRequestReceived",
+      {teamId},
+    );
+  },
+);
+
+// ============================================================================
+// 7.3) عند بتّ طلب خروج — قبول=فكّ ارتباط، رفض=إشعار (يمكن التصعيد)
+// ============================================================================
+// 📝 HINT AR: القبول يفكّ ارتباط اللاعب بالفريق (currentTeamId="") مع **إبقاء**
+// سجله الدائم وإحصائياته وحسابه (linkedPlayerId) — الهوية دائمة عبر الانتقالات.
+// نمسح teamToken فقط. الأدمن يُنفّذ الفكّ القسري بضبط status=accepted.
+exports.onReleaseRequestResolved = onDocumentUpdated(
+  "release_requests/{id}",
+  async (event) => {
+    const before = event.data.before.data();
+    const after = event.data.after.data();
+    if (!before || !after) return;
+    if (before.status === after.status) return;
+
+    const {playerId, teamId, userId, teamName} = after;
+
+    if (after.status === "accepted") {
+      const fv = admin.firestore.FieldValue;
+      // 📝 HINT AR: لا نحذف السجل — نفكّ ارتباط الفريق فقط (syncRosterSummary
+      // يُزيله من roster). careerStats و linkedPlayerId يبقيان (هوية دائمة).
+      if (playerId) {
+        await db.collection("players").doc(playerId).update({
+          currentTeamId: "",
+          teamToken: fv.delete(),
+          updatedAt: fv.serverTimestamp(),
+        });
+      }
+      await _sendUserNotification(
+        userId,
+        "تم فكّ ارتباطك ✅",
+        `تم فكّ ارتباطك من فريق ${teamName || ""}. يمكنك الآن الانضمام لفريق آخر.`,
+        "releaseAccepted",
+        {teamId},
+      );
+    } else if (after.status === "rejected") {
+      await _sendUserNotification(
+        userId,
+        "رُفض طلب خروجك ❌",
+        `رفض كابتن ${teamName || "فريقك"} طلب خروجك. يمكنك تصعيد الطلب للإدارة.`,
+        "releaseRejected",
+        {teamId},
+      );
+    }
+  },
+);
+
+// ============================================================================
+// 7.4) تجميع تقييمات الحكّام — متوسط + عدد في refereeProfiles
+// ============================================================================
+// 📝 HINT AR: عند كتابة/تعديل تقييم حكم، نعيد حساب متوسط تقييماته وعددها من كل
+// تقييماته ونكتبها في refereeProfiles/{refereeId} (حقول النظام: rating/ratingCount).
+exports.onRefereeRatingWritten = onDocumentWritten(
+  "referee_ratings/{id}",
+  async (event) => {
+    const after = event.data.after.exists ? event.data.after.data() : null;
+    const before = event.data.before.exists ? event.data.before.data() : null;
+    const refereeId = (after && after.refereeId) ||
+      (before && before.refereeId);
+    if (!refereeId) return;
+
+    const snap = await db.collection("referee_ratings")
+      .where("refereeId", "==", refereeId).get();
+    let sum = 0;
+    let count = 0;
+    snap.forEach((d) => {
+      const r = d.data().rating;
+      if (typeof r === "number") {
+        sum += r; count += 1;
+      }
+    });
+    const avg = count > 0 ? Math.round((sum / count) * 10) / 10 : 0;
+
+    await db.collection("refereeProfiles").doc(refereeId).set({
+      rating: avg,
+      ratingCount: count,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, {merge: true});
+  },
+);
+
+// ============================================================================
+// 7.5) عند تقديم طلب تحكيم — إشعار كل الأدمن
+// ============================================================================
+exports.onRefereeApplicationCreated = onDocumentCreated(
+  "referee_applications/{id}",
+  async (event) => {
+    const data = event.data && event.data.data();
+    if (!data || data.status !== "pending") return;
+    const admins = await db.collection("users")
+      .where("role", "==", "admin").get();
+    await Promise.all(admins.docs.map((d) => _sendUserNotification(
+      d.id,
+      "طلب تحكيم جديد 🧑‍⚖️",
+      `${data.userName || "مستخدم"} يطلب التحكيم في بطولة ${data.tournamentName || ""}`,
+      "refereeApplicationReceived",
+      {tournamentId: data.tournamentId || ""},
+    )));
+  },
+);
+
+// ============================================================================
+// 7.6) عند بتّ طلب تحكيم — موافقة=منح صفة حكم + إشعار المنظّم، رفض=إشعار
+// ============================================================================
+exports.onRefereeApplicationResolved = onDocumentUpdated(
+  "referee_applications/{id}",
+  async (event) => {
+    const before = event.data.before.data();
+    const after = event.data.after.data();
+    if (!before || !after) return;
+    if (before.status === after.status) return;
+    const {userId, userName, tournamentId, tournamentName, organizerUid} =
+      after;
+
+    if (after.status === "approved") {
+      // منح صفة الحكم (Custom Claim + مرآة Firestore).
+      try {
+        const user = await admin.auth().getUser(userId);
+        const claims = Object.assign({}, user.customClaims || {});
+        claims.referee = true;
+        await admin.auth().setCustomUserClaims(userId, claims);
+      } catch (e) {
+        logger.warn("تعذّر منح صفة الحكم", {userId, error: `${e}`});
+      }
+      const fv = admin.firestore.FieldValue;
+      await db.collection("users").doc(userId).set({
+        adminPermissions: fv.arrayUnion("referee"),
+        updatedAt: fv.serverTimestamp(),
+      }, {merge: true});
+
+      // إشعار مقدّم الطلب + المنظّم.
+      await _sendUserNotification(
+        userId,
+        "تمت الموافقة على طلب التحكيم ✅",
+        `أصبحت حكماً. سيضيفك منظّم بطولة ${tournamentName || ""} للمباريات.`,
+        "refereeApplicationApproved",
+        {tournamentId: tournamentId || ""},
+      );
+      if (organizerUid) {
+        await _sendUserNotification(
+          organizerUid,
+          "حكم جاهز لبطولتك 🧑‍⚖️",
+          `وافق الأدمن على تحكيم ${userName || "مستخدم"} في ${tournamentName || "بطولتك"}. عيّنه على المباريات.`,
+          "refereeReadyForTournament",
+          {tournamentId: tournamentId || ""},
+        );
+      }
+    } else if (after.status === "rejected") {
+      await _sendUserNotification(
+        userId,
+        "طلب التحكيم مرفوض ❌",
+        `عذراً، رُفض طلبك للتحكيم في ${tournamentName || "البطولة"}.`,
+        "refereeApplicationRejected",
+        {tournamentId: tournamentId || ""},
+      );
+    }
+  },
+);
+
+// ============================================================================
 // 8) حذف الحساب نهائياً (مطلوب لمتجري Apple وGoogle) — callable
 // ============================================================================
 // 📝 HINT AR: يحذف بيانات المستخدم الشخصية + حساب المصادقة. يرفض إن كان
@@ -699,3 +1074,52 @@ exports.moderateReport = onCall(async (request) => {
 
   return {success: true};
 });
+
+// ============================================================================
+// 17) تحدّيات الفرق (المرحلة 7) — إشعارات التقديم والقبول
+// ============================================================================
+// 📝 HINT AR: عند تقدّم فريق جديد على تحدٍّ (نمو applicantCaptainIds) →
+// إشعار صاحب الطلب. الطرف الآخر لا يكتب إشعار غيره (القواعد تمنعه) — لذا CF.
+exports.onChallengeApplied = onDocumentUpdated(
+  "challenges/{id}",
+  async (event) => {
+    const before = event.data.before.data();
+    const after = event.data.after.data();
+    if (!before || !after) return;
+    const beforeIds = before.applicantCaptainIds || [];
+    const afterIds = after.applicantCaptainIds || [];
+    if (afterIds.length <= beforeIds.length) return; // لا متقدّم جديد
+
+    const newIds = afterIds.filter((x) => !beforeIds.includes(x));
+    const applicant = (after.applicants || [])
+      .find((a) => newIds.includes(a.captainId));
+    const teamName = applicant ? applicant.teamName : "فريق";
+    await _sendUserNotification(
+      after.requesterCaptainId,
+      "طلب تحدٍّ جديد",
+      `فريق ${teamName} وافق على تحدّي فريقك «${after.requesterTeamName}»`,
+      "challenge_applied",
+      {challengeId: event.params.id},
+    );
+  },
+);
+
+// 📝 HINT AR: عند قبول التحدّي (status → matched) → إشعار الفريق المختار
+// بفتح المحادثة (chatId مُمرَّر في الإشعار).
+exports.onChallengeMatched = onDocumentUpdated(
+  "challenges/{id}",
+  async (event) => {
+    const before = event.data.before.data();
+    const after = event.data.after.data();
+    if (!before || !after) return;
+    if (before.status === "matched" || after.status !== "matched") return;
+    if (!after.matchedCaptainId) return;
+    await _sendUserNotification(
+      after.matchedCaptainId,
+      "تم قبول تحدّيك 🎉",
+      `فريق ${after.requesterTeamName} اختارك للتحدّي — افتح المحادثة للاتفاق`,
+      "challenge_matched",
+      {challengeId: event.params.id, chatId: after.chatId || ""},
+    );
+  },
+);

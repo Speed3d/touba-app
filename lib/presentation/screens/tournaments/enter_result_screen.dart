@@ -4,7 +4,9 @@ import '../../cubits/tournament/tournament_cubit.dart';
 import '../../cubits/tournament/tournament_state.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/models/player_model.dart';
+import '../../../data/models/team_model.dart';
 import '../../../data/repositories/player_repository.dart';
+import '../../../data/repositories/team_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 
 /// 📝 HINT AR: شاشة إدخال نتيجة المباراة بأسلوب «ورقة المباراة»: قسمان (فريق
@@ -30,12 +32,17 @@ class _Counts {
   int assists = 0;
   int yellow = 0;
   int red = 0;
+  int penalties = 0; // أهداف من ركلة جزاء (تُحتسب هدفاً)
+  int ownGoals = 0; // أهداف بالخطأ (تُحتسب لخصمه)
+  bool injured = false; // إصابة
 }
 
 class _EnterResultScreenState extends State<EnterResultScreen> {
   final Map<String, _Counts> _counts = {};
   List<PlayerModel> _homePlayers = [];
   List<PlayerModel> _awayPlayers = [];
+  TeamModel? _homeTeam;
+  TeamModel? _awayTeam;
   bool _loading = true;
 
   @override
@@ -47,8 +54,14 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
   Future<void> _loadRosters() async {
     try {
       final repo = context.read<PlayerRepository>();
+      final teamRepo = context.read<TeamRepository>();
       final home = await repo.getPlayersByTeam(widget.match.homeTeamId);
       final away = await repo.getPlayersByTeam(widget.match.awayTeamId);
+      // 📝 HINT AR: نحمّل الفريقين لالتقاط خطّتهما ضمن لقطة المباراة.
+      try {
+        _homeTeam = await teamRepo.getTeamById(widget.match.homeTeamId);
+        _awayTeam = await teamRepo.getTeamById(widget.match.awayTeamId);
+      } catch (_) {}
       for (final p in [...home, ...away]) {
         _counts[p.id] = _Counts();
       }
@@ -59,7 +72,12 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
         if (c == null) continue;
         switch (ev['type']) {
           case 'goal':
-            c.goals++;
+            // 📝 HINT AR: ركلة الجزاء تُخزَّن كهدف بعلامة penalty.
+            if (ev['penalty'] == true) {
+              c.penalties++;
+            } else {
+              c.goals++;
+            }
             break;
           case 'assist':
             c.assists++;
@@ -69,6 +87,12 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
             break;
           case 'red':
             c.red++;
+            break;
+          case 'owngoal':
+            c.ownGoals++;
+            break;
+          case 'injury':
+            c.injured = true;
             break;
         }
       }
@@ -84,8 +108,18 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
     }
   }
 
-  int _teamGoals(List<PlayerModel> players) =>
-      players.fold(0, (s, p) => s + (_counts[p.id]?.goals ?? 0));
+  // 📝 HINT AR: نتيجة فريق = أهدافه (عادية + ركلات جزاء) + أهداف الخصم بالخطأ.
+  int _scoreFor(List<PlayerModel> own, List<PlayerModel> opp) {
+    int s = 0;
+    for (final p in own) {
+      final c = _counts[p.id];
+      if (c != null) s += c.goals + c.penalties;
+    }
+    for (final p in opp) {
+      s += _counts[p.id]?.ownGoals ?? 0;
+    }
+    return s;
+  }
 
   void _change(String playerId, String field, int delta) {
     final c = _counts[playerId];
@@ -106,8 +140,20 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
         case 'red':
           c.red = (c.red + delta).clamp(0, 1);
           break;
+        case 'penalties':
+          c.penalties = (c.penalties + delta).clamp(0, 99);
+          break;
+        case 'ownGoals':
+          c.ownGoals = (c.ownGoals + delta).clamp(0, 99);
+          break;
       }
     });
+  }
+
+  void _toggleInjured(String playerId) {
+    final c = _counts[playerId];
+    if (c == null) return;
+    setState(() => c.injured = !c.injured);
   }
 
   void _save() {
@@ -118,6 +164,14 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
         for (var i = 0; i < c.goals; i++) {
           events.add({'type': 'goal', 'playerId': p.id, 'teamId': teamId, 'minute': 0});
         }
+        // 📝 HINT AR: ركلة جزاء = هدف بعلامة penalty (يحتسبها CF هدفاً للاعب).
+        for (var i = 0; i < c.penalties; i++) {
+          events.add({'type': 'goal', 'penalty': true, 'playerId': p.id, 'teamId': teamId, 'minute': 0});
+        }
+        // هدف بالخطأ = owngoal (يُحتسب لنتيجة الخصم، لا لإحصائيات اللاعب).
+        for (var i = 0; i < c.ownGoals; i++) {
+          events.add({'type': 'owngoal', 'playerId': p.id, 'teamId': teamId, 'minute': 0});
+        }
         for (var i = 0; i < c.assists; i++) {
           events.add({'type': 'assist', 'playerId': p.id, 'teamId': teamId, 'minute': 0});
         }
@@ -126,6 +180,9 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
         }
         for (var i = 0; i < c.red; i++) {
           events.add({'type': 'red', 'playerId': p.id, 'teamId': teamId, 'minute': 0});
+        }
+        if (c.injured) {
+          events.add({'type': 'injury', 'playerId': p.id, 'teamId': teamId, 'minute': 0});
         }
       }
     }
@@ -139,13 +196,33 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
       ..._awayPlayers.map((p) => p.id),
     ];
 
+    // 📝 HINT AR: لقطة تشكيلة كل فريق (الأساسيون، أو الكل إن لم يُحدَّد أساسيون)
+    // تُحفظ بالمباراة فتبقى ثابتة لهذه اللعبة بعينها.
+    List<Map<String, dynamic>> snap(List<PlayerModel> ps) {
+      final starters = ps.where((p) => p.isStarter).toList();
+      final use = starters.isNotEmpty ? starters : ps;
+      return use
+          .map((p) => LineupPlayer(
+                playerId: p.id,
+                name: p.name,
+                photoUrl: p.photoUrl,
+                position: p.position,
+                shirtNumber: p.shirtNumber,
+              ).toJson())
+          .toList();
+    }
+
     context.read<TournamentCubit>().enterResult(
           widget.tournamentId,
           widget.match,
-          _teamGoals(_homePlayers),
-          _teamGoals(_awayPlayers),
+          _scoreFor(_homePlayers, _awayPlayers),
+          _scoreFor(_awayPlayers, _homePlayers),
           events: events,
           lineup: lineup,
+          homeLineup: snap(_homePlayers),
+          awayLineup: snap(_awayPlayers),
+          homeFormation: _homeTeam?.formation,
+          awayFormation: _awayTeam?.formation,
         );
   }
 
@@ -233,7 +310,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                     color: Colors.white, fontWeight: FontWeight.bold)),
           ),
           Text(
-            '${_teamGoals(_homePlayers)} - ${_teamGoals(_awayPlayers)}',
+            '${_scoreFor(_homePlayers, _awayPlayers)} - ${_scoreFor(_awayPlayers, _homePlayers)}',
             style: const TextStyle(
                 color: Colors.white,
                 fontSize: 28,
@@ -317,6 +394,45 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                   () => _change(p.id, 'yellow', 1), () => _change(p.id, 'yellow', -1)),
               _stepper('طرد', Colors.red, c.red,
                   () => _change(p.id, 'red', 1), () => _change(p.id, 'red', -1)),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              _stepper('ركلة جزاء', Colors.green.shade800, c.penalties,
+                  () => _change(p.id, 'penalties', 1),
+                  () => _change(p.id, 'penalties', -1)),
+              _stepper('هدف بالخطأ', Colors.redAccent, c.ownGoals,
+                  () => _change(p.id, 'ownGoals', 1),
+                  () => _change(p.id, 'ownGoals', -1)),
+              // إصابة — زرّ تبديل بسيط.
+              Expanded(
+                child: Column(
+                  children: [
+                    const Text('إصابة',
+                        style: TextStyle(fontSize: 10, color: Colors.red)),
+                    const SizedBox(height: 2),
+                    InkWell(
+                      onTap: () => _toggleInjured(p.id),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: (c.injured ? Colors.red : Colors.grey)
+                              .withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          c.injured ? Icons.healing : Icons.add,
+                          size: 16,
+                          color: c.injured ? Colors.red : Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Expanded(child: SizedBox()), // محاذاة (عمود فارغ)
             ],
           ),
           const Divider(height: 12),

@@ -63,6 +63,7 @@ class PlayerModel extends Equatable {
   final CareerStats careerStats;
   final String? claimedByUid; // حساب اللاعب المرتبط (إن وُجد)
   final String? createdByUid; // الكابتن المنشئ
+  final String? teamToken; // 📝 HINT AR: توكن عضوية الفريق الحالي (يُجدَّد عند الانتقال)
 
   const PlayerModel({
     required this.id,
@@ -80,6 +81,7 @@ class PlayerModel extends Equatable {
     this.careerStats = const CareerStats(),
     this.claimedByUid,
     this.createdByUid,
+    this.teamToken,
   });
 
   bool get isClaimed => claimedByUid != null && claimedByUid!.isNotEmpty;
@@ -103,6 +105,7 @@ class PlayerModel extends Equatable {
       careerStats: CareerStats.fromJson(json['careerStats']),
       claimedByUid: json['claimedByUid'],
       createdByUid: json['createdByUid'],
+      teamToken: json['teamToken'],
     );
   }
 
@@ -122,6 +125,7 @@ class PlayerModel extends Equatable {
       'careerStats': careerStats.toJson(),
       'claimedByUid': claimedByUid,
       'createdByUid': createdByUid,
+      if (teamToken != null) 'teamToken': teamToken,
     };
   }
 
@@ -140,6 +144,7 @@ class PlayerModel extends Equatable {
     CareerStats? careerStats,
     String? claimedByUid,
     String? createdByUid,
+    String? teamToken,
   }) {
     return PlayerModel(
       id: id,
@@ -157,6 +162,7 @@ class PlayerModel extends Equatable {
       careerStats: careerStats ?? this.careerStats,
       claimedByUid: claimedByUid ?? this.claimedByUid,
       createdByUid: createdByUid ?? this.createdByUid,
+      teamToken: teamToken ?? this.teamToken,
     );
   }
 
@@ -164,6 +170,6 @@ class PlayerModel extends Equatable {
   List<Object?> get props => [
         id, name, photoUrl, birthDate, position, shirtNumber, preferredFoot,
         height, weight, status, isStarter, currentTeamId, careerStats,
-        claimedByUid, createdByUid,
+        claimedByUid, createdByUid, teamToken,
       ];
 }

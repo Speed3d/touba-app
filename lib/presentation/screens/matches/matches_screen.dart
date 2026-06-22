@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import '../../../data/models/match_model.dart';
-import '../../../data/repositories/match_repository.dart';
-import '../../widgets/core/tooba_match_card.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import '../../../data/models/tournament_model.dart';
+import '../../../data/repositories/tournament_repository.dart';
 import '../../widgets/core/tooba_empty_state.dart';
 import '../../widgets/core/tooba_shimmer.dart';
-import 'match_detail_screen.dart';
+import 'tournament_matches_screen.dart';
 import '../../../app/router/tooba_route.dart';
 
-/// 📝 HINT AR: قائمة المباريات الحقيقية من Firestore مُرتَّبة بالتاريخ.
-/// المباريات مجمَّعة في ثلاثة أقسام: جارية الآن، قادمة، انتهت.
+/// 📝 HINT AR: شاشة المباريات متمحورة حول البطولة — كروت بطولات، كل كارت يفتح
+/// مبارياته الخاصة (جارية/قادمة/انتهت) دون تداخل بين البطولات.
 class MatchesScreen extends StatefulWidget {
   const MatchesScreen({super.key});
 
@@ -18,26 +18,17 @@ class MatchesScreen extends StatefulWidget {
   State<MatchesScreen> createState() => _MatchesScreenState();
 }
 
-class _MatchesScreenState extends State<MatchesScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  late Future<List<MatchModel>> _future;
+class _MatchesScreenState extends State<MatchesScreen> {
+  late Future<List<TournamentModel>> _future;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
-    _future = context.read<MatchRepository>().getAllMatches();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    _future = context.read<TournamentRepository>().getTournaments();
   }
 
   Future<void> _reload() async {
-    final f = context.read<MatchRepository>().getAllMatches();
+    final f = context.read<TournamentRepository>().getTournaments();
     setState(() => _future = f);
     await f;
   }
@@ -49,65 +40,43 @@ class _MatchesScreenState extends State<MatchesScreen>
         title: const Text('المباريات',
             style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorSize: TabBarIndicatorSize.label,
-          tabs: const [
-            Tab(text: 'جارية'),
-            Tab(text: 'قادمة'),
-            Tab(text: 'انتهت'),
-          ],
-        ),
       ),
-      body: FutureBuilder<List<MatchModel>>(
+      body: FutureBuilder<List<TournamentModel>>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return TabBarView(
-              controller: _tabController,
-              children: List.generate(
-                3,
-                (_) => const ToobaShimmerList(count: 5, tileHeight: 90),
-              ),
-            );
+            return const ToobaShimmerList(count: 5, tileHeight: 110);
           }
           if (snapshot.hasError) {
-            return _errorState(snapshot.error.toString());
+            return ToobaEmptyState(
+              icon: Icons.wifi_off_rounded,
+              title: 'تعذّر تحميل البطولات',
+              subtitle: snapshot.error.toString(),
+              actionLabel: 'إعادة المحاولة',
+              onAction: _reload,
+            );
           }
-
-          final all = snapshot.data ?? [];
-          final now = DateTime.now();
-
-          // 📝 HINT AR: تصنيف المباريات في ثلاث قوائم.
-          final live = all.where((m) => m.status == 'live').toList();
-          final upcoming = all.where((m) {
-            if (m.resultConfirmed || m.status == 'live') return false;
-            return true; // بدون موعد أو الموعد لم يحِن
-          }).toList()
-            ..sort((a, b) {
-              // المباريات بموعد أولاً (ترتيب تصاعدي)، ثم بدون موعد
-              if (a.dateTime == null && b.dateTime == null) return 0;
-              if (a.dateTime == null) return 1;
-              if (b.dateTime == null) return -1;
-              return a.dateTime!.compareTo(b.dateTime!);
-            });
-          final finished = all.where((m) => m.resultConfirmed).toList()
-            ..sort((a, b) {
-              if (a.dateTime == null && b.dateTime == null) return 0;
-              if (a.dateTime == null) return 1;
-              if (b.dateTime == null) return -1;
-              return b.dateTime!.compareTo(a.dateTime!); // الأحدث أولاً
-            });
-
+          final tournaments = snapshot.data ?? [];
+          if (tournaments.isEmpty) {
+            return const ToobaEmptyState(
+              icon: Icons.sports_soccer_outlined,
+              title: 'لا توجد بطولات بعد',
+              subtitle: 'ستظهر هنا البطولات ومبارياتها',
+            );
+          }
+          // الجارية أولاً ثم المنتهية.
+          tournaments.sort((a, b) {
+            if (a.status == b.status) return 0;
+            if (a.status == 'ongoing') return -1;
+            if (b.status == 'ongoing') return 1;
+            return 0;
+          });
           return RefreshIndicator(
             onRefresh: _reload,
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildList(context, live, 'لا توجد مباريات جارية الآن', now),
-                _buildList(context, upcoming, 'لا توجد مباريات قادمة', now),
-                _buildList(context, finished, 'لا توجد مباريات منتهية', now),
-              ],
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: tournaments.length,
+              itemBuilder: (context, i) => _card(tournaments[i]),
             ),
           );
         },
@@ -115,115 +84,91 @@ class _MatchesScreenState extends State<MatchesScreen>
     );
   }
 
-  Widget _errorState(String error) {
-    return ToobaEmptyState(
-      icon: Icons.wifi_off_rounded,
-      title: 'تعذّر تحميل المباريات',
-      subtitle: error,
-      actionLabel: 'إعادة المحاولة',
-      onAction: _reload,
-    );
-  }
-
-  Widget _buildList(BuildContext context, List<MatchModel> matches,
-      String emptyMsg, DateTime now) {
-    if (matches.isEmpty) {
-      return ToobaEmptyState(
-        icon: Icons.sports_soccer_outlined,
-        title: emptyMsg,
-      );
-    }
-
-    // 📝 HINT AR: تجميع المباريات حسب اليوم — مباريات بدون موعد في مجموعة منفصلة.
-    final Map<String, List<MatchModel>> byDate = {};
-    for (final m in matches) {
-      final key = m.dateTime != null
-          ? DateFormat('yyyy-MM-dd').format(m.dateTime!)
-          : '__no_date__';
-      byDate.putIfAbsent(key, () => []).add(m);
-    }
-
-    final items = <Widget>[];
-    for (final dateKey in byDate.keys) {
-      final label = dateKey == '__no_date__'
-          ? 'موعد غير محدد'
-          : _formatDateHeader(DateTime.parse(dateKey), now);
-      items.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 16, bottom: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 13,
+  Widget _card(TournamentModel t) {
+    final finished = t.status == 'finished';
+    final gradient = finished
+        ? [Colors.amber.shade700, Colors.orange.shade900]
+        : const [Color(0xFF1877F2), Color(0xFF0C5EBF)];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: InkWell(
+        onTap: () => Navigator.push(
+          context,
+          ToobaRoute.to(TournamentMatchesScreen(tournament: t)),
+        ),
+        borderRadius: BorderRadius.circular(16),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: 110,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: gradient,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              image: (t.logoUrl != null && t.logoUrl!.isNotEmpty)
+                  ? DecorationImage(
+                      image: CachedNetworkImageProvider(t.logoUrl!),
+                      fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                          Colors.black.withValues(alpha: 0.45),
+                          BlendMode.darken),
+                    )
+                  : null,
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: -10,
+                  bottom: -10,
+                  child: Icon(LucideIcons.trophy,
+                      size: 90, color: Colors.white.withValues(alpha: 0.12)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.22),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Text(finished ? 'منتهية' : 'جارية',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 11)),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(t.name,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 2),
+                      Text('${t.city} • ${t.teamIds.length} فريق',
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 12)),
+                    ],
+                  ),
+                ),
+                const Positioned(
+                  left: 12,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: Icon(Icons.chevron_left, color: Colors.white70),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      );
-      for (final m in byDate[dateKey]!) {
-        items.add(
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                ToobaRoute.to(MatchDetailScreen(match: m)),
-              ),
-              child: ToobaMatchCard(
-                homeTeamName: m.homeTeamName,
-                awayTeamName: m.awayTeamName,
-                homeScore: m.resultConfirmed ? m.homeScore : null,
-                awayScore: m.resultConfirmed ? m.awayScore : null,
-                timeText: _formatMatchTime(m, now),
-                isLive: m.status == 'live',
-                dateTime: m.dateTime,
-              ),
-            ),
-          ),
-        );
-      }
-    }
-
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: items,
+      ),
     );
-  }
-
-  String _formatDateHeader(DateTime dt, DateTime now) {
-    final isToday = dt.year == now.year &&
-        dt.month == now.month &&
-        dt.day == now.day;
-    final isTomorrow = dt.year == now.year &&
-        dt.month == now.month &&
-        dt.day == now.day + 1;
-    if (isToday) return 'اليوم';
-    if (isTomorrow) return 'غداً';
-    return DateFormat('EEEE، d MMMM', 'ar').format(dt);
-  }
-
-  // 📝 HINT AR: يُنسَّق الوقت بحسب الحالة: إذا اليوم يُظهر الساعة، وإلا
-  // يُظهر اليوم والشهر والساعة. إذا لم يحدَّد موعد يُظهر «الجولة X».
-  String _formatMatchTime(MatchModel m, DateTime now) {
-    if (m.resultConfirmed) return 'انتهت';
-    if (m.status == 'live') return 'مباشر';
-    if (m.dateTime == null) return 'الجولة ${m.round}';
-
-    final dt = m.dateTime!;
-    final isToday = dt.year == now.year &&
-        dt.month == now.month &&
-        dt.day == now.day;
-    final isTomorrow = dt.year == now.year &&
-        dt.month == now.month &&
-        dt.day == now.day + 1;
-
-    if (isToday) {
-      return 'اليوم ${DateFormat('HH:mm').format(dt)}';
-    } else if (isTomorrow) {
-      return 'غداً ${DateFormat('HH:mm').format(dt)}';
-    } else {
-      return DateFormat('d MMM • HH:mm', 'ar').format(dt);
-    }
   }
 }

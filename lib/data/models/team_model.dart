@@ -110,6 +110,7 @@ class TeamModel extends Equatable {
   final TeamStats stats;
   final List<RosterEntry> roster;
   final int playerCount;
+  final String? formation; // خطة الفريق الأساسية «1-2-2-1» (يختارها الكابتن)
 
   const TeamModel({
     required this.id,
@@ -129,6 +130,7 @@ class TeamModel extends Equatable {
     this.stats = const TeamStats(),
     this.roster = const [],
     this.playerCount = 0,
+    this.formation,
   }) : nameLower = nameLower ?? name;
 
   factory TeamModel.fromJson(Map<String, dynamic> json, String id) {
@@ -152,6 +154,7 @@ class TeamModel extends Equatable {
           .map((e) => RosterEntry.fromJson(Map<String, dynamic>.from(e)))
           .toList(),
       playerCount: json['playerCount'] ?? 0,
+      formation: json['formation'],
     );
   }
 
@@ -174,6 +177,7 @@ class TeamModel extends Equatable {
       'stats': stats.toJson(),
       'roster': roster.map((e) => e.toJson()).toList(),
       'playerCount': playerCount,
+      if (formation != null) 'formation': formation,
     };
   }
 
@@ -193,6 +197,7 @@ class TeamModel extends Equatable {
     TeamStats? stats,
     List<RosterEntry>? roster,
     int? playerCount,
+    String? formation,
   }) {
     return TeamModel(
       id: id,
@@ -212,6 +217,7 @@ class TeamModel extends Equatable {
       stats: stats ?? this.stats,
       roster: roster ?? this.roster,
       playerCount: playerCount ?? this.playerCount,
+      formation: formation ?? this.formation,
     );
   }
 
@@ -219,6 +225,6 @@ class TeamModel extends Equatable {
   List<Object?> get props => [
         id, name, nameLower, logoUrl, city, area, foundedYear, colorPrimary,
         colorSecondary, description, captainId, managerPhone, ratingPoints,
-        badges, stats, roster, playerCount,
+        badges, stats, roster, playerCount, formation,
       ];
 }

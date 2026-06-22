@@ -20,6 +20,10 @@ class UserModel extends Equatable {
   /// سجل اللاعب المرتبط بهذا الحساب (إن طالب المستخدم بملفه).
   final String? linkedPlayerId;
 
+  /// 📝 HINT AR: كود اللاعب الدائم — هويته الثابتة التي لا تتغيّر. يُولَّد مرة
+  /// عند التسجيل كلاعب، يظهر في ملفه، ويُدخله الكابتن لدعوته/ربطه.
+  final String? playerCode;
+
   const UserModel({
     required this.id,
     required this.name,
@@ -29,6 +33,7 @@ class UserModel extends Equatable {
     this.role = 'user',
     this.adminPermissions = const [],
     this.linkedPlayerId,
+    this.playerCode,
   });
 
   bool get isCaptain => role == 'captain';
@@ -45,6 +50,7 @@ class UserModel extends Equatable {
       adminPermissions:
           List<String>.from(json['adminPermissions'] ?? const []),
       linkedPlayerId: json['linkedPlayerId'],
+      playerCode: json['playerCode'],
     );
   }
 
@@ -57,6 +63,7 @@ class UserModel extends Equatable {
       'role': role,
       'adminPermissions': adminPermissions,
       if (linkedPlayerId != null) 'linkedPlayerId': linkedPlayerId,
+      if (playerCode != null) 'playerCode': playerCode,
     };
   }
 
@@ -68,6 +75,7 @@ class UserModel extends Equatable {
     String? role,
     List<String>? adminPermissions,
     String? linkedPlayerId,
+    String? playerCode,
   }) {
     return UserModel(
       id: id,
@@ -78,12 +86,13 @@ class UserModel extends Equatable {
       role: role ?? this.role,
       adminPermissions: adminPermissions ?? this.adminPermissions,
       linkedPlayerId: linkedPlayerId ?? this.linkedPlayerId,
+      playerCode: playerCode ?? this.playerCode,
     );
   }
 
   @override
   List<Object?> get props => [
         id, name, email, phone, profileImage, role, adminPermissions,
-        linkedPlayerId,
+        linkedPlayerId, playerCode,
       ];
 }

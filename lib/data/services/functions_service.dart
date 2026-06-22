@@ -13,6 +13,17 @@ class FunctionsService {
     return (data['playerId'] ?? '').toString();
   }
 
+  /// 📝 HINT AR: ربط لاعب بكوده الدائم (الكابتن يُدخل كود اللاعب). يُعيد معرّف السجل.
+  Future<String> linkPlayerByCode(String teamId, String playerCode) async {
+    final callable = _functions.httpsCallable('linkPlayerByCode');
+    final result = await callable.call(<String, dynamic>{
+      'teamId': teamId,
+      'playerCode': playerCode,
+    });
+    final data = Map<String, dynamic>.from(result.data as Map);
+    return (data['playerId'] ?? '').toString();
+  }
+
   /// 📝 HINT AR: منح أو سحب صلاحية من مستخدم (للأدمن فقط)
   Future<void> grantCapability(String uid, String capability, bool value) async {
     final callable = _functions.httpsCallable('grantCapability');

@@ -124,11 +124,13 @@ service cloud.firestore {
       allow create: if isOwner(userId)
                     && request.resource.data.role in ['user', 'captain'];
 
-      // 📝 HINT AR: التعديل لصاحبه (بلا تصعيد صلاحيات) أو للأدمن.
-      // المستخدم لا يستطيع تغيير role / adminPermissions / linkedPlayerId بنفسه.
+      // 📝 HINT AR: التعديل لصاحبه (بلا تصعيد صلاحيات) أو للأدمن. المستخدم لا
+      // يغيّر role / adminPermissions / linkedPlayerId / playerCode بنفسه
+      // (playerCode هوية دائمة تُولَّد مرة عند الإنشاء، وlinkedPlayerId من CF).
       allow update: if isAdmin()
                     || (isOwner(userId)
-                        && !touches(['role', 'adminPermissions', 'linkedPlayerId']));
+                        && !touches(['role', 'adminPermissions',
+                            'linkedPlayerId', 'playerCode']));
 
       allow delete: if isAdmin();
     }
@@ -169,7 +171,7 @@ service cloud.firestore {
       // 3) اللاعب صاحب السجل (بعد المطالبة): حقوله الشخصية فقط.
       allow update: if isAdmin()
                     || (isTeamCaptain(resource.data.currentTeamId)
-                        && !touches(['careerStats', 'claimedByUid']))
+                        && !touches(['careerStats', 'claimedByUid', 'teamToken']))
                     || (resource.data.claimedByUid == request.auth.uid
                         && changes(['name', 'photoUrl', 'preferredFoot',
                                     'height', 'weight', 'birthDate', 'updatedAt']));
@@ -192,6 +194,20 @@ service cloud.firestore {
       // 📝 HINT AR: القبول/الرفض بيد كابتن الفريق أو الأدمن.
       allow update: if isTeamCaptain(resource.data.teamId) || isAdmin();
       allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+
+    // ─── طلبات الخروج من الفريق (Release Requests) ───────────────────────
+    // 📝 HINT AR: ينشئها اللاعب (userId==المستخدم)؛ يبتّها كابتن الفريق أو الأدمن
+    // (status). التصعيد (escalated) يضبطه اللاعب صاحب الطلب. الفكّ الفعلي في CF.
+    match /release_requests/{reqId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated()
+                    && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin()
+                    || isTeamCaptain(resource.data.teamId)
+                    || (resource.data.userId == request.auth.uid
+                        && changes(['escalated']));
+      allow delete: if isAdmin();
     }
 
     // ─── روابط دعوة المطالبة (Claim Invites) ─────────────────────────────
@@ -246,7 +262,36 @@ service cloud.firestore {
       allow read: if true;
       allow create, update: if isAdmin()
                             || (isOwner(uid) && isReferee()
-                                && !touches(['rating', 'matchesCount', 'verified']));
+                                && !touches(['rating', 'matchesCount',
+                                    'ratingCount', 'verified']));
+      allow delete: if isAdmin();
+    }
+
+    // ─── طلبات التحكيم (Referee Applications) ────────────────────────────
+    // 📝 HINT AR: يقدّمها أي مستخدم لنفسه (status=pending). يراجعها الأدمن وحده
+    // (status). يقرؤها صاحبها أو منظّم البطولة أو الأدمن. المنح يتم عبر CF.
+    match /referee_applications/{appId} {
+      allow read: if isAuthenticated()
+                  && (resource.data.userId == request.auth.uid
+                      || resource.data.organizerUid == request.auth.uid
+                      || isAdmin());
+      allow create: if isAuthenticated()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == 'pending';
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─── تقييمات الحكّام (Referee Ratings) ───────────────────────────────
+    // 📝 HINT AR: أي مستخدم مسجّل يقيّم الحكم بعد المباراة (1..5). مُعرّف المستند
+    // = matchId_raterId يمنع التكرار. المتوسط يُجمَّع في refereeProfiles عبر CF.
+    match /referee_ratings/{ratingId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated()
+                    && request.resource.data.raterId == request.auth.uid
+                    && request.resource.data.rating is int
+                    && request.resource.data.rating >= 1
+                    && request.resource.data.rating <= 5;
       allow delete: if isAdmin();
     }
 
@@ -272,6 +317,57 @@ service cloud.firestore {
       allow create: if isAuthenticated()
                     && request.resource.data.reporterId == request.auth.uid;
       allow update, delete: if isAdmin();
+    }
+
+    // ─── المحادثات (كابتن↔كابتن في التحدي) — المرحلة 7 ───────────────────
+    // 📝 HINT AR: محادثة بين طرفين فقط (participants). الطرفان يقرآن/يكتبان آخر
+    // رسالة وعدّاد غير المقروء؛ لا أحد آخر. تغيير participants ممنوع.
+    match /chats/{chatId} {
+      allow read: if isAuthenticated()
+                  && request.auth.uid in resource.data.participants;
+      allow create: if isAuthenticated()
+                    && request.auth.uid in request.resource.data.participants;
+      allow update: if isAuthenticated()
+                    && request.auth.uid in resource.data.participants
+                    && !touches(['participants']);
+      allow delete: if false;
+
+      // الرسائل: يقرؤها/يكتبها المشاركون فقط؛ المرسِل صاحب رسالته.
+      match /messages/{messageId} {
+        allow read: if isAuthenticated()
+                    && request.auth.uid in get(
+                      /databases/$(database)/documents/chats/$(chatId)
+                    ).data.participants;
+        allow create: if isAuthenticated()
+                      && request.resource.data.senderId == request.auth.uid
+                      && request.auth.uid in get(
+                        /databases/$(database)/documents/chats/$(chatId)
+                      ).data.participants;
+        allow update, delete: if false;
+      }
+    }
+
+    // ─── تحدّيات الفرق الودّية — المرحلة 7 ───────────────────────────────
+    // 📝 HINT AR: القراءة للمسجّلين. الإنشاء لصاحب الطلب (كابتن). التحديث:
+    // صاحب الطلب يدير كلّ شيء؛ أو متقدّم يضيف نفسه فقط (applicants/معرّفاته).
+    match /challenges/{challengeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated()
+                    && request.resource.data.requesterCaptainId == request.auth.uid
+                    && request.resource.data.status == 'open';
+      allow update: if isAuthenticated() && (
+                      isAdmin()
+                      || resource.data.requesterCaptainId == request.auth.uid
+                      || (
+                        request.resource.data.diff(resource.data).affectedKeys()
+                            .hasOnly(['applicants', 'applicantCaptainIds'])
+                        && request.auth.uid in
+                            request.resource.data.applicantCaptainIds
+                      )
+                    );
+      allow delete: if isAuthenticated()
+                    && (resource.data.requesterCaptainId == request.auth.uid
+                        || isAdmin());
     }
 
     // 📝 HINT AR: قاعدة افتراضية صريحة — أي مسار غير معرّف أعلاه مرفوض تماماً.

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,6 +11,7 @@ import '../../../data/repositories/home_repository.dart';
 import '../../../data/services/notification_service.dart';
 import '../../widgets/core/tooba_shimmer.dart';
 import '../notifications/notifications_screen.dart';
+import 'banner_details_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 
@@ -70,10 +72,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 overflow: TextOverflow.ellipsis),
           ],
         ),
-        centerTitle: true,
+        // 📝 HINT AR: الاسم يمين (centerTitle=false)، اللوغو وسط، الجرس يسار.
+        centerTitle: false,
         flexibleSpace: SafeArea(
           child: Center(
-            child: Image.asset('assets/images/logo.png', height: 36),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset('assets/images/logo.png', height: 38),
+            ),
           ),
         ),
         actions: [_notificationBell(context)],
@@ -204,11 +210,41 @@ class _BannerSlider extends StatefulWidget {
 class _BannerSliderState extends State<_BannerSlider> {
   final _controller = PageController();
   int _current = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoplay();
+  }
+
+  // 📝 HINT AR: تقليب تلقائي كل 5 ثوانٍ (يلتفّ للبداية بعد آخر إعلان).
+  void _startAutoplay() {
+    if (widget.banners.length <= 1) return;
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted || !_controller.hasClients) return;
+      final next = (_current + 1) % widget.banners.length;
+      _controller.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _openBanner(BannerModel b) {
+    if (!b.hasDetails) return;
+    Navigator.push(
+      context,
+      ToobaRoute.to(BannerDetailsScreen(banner: b)),
+    );
   }
 
   @override
@@ -224,7 +260,9 @@ class _BannerSliderState extends State<_BannerSlider> {
             onPageChanged: (i) => setState(() => _current = i),
             itemBuilder: (context, i) {
               final b = widget.banners[i];
-              return Padding(
+              return GestureDetector(
+                onTap: () => _openBanner(b),
+                child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
@@ -272,6 +310,7 @@ class _BannerSliderState extends State<_BannerSlider> {
                       ],
                     ),
                   ),
+                ),
               );
             },
           ),

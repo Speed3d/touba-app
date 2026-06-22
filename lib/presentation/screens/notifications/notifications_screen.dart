@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/notification_model.dart';
+import '../../../data/repositories/team_repository.dart';
+import '../../../data/repositories/player_repository.dart';
+import '../../../data/repositories/match_repository.dart';
+import '../../../data/repositories/tournament_repository.dart';
 import '../../cubits/notifications/notifications_cubit.dart';
 import '../../cubits/notifications/notifications_state.dart';
+import '../../cubits/team/team_cubit.dart';
+import '../../cubits/tournament/tournament_cubit.dart';
+import '../teams/team_details_screen.dart';
+import '../tournaments/tournament_details_screen.dart';
+import '../chat/chat_screen.dart';
+import '../challenges/challenges_screen.dart';
+import '../../../app/router/tooba_route.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -109,9 +120,12 @@ class _NotificationTile extends StatelessWidget {
       onDismissed: (_) =>
           context.read<NotificationsCubit>().deleteNotification(notification.id),
       child: InkWell(
-        onTap: isUnread
-            ? () => context.read<NotificationsCubit>().markAsRead(notification.id)
-            : null,
+        onTap: () {
+          if (isUnread) {
+            context.read<NotificationsCubit>().markAsRead(notification.id);
+          }
+          _navigate(context);
+        },
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
@@ -185,6 +199,49 @@ class _NotificationTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // 📝 HINT AR: يفتح الشاشة المناسبة حسب محتوى الإشعار (data): بطولة → تفاصيلها،
+  // فريق → تفاصيله (حيث يجد الكابتن زر الإدارة والطلبات).
+  void _navigate(BuildContext context) {
+    final data = notification.data;
+    if (data == null) return;
+    final tournamentId = (data['tournamentId'] as String?) ?? '';
+    final teamId = (data['teamId'] as String?) ?? '';
+    final chatId = (data['chatId'] as String?) ?? '';
+    final challengeId = (data['challengeId'] as String?) ?? '';
+
+    if (chatId.isNotEmpty) {
+      Navigator.push(
+        context,
+        ToobaRoute.to(ChatScreen(chatId: chatId, title: 'محادثة التحدّي')),
+      );
+    } else if (challengeId.isNotEmpty) {
+      Navigator.push(context, ToobaRoute.to(const ChallengesScreen()));
+    } else if (tournamentId.isNotEmpty) {
+      Navigator.push(
+        context,
+        ToobaRoute.to(BlocProvider(
+          create: (ctx) => TournamentCubit(
+            ctx.read<TournamentRepository>(),
+            ctx.read<MatchRepository>(),
+            ctx.read<TeamRepository>(),
+          )..fetchDetails(tournamentId),
+          child: TournamentDetailsScreen(tournamentId: tournamentId),
+        )),
+      );
+    } else if (teamId.isNotEmpty) {
+      Navigator.push(
+        context,
+        ToobaRoute.to(BlocProvider(
+          create: (ctx) => TeamCubit(
+            ctx.read<TeamRepository>(),
+            ctx.read<PlayerRepository>(),
+          ),
+          child: TeamDetailsScreen(teamId: teamId),
+        )),
+      );
+    }
   }
 
   String _timeAgo(DateTime dt) {

@@ -5,10 +5,14 @@ import '../../cubits/theme_cubit.dart';
 import '../../cubits/locale_cubit.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/repositories/team_repository.dart';
+import '../../../data/repositories/player_repository.dart';
 import '../../../data/services/functions_service.dart';
 import '../legal/privacy_policy_screen.dart';
 import '../legal/terms_conditions_screen.dart';
 import '../profile/profile_screen.dart';
+import '../matches/referee_matches_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 
@@ -40,6 +44,27 @@ class SettingsScreen extends StatelessWidget {
             _profileHeader(context, isDark, authState),
           if (authState is AuthVisitor) _visitorHeader(context, theme),
           const SizedBox(height: 20),
+
+          // ── كارت الحكم (لمن يملك صلاحية حكم فقط) ──
+          if (authState is AuthAuthenticated &&
+              authState.user.adminPermissions.contains('referee')) ...[
+            _card(context, isDark, [
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.sports, color: theme.colorScheme.primary),
+                title: const Text('مبارياتي كحكم'),
+                subtitle: const Text('المباريات المعيّن لها',
+                    style: TextStyle(fontSize: 12)),
+                trailing: const Icon(Icons.chevron_left, size: 20),
+                onTap: () => Navigator.push(
+                  context,
+                  ToobaRoute.to(RefereeMatchesScreen(
+                      refereeUid: authState.user.id)),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 16),
+          ],
 
           _section(context, 'المظهر'),
           _card(context, isDark, [
@@ -175,9 +200,15 @@ class SettingsScreen extends StatelessWidget {
             style: theme.textTheme.titleLarge
                 ?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 2),
-        Text(_roleLabel(user.role),
+        // 📝 HINT AR: الصفة + الفريق (لاعب مع فريق X / كابتن فريق X).
+        FutureBuilder<String>(
+          future: _resolveTeamLabel(context, user),
+          builder: (context, snap) => Text(
+            snap.data ?? _roleLabel(user.role),
             style: theme.textTheme.bodyMedium
-                ?.copyWith(color: theme.colorScheme.primary)),
+                ?.copyWith(color: theme.colorScheme.primary),
+          ),
+        ),
         const SizedBox(height: 16),
         _card(context, isDark, [
           ListTile(
@@ -230,6 +261,31 @@ class SettingsScreen extends StatelessWidget {
         return 'مدير المنصة';
       default:
         return 'لاعب';
+    }
+  }
+
+  // 📝 HINT AR: «كابتن فريق X» / «لاعب مع فريق X» — يحلّ فريق المستخدم.
+  Future<String> _resolveTeamLabel(BuildContext context, UserModel user) async {
+    if (user.role == 'admin') return 'مدير المنصة';
+    final teamRepo = context.read<TeamRepository>();
+    try {
+      if (user.role == 'captain') {
+        final team = await teamRepo.getTeamByCaptain(user.id);
+        return team != null ? 'كابتن فريق ${team.name}' : 'كابتن (بلا فريق)';
+      }
+      // لاعب
+      if (user.linkedPlayerId != null && user.linkedPlayerId!.isNotEmpty) {
+        final player = await context
+            .read<PlayerRepository>()
+            .getPlayerById(user.linkedPlayerId!);
+        if (player.currentTeamId.isNotEmpty) {
+          final team = await teamRepo.getTeamById(player.currentTeamId);
+          return 'لاعب مع فريق ${team.name}';
+        }
+      }
+      return 'لاعب (بلا فريق)';
+    } catch (_) {
+      return _roleLabel(user.role);
     }
   }
 

@@ -13,3 +13,8 @@ export 'notification_model.dart';
 export 'report_model.dart';
 export 'banner_model.dart';
 export 'news_model.dart';
+export 'release_request_model.dart';
+export 'referee_application_model.dart';
+export 'chat_model.dart';
+export 'chat_message_model.dart';
+export 'challenge_model.dart';

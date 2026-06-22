@@ -1,5 +1,24 @@
 import 'package:equatable/equatable.dart';
 
+/// 📝 HINT AR: داعم/راعٍ للبطولة (لوغو + اسم) — يعرضه تبويب «شروط وقوانين».
+/// قائمة منها تُحفظ على مستند البطولة (يكتبها المنظّم/الأدمن).
+class Sponsor extends Equatable {
+  final String name;
+  final String logoUrl;
+
+  const Sponsor({required this.name, this.logoUrl = ''});
+
+  factory Sponsor.fromJson(Map<String, dynamic> json) => Sponsor(
+        name: json['name'] ?? '',
+        logoUrl: json['logoUrl'] ?? '',
+      );
+
+  Map<String, dynamic> toJson() => {'name': name, 'logoUrl': logoUrl};
+
+  @override
+  List<Object?> get props => [name, logoUrl];
+}
+
 /// 📝 HINT AR: البطولة. الترتيب (standings) يحسبه النظام (Cloud Functions)؛
 /// المنظّم يكتب البيانات التعريفية والفرق المشاركة فقط.
 class TournamentModel extends Equatable {
@@ -16,6 +35,8 @@ class TournamentModel extends Equatable {
   final String city;
   final String status; // upcoming | ongoing | finished
   final String? logoUrl;
+  final String? cupImageUrl; // صورة الكأس (يضبطها الأدمن)
+  final String? prizes; // وصف الجوائز
   final String? sponsorName;
   final String? sponsorLogo;
   final List<dynamic> standings;
@@ -25,6 +46,9 @@ class TournamentModel extends Equatable {
   final int playerFormat; // عدد اللاعبين الأساسيين (5/7/11)
   final String? winnerTeamId; // الفريق الفائز (يكتبه النظام عند الانتهاء)
   final String? winnerTeamName; // اسم الفائز (denormalized للعرض الرخيص)
+  final String? rules; // نص الشروط والقوانين (تبويب «شروط وقوانين»)
+  final List<Sponsor> sponsors; // الداعمون (لوغو + اسم) — المنظّم/الأدمن
+  final List<String> adBanners; // صور البانر المتحرك في تبويب الشروط
 
   const TournamentModel({
     required this.id,
@@ -40,15 +64,20 @@ class TournamentModel extends Equatable {
     required this.city,
     this.status = 'upcoming',
     this.logoUrl,
+    this.cupImageUrl,
+    this.prizes,
     this.sponsorName,
     this.sponsorLogo,
     this.standings = const [],
     this.isHomeAndAway = false,
     this.generationMode = 'full_tree',
     this.numberOfGroups,
-    this.playerFormat = 7,
+    this.playerFormat = 6,
     this.winnerTeamId,
     this.winnerTeamName,
+    this.rules,
+    this.sponsors = const [],
+    this.adBanners = const [],
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json, String id) {
@@ -72,15 +101,23 @@ class TournamentModel extends Equatable {
       city: json['city'] ?? '',
       status: json['status'] ?? 'upcoming',
       logoUrl: json['logoUrl'],
+      cupImageUrl: json['cupImageUrl'],
+      prizes: json['prizes'],
       sponsorName: json['sponsorName'],
       sponsorLogo: json['sponsorLogo'],
       standings: json['standings'] ?? const [],
       isHomeAndAway: json['isHomeAndAway'] ?? false,
       generationMode: json['generationMode'] ?? 'full_tree',
       numberOfGroups: json['numberOfGroups'],
-      playerFormat: json['playerFormat'] ?? 7,
+      playerFormat: json['playerFormat'] ?? 6,
       winnerTeamId: json['winnerTeamId'],
       winnerTeamName: json['winnerTeamName'],
+      rules: json['rules'],
+      sponsors: (json['sponsors'] as List?)
+              ?.map((e) => Sponsor.fromJson(Map<String, dynamic>.from(e)))
+              .toList() ??
+          const [],
+      adBanners: List<String>.from(json['adBanners'] ?? const []),
     );
   }
 
@@ -98,6 +135,8 @@ class TournamentModel extends Equatable {
       'city': city,
       'status': status,
       if (logoUrl != null) 'logoUrl': logoUrl,
+      if (cupImageUrl != null) 'cupImageUrl': cupImageUrl,
+      if (prizes != null) 'prizes': prizes,
       if (sponsorName != null) 'sponsorName': sponsorName,
       if (sponsorLogo != null) 'sponsorLogo': sponsorLogo,
       'standings': standings,
@@ -105,6 +144,10 @@ class TournamentModel extends Equatable {
       'generationMode': generationMode,
       if (numberOfGroups != null) 'numberOfGroups': numberOfGroups,
       'playerFormat': playerFormat,
+      if (rules != null) 'rules': rules,
+      if (sponsors.isNotEmpty)
+        'sponsors': sponsors.map((s) => s.toJson()).toList(),
+      if (adBanners.isNotEmpty) 'adBanners': adBanners,
       // 📝 HINT AR: winnerTeamId يكتبه النظام (CF) عند الانتهاء — لا نرسله من العميل.
     };
   }
@@ -112,8 +155,9 @@ class TournamentModel extends Equatable {
   @override
   List<Object?> get props => [
         id, name, type, organizerUid, teamIds, pointsRule, tiebreakers, rounds,
-        startDate, endDate, city, status, logoUrl, sponsorName, sponsorLogo,
-        standings, isHomeAndAway, generationMode, numberOfGroups,
-        playerFormat, winnerTeamId, winnerTeamName,
+        startDate, endDate, city, status, logoUrl, cupImageUrl, prizes,
+        sponsorName, sponsorLogo, standings, isHomeAndAway, generationMode,
+        numberOfGroups, playerFormat, winnerTeamId, winnerTeamName,
+        rules, sponsors, adBanners,
       ];
 }

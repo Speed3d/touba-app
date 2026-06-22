@@ -68,6 +68,20 @@ class UserRepository {
   // Admin Methods
   // ==========================================
 
+  // 📝 HINT AR: قائمة الحكّام — مستخدمون مُنحوا صلاحية «حكم» (مرآة adminPermissions).
+  Future<List<UserModel>> getReferees() async {
+    try {
+      final query = await _firestore
+          .collection('users')
+          .where('adminPermissions', arrayContains: 'referee')
+          .limit(50)
+          .get();
+      return query.docs.map((d) => UserModel.fromJson(d.data(), d.id)).toList();
+    } catch (e) {
+      throw AuthException('حدث خطأ أثناء جلب الحكّام');
+    }
+  }
+
   Future<List<UserModel>> searchUsersByPhone(String phoneQuery) async {
     try {
       // 📝 HINT AR: في Firestore البحث النصي الجزئي صعب، لذا نبحث بتطابق البداية (Prefix)

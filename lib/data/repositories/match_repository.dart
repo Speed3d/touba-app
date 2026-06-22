@@ -31,6 +31,69 @@ class MatchRepository {
     return snap.docs.map((d) => MatchModel.fromJson(d.data(), d.id)).toList();
   }
 
+  // 📝 HINT AR: تعيين حكم لمباراة (للمنظّم/الأدمن) — يحدّث refereeId + الاسم.
+  Future<void> assignReferee(
+      String matchId, String? refereeId, String? refereeName) async {
+    await _firestore.collection('matches').doc(matchId).update({
+      'refereeId': refereeId,
+      'refereeName': refereeName,
+    });
+  }
+
+  // 📝 HINT AR: مباريات هذا الحكم (لشاشة «مبارياتي كحكم»).
+  Future<List<MatchModel>> getMatchesByReferee(String refereeUid,
+      {int limit = 50}) async {
+    final snap = await _firestore
+        .collection('matches')
+        .where('refereeId', isEqualTo: refereeUid)
+        .limit(limit)
+        .get();
+    return snap.docs.map((d) => MatchModel.fromJson(d.data(), d.id)).toList();
+  }
+
+  // 📝 HINT AR: تقييم الحكم بعد المباراة (1..5). مُعرّف المستند يمنع التكرار؛
+  // المتوسط يُجمَّع في refereeProfiles عبر Cloud Function.
+  Future<void> rateReferee({
+    required String refereeId,
+    required String matchId,
+    required String raterId,
+    required int rating,
+  }) async {
+    await _firestore
+        .collection('referee_ratings')
+        .doc('${matchId}_$raterId')
+        .set({
+      'refereeId': refereeId,
+      'matchId': matchId,
+      'raterId': raterId,
+      'rating': rating,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // 📝 HINT AR: تقييمي السابق لحكم هذه المباراة (إن وُجد) — لعرضه مسبقاً.
+  Future<int?> getMyRefereeRating(String matchId, String raterId) async {
+    final doc = await _firestore
+        .collection('referee_ratings')
+        .doc('${matchId}_$raterId')
+        .get();
+    if (!doc.exists) return null;
+    return doc.data()?['rating'] as int?;
+  }
+
+  // 📝 HINT AR: متوسط تقييم الحكم وعدده (من refereeProfiles).
+  Future<({double rating, int count})> getRefereeProfile(
+      String refereeId) async {
+    final doc =
+        await _firestore.collection('refereeProfiles').doc(refereeId).get();
+    if (!doc.exists) return (rating: 0.0, count: 0);
+    final d = doc.data()!;
+    return (
+      rating: ((d['rating'] ?? 0) as num).toDouble(),
+      count: (d['ratingCount'] ?? 0) as int,
+    );
+  }
+
   // 📝 HINT AR: جدولة موعد المباراة (للمنظّم) — يحدّث حقل dateTime فقط.
   // الحقول الأخرى (النتيجة/statsApplied) لا تُمسّ.
   Future<void> scheduleMatch(String matchId, DateTime dateTime) async {
@@ -48,12 +111,21 @@ class MatchRepository {
     int awayScore, {
     List<Map<String, dynamic>> events = const [],
     List<String> lineup = const [],
+    // 📝 HINT AR: لقطة تشكيلة كل فريق + خطته — تُحفظ بالمباراة فتبقى ثابتة.
+    List<Map<String, dynamic>> homeLineup = const [],
+    List<Map<String, dynamic>> awayLineup = const [],
+    String? homeFormation,
+    String? awayFormation,
   }) async {
     await _firestore.collection('matches').doc(matchId).update({
       'homeScore': homeScore,
       'awayScore': awayScore,
       'events': events,
       'lineup': lineup,
+      if (homeLineup.isNotEmpty) 'homeLineup': homeLineup,
+      if (awayLineup.isNotEmpty) 'awayLineup': awayLineup,
+      if (homeFormation != null) 'homeFormation': homeFormation,
+      if (awayFormation != null) 'awayFormation': awayFormation,
       'status': 'finished',
       'resultConfirmed': true,
     });

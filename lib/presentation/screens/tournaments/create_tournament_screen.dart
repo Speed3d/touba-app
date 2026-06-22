@@ -1,13 +1,18 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/tournament/tournament_cubit.dart';
 import '../../cubits/tournament/tournament_state.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/models/city_model.dart';
+import '../../../data/models/user_model.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../data/repositories/player_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/location_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 
@@ -28,11 +33,17 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
   bool _isHomeAndAway = false;
   String _generationMode = 'full_tree';
   int _numberOfGroups = 2;
-  int _playerFormat = 7; // 5/7/11 — عدد اللاعبين الأساسيين المطلوب
+  int _playerFormat = 6; // 6/8/11 — عدد اللاعبين الأساسيين المطلوب
   bool _validating = false;
+  File? _logoFile; // صورة البطولة (للكارت)
+  DateTime? _startDate; // موعد بداية البطولة
+  int _roundIntervalDays = 7; // الفاصل بين الجولات (افتراضي أسبوعي)
+  final ImagePicker _picker = ImagePicker();
   final Set<String> _selected = {};
   List<TeamModel> _teams = [];
   bool _loadingTeams = true;
+  List<UserModel> _referees = [];
+  final Set<String> _selectedReferees = {};
   
   final LocationRepository _locationRepo = LocationRepository();
 
@@ -43,11 +54,18 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
   }
 
   Future<void> _loadTeams() async {
+    final teamRepo = context.read<TeamRepository>();
+    final userRepo = context.read<UserRepository>();
     try {
-      final teams = await context.read<TeamRepository>().getTeams();
+      final teams = await teamRepo.getTeams();
+      List<UserModel> referees = [];
+      try {
+        referees = await userRepo.getReferees();
+      } catch (_) {}
       if (mounted) {
         setState(() {
           _teams = teams;
+          _referees = referees;
           _loadingTeams = false;
         });
       }
@@ -111,10 +129,68 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
           generationMode: _generationMode,
           numberOfGroups: _tournamentType == 'groups' ? _numberOfGroups : null,
           playerFormat: _playerFormat,
+          logoFile: _logoFile,
+          startDate: _startDate,
+          roundIntervalDays: _roundIntervalDays,
+          referees: _referees
+              .where((r) => _selectedReferees.contains(r.id))
+              .toList(),
         );
   }
 
   void _snack(String msg) => ToobaSnackBar.warning(context, msg);
+
+  // 📝 HINT AR: اختيار صورة البطولة (معرض/كاميرا).
+  Future<void> _pickLogo() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Wrap(children: [
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('اختيار من المعرض'),
+            onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+          ),
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('التقاط صورة'),
+            onTap: () => Navigator.pop(ctx, ImageSource.camera),
+          ),
+        ]),
+      ),
+    );
+    if (source == null) return;
+    final f = await _picker.pickImage(
+        source: source, imageQuality: 70, maxWidth: 1200);
+    if (f != null) setState(() => _logoFile = File(f.path));
+  }
+
+  // 📝 HINT AR: اختيار تاريخ ووقت بداية البطولة (يُجدول المباريات تلقائياً).
+  Future<void> _pickStartDate() async {
+    final now = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _startDate ?? now,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 3),
+      helpText: 'موعد بداية البطولة',
+    );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: _startDate != null
+          ? TimeOfDay.fromDateTime(_startDate!)
+          : const TimeOfDay(hour: 18, minute: 0),
+    );
+    if (!mounted) return;
+    setState(() {
+      _startDate = DateTime(date.year, date.month, date.day,
+          time?.hour ?? 18, time?.minute ?? 0);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +225,39 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        // صورة البطولة (تظهر في الكارت).
+                        Center(
+                          child: GestureDetector(
+                            onTap: _pickLogo,
+                            child: Container(
+                              width: 110,
+                              height: 110,
+                              decoration: BoxDecoration(
+                                color: fill,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                    color: theme.colorScheme.primary),
+                                image: _logoFile != null
+                                    ? DecorationImage(
+                                        image: FileImage(_logoFile!),
+                                        fit: BoxFit.cover)
+                                    : null,
+                              ),
+                              child: _logoFile == null
+                                  ? Icon(Icons.add_a_photo,
+                                      color: theme.colorScheme.primary,
+                                      size: 32)
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Center(
+                          child: Text('صورة البطولة (اختياري)',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12)),
+                        ),
+                        const SizedBox(height: 16),
                         TextFormField(
                           controller: _nameController,
                           decoration: InputDecoration(
@@ -161,6 +270,50 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           validator: (v) => v == null || v.isEmpty
                               ? 'يرجى إدخال اسم البطولة'
                               : null,
+                        ),
+                        const SizedBox(height: 16),
+                        // موعد البداية + الفاصل بين الجولات.
+                        InkWell(
+                          onTap: _pickStartDate,
+                          borderRadius: BorderRadius.circular(12),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'موعد بداية البطولة (اختياري)',
+                              prefixIcon: const Icon(Icons.event),
+                              border: border,
+                              filled: true,
+                              fillColor: fill,
+                            ),
+                            child: Text(
+                              _startDate == null
+                                  ? 'يُجدول النظام المباريات تلقائياً'
+                                  : DateFormat('EEE d MMM yyyy • HH:mm', 'ar')
+                                      .format(_startDate!),
+                              style: TextStyle(
+                                  color: _startDate == null
+                                      ? Colors.grey
+                                      : null),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<int>(
+                          initialValue: _roundIntervalDays,
+                          decoration: InputDecoration(
+                            labelText: 'الفاصل بين الجولات',
+                            prefixIcon: const Icon(Icons.repeat),
+                            border: border,
+                            filled: true,
+                            fillColor: fill,
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: 1, child: Text('يومياً')),
+                            DropdownMenuItem(value: 3, child: Text('كل 3 أيام')),
+                            DropdownMenuItem(value: 7, child: Text('أسبوعياً')),
+                            DropdownMenuItem(value: 14, child: Text('كل أسبوعين')),
+                          ],
+                          onChanged: (v) =>
+                              setState(() => _roundIntervalDays = v ?? 7),
                         ),
                         const SizedBox(height: 16),
                         StreamBuilder<List<CityModel>>(
@@ -217,12 +370,12 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                             fillColor: fill,
                           ),
                           items: const [
-                            DropdownMenuItem(value: 5, child: Text('خماسي (5 لاعبين)')),
-                            DropdownMenuItem(value: 7, child: Text('سباعي (7 لاعبين)')),
+                            DropdownMenuItem(value: 6, child: Text('سداسي (6 لاعبين)')),
+                            DropdownMenuItem(value: 8, child: Text('ثماني (8 لاعبين)')),
                             DropdownMenuItem(value: 11, child: Text('11 لاعب')),
                           ],
                           onChanged: (v) =>
-                              setState(() => _playerFormat = v ?? 7),
+                              setState(() => _playerFormat = v ?? 6),
                         ),
                         const SizedBox(height: 16),
 
@@ -293,6 +446,38 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                     _selected.add(t.id);
                                   } else {
                                     _selected.remove(t.id);
+                                  }
+                                }),
+                              )),
+                        const SizedBox(height: 24),
+                        // اختيار الحكّام (توزيع عشوائي بلا تعارض زمني).
+                        Text('الحكّام (${_selectedReferees.length})',
+                            style: theme.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        Text(
+                            'يوزّعهم النظام عشوائياً على المباريات دون تكرار حكم بنفس الموعد.',
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600])),
+                        const SizedBox(height: 8),
+                        if (_referees.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(
+                                'لا يوجد حكّام — يمنح الأدمن صفة الحكم للمستخدمين',
+                                style: TextStyle(color: Colors.grey[600])),
+                          )
+                        else
+                          ..._referees.map((r) => CheckboxListTile(
+                                value: _selectedReferees.contains(r.id),
+                                title: Text(r.name),
+                                subtitle: Text(r.phone),
+                                secondary: const Icon(Icons.sports),
+                                onChanged: (sel) => setState(() {
+                                  if (sel == true) {
+                                    _selectedReferees.add(r.id);
+                                  } else {
+                                    _selectedReferees.remove(r.id);
                                   }
                                 }),
                               )),

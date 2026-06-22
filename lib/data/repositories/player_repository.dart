@@ -1,9 +1,7 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../models/player_model.dart';
 
-/// 📝 HINT AR: التعامل مع سجلات اللاعبين وروابط دعوة المطالبة.
+/// 📝 HINT AR: التعامل مع سجلات اللاعبين.
 class PlayerRepository {
   final FirebaseFirestore _firestore;
   PlayerRepository({FirebaseFirestore? firestore})
@@ -40,26 +38,28 @@ class PlayerRepository {
     });
   }
 
-  // 📝 HINT AR: ينشئ رمز دعوة لمرة واحدة (صالح 7 أيام) ليطالب اللاعب بحسابه.
-  // الكتابة مسموحة لكابتن الفريق فقط (قواعد claim_invites).
-  Future<String> createClaimInvite(String playerId, String teamId) async {
-    final token = _randomToken();
-    await _firestore.collection('claim_invites').add({
-      'playerId': playerId,
-      'teamId': teamId,
-      'token': token,
-      'status': 'pending',
-      'createdBy': FirebaseAuth.instance.currentUser?.uid,
-      'expiresAt':
-          Timestamp.fromDate(DateTime.now().add(const Duration(days: 7))),
-      'createdAt': FieldValue.serverTimestamp(),
+  // 📝 HINT AR: تحديث صورة اللاعب (تنعكس في roster الفريق عبر syncRosterSummary).
+  // يكتبها الكابتن أو اللاعب صاحب السجل (بعد المطالبة).
+  Future<void> setPhoto(String playerId, String photoUrl) async {
+    await _firestore.collection('players').doc(playerId).update({
+      'photoUrl': photoUrl,
+      'updatedAt': FieldValue.serverTimestamp(),
     });
-    return token;
   }
 
-  String _randomToken([int len = 8]) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    final r = Random.secure();
-    return List.generate(len, (_) => chars[r.nextInt(chars.length)]).join();
+  // 📝 HINT AR: تحديث مركز اللاعب (حارس/مدافع/وسط/مهاجم) — يكتبه الكابتن.
+  Future<void> setPosition(String playerId, String position) async {
+    await _firestore.collection('players').doc(playerId).update({
+      'position': position,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // 📝 HINT AR: تحديث رقم قميص اللاعب — يكتبه الكابتن (التحقق من التكرار في الكيوبت).
+  Future<void> setShirtNumber(String playerId, int? number) async {
+    await _firestore.collection('players').doc(playerId).update({
+      'shirtNumber': number,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 }

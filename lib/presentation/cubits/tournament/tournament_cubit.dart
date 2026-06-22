@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import 'tournament_state.dart';
 import '../../../data/models/tournament_model.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/models/team_model.dart';
+import '../../../data/models/user_model.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import '../../../data/repositories/match_repository.dart';
 import '../../../data/repositories/team_repository.dart';
@@ -37,11 +39,20 @@ class TournamentCubit extends Cubit<TournamentState> {
     bool isHomeAndAway = false,
     String generationMode = 'full_tree',
     int? numberOfGroups,
-    int playerFormat = 7,
+    int playerFormat = 6,
+    File? logoFile,
+    DateTime? startDate,
+    int roundIntervalDays = 7,
+    List<UserModel> referees = const [],
   }) async {
     emit(TournamentLoading());
     try {
       final id = const Uuid().v4();
+      // 📝 HINT AR: رفع صورة البطولة (إن وُجدت) قبل إنشاء المستند.
+      String? logoUrl;
+      if (logoFile != null) {
+        logoUrl = await _tournamentRepo.uploadTournamentImage(id, logoFile);
+      }
       final tournament = TournamentModel(
         id: id,
         name: name,
@@ -50,6 +61,8 @@ class TournamentCubit extends Cubit<TournamentState> {
         generationMode: generationMode,
         numberOfGroups: numberOfGroups,
         playerFormat: playerFormat,
+        logoUrl: logoUrl,
+        startDate: startDate,
         organizerUid: organizerUid,
         teamIds: teams.map((t) => t.id).toList(),
         city: city,
@@ -77,15 +90,53 @@ class TournamentCubit extends Cubit<TournamentState> {
                 awayTeamId: f.awayId,
                 homeTeamName: teamsById[f.homeId]?.name ?? (f.homeId.startsWith('TBD') ? f.homeId : ''),
                 awayTeamName: teamsById[f.awayId]?.name ?? (f.awayId.startsWith('TBD') ? f.awayId : ''),
+                homeTeamLogo: teamsById[f.homeId]?.logoUrl,
+                awayTeamLogo: teamsById[f.awayId]?.logoUrl,
+                // 📝 HINT AR: جدولة تلقائية — كل جولة بعد السابقة بـ roundIntervalDays
+                // ابتداءً من startDate (إن حُدِّد). قابلة للتعديل لاحقاً من المنظّم.
+                dateTime: startDate?.add(
+                    Duration(days: (f.round - 1) * roundIntervalDays)),
               ))
           .toList();
-      if (matches.isNotEmpty) await _matchRepo.createMatchesBatch(matches);
+
+      // 📝 HINT AR: توزيع الحكّام عشوائياً — لا يتكرّر حكم في نفس التاريخ/الوقت.
+      final withReferees =
+          _distributeReferees(matches, referees);
+
+      if (withReferees.isNotEmpty) {
+        await _matchRepo.createMatchesBatch(withReferees);
+      }
 
       final list = await _tournamentRepo.getTournaments();
       emit(TournamentsLoaded(list));
     } catch (e) {
       emit(TournamentError(e.toString()));
     }
+  }
+
+  // 📝 HINT AR: يوزّع الحكّام على المباريات عشوائياً مع منع تكرار الحكم في
+  // نفس الفتحة الزمنية (نفس dateTime). إن زادت مباريات الفتحة عن عدد الحكّام
+  // تبقى الزائدة بلا حكم (يعيّنها المنظّم يدوياً لاحقاً).
+  List<MatchModel> _distributeReferees(
+      List<MatchModel> matches, List<UserModel> referees) {
+    if (referees.isEmpty || matches.isEmpty) return matches;
+    final result = List<MatchModel>.from(matches);
+    final bySlot = <String, List<int>>{};
+    for (var i = 0; i < matches.length; i++) {
+      final key = matches[i].dateTime?.millisecondsSinceEpoch.toString() ??
+          'slot_${matches[i].round}';
+      bySlot.putIfAbsent(key, () => []).add(i);
+    }
+    for (final indices in bySlot.values) {
+      final pool = List<UserModel>.from(referees)..shuffle();
+      for (var j = 0; j < indices.length; j++) {
+        if (j >= pool.length) break; // مباريات أكثر من الحكّام في هذه الفتحة
+        final ref = pool[j];
+        result[indices[j]] =
+            result[indices[j]].copyWith(refereeId: ref.id, refereeName: ref.name);
+      }
+    }
+    return result;
   }
 
   Future<void> fetchDetails(String tournamentId) async {
@@ -115,6 +166,20 @@ class TournamentCubit extends Cubit<TournamentState> {
     }
   }
 
+  // 📝 HINT AR: تعيين/إلغاء حكم لمباراة (للمنظّم) ثم إعادة تحميل التفاصيل.
+  Future<void> assignReferee(String tournamentId, String matchId,
+      String? refereeId, String? refereeName) async {
+    try {
+      await _matchRepo.assignReferee(matchId, refereeId, refereeName);
+      emit(TournamentActionSuccess(
+          refereeId == null ? 'تم إلغاء تعيين الحكم' : 'تم تعيين الحكم'));
+      await fetchDetails(tournamentId);
+    } catch (e) {
+      emit(TournamentError(e.toString()));
+      await fetchDetails(tournamentId);
+    }
+  }
+
   // 📝 HINT AR: إدخال النتيجة + أحداثها (للمنظّم) — يؤكّدها فتُشغّل CF التي
   // تحدّث الترتيب وإحصائيات اللاعبين (من الأحداث).
   Future<void> enterResult(
@@ -124,10 +189,19 @@ class TournamentCubit extends Cubit<TournamentState> {
     int away, {
     List<Map<String, dynamic>> events = const [],
     List<String> lineup = const [],
+    List<Map<String, dynamic>> homeLineup = const [],
+    List<Map<String, dynamic>> awayLineup = const [],
+    String? homeFormation,
+    String? awayFormation,
   }) async {
     try {
       await _matchRepo.setResult(match.id, home, away,
-          events: events, lineup: lineup);
+          events: events,
+          lineup: lineup,
+          homeLineup: homeLineup,
+          awayLineup: awayLineup,
+          homeFormation: homeFormation,
+          awayFormation: awayFormation);
       emit(const TournamentActionSuccess(
           'تم حفظ النتيجة — يُحدَّث الترتيب والإحصائيات خلال ثوانٍ'));
       await fetchDetails(tournamentId);

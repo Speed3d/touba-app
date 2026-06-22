@@ -180,7 +180,16 @@ class _BannerEditorState extends State<_BannerEditor> {
   final _title = TextEditingController();
   final _targetUrl = TextEditingController();
   final _order = TextEditingController(text: '0');
+  final _description = TextEditingController();
+  final _city = TextEditingController();
+  final _area = TextEditingController();
+  final _phone = TextEditingController();
+  final _whatsapp = TextEditingController();
+  final _facebook = TextEditingController();
+  final _instagram = TextEditingController();
   File? _image;
+  final List<String> _existingExtras = []; // روابط صور إضافية محفوظة
+  final List<File> _newExtras = []; // صور إضافية جديدة (تُرفع عند الحفظ)
   bool _saving = false;
   final _picker = ImagePicker();
 
@@ -192,6 +201,21 @@ class _BannerEditorState extends State<_BannerEditor> {
       _title.text = b.title ?? '';
       _targetUrl.text = b.targetUrl ?? '';
       _order.text = b.order.toString();
+      _description.text = b.description ?? '';
+      _city.text = b.city ?? '';
+      _area.text = b.area ?? '';
+      _phone.text = b.phone ?? '';
+      _whatsapp.text = b.whatsapp ?? '';
+      _facebook.text = b.facebook ?? '';
+      _instagram.text = b.instagram ?? '';
+      _existingExtras.addAll(b.extraImages);
+    }
+  }
+
+  Future<void> _pickExtras() async {
+    final files = await _picker.pickMultiImage(imageQuality: 70, limit: 6);
+    if (files.isNotEmpty) {
+      setState(() => _newExtras.addAll(files.map((f) => File(f.path))));
     }
   }
 
@@ -200,7 +224,47 @@ class _BannerEditorState extends State<_BannerEditor> {
     _title.dispose();
     _targetUrl.dispose();
     _order.dispose();
+    _description.dispose();
+    _city.dispose();
+    _area.dispose();
+    _phone.dispose();
+    _whatsapp.dispose();
+    _facebook.dispose();
+    _instagram.dispose();
     super.dispose();
+  }
+
+  String? _v(TextEditingController c) =>
+      c.text.trim().isEmpty ? null : c.text.trim();
+
+  Widget _extraThumb(ImageProvider img, VoidCallback onRemove) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Stack(
+        children: [
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(image: img, fit: BoxFit.cover),
+            ),
+          ),
+          Positioned(
+            top: 2,
+            right: 2,
+            child: GestureDetector(
+              onTap: onRemove,
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Colors.black54, shape: BoxShape.circle),
+                child: const Icon(Icons.close, size: 16, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // 📝 HINT AR: اختيار المصدر (معرض/كاميرا) عبر شيت سفلي ثم التقاط الصورة.
@@ -246,12 +310,27 @@ class _BannerEditorState extends State<_BannerEditor> {
       if (_image != null) {
         imageUrl = await widget.repo.uploadBannerImage(id, _image!);
       }
+      // رفع الصور الإضافية الجديدة ودمجها مع المحفوظة.
+      final extras = List<String>.from(_existingExtras);
+      for (var i = 0; i < _newExtras.length; i++) {
+        final name = 'extra_${DateTime.now().millisecondsSinceEpoch}_$i';
+        final url =
+            await widget.repo.uploadBannerExtra(id, _newExtras[i], name);
+        extras.add(url);
+      }
       final banner = BannerModel(
         id: id,
         imageUrl: imageUrl,
-        title: _title.text.trim().isEmpty ? null : _title.text.trim(),
-        targetUrl:
-            _targetUrl.text.trim().isEmpty ? null : _targetUrl.text.trim(),
+        title: _v(_title),
+        targetUrl: _v(_targetUrl),
+        description: _v(_description),
+        city: _v(_city),
+        area: _v(_area),
+        phone: _v(_phone),
+        whatsapp: _v(_whatsapp),
+        facebook: _v(_facebook),
+        instagram: _v(_instagram),
+        extraImages: extras,
         isActive: widget.banner?.isActive ?? true,
         order: int.tryParse(_order.text.trim()) ?? 0,
         createdAt: widget.banner?.createdAt,
@@ -278,7 +357,8 @@ class _BannerEditorState extends State<_BannerEditor> {
         top: 16,
         bottom: MediaQuery.of(context).viewInsets.bottom + 16,
       ),
-      child: Column(
+      child: SingleChildScrollView(
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -320,9 +400,68 @@ class _BannerEditorState extends State<_BannerEditor> {
           ),
           const SizedBox(height: 12),
           TextField(
+            controller: _description,
+            maxLines: 3,
+            decoration: const InputDecoration(
+                labelText: 'الوصف / التفاصيل (اختياري)',
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _city,
+                  decoration: const InputDecoration(
+                      labelText: 'المحافظة', border: OutlineInputBorder()),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: _area,
+                  decoration: const InputDecoration(
+                      labelText: 'المنطقة', border: OutlineInputBorder()),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _phone,
+            keyboardType: TextInputType.phone,
+            decoration: const InputDecoration(
+                labelText: 'رقم الهاتف (اختياري)',
+                border: OutlineInputBorder()),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _whatsapp,
+            keyboardType: TextInputType.phone,
+            decoration: const InputDecoration(
+                labelText: 'واتساب (مع رمز الدولة، اختياري)',
+                border: OutlineInputBorder()),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _facebook,
+            decoration: const InputDecoration(
+                labelText: 'رابط فيسبوك (اختياري)',
+                border: OutlineInputBorder()),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _instagram,
+            decoration: const InputDecoration(
+                labelText: 'رابط إنستغرام (اختياري)',
+                border: OutlineInputBorder()),
+          ),
+          const SizedBox(height: 12),
+          TextField(
             controller: _targetUrl,
             decoration: const InputDecoration(
-                labelText: 'رابط عند النقر (اختياري)',
+                labelText: 'رابط الموقع عند النقر (اختياري)',
                 border: OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
@@ -332,6 +471,37 @@ class _BannerEditorState extends State<_BannerEditor> {
             decoration: const InputDecoration(
                 labelText: 'ترتيب الظهور', border: OutlineInputBorder()),
           ),
+          const SizedBox(height: 16),
+          // صور إضافية لشاشة التفاصيل.
+          Row(
+            children: [
+              const Text('صور إضافية',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const Spacer(),
+              TextButton.icon(
+                onPressed: _pickExtras,
+                icon: const Icon(Icons.add_photo_alternate, size: 18),
+                label: const Text('إضافة'),
+              ),
+            ],
+          ),
+          if (_existingExtras.isNotEmpty || _newExtras.isNotEmpty)
+            SizedBox(
+              height: 70,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  ..._existingExtras.asMap().entries.map((e) => _extraThumb(
+                        CachedNetworkImageProvider(e.value),
+                        () => setState(() => _existingExtras.removeAt(e.key)),
+                      )),
+                  ..._newExtras.asMap().entries.map((e) => _extraThumb(
+                        FileImage(e.value),
+                        () => setState(() => _newExtras.removeAt(e.key)),
+                      )),
+                ],
+              ),
+            ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _saving ? null : _save,
@@ -345,6 +515,7 @@ class _BannerEditorState extends State<_BannerEditor> {
                 : const Text('حفظ'),
           ),
         ],
+      ),
       ),
     );
   }

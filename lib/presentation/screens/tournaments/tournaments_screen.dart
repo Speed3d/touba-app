@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
@@ -9,7 +10,6 @@ import '../../../data/models/tournament_model.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import '../../../data/repositories/match_repository.dart';
 import '../../../data/repositories/team_repository.dart';
-import '../../widgets/core/tooba_card.dart';
 import '../../widgets/core/tooba_empty_state.dart';
 import '../../widgets/core/tooba_shimmer.dart';
 import 'create_tournament_screen.dart';
@@ -84,8 +84,11 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
           if (state is TournamentsLoaded) {
             final ongoing =
                 state.tournaments.where((t) => t.status == 'ongoing').toList();
-            final others =
-                state.tournaments.where((t) => t.status != 'ongoing').toList();
+            final finished =
+                state.tournaments.where((t) => t.status == 'finished').toList();
+            final others = state.tournaments
+                .where((t) => t.status != 'ongoing' && t.status != 'finished')
+                .toList();
 
             if (state.tournaments.isEmpty) {
               return ToobaEmptyState(
@@ -105,12 +108,17 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                 children: [
                   if (ongoing.isNotEmpty) ...[
                     _header('بطولات جارية'),
-                    ...ongoing.map((t) => _ongoingBanner(theme, t)),
+                    ...ongoing.map((t) => _tournamentCard(theme, t)),
+                    const SizedBox(height: 16),
+                  ],
+                  if (finished.isNotEmpty) ...[
+                    _header('بطولات منتهية'),
+                    ...finished.map((t) => _tournamentCard(theme, t)),
                     const SizedBox(height: 16),
                   ],
                   if (others.isNotEmpty) ...[
                     _header('بطولات أخرى'),
-                    ...others.map((t) => _tournamentRow(t)),
+                    ...others.map((t) => _tournamentCard(theme, t)),
                   ],
                 ],
               ),
@@ -133,6 +141,15 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
     );
   }
 
+  Widget _miniBadge(String text) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.22),
+            borderRadius: BorderRadius.circular(8)),
+        child: Text(text,
+            style: const TextStyle(color: Colors.white, fontSize: 12)),
+      );
+
   Widget _header(String title) => Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
         child: Text(title,
@@ -140,139 +157,95 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                 const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       );
 
-  Widget _ongoingBanner(ThemeData theme, TournamentModel t) {
+  // 📝 HINT AR: كارت بطولة موحّد (نفس الحجم للجارية والمنتهية). المنتهية تأخذ
+  // تدرّجاً ذهبياً + شارة «منتهية» + اسم البطل.
+  Widget _tournamentCard(ThemeData theme, TournamentModel t) {
+    final finished = t.status == 'finished';
+    final gradient = finished
+        ? [Colors.amber.shade700, Colors.orange.shade900]
+        : const [Color(0xFF1877F2), Color(0xFF0C5EBF)];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: InkWell(
         onTap: () => _openDetails(t),
         borderRadius: BorderRadius.circular(16),
-        child: Container(
-          height: 140,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1877F2), Color(0xFF0C5EBF)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: -20,
-                bottom: -20,
-                child: Icon(LucideIcons.trophy,
-                    size: 120, color: Colors.white.withValues(alpha: 0.1)),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: const Text('جارية',
-                          style: TextStyle(color: Colors.white, fontSize: 12)),
-                    ),
-                    const Spacer(),
-                    Text(t.name,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    Text('${t.city} • ${t.teamIds.length} فريق',
-                        style: const TextStyle(
-                            color: Colors.white70, fontSize: 14)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _tournamentRow(TournamentModel t) {
-    final finished = t.status == 'finished';
-    return ToobaCard(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      onTap: () => _openDetails(t),
-      child: Row(
-        children: [
-          Container(
-            width: 56,
-            height: 56,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: 140,
             decoration: BoxDecoration(
-                color: finished
-                    ? Colors.amber.withValues(alpha: 0.15)
-                    : Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12)),
-            child: Icon(LucideIcons.trophy,
-                color: finished ? Colors.amber.shade700 : Colors.grey),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                colors: gradient,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              // 📝 HINT AR: صورة البطولة كخلفية (إن وُجدت) تحت تدرّج معتم.
+              image: (t.logoUrl != null && t.logoUrl!.isNotEmpty)
+                  ? DecorationImage(
+                      image: CachedNetworkImageProvider(t.logoUrl!),
+                      fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                          Colors.black.withValues(alpha: 0.45),
+                          BlendMode.darken),
+                    )
+                  : null,
+            ),
+            child: Stack(
               children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(t.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
-                    ),
-                    if (finished) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text('منتهية',
-                            style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green.shade700)),
-                      ),
-                    ],
-                  ],
+                Positioned(
+                  right: -20,
+                  bottom: -20,
+                  child: Icon(LucideIcons.trophy,
+                      size: 120, color: Colors.white.withValues(alpha: 0.12)),
                 ),
-                const SizedBox(height: 4),
-                if (finished && t.winnerTeamName != null)
-                  Row(
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('🏆 ', style: TextStyle(fontSize: 13)),
-                      Flexible(
-                        child: Text('البطل: ${t.winnerTeamName}',
-                            style: TextStyle(
-                                color: Colors.amber.shade800,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
+                      Row(
+                        children: [
+                          _miniBadge(finished ? 'منتهية' : 'جارية'),
+                          const SizedBox(width: 6),
+                          _miniBadge('${t.playerFormat} ضد ${t.playerFormat}'),
+                        ],
                       ),
+                      const Spacer(),
+                      Text(t.name,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      if (finished && t.winnerTeamName != null)
+                        Row(
+                          children: [
+                            const Icon(Icons.emoji_events,
+                                color: Colors.white, size: 16),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text('البطل: ${t.winnerTeamName}',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          ],
+                        )
+                      else
+                        Text('${t.city} • ${t.teamIds.length} فريق',
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 14)),
                     ],
-                  )
-                else
-                  Text('${t.city} • ${t.teamIds.length} فريق',
-                      style: TextStyle(
-                          color: Colors.grey.shade600, fontSize: 13)),
+                  ),
+                ),
               ],
             ),
           ),
-          const Icon(LucideIcons.chevronLeft, color: Colors.grey),
-        ],
+        ),
       ),
     );
   }

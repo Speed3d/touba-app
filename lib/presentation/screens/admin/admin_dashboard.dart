@@ -5,6 +5,11 @@ import 'manage_roles_screen.dart';
 import 'admin_reports_screen.dart';
 import 'admin_banners_screen.dart';
 import 'admin_news_screen.dart';
+import 'admin_disputes_screen.dart';
+import 'admin_challenges_screen.dart';
+import 'admin_tournaments_screen.dart';
+import 'admin_referee_applications_screen.dart';
+import 'admin_sections_screen.dart';
 import '../../../app/router/tooba_route.dart';
 
 class AdminDashboard extends StatelessWidget {
@@ -54,6 +59,16 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
+            icon: LucideIcons.trophy,
+            title: 'إدارة البطولات',
+            subtitle: 'تعديل الأسماء والصور والكؤوس والجوائز',
+            color: Colors.amber.shade800,
+            onTap: () => Navigator.push(
+                context, ToobaRoute.to(const AdminTournamentsScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
             icon: LucideIcons.image,
             title: 'إدارة الإعلانات',
             subtitle: 'بانرات سلايدر الصفحة الرئيسية',
@@ -70,6 +85,46 @@ class AdminDashboard extends StatelessWidget {
             color: Colors.green.shade700,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminNewsScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.userCheck,
+            title: 'طلبات التحكيم',
+            subtitle: 'موافقة/رفض طلبات الراغبين بالتحكيم',
+            color: Colors.teal.shade700,
+            onTap: () => Navigator.push(context,
+                ToobaRoute.to(const AdminRefereeApplicationsScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.scale,
+            title: 'نزاعات فكّ الارتباط',
+            subtitle: 'طلبات خروج رفضها الكباتن وصعّدها اللاعبون',
+            color: Colors.purple,
+            onTap: () => Navigator.push(
+                context, ToobaRoute.to(const AdminDisputesScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.swords,
+            title: 'إدارة التحديات',
+            subtitle: 'إلغاء طلبات التحدّي المتروكة (بلا متقدّمين منذ أيام)',
+            color: Colors.deepOrange,
+            onTap: () => Navigator.push(
+                context, ToobaRoute.to(const AdminChallengesScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.layoutGrid,
+            title: 'إعدادات الأقسام',
+            subtitle: 'إظهار/إخفاء أقسام التطبيق (مثل البطولات)',
+            color: Colors.blueGrey,
+            onTap: () => Navigator.push(
+                context, ToobaRoute.to(const AdminSectionsScreen())),
           ),
           const SizedBox(height: 12),
           _buildAdminCard(
