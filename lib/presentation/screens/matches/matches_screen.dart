@@ -29,7 +29,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   Future<void> _reload() async {
     final f = context.read<TournamentRepository>().getTournaments();
-    setState(() => _future = f);
+    // 📝 HINT AR: جسم لا سهم — السهم يُرجِع قيمة الإسناد (Future) فيرفضه setState.
+    setState(() {
+      _future = f;
+    });
     await f;
   }
 

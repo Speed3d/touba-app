@@ -34,13 +34,23 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
   String _generationMode = 'full_tree';
   int _numberOfGroups = 2;
   int _playerFormat = 6; // 6/8/11 — عدد اللاعبين الأساسيين المطلوب
+  bool _isFree = true; // بطولة مجانية أو باشتراك (المرحلة 8)
+  final _entryInfoController = TextEditingController(); // رسوم/تواصل الدخول
   bool _validating = false;
   File? _logoFile; // صورة البطولة (للكارت)
   DateTime? _startDate; // موعد بداية البطولة
   int _roundIntervalDays = 7; // الفاصل بين الجولات (افتراضي أسبوعي)
+  // 📝 HINT AR: نمط الجدولة — 'rounds' (فاصل بين الجولات) أو 'daily' (توقيت يومي
+  // ثابت مع عدد مباريات/يوم). + إعدادات المباراة الحيّة (المدّة/الأشواط).
+  String _scheduleMode = 'rounds';
+  int _matchesPerDay = 1; // مباريات/يوم في النمط اليومي
+  int _matchGapMinutes = 90; // الفاصل بين مباريات اليوم الواحد
+  int _matchDuration = 45; // مدّة الشوط (30/45) — للمؤقّت الحيّ
+  int _halvesCount = 2; // عدد الأشواط (1/2)
   final ImagePicker _picker = ImagePicker();
   final Set<String> _selected = {};
   List<TeamModel> _teams = [];
+  final Map<String, String> _captainNames = {}; // teamId → اسم الكابتن
   bool _loadingTeams = true;
   List<UserModel> _referees = [];
   final Set<String> _selectedReferees = {};
@@ -62,10 +72,23 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
       try {
         referees = await userRepo.getReferees();
       } catch (_) {}
+      // 📝 HINT AR: أسماء كباتن الفرق (قراءة مجمّعة واحدة) — تُعرض على كرت الفريق.
+      final captains = <String, String>{};
+      try {
+        final byUid = await userRepo
+            .getUsersByIds(teams.map((t) => t.captainId).toList());
+        for (final t in teams) {
+          final u = byUid[t.captainId];
+          if (u != null) captains[t.id] = u.name;
+        }
+      } catch (_) {}
       if (mounted) {
         setState(() {
           _teams = teams;
           _referees = referees;
+          _captainNames
+            ..clear()
+            ..addAll(captains);
           _loadingTeams = false;
         });
       }
@@ -77,6 +100,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _entryInfoController.dispose();
     super.dispose();
   }
 
@@ -132,6 +156,15 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
           logoFile: _logoFile,
           startDate: _startDate,
           roundIntervalDays: _roundIntervalDays,
+          scheduleMode: _scheduleMode,
+          matchesPerDay: _matchesPerDay,
+          matchGapMinutes: _matchGapMinutes,
+          matchDuration: _matchDuration,
+          halvesCount: _halvesCount,
+          isFree: _isFree,
+          entryInfo: _isFree || _entryInfoController.text.trim().isEmpty
+              ? null
+              : _entryInfoController.text.trim(),
           referees: _referees
               .where((r) => _selectedReferees.contains(r.id))
               .toList(),
@@ -297,23 +330,141 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        DropdownButtonFormField<int>(
-                          initialValue: _roundIntervalDays,
+                        // ── نمط الجدولة ──
+                        DropdownButtonFormField<String>(
+                          initialValue: _scheduleMode,
                           decoration: InputDecoration(
-                            labelText: 'الفاصل بين الجولات',
-                            prefixIcon: const Icon(Icons.repeat),
+                            labelText: 'نمط الجدولة',
+                            prefixIcon: const Icon(Icons.event_repeat),
                             border: border,
                             filled: true,
                             fillColor: fill,
                           ),
                           items: const [
-                            DropdownMenuItem(value: 1, child: Text('يومياً')),
-                            DropdownMenuItem(value: 3, child: Text('كل 3 أيام')),
-                            DropdownMenuItem(value: 7, child: Text('أسبوعياً')),
-                            DropdownMenuItem(value: 14, child: Text('كل أسبوعين')),
+                            DropdownMenuItem(
+                                value: 'rounds',
+                                child: Text('فاصل بين الجولات')),
+                            DropdownMenuItem(
+                                value: 'daily',
+                                child: Text('توقيت يومي ثابت')),
                           ],
                           onChanged: (v) =>
-                              setState(() => _roundIntervalDays = v ?? 7),
+                              setState(() => _scheduleMode = v ?? 'rounds'),
+                        ),
+                        const SizedBox(height: 16),
+                        if (_scheduleMode == 'rounds')
+                          DropdownButtonFormField<int>(
+                            initialValue: _roundIntervalDays,
+                            decoration: InputDecoration(
+                              labelText: 'الفاصل بين الجولات',
+                              prefixIcon: const Icon(Icons.repeat),
+                              border: border,
+                              filled: true,
+                              fillColor: fill,
+                            ),
+                            items: const [
+                              DropdownMenuItem(value: 1, child: Text('يومياً')),
+                              DropdownMenuItem(
+                                  value: 3, child: Text('كل 3 أيام')),
+                              DropdownMenuItem(
+                                  value: 7, child: Text('أسبوعياً')),
+                              DropdownMenuItem(
+                                  value: 14, child: Text('كل أسبوعين')),
+                            ],
+                            onChanged: (v) =>
+                                setState(() => _roundIntervalDays = v ?? 7),
+                          )
+                        else ...[
+                          // 📝 HINT AR: التوقيت اليومي = وقت «موعد البداية»؛ تُوزَّع
+                          // المباريات يوماً بيوم، وأكثر من مباراة/يوم بفاصل زمني.
+                          DropdownButtonFormField<int>(
+                            initialValue: _matchesPerDay,
+                            decoration: InputDecoration(
+                              labelText: 'عدد المباريات في اليوم',
+                              prefixIcon: const Icon(Icons.today),
+                              border: border,
+                              filled: true,
+                              fillColor: fill,
+                            ),
+                            items: const [
+                              DropdownMenuItem(
+                                  value: 1, child: Text('مباراة واحدة')),
+                              DropdownMenuItem(
+                                  value: 2, child: Text('مباراتان')),
+                              DropdownMenuItem(
+                                  value: 3, child: Text('ثلاث مباريات')),
+                            ],
+                            onChanged: (v) =>
+                                setState(() => _matchesPerDay = v ?? 1),
+                          ),
+                          if (_matchesPerDay > 1) ...[
+                            const SizedBox(height: 16),
+                            DropdownButtonFormField<int>(
+                              initialValue: _matchGapMinutes,
+                              decoration: InputDecoration(
+                                labelText: 'الفاصل بين مباريات اليوم',
+                                prefixIcon: const Icon(Icons.timelapse),
+                                border: border,
+                                filled: true,
+                                fillColor: fill,
+                              ),
+                              items: const [
+                                DropdownMenuItem(
+                                    value: 60, child: Text('ساعة')),
+                                DropdownMenuItem(
+                                    value: 90, child: Text('ساعة ونصف')),
+                                DropdownMenuItem(
+                                    value: 120, child: Text('ساعتان')),
+                              ],
+                              onChanged: (v) =>
+                                  setState(() => _matchGapMinutes = v ?? 90),
+                            ),
+                          ],
+                        ],
+                        const SizedBox(height: 16),
+                        // ── إعدادات المباراة (المدّة/الأشواط) للمؤقّت الحيّ ──
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<int>(
+                                initialValue: _matchDuration,
+                                decoration: InputDecoration(
+                                  labelText: 'مدّة الشوط',
+                                  border: border,
+                                  filled: true,
+                                  fillColor: fill,
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                      value: 30, child: Text('30 دقيقة')),
+                                  DropdownMenuItem(
+                                      value: 45, child: Text('45 دقيقة')),
+                                ],
+                                onChanged: (v) =>
+                                    setState(() => _matchDuration = v ?? 45),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: DropdownButtonFormField<int>(
+                                initialValue: _halvesCount,
+                                decoration: InputDecoration(
+                                  labelText: 'عدد الأشواط',
+                                  border: border,
+                                  filled: true,
+                                  fillColor: fill,
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                      value: 1, child: Text('شوط واحد')),
+                                  DropdownMenuItem(
+                                      value: 2, child: Text('شوطان')),
+                                ],
+                                onChanged: (v) =>
+                                    setState(() => _halvesCount = v ?? 2),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         StreamBuilder<List<CityModel>>(
@@ -397,6 +548,27 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                   value: _isHomeAndAway,
                                   onChanged: (v) => setState(() => _isHomeAndAway = v),
                                 ),
+                                // 📝 HINT AR: مجانية/باشتراك (المرحلة 8) — الدخول المدفوع
+                                // يُدار يدوياً من الأدمن (إضافة الفريق بعد الدفع).
+                                SwitchListTile(
+                                  title: const Text('بطولة مجانية'),
+                                  subtitle: Text(_isFree
+                                      ? 'يستطيع الأدمن إضافة أي فريق'
+                                      : 'باشتراك — يُضاف الفريق بعد دفع الرسوم'),
+                                  value: _isFree,
+                                  onChanged: (v) => setState(() => _isFree = v),
+                                ),
+                                if (!_isFree)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    child: TextField(
+                                      controller: _entryInfoController,
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'رسوم/تواصل الدخول (يُعرض على البطولة)'),
+                                    ),
+                                  ),
                                 if (_tournamentType == 'knockout' || _tournamentType == 'groups')
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -440,7 +612,10 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           ..._teams.map((t) => CheckboxListTile(
                                 value: _selected.contains(t.id),
                                 title: Text(t.name),
-                                subtitle: Text(t.city),
+                                // 📝 HINT AR: المدينة + اسم الكابتن (بند 8).
+                                subtitle: Text(_captainNames[t.id] != null
+                                    ? '${t.city} • كابتن: ${_captainNames[t.id]}'
+                                    : t.city),
                                 onChanged: (sel) => setState(() {
                                   if (sel == true) {
                                     _selected.add(t.id);

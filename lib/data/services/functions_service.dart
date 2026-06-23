@@ -51,6 +51,23 @@ class FunctionsService {
     });
   }
 
+  /// 📝 HINT AR: تفعيل اشتراك الكابتن بكود (المرحلة 8). تحقّق خادمي + معاملة ذرّية.
+  /// تُعيد {durationMonths, expiresAt} عند النجاح، وترمي FirebaseFunctionsException
+  /// برسالة عربية واضحة عند الفشل (كود غير موجود/مستخدم/مقفل/تجاوز المحاولات).
+  Future<Map<String, dynamic>> redeemActivationCode(String code) async {
+    final callable = _functions.httpsCallable('redeemActivationCode');
+    final result = await callable.call(<String, dynamic>{'code': code});
+    return Map<String, dynamic>.from(result.data as Map);
+  }
+
+  /// 📝 HINT AR: يمنح التجربة المجانية للكابتن إن لم يكن له اشتراك بعد (idempotent).
+  /// يُستدعى عند فتح بطاقة الاشتراك. يُعيد {granted, expiresAt}.
+  Future<Map<String, dynamic>> startTrialIfEligible() async {
+    final callable = _functions.httpsCallable('startTrialIfEligible');
+    final result = await callable.call(<String, dynamic>{});
+    return Map<String, dynamic>.from(result.data as Map);
+  }
+
   /// 📝 HINT AR: حذف الحساب الحالي نهائياً (مطلوب للمتجر). تحذف الدالة:
   /// مستند المستخدم + طلبات الانضمام + فكّ ربط سجل اللاعب + حساب المصادقة.
   /// ترفض إن كان المستخدم كابتن فريق (يجب حذف/نقل الفريق أولاً).

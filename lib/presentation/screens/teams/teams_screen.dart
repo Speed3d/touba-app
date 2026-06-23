@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
@@ -18,7 +16,6 @@ import '../../../core/utils/tooba_snack_bar.dart';
 import 'create_team_screen.dart';
 import 'team_details_screen.dart';
 import '../challenges/challenges_screen.dart';
-import '../chat/chats_list_screen.dart';
 import '../../../app/router/tooba_route.dart';
 
 /// 📝 HINT AR: شاشة الفرق — تبويبان: «فريقي» (فريق المستخدم) و«الفرق الشعبية»
@@ -34,7 +31,6 @@ class TeamsScreen extends StatefulWidget {
 class _TeamsScreenState extends State<TeamsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  final ImagePicker _picker = ImagePicker();
 
   // 📝 HINT AR: فريق المستخدم (كابتن أو لاعب مرتبط) — يُحلّ مرة ويُعاد عند الحاجة.
   Future<TeamModel?>? _myTeamFuture;
@@ -198,40 +194,18 @@ class _TeamsScreenState extends State<TeamsScreen> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          // الشعار — قابل للضغط لتحديثه إن كان كابتناً.
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                backgroundImage: team.logoUrl != null
-                    ? CachedNetworkImageProvider(team.logoUrl!)
-                    : null,
-                child: team.logoUrl == null
-                    ? Icon(Icons.shield,
-                        size: 50,
-                        color: isDark ? Colors.grey[600] : Colors.grey[400])
-                    : null,
-              ),
-              if (isCaptain)
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () => _updateLogo(team),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: const Icon(Icons.camera_alt,
-                          size: 16, color: Colors.white),
-                    ),
-                  ),
-                ),
-            ],
+          // 📝 HINT AR: الشعار للعرض فقط هنا — تغييره من «عرض وإدارة الفريق».
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+            backgroundImage: team.logoUrl != null
+                ? CachedNetworkImageProvider(team.logoUrl!)
+                : null,
+            child: team.logoUrl == null
+                ? Icon(Icons.shield,
+                    size: 50,
+                    color: isDark ? Colors.grey[600] : Colors.grey[400])
+                : null,
           ),
           const SizedBox(height: 12),
           Text(team.name,
@@ -252,11 +226,20 @@ class _TeamsScreenState extends State<TeamsScreen> {
             ],
           ),
           const SizedBox(height: 16),
+          // 📝 HINT AR: صفّان — (لعب/فاز/خسر/تعادل) ليصحّ المجموع، ثم (نقاط/لاعبون).
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _miniStat('لعب', team.stats.played.toString()),
               _miniStat('فاز', team.stats.wins.toString()),
+              _miniStat('خسر', team.stats.losses.toString()),
+              _miniStat('تعادل', team.stats.draws.toString()),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
               _miniStat('نقاط', team.stats.points.toString()),
               _miniStat('لاعبون', team.playerCount.toString()),
             ],
@@ -286,29 +269,23 @@ class _TeamsScreenState extends State<TeamsScreen> {
               ),
             ),
           ),
-          // 📝 HINT AR: للكابتن — دخول تحدّيات الفرق ومحادثاته (المرحلة 7).
+          // 📝 HINT AR: للكابتن — دخول تحدّيات الفرق (المحادثات صارت زراً في
+          // شريط التنقّل السفلي).
           if (isCaptain) ...[
             const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.push(
-                        context, ToobaRoute.to(const ChallengesScreen())),
-                    icon: const Icon(Icons.sports_kabaddi, size: 18),
-                    label: const Text('تحدّيات الفرق'),
-                  ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => Navigator.push(
+                    context, ToobaRoute.to(const ChallengesScreen())),
+                icon: const Icon(Icons.sports_kabaddi, size: 18),
+                label: const Text('تحدّيات الفرق'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.push(
-                        context, ToobaRoute.to(const ChatsListScreen())),
-                    icon: const Icon(Icons.chat, size: 18),
-                    label: const Text('محادثاتي'),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
           // 📝 HINT AR: للاعب (لا الكابتن) — حالة طلب خروجه إن رُفض + التصعيد.
@@ -420,48 +397,6 @@ class _TeamsScreenState extends State<TeamsScreen> {
     );
   }
 
-  // 📝 HINT AR: تحديث شعار الفريق (للكابتن) — اختيار مصدر ثم رفع وتحديث الرابط.
-  Future<void> _updateLogo(TeamModel team) async {
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('اختيار من المعرض'),
-              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('التقاط صورة'),
-              onTap: () => Navigator.pop(ctx, ImageSource.camera),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (source == null) return;
-    final picked =
-        await _picker.pickImage(source: source, imageQuality: 70, maxWidth: 800);
-    if (picked == null || !mounted) return;
-    final messenger = ScaffoldMessenger.of(context);
-    final teamRepo = context.read<TeamRepository>();
-    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ تحديث الشعار...'));
-    try {
-      final url = await teamRepo.uploadTeamLogo(team.id, File(picked.path));
-      await teamRepo.updateTeamLogo(team.id, url);
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم تحديث الشعار'));
-      _refreshMyTeam();
-      if (mounted) context.read<TeamCubit>().fetchTeams();
-    } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تحديث الشعار'));
-    }
-  }
-
   // ── تبويب «الفرق الشعبية» ──────────────────────────────────────────────
   Widget _popularTeamsTab(bool isDark, ThemeData theme, UserModel? user) {
     return Column(
@@ -522,13 +457,42 @@ class _TeamsScreenState extends State<TeamsScreen> {
                   );
                 }
 
+                // 📝 HINT AR: فصل فريق الكابتن — «فريقي» أعلى ثم «فرق أخرى».
+                TeamModel? myTeam;
+                if (user != null && user.role == 'captain') {
+                  for (final t in state.teams) {
+                    if (t.captainId == user.id) {
+                      myTeam = t;
+                      break;
+                    }
+                  }
+                }
+                final showMine = myTeam != null && _searchQuery.isEmpty;
+                final others = showMine
+                    ? filtered.where((t) => t.id != myTeam!.id).toList()
+                    : filtered;
+
                 return RefreshIndicator(
                   onRefresh: () => context.read<TeamCubit>().fetchTeams(),
-                  child: ListView.builder(
+                  child: ListView(
                     padding: const EdgeInsets.all(16.0),
-                    itemCount: filtered.length,
-                    itemBuilder: (context, index) =>
-                        _teamTile(filtered[index], isDark, theme),
+                    children: [
+                      if (showMine) ...[
+                        _sectionLabel('فريقي'),
+                        const SizedBox(height: 8),
+                        _teamTile(myTeam, isDark, theme, isMine: true),
+                        const SizedBox(height: 12),
+                        _sectionLabel('فرق أخرى'),
+                        const SizedBox(height: 8),
+                        if (others.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text('لا توجد فرق أخرى بعد',
+                                style: TextStyle(color: Colors.grey[600])),
+                          ),
+                      ],
+                      ...others.map((t) => _teamTile(t, isDark, theme)),
+                    ],
                   ),
                 );
               }
@@ -540,10 +504,27 @@ class _TeamsScreenState extends State<TeamsScreen> {
     );
   }
 
-  Widget _teamTile(TeamModel team, bool isDark, ThemeData theme) {
+  // 📝 HINT AR: عنوان قسم داخل قائمة الفرق الشعبية («فريقي» / «فرق أخرى»).
+  Widget _sectionLabel(String text) {
+    final theme = Theme.of(context);
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Text(text,
+          style: theme.textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _teamTile(TeamModel team, bool isDark, ThemeData theme,
+      {bool isMine = false}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: isMine
+            ? BorderSide(color: theme.colorScheme.primary, width: 1.5)
+            : BorderSide.none,
+      ),
       color: isDark ? Colors.grey[900] : Colors.white,
       child: ListTile(
         contentPadding: const EdgeInsets.all(12),

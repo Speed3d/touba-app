@@ -43,7 +43,14 @@ class TournamentCubit extends Cubit<TournamentState> {
     File? logoFile,
     DateTime? startDate,
     int roundIntervalDays = 7,
+    String scheduleMode = 'rounds', // 'rounds' | 'daily'
+    int matchesPerDay = 1,
+    int matchGapMinutes = 90,
+    int matchDuration = 45,
+    int halvesCount = 2,
     List<UserModel> referees = const [],
+    bool isFree = true,
+    String? entryInfo,
   }) async {
     emit(TournamentLoading());
     try {
@@ -67,6 +74,10 @@ class TournamentCubit extends Cubit<TournamentState> {
         teamIds: teams.map((t) => t.id).toList(),
         city: city,
         status: 'ongoing',
+        isFree: isFree,
+        entryInfo: entryInfo,
+        matchDuration: matchDuration,
+        halvesCount: halvesCount,
       );
       await _tournamentRepo.createTournament(tournament);
 
@@ -81,23 +92,42 @@ class TournamentCubit extends Cubit<TournamentState> {
         fixtures = FixturesService.groups(tournament.teamIds, numberOfGroups: numberOfGroups ?? 2, isHomeAndAway: isHomeAndAway);
       }
 
-      final matches = fixtures
-          .map((f) => MatchModel(
-                id: const Uuid().v4(),
-                tournamentId: id,
-                round: f.round,
-                homeTeamId: f.homeId,
-                awayTeamId: f.awayId,
-                homeTeamName: teamsById[f.homeId]?.name ?? (f.homeId.startsWith('TBD') ? f.homeId : ''),
-                awayTeamName: teamsById[f.awayId]?.name ?? (f.awayId.startsWith('TBD') ? f.awayId : ''),
-                homeTeamLogo: teamsById[f.homeId]?.logoUrl,
-                awayTeamLogo: teamsById[f.awayId]?.logoUrl,
-                // 📝 HINT AR: جدولة تلقائية — كل جولة بعد السابقة بـ roundIntervalDays
-                // ابتداءً من startDate (إن حُدِّد). قابلة للتعديل لاحقاً من المنظّم.
-                dateTime: startDate?.add(
-                    Duration(days: (f.round - 1) * roundIntervalDays)),
-              ))
-          .toList();
+      // 📝 HINT AR: جدولة تلقائية — نمطان:
+      // • rounds: كل جولة بعد السابقة بـ roundIntervalDays.
+      // • daily: توقيت يومي ثابت (وقت startDate)، توزيع matchesPerDay/يوم
+      //   كلٌّ بفاصل matchGapMinutes. (قابلة للتعديل لاحقاً من المنظّم.)
+      final matches = <MatchModel>[];
+      for (var i = 0; i < fixtures.length; i++) {
+        final f = fixtures[i];
+        DateTime? dt;
+        if (startDate != null) {
+          if (scheduleMode == 'daily') {
+            final day = i ~/ matchesPerDay;
+            final slot = i % matchesPerDay;
+            final base = DateTime(startDate.year, startDate.month,
+                startDate.day, startDate.hour, startDate.minute);
+            dt = base.add(
+                Duration(days: day, minutes: slot * matchGapMinutes));
+          } else {
+            dt = startDate.add(
+                Duration(days: (f.round - 1) * roundIntervalDays));
+          }
+        }
+        matches.add(MatchModel(
+          id: const Uuid().v4(),
+          tournamentId: id,
+          round: f.round,
+          homeTeamId: f.homeId,
+          awayTeamId: f.awayId,
+          homeTeamName: teamsById[f.homeId]?.name ??
+              (f.homeId.startsWith('TBD') ? f.homeId : ''),
+          awayTeamName: teamsById[f.awayId]?.name ??
+              (f.awayId.startsWith('TBD') ? f.awayId : ''),
+          homeTeamLogo: teamsById[f.homeId]?.logoUrl,
+          awayTeamLogo: teamsById[f.awayId]?.logoUrl,
+          dateTime: dt,
+        ));
+      }
 
       // 📝 HINT AR: توزيع الحكّام عشوائياً — لا يتكرّر حكم في نفس التاريخ/الوقت.
       final withReferees =
@@ -159,6 +189,44 @@ class TournamentCubit extends Cubit<TournamentState> {
     try {
       await _matchRepo.scheduleMatch(matchId, dateTime);
       emit(const TournamentActionSuccess('تم تحديد موعد المباراة بنجاح'));
+      await fetchDetails(tournamentId);
+    } catch (e) {
+      emit(TournamentError(e.toString()));
+      await fetchDetails(tournamentId);
+    }
+  }
+
+  // 📝 HINT AR: بدء المباراة (status='live') — تظهر في تبويب «جارية» ويبدأ المؤقّت.
+  Future<void> startMatch(String tournamentId, String matchId) async {
+    try {
+      await _matchRepo.startMatch(matchId);
+      emit(const TournamentActionSuccess('بدأت المباراة'));
+      await fetchDetails(tournamentId);
+    } catch (e) {
+      emit(TournamentError(e.toString()));
+      await fetchDetails(tournamentId);
+    }
+  }
+
+  // 📝 HINT AR: بدء الشوط التالي (يقوده المنظّم) — يُعيد ضبط بداية المؤقّت.
+  Future<void> startNextHalf(
+      String tournamentId, String matchId, int half) async {
+    try {
+      await _matchRepo.startNextHalf(matchId, half);
+      emit(TournamentActionSuccess('بدأ الشوط $half'));
+      await fetchDetails(tournamentId);
+    } catch (e) {
+      emit(TournamentError(e.toString()));
+      await fetchDetails(tournamentId);
+    }
+  }
+
+  // 📝 HINT AR: تغيير خطة الكابتن لمباراته (بند 8) ثم إعادة تحميل التفاصيل.
+  Future<void> setMatchFormation(String tournamentId, String matchId,
+      bool isHome, String formation) async {
+    try {
+      await _matchRepo.setCaptainFormation(matchId, isHome, formation);
+      emit(const TournamentActionSuccess('تم تحديث خطة فريقك لهذه المباراة'));
       await fetchDetails(tournamentId);
     } catch (e) {
       emit(TournamentError(e.toString()));

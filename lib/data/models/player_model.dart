@@ -57,6 +57,8 @@ class PlayerModel extends Equatable {
   final String? preferredFoot; // right | left | both
   final int? height;
   final int? weight;
+  final String? bio; // نبذة شخصية (يكتبها اللاعب صاحب السجل)
+  final List<String> gallery; // معرض صور اللاعب (حتى 5) — يديره اللاعب
   final String status; // active | injured | suspended
   final bool isStarter; // أساسي (true) أو احتياط (false) في التشكيلة
   final String currentTeamId;
@@ -75,6 +77,8 @@ class PlayerModel extends Equatable {
     this.preferredFoot,
     this.height,
     this.weight,
+    this.bio,
+    this.gallery = const [],
     this.status = 'active',
     this.isStarter = true,
     required this.currentTeamId,
@@ -83,6 +87,18 @@ class PlayerModel extends Equatable {
     this.createdByUid,
     this.teamToken,
   });
+
+  // 📝 HINT AR: العمر محسوب من تاريخ الميلاد (للعرض في البطاقة).
+  int? get age {
+    if (birthDate == null) return null;
+    final now = DateTime.now();
+    var a = now.year - birthDate!.year;
+    if (now.month < birthDate!.month ||
+        (now.month == birthDate!.month && now.day < birthDate!.day)) {
+      a--;
+    }
+    return a < 0 ? null : a;
+  }
 
   bool get isClaimed => claimedByUid != null && claimedByUid!.isNotEmpty;
 
@@ -99,6 +115,8 @@ class PlayerModel extends Equatable {
       preferredFoot: json['preferredFoot'],
       height: json['height'],
       weight: json['weight'],
+      bio: json['bio'],
+      gallery: List<String>.from(json['gallery'] ?? const []),
       status: json['status'] ?? 'active',
       isStarter: json['isStarter'] ?? true,
       currentTeamId: json['currentTeamId'] ?? '',
@@ -119,6 +137,8 @@ class PlayerModel extends Equatable {
       'preferredFoot': preferredFoot,
       'height': height,
       'weight': weight,
+      if (bio != null) 'bio': bio,
+      'gallery': gallery,
       'status': status,
       'isStarter': isStarter,
       'currentTeamId': currentTeamId,
@@ -138,6 +158,8 @@ class PlayerModel extends Equatable {
     String? preferredFoot,
     int? height,
     int? weight,
+    String? bio,
+    List<String>? gallery,
     String? status,
     bool? isStarter,
     String? currentTeamId,
@@ -156,6 +178,8 @@ class PlayerModel extends Equatable {
       preferredFoot: preferredFoot ?? this.preferredFoot,
       height: height ?? this.height,
       weight: weight ?? this.weight,
+      bio: bio ?? this.bio,
+      gallery: gallery ?? this.gallery,
       status: status ?? this.status,
       isStarter: isStarter ?? this.isStarter,
       currentTeamId: currentTeamId ?? this.currentTeamId,
@@ -169,7 +193,7 @@ class PlayerModel extends Equatable {
   @override
   List<Object?> get props => [
         id, name, photoUrl, birthDate, position, shirtNumber, preferredFoot,
-        height, weight, status, isStarter, currentTeamId, careerStats,
-        claimedByUid, createdByUid, teamToken,
+        height, weight, bio, gallery, status, isStarter, currentTeamId,
+        careerStats, claimedByUid, createdByUid, teamToken,
       ];
 }

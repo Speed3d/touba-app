@@ -23,6 +23,7 @@ class MatchDetailScreen extends StatefulWidget {
 class _MatchDetailScreenState extends State<MatchDetailScreen> {
   final Map<String, String> _names = {};
   final Map<String, String?> _photos = {};
+  final Map<String, String> _positions = {};
   List<PlayerModel> _homePlayers = [];
   List<PlayerModel> _awayPlayers = [];
   bool _showHomeFormation = true;
@@ -44,9 +45,20 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       for (final p in [...home, ...away]) {
         _names[p.id] = p.name;
         _photos[p.id] = p.photoUrl;
+        _positions[p.id] = p.position;
       }
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
+  }
+
+  // 📝 HINT AR: اسم اللاعب مسبوقاً بمركزه (بند 7) — «المهاجم - صلاح».
+  String _displayName(String id) {
+    final name = _names[id] ?? 'لاعب';
+    final pos = _positions[id];
+    if (pos != null && pos.isNotEmpty && pos != 'غير محدد') {
+      return '$pos - $name';
+    }
+    return name;
   }
 
   @override
@@ -450,11 +462,11 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
               final awayId = i < awayPlayers.length ? awayPlayers[i] : null;
               return _playerRow(
                 homeId != null
-                    ? _PData(_names[homeId] ?? 'لاعب', _photos[homeId],
+                    ? _PData(_displayName(homeId), _photos[homeId],
                         byPlayer[homeId]!)
                     : null,
                 awayId != null
-                    ? _PData(_names[awayId] ?? 'لاعب', _photos[awayId],
+                    ? _PData(_displayName(awayId), _photos[awayId],
                         byPlayer[awayId]!)
                     : null,
               );

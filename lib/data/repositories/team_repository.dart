@@ -31,6 +31,16 @@ class TeamRepository {
         .update({'formation': formation});
   }
 
+  // 📝 HINT AR: حفظ خطة الفريق + تعيين اللاعبين الصريح على خاناتها (تشكيلة
+  // تفاعلية) — يكتبها الكابتن (حقول تعريفية خارج جدار المصداقية).
+  Future<void> setLineup(
+      String teamId, String formation, List<String> slots) async {
+    await _firestore.collection('teams').doc(teamId).update({
+      'formation': formation,
+      'lineupSlots': slots,
+    });
+  }
+
   // 📝 HINT AR: هل لدى هذا الكابتن فريق مسبقاً؟ (قاعدة: فريق واحد لكل كابتن).
   Future<bool> captainHasTeam(String captainId) async {
     final snap = await _firestore
@@ -62,6 +72,19 @@ class TeamRepository {
     } catch (e) {
       throw Exception('حدث خطأ أثناء رفع الشعار');
     }
+  }
+
+  // 📝 HINT AR: رفع صورة لمعرض الفريق — المسار: teams/{teamId}/gallery/...
+  Future<String> uploadTeamGalleryImage(String teamId, File imageFile) async {
+    final name = DateTime.now().millisecondsSinceEpoch.toString();
+    final ref = _storage.ref().child('teams/$teamId/gallery/$name.jpg');
+    final task = await ref.putFile(imageFile);
+    return task.ref.getDownloadURL();
+  }
+
+  // 📝 HINT AR: حفظ قائمة صور معرض الفريق (حتى 5) — يكتبها الكابتن (حقل تعريفي).
+  Future<void> setTeamPhotos(String teamId, List<String> photos) async {
+    await _firestore.collection('teams').doc(teamId).update({'photos': photos});
   }
 
   // 📝 HINT AR: ترقيم صفحات بسيط (limit) لترشيد الاستهلاك.

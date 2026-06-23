@@ -1123,3 +1123,207 @@ exports.onChallengeMatched = onDocumentUpdated(
     );
   },
 );
+
+// ============================================================================
+// 18) الاشتراكات (المرحلة 8) — تفعيل بالكود + التجربة المجانية
+// ============================================================================
+// 📝 HINT AR: تفعيل اشتراك الكابتن بكود. حقول الاشتراك على users تكتبها CF فقط
+// (جدار المصداقية). تحقّق خادمي + rate-limit (قفل بعد 5 محاولات خاطئة/ساعة على
+// مستند المستخدم) + معاملة ذرّية (يعلّم الكود مستخدماً ويمدّد الاشتراك) + سجل تدقيق.
+exports.redeemActivationCode = onCall(async (request) => {
+  const uid = request.auth && request.auth.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "سجّل الدخول أولاً");
+  const code = String((request.data && request.data.code) || "")
+    .toUpperCase().trim();
+  if (!code) throw new HttpsError("invalid-argument", "أدخل الكود");
+
+  const fv = admin.firestore.FieldValue;
+  const Timestamp = admin.firestore.Timestamp;
+  const userRef = db.collection("users").doc(uid);
+  const codeRef = db.collection("activation_codes").doc(code);
+
+  const userSnap = await userRef.get();
+  const u = userSnap.exists ? userSnap.data() : {};
+
+  // قفل المحاولات (rate-limit).
+  const lockUntil = u.activationLockUntil ?
+    u.activationLockUntil.toDate() : null;
+  if (lockUntil && lockUntil > new Date()) {
+    throw new HttpsError(
+      "resource-exhausted", "تجاوزت عدد المحاولات — حاول بعد قليل");
+  }
+
+  const recordFailure = async (reason) => {
+    await db.collection("activation_attempts").add({
+      userId: uid, code, success: false, reason,
+      createdAt: fv.serverTimestamp(),
+    });
+    const count = (u.activationFailedCount || 0) + 1;
+    const updates = {activationFailedCount: count};
+    if (count >= 5) {
+      updates.activationLockUntil =
+        Timestamp.fromMillis(Date.now() + 3600000);
+      updates.activationFailedCount = 0;
+    }
+    await userRef.set(updates, {merge: true});
+  };
+
+  const codeSnap = await codeRef.get();
+  if (!codeSnap.exists) {
+    await recordFailure("كود غير موجود");
+    throw new HttpsError("not-found", "الكود غير موجود — تأكّد من كتابته");
+  }
+  const c = codeSnap.data();
+  if (c.isLocked) throw new HttpsError("permission-denied", "هذا الكود مقفل");
+  if (c.isUsed) {
+    await recordFailure("مستخدم");
+    throw new HttpsError("already-exists", "هذا الكود مُستخدم بالفعل");
+  }
+
+  const durationMonths = c.durationMonths || 1;
+  let expiresMillis = 0;
+
+  await db.runTransaction(async (tx) => {
+    const freshCode = await tx.get(codeRef);
+    const freshUser = await tx.get(userRef);
+    if (!freshCode.exists || freshCode.data().isUsed) {
+      throw new HttpsError("already-exists", "هذا الكود مُستخدم بالفعل");
+    }
+    const now = new Date();
+    const cur = freshUser.exists && freshUser.data().subscriptionExpiresAt ?
+      freshUser.data().subscriptionExpiresAt.toDate() : null;
+    const base = (cur && cur > now) ? cur : now; // يمدّد من الانتهاء إن نشطاً
+    const newExpiry = new Date(base);
+    newExpiry.setMonth(newExpiry.getMonth() + durationMonths);
+    expiresMillis = newExpiry.getTime();
+
+    tx.update(codeRef, {
+      isUsed: true,
+      usedBy: uid,
+      usedByName: (freshUser.data() || {}).name || "",
+      usedAt: fv.serverTimestamp(),
+    });
+    tx.set(userRef, {
+      subscriptionStatus: "active",
+      subscriptionExpiresAt: Timestamp.fromDate(newExpiry),
+      subscriptionActivatedAt: fv.serverTimestamp(),
+      activationFailedCount: 0,
+    }, {merge: true});
+  });
+
+  await db.collection("activation_attempts").add({
+    userId: uid, code, success: true, reason: "تم التفعيل",
+    createdAt: fv.serverTimestamp(),
+  });
+  return {durationMonths, expiresAt: expiresMillis};
+});
+
+// 📝 HINT AR: يمنح التجربة المجانية للكابتن مرة واحدة (idempotent) — يُستدعى عند
+// فتح بطاقة الاشتراك. لا يمنح إن كان للكابتن اشتراك بالفعل أو لم يكن كابتناً.
+exports.startTrialIfEligible = onCall(async (request) => {
+  const uid = request.auth && request.auth.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "سجّل الدخول أولاً");
+  const fv = admin.firestore.FieldValue;
+  const Timestamp = admin.firestore.Timestamp;
+  const userRef = db.collection("users").doc(uid);
+  const snap = await userRef.get();
+  if (!snap.exists) return {granted: false};
+  const u = snap.data();
+  if (u.role !== "captain") return {granted: false};
+  if (u.subscriptionExpiresAt) return {granted: false};
+
+  let trialDays = 14;
+  try {
+    const cfg = await db.collection("settings").doc("subscription").get();
+    if (cfg.exists && cfg.data().freeTrialDays) {
+      trialDays = cfg.data().freeTrialDays;
+    }
+  } catch (e) {
+    logger.warn("freeTrialDays read failed", {error: e.message});
+  }
+
+  const expiry = Timestamp.fromMillis(Date.now() + trialDays * 86400000);
+  await userRef.set({
+    subscriptionStatus: "free_trial",
+    subscriptionExpiresAt: expiry,
+    subscriptionActivatedAt: fv.serverTimestamp(),
+  }, {merge: true});
+  return {granted: true, expiresAt: expiry.toMillis(), trialDays};
+});
+
+// ============================================================================
+// 21) تشكيلات البطولة (بند 8) — إشعار الكباتن بإنشاء البطولة + إشعارات المراجعة
+// ============================================================================
+
+// 📝 HINT AR: عند إنشاء بطولة — يُشعَر كابتن كل فريق مشارك ليُدخل تشكيلته.
+exports.onTournamentCreated = onDocumentCreated(
+  "tournaments/{id}",
+  async (event) => {
+    const t = event.data && event.data.data();
+    if (!t) return;
+    const teamIds = t.teamIds || [];
+    for (const teamId of teamIds) {
+      try {
+        const teamDoc = await db.collection("teams").doc(teamId).get();
+        if (!teamDoc.exists) continue;
+        const captainId = teamDoc.data().captainId;
+        if (!captainId) continue;
+        await _sendUserNotification(
+          captainId,
+          "بطولة جديدة ⚽",
+          `فريقك مشارك في بطولة «${t.name}» — أدخل تشكيلتك للمراجعة`,
+          "tournament_created",
+          {tournamentId: event.params.id},
+        );
+      } catch (e) {
+        logger.warn("notify captain failed", {teamId, error: e.message});
+      }
+    }
+  },
+);
+
+// 📝 HINT AR: عند كتابة تشكيلة — إن صارت pending (إرسال الكابتن) يُشعَر المنظّم؛
+// وإن صارت approved/rejected (مراجعة المنظّم) يُشعَر الكابتن.
+exports.onTournamentLineupWritten = onDocumentWritten(
+  "tournament_lineups/{id}",
+  async (event) => {
+    const after = event.data.after.exists ? event.data.after.data() : null;
+    if (!after) return;
+    const before = event.data.before.exists ? event.data.before.data() : null;
+    const status = after.status;
+
+    // إرسال الكابتن → إشعار المنظّم.
+    if (status === "pending" && (!before || before.status !== "pending")) {
+      try {
+        const t = await db.collection("tournaments")
+          .doc(after.tournamentId).get();
+        if (t.exists) {
+          await _sendUserNotification(
+            t.data().organizerUid,
+            "تشكيلة بانتظار المراجعة",
+            `أرسل فريق «${after.teamName}» تشكيلته في بطولة ${t.data().name}`,
+            "lineup_submitted",
+            {tournamentId: after.tournamentId},
+          );
+        }
+      } catch (e) {
+        logger.warn("notify organizer failed", {error: e.message});
+      }
+    }
+
+    // مراجعة المنظّم → إشعار الكابتن.
+    if ((status === "approved" || status === "rejected") &&
+        (!before || before.status !== status)) {
+      const msg = status === "approved" ?
+        "قُبلت تشكيلة فريقك في البطولة ✅" :
+        `رُفضت تشكيلة فريقك — ${after.reviewNote || "راجعها وأعد الإرسال"}`;
+      await _sendUserNotification(
+        after.captainId,
+        "مراجعة التشكيلة",
+        msg,
+        "lineup_reviewed",
+        {tournamentId: after.tournamentId, teamId: after.teamId},
+      );
+    }
+  },
+);

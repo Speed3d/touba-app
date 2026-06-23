@@ -57,6 +57,8 @@ class MatchModel extends Equatable {
   final String? refereeId;
   final String? refereeName; // denormalized للعرض الرخيص
   final String status; // upcoming | live | finished | postponed | cancelled
+  final DateTime? matchStartedAt; // 📝 HINT AR: لحظة بدء الشوط الحالي (مؤقّت خادمي)
+  final int currentHalf; // الشوط الحالي (1 أو 2) أثناء المباراة الحيّة
   final int homeScore;
   final int awayScore;
   final List<dynamic> events; // {type, playerId, teamId, minute}
@@ -84,6 +86,8 @@ class MatchModel extends Equatable {
     this.refereeId,
     this.refereeName,
     this.status = 'upcoming',
+    this.matchStartedAt,
+    this.currentHalf = 1,
     this.homeScore = 0,
     this.awayScore = 0,
     this.events = const [],
@@ -112,6 +116,8 @@ class MatchModel extends Equatable {
       refereeId: json['refereeId'],
       refereeName: json['refereeName'],
       status: json['status'] ?? 'upcoming',
+      matchStartedAt: _parseDateTime(json['matchStartedAt']),
+      currentHalf: json['currentHalf'] ?? 1,
       homeScore: json['homeScore'] ?? 0,
       awayScore: json['awayScore'] ?? 0,
       events: json['events'] ?? const [],
@@ -147,6 +153,9 @@ class MatchModel extends Equatable {
       if (refereeId != null) 'refereeId': refereeId,
       if (refereeName != null) 'refereeName': refereeName,
       'status': status,
+      if (matchStartedAt != null)
+        'matchStartedAt': matchStartedAt!.toIso8601String(),
+      'currentHalf': currentHalf,
       'homeScore': homeScore,
       'awayScore': awayScore,
       'events': events,
@@ -166,6 +175,8 @@ class MatchModel extends Equatable {
     String? refereeId,
     String? refereeName,
     String? status,
+    DateTime? matchStartedAt,
+    int? currentHalf,
   }) {
     return MatchModel(
       id: id,
@@ -182,10 +193,16 @@ class MatchModel extends Equatable {
       refereeId: refereeId ?? this.refereeId,
       refereeName: refereeName ?? this.refereeName,
       status: status ?? this.status,
+      matchStartedAt: matchStartedAt ?? this.matchStartedAt,
+      currentHalf: currentHalf ?? this.currentHalf,
       homeScore: homeScore,
       awayScore: awayScore,
       events: events,
       lineup: lineup,
+      homeLineup: homeLineup,
+      awayLineup: awayLineup,
+      homeFormation: homeFormation,
+      awayFormation: awayFormation,
       resultConfirmed: resultConfirmed,
       statsApplied: statsApplied,
     );
@@ -195,7 +212,8 @@ class MatchModel extends Equatable {
   List<Object?> get props => [
         id, tournamentId, round, homeTeamId, awayTeamId, homeTeamName,
         awayTeamName, homeTeamLogo, awayTeamLogo, dateTime, stadiumId,
-        refereeId, refereeName, status, homeScore, awayScore, events, lineup,
+        refereeId, refereeName, status, matchStartedAt, currentHalf,
+        homeScore, awayScore, events, lineup,
         homeLineup, awayLineup, homeFormation, awayFormation,
         resultConfirmed, statsApplied,
       ];

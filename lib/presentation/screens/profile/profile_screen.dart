@@ -9,6 +9,7 @@ import '../../cubits/auth/auth_state.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/player_repository.dart';
 import 'ready_images_selector_screen.dart';
+import 'player_profile_edit_screen.dart';
 import '../admin/admin_dashboard.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
@@ -277,18 +278,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
                 if (user.linkedPlayerId != null) ...[
                   const SizedBox(height: 16),
-                  _infoCard(isDark, [
-                    const Row(
-                      children: [
-                        Icon(Icons.verified, color: Colors.blue),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text('حسابك مرتبط ببطاقة لاعب',
-                              style: TextStyle(fontSize: 13)),
-                        ),
+                  // 📝 HINT AR: بطاقة تفتح تعديل تفاصيل اللاعب الرياضية (بند 14).
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.grey[900] : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4)),
                       ],
                     ),
-                  ]),
+                    clipBehavior: Clip.antiAlias,
+                    child: ListTile(
+                      onTap: () => Navigator.push(
+                        context,
+                        ToobaRoute.to(PlayerProfileEditScreen(
+                            playerId: user.linkedPlayerId!)),
+                      ),
+                      leading: Icon(Icons.sports_soccer,
+                          color: theme.colorScheme.primary),
+                      title: const Text('تفاصيل اللاعب الرياضية',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: const Text(
+                          'القدم المفضّلة • الطول • الوزن • العمر • نبذة • معرض الصور',
+                          style: TextStyle(fontSize: 11)),
+                      trailing: const Icon(Icons.chevron_left),
+                    ),
+                  ),
                 ],
 
                 // لوحة الأدمن (للأدمن فقط).

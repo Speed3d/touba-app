@@ -119,6 +119,8 @@ class _TournamentEditorState extends State<_TournamentEditor> {
   late final TextEditingController _name;
   late final TextEditingController _prizes;
   late final TextEditingController _sponsor;
+  late final TextEditingController _entryInfo;
+  bool _isFree = true;
   File? _cover;
   File? _cup;
   bool _saving = false;
@@ -131,6 +133,9 @@ class _TournamentEditorState extends State<_TournamentEditor> {
     _prizes = TextEditingController(text: widget.tournament.prizes ?? '');
     _sponsor =
         TextEditingController(text: widget.tournament.sponsorName ?? '');
+    _entryInfo =
+        TextEditingController(text: widget.tournament.entryInfo ?? '');
+    _isFree = widget.tournament.isFree;
   }
 
   @override
@@ -138,6 +143,7 @@ class _TournamentEditorState extends State<_TournamentEditor> {
     _name.dispose();
     _prizes.dispose();
     _sponsor.dispose();
+    _entryInfo.dispose();
     super.dispose();
   }
 
@@ -164,6 +170,10 @@ class _TournamentEditorState extends State<_TournamentEditor> {
         'prizes': _prizes.text.trim().isEmpty ? null : _prizes.text.trim(),
         'sponsorName':
             _sponsor.text.trim().isEmpty ? null : _sponsor.text.trim(),
+        'isFree': _isFree,
+        'entryInfo': _isFree || _entryInfo.text.trim().isEmpty
+            ? null
+            : _entryInfo.text.trim(),
       };
       if (_cover != null) {
         data['logoUrl'] =
@@ -236,6 +246,24 @@ class _TournamentEditorState extends State<_TournamentEditor> {
                   labelText: 'اسم الراعي (اختياري)',
                   border: OutlineInputBorder()),
             ),
+            const SizedBox(height: 8),
+            // 📝 HINT AR: مجانية/باشتراك (المرحلة 8) — الدخول المدفوع يُدار يدوياً.
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('بطولة مجانية'),
+              subtitle: Text(_isFree
+                  ? 'مفتوحة لكل الفرق'
+                  : 'باشتراك — يُضاف الفريق بعد الدفع'),
+              value: _isFree,
+              onChanged: (v) => setState(() => _isFree = v),
+            ),
+            if (!_isFree)
+              TextField(
+                controller: _entryInfo,
+                decoration: const InputDecoration(
+                    labelText: 'رسوم/تواصل الدخول (للعرض)',
+                    border: OutlineInputBorder()),
+              ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _saving ? null : _save,

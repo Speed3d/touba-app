@@ -7,6 +7,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/challenge_model.dart';
 import '../../../data/models/team_model.dart';
+import '../../../data/models/user_model.dart';
 import '../../../data/repositories/challenge_repository.dart';
 import '../../../data/repositories/chat_repository.dart';
 import '../../../data/repositories/team_repository.dart';
@@ -16,6 +17,7 @@ import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 import '../chat/chat_screen.dart';
 import '../teams/team_details_screen.dart';
+import '../subscription/subscription_locked_sheet.dart';
 
 /// 📝 HINT AR: تحدّيات الفرق الودّية (المرحلة 7). تبويبان: «طلبات الفرق» (المفتوحة)
 /// و«تحدياتي» (طلباتي + ما تقدّمت إليه). القبول يفتح محادثة بين الكابتنين.
@@ -29,6 +31,7 @@ class ChallengesScreen extends StatefulWidget {
 
 class _ChallengesScreenState extends State<ChallengesScreen> {
   TeamModel? _myTeam;
+  UserModel? _user;
   String? _uid;
   bool _loading = true;
 
@@ -40,7 +43,10 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
 
   Future<void> _load() async {
     final st = context.read<AuthCubit>().state;
-    if (st is AuthAuthenticated) _uid = st.user.id;
+    if (st is AuthAuthenticated) {
+      _user = st.user;
+      _uid = st.user.id;
+    }
     if (_uid != null) {
       try {
         _myTeam = await context.read<TeamRepository>().getTeamByCaptain(_uid!);
@@ -49,8 +55,18 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
     if (mounted) setState(() => _loading = false);
   }
 
-  // 📝 HINT AR: خطّاف القفل بالاشتراك (المرحلة 8). حالياً متاح للكباتن أصحاب الفرق.
-  bool get _canChallenge => _myTeam != null;
+  // 📝 HINT AR: التصفّح مجاني؛ امتلاك فريق يُظهر أزرار الفعل (المرحلة 7).
+  bool get _hasTeam => _myTeam != null;
+
+  // 📝 HINT AR: قفل المرحلة 8 — الطلب والقبول يتطلّبان اشتراكاً فعّالاً.
+  bool get _isSubscribed => _user?.isSubscriptionActive ?? false;
+
+  /// يتحقّق من الاشتراك قبل فعل مقفول؛ يعرض ورقة القفل ويُعيد false إن لزم.
+  bool _requireSub(String feature) {
+    if (_isSubscribed) return true;
+    SubscriptionLockedSheet.show(context, feature: feature);
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +80,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
             tabs: [Tab(text: 'طلبات الفرق'), Tab(text: 'تحدياتي')],
           ),
         ),
-        floatingActionButton: (!_loading && _canChallenge)
+        floatingActionButton: (!_loading && _hasTeam)
             ? FloatingActionButton.extended(
                 onPressed: _createChallenge,
                 icon: const Icon(Icons.add),
@@ -151,9 +167,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: (applied || !_canChallenge)
-                    ? null
-                    : () => _apply(c),
+                onPressed: (applied || !_hasTeam) ? null : () => _apply(c),
                 icon: Icon(applied ? Icons.check : Icons.sports_soccer,
                     size: 18),
                 label: Text(applied ? 'تم التقديم' : 'أوافق على التحدي'),
@@ -336,6 +350,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
 
   // ─── إجراءات ─────────────────────────────────────────────────────────
   Future<void> _apply(ChallengeModel c) async {
+    if (!_requireSub('الموافقة على التحدّي')) return;
     final t = _myTeam!;
     try {
       await context.read<ChallengeRepository>().apply(
@@ -353,6 +368,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
   }
 
   Future<void> _accept(ChallengeModel c, ChallengeApplicant a) async {
+    if (!_requireSub('قبول التحدّي')) return;
     final messenger = ScaffoldMessenger.of(context);
     final chatRepo = context.read<ChatRepository>();
     final challengeRepo = context.read<ChallengeRepository>();
@@ -393,6 +409,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
   }
 
   Future<void> _createChallenge({ChallengeModel? editing}) async {
+    if (!_requireSub('طلب تحدٍّ')) return;
     final t = _myTeam!;
     final challengeRepo = context.read<ChallengeRepository>();
     // 📝 HINT AR: طلب واحد مفتوح فقط لكل كابتن (منع التلاعب) — عدّله أو ألغِه.

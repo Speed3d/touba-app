@@ -149,8 +149,102 @@ class PlayerDetailScreen extends StatelessWidget {
 
             // تفاصيل فنية
             _detailsCard(context),
+            // نبذة عن اللاعب
+            if (player.bio != null && player.bio!.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              _bioCard(context),
+            ],
+            // معرض صور اللاعب
+            if (player.gallery.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              _galleryCard(context),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _bioCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4)),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('نبذة',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const Divider(),
+          Text(player.bio!,
+              style: TextStyle(
+                  height: 1.5,
+                  color: isDark ? Colors.white70 : Colors.black87)),
+        ],
+      ),
+    );
+  }
+
+  Widget _galleryCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4)),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('معرض الصور',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 110,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: player.gallery.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, i) => ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  imageUrl: player.gallery[i],
+                  width: 110,
+                  height: 110,
+                  fit: BoxFit.cover,
+                  placeholder: (c, u) =>
+                      Container(width: 110, color: Colors.grey.shade200),
+                  errorWidget: (c, u, e) => Container(
+                      width: 110,
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.broken_image,
+                          color: Colors.grey)),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -230,6 +324,7 @@ class PlayerDetailScreen extends StatelessWidget {
                   theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const Divider(),
           _row('القدم المفضّلة', foot),
+          _row('العمر', player.age != null ? '${player.age} سنة' : 'غير محدد'),
           _row('الطول', player.height != null ? '${player.height} سم' : 'غير محدد'),
           _row('الوزن', player.weight != null ? '${player.weight} كجم' : 'غير محدد'),
           _row('الحالة', _statusLabel(player.status)),

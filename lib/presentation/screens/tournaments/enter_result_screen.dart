@@ -375,6 +375,26 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
             children: [
               const Icon(Icons.person, size: 16, color: Colors.grey),
               const SizedBox(width: 6),
+              // 📝 HINT AR: مركز اللاعب بجانب اسمه (بند 7) — «المهاجم - صلاح».
+              if (p.position != 'غير محدد') ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(p.position,
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary)),
+                ),
+                const SizedBox(width: 6),
+              ],
               Expanded(
                 child: Text(p.name,
                     maxLines: 1,

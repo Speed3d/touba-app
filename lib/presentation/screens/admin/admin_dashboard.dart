@@ -7,6 +7,7 @@ import 'admin_banners_screen.dart';
 import 'admin_news_screen.dart';
 import 'admin_disputes_screen.dart';
 import 'admin_challenges_screen.dart';
+import 'admin_subscriptions_screen.dart';
 import 'admin_tournaments_screen.dart';
 import 'admin_referee_applications_screen.dart';
 import 'admin_sections_screen.dart';
@@ -125,6 +126,16 @@ class AdminDashboard extends StatelessWidget {
             color: Colors.blueGrey,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminSectionsScreen())),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminCard(
+            context,
+            icon: LucideIcons.ticket,
+            title: 'أكواد التفعيل',
+            subtitle: 'توليد أكواد الاشتراك + مدة التجربة + واتساب التفعيل',
+            color: Colors.teal,
+            onTap: () => Navigator.push(
+                context, ToobaRoute.to(const AdminSubscriptionsScreen())),
           ),
           const SizedBox(height: 12),
           _buildAdminCard(

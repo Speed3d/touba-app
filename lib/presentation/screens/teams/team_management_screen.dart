@@ -6,11 +6,11 @@ import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_manage_cubit.dart';
 import '../../cubits/team/team_manage_state.dart';
 import '../../../data/models/player_model.dart';
-import '../../../data/models/match_model.dart';
 import '../../../data/services/functions_service.dart';
 import '../../../core/utils/formations.dart';
-import '../../widgets/core/formation_share_sheet.dart';
 import 'add_player_screen.dart';
+import 'team_gallery_edit_screen.dart';
+import 'team_formation_edit_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 
@@ -141,6 +141,9 @@ class TeamManagementScreen extends StatelessWidget {
         ],
         // ── خطة الفريق (التشكيلة الثابتة) ──
         _formationCard(context, state),
+        const SizedBox(height: 12),
+        // ── صور الفريق (معرض حتى 5) ──
+        _galleryCard(context, state),
         const SizedBox(height: 16),
         Row(
           children: [
@@ -198,6 +201,38 @@ class TeamManagementScreen extends StatelessWidget {
         trailing: OutlinedButton(
           onPressed: () => _pickFormation(context, state),
           child: Text(hasFmt ? 'تغيير' : 'تحديد'),
+        ),
+      ),
+    );
+  }
+
+  // 📝 HINT AR: بطاقة معرض صور الفريق — تفتح شاشة التحرير (بند 13).
+  Widget _galleryCard(BuildContext context, TeamManageLoaded state) {
+    final theme = Theme.of(context);
+    final count = state.team.photos.length;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(Icons.photo_library_outlined,
+            color: theme.colorScheme.primary),
+        title: const Text('صور الفريق',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(count == 0
+            ? 'لم تُضَف صور بعد — أضِف حتى 5 صور'
+            : '$count/5 صور'),
+        trailing: OutlinedButton(
+          onPressed: () async {
+            final cubit = context.read<TeamManageCubit>();
+            final changed = await Navigator.push<bool>(
+              context,
+              ToobaRoute.to(TeamGalleryEditScreen(
+                teamId: state.team.id,
+                initialPhotos: state.team.photos,
+              )),
+            );
+            if (changed == true) await cubit.load();
+          },
+          child: Text(count == 0 ? 'إضافة' : 'تعديل'),
         ),
       ),
     );
@@ -261,27 +296,22 @@ class TeamManagementScreen extends StatelessWidget {
     );
   }
 
-  // 📝 HINT AR: عرض/مشاركة التشكيلة على الملعب (الأساسيون حسب الخطة المحفوظة).
-  void _openFormationSheet(BuildContext context, TeamManageLoaded state) {
-    final starters = state.players.where((p) => p.isStarter).toList();
-    final use = starters.isNotEmpty ? starters : state.players;
-    final lineup = use
-        .map((p) => LineupPlayer(
-              playerId: p.id,
-              name: p.name,
-              photoUrl: p.photoUrl,
-              position: p.position,
-              shirtNumber: p.shirtNumber,
-            ))
-        .toList();
-    final fmt = state.team.formation;
-    FormationShareSheet.show(
+  // 📝 HINT AR: محرّر التشكيلة التفاعلي (تعيين على الملعب + تغيير الخطة + مشاركة
+  // + حفظ). عند الرجوع بعد الحفظ نُعيد تحميل بيانات الفريق.
+  Future<void> _openFormationSheet(
+      BuildContext context, TeamManageLoaded state) async {
+    final cubit = context.read<TeamManageCubit>();
+    final changed = await Navigator.push<bool>(
       context,
-      title: 'تشكيلة ${state.team.name}',
-      subtitle: fmt != null && fmt.isNotEmpty ? 'خطة $fmt' : 'حسب المراكز',
-      players: lineup,
-      formation: fmt,
+      ToobaRoute.to(TeamFormationEditScreen(
+        teamId: state.team.id,
+        teamName: state.team.name,
+        players: state.players,
+        initialFormation: state.team.formation,
+        initialSlots: state.team.lineupSlots,
+      )),
     );
+    if (changed == true) await cubit.load();
   }
 
   Widget _sectionLabel(

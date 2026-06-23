@@ -14,7 +14,20 @@ import '../../../core/utils/formations.dart';
 class PitchFormationView extends StatelessWidget {
   final List<LineupPlayer> players;
   final String? formation;
-  const PitchFormationView({super.key, required this.players, this.formation});
+
+  // 📝 HINT AR: التعيين التفاعلي (بند 12): عند true تُملأ خانات الخطة بترتيب
+  // [players] (players[i] → الخانة i) بدل التوزيع حسب المركز. مع [onSlotTap]
+  // يصبح كل خانة قابلة للنقر (لاختيار لاعبها) — يُستخدم في شاشة بناء التشكيلة.
+  final bool bySlotOrder;
+  final void Function(int slotIndex)? onSlotTap;
+
+  const PitchFormationView({
+    super.key,
+    required this.players,
+    this.formation,
+    this.bySlotOrder = false,
+    this.onSlotTap,
+  });
 
   static const _gk = 'حارس';
   static const _def = 'مدافع';
@@ -35,7 +48,7 @@ class PitchFormationView extends StatelessWidget {
               child: Image.asset('assets/images/pitch.jpg', fit: BoxFit.cover),
             ),
             Container(color: Colors.black.withValues(alpha: 0.08)),
-            if (players.isEmpty)
+            if (players.isEmpty && onSlotTap == null)
               const Center(
                 child: Text('لا توجد تشكيلة محدّدة',
                     style: TextStyle(
@@ -44,7 +57,12 @@ class PitchFormationView extends StatelessWidget {
             for (final c in placed)
               Align(
                 alignment: Alignment(c.x * 2 - 1, c.y * 2 - 1),
-                child: _PlayerChip(player: c.player, line: c.line),
+                child: onSlotTap != null
+                    ? GestureDetector(
+                        onTap: () => onSlotTap!(c.index),
+                        child: _PlayerChip(player: c.player, line: c.line),
+                      )
+                    : _PlayerChip(player: c.player, line: c.line),
               ),
           ],
         ),
@@ -53,7 +71,8 @@ class PitchFormationView extends StatelessWidget {
   }
 
   // 📝 HINT AR: يحسب موقع كل لاعب: إمّا على خانات الخطة الثابتة أو ترتيب تلقائي.
-  List<({double x, double y, LineupPlayer? player, String line})> _placeChips() {
+  List<({double x, double y, LineupPlayer? player, String line, int index})>
+      _placeChips() {
     final gk = players.where((p) => p.position == _gk).toList();
     final def = players.where((p) => p.position == _def).toList();
     final fwd = players.where((p) => p.position == _fwd).toList();
@@ -62,20 +81,38 @@ class PitchFormationView extends StatelessWidget {
             p.position != _gk && p.position != _def && p.position != _fwd)
         .toList();
 
-    final result = <({double x, double y, LineupPlayer? player, String line})>[];
+    final result =
+        <({double x, double y, LineupPlayer? player, String line, int index})>[];
     final fmt = formation;
 
     if (fmt != null && fmt.trim().isNotEmpty) {
+      final slots = formationSlots(fmt);
+      // التعيين التفاعلي: players[i] → الخانة i (بلا توزيع حسب المركز).
+      if (bySlotOrder) {
+        for (var i = 0; i < slots.length; i++) {
+          final p = i < players.length ? players[i] : null;
+          result.add((
+            x: slots[i].x,
+            y: slots[i].y,
+            player: p,
+            line: slots[i].line,
+            index: i,
+          ));
+        }
+        return result;
+      }
       final queues = {
         'gk': Queue<LineupPlayer>.of(gk),
         'def': Queue<LineupPlayer>.of(def),
         'mid': Queue<LineupPlayer>.of(mid),
         'fwd': Queue<LineupPlayer>.of(fwd),
       };
-      for (final slot in formationSlots(fmt)) {
+      for (var i = 0; i < slots.length; i++) {
+        final slot = slots[i];
         final q = queues[slot.line]!;
         final p = q.isNotEmpty ? q.removeFirst() : null;
-        result.add((x: slot.x, y: slot.y, player: p, line: slot.line));
+        result.add(
+            (x: slot.x, y: slot.y, player: p, line: slot.line, index: i));
       }
       return result;
     }
@@ -87,11 +124,17 @@ class PitchFormationView extends StatelessWidget {
       (line: 'mid', y: 0.46, ps: mid),
       (line: 'fwd', y: 0.21, ps: fwd),
     ].where((l) => l.ps.isNotEmpty);
+    var idx = 0;
     for (final l in lines) {
       final n = l.ps.length;
       for (var i = 0; i < n; i++) {
-        result.add(
-            (x: (i + 1) / (n + 1), y: l.y, player: l.ps[i], line: l.line));
+        result.add((
+          x: (i + 1) / (n + 1),
+          y: l.y,
+          player: l.ps[i],
+          line: l.line,
+          index: idx++,
+        ));
       }
     }
     return result;

@@ -82,6 +82,26 @@ class UserRepository {
     }
   }
 
+  // 📝 HINT AR: جلب عدة مستخدمين بمعرّفاتهم دفعة واحدة (whereIn حتى 30) — لعرض
+  // أسماء كباتن الفرق عند إنشاء البطولة (قراءة مجمّعة واحدة، ترشيد الاستهلاك).
+  Future<Map<String, UserModel>> getUsersByIds(List<String> uids) async {
+    final ids = uids.where((e) => e.isNotEmpty).toSet().toList();
+    if (ids.isEmpty) return {};
+    final result = <String, UserModel>{};
+    // 📝 HINT AR: whereIn محدود بـ 30 معرّفاً — نقسّم على دفعات.
+    for (var i = 0; i < ids.length; i += 30) {
+      final chunk = ids.sublist(i, i + 30 > ids.length ? ids.length : i + 30);
+      final snap = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: chunk)
+          .get();
+      for (final d in snap.docs) {
+        result[d.id] = UserModel.fromJson(d.data(), d.id);
+      }
+    }
+    return result;
+  }
+
   Future<List<UserModel>> searchUsersByPhone(String phoneQuery) async {
     try {
       // 📝 HINT AR: في Firestore البحث النصي الجزئي صعب، لذا نبحث بتطابق البداية (Prefix)

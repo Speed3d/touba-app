@@ -49,6 +49,10 @@ class TournamentModel extends Equatable {
   final String? rules; // نص الشروط والقوانين (تبويب «شروط وقوانين»)
   final List<Sponsor> sponsors; // الداعمون (لوغو + اسم) — المنظّم/الأدمن
   final List<String> adBanners; // صور البانر المتحرك في تبويب الشروط
+  final bool isFree; // بطولة مجانية (true) أو باشتراك (false) — يضبطه الأدمن/المنظّم
+  final String? entryInfo; // نص رسوم/تواصل الدخول (يُعرض على البطولة المدفوعة)
+  final int matchDuration; // مدّة الشوط بالدقائق (30 أو 45) — للمؤقّت الحيّ
+  final int halvesCount; // عدد الأشواط (1 أو 2)
 
   const TournamentModel({
     required this.id,
@@ -78,6 +82,10 @@ class TournamentModel extends Equatable {
     this.rules,
     this.sponsors = const [],
     this.adBanners = const [],
+    this.isFree = true,
+    this.entryInfo,
+    this.matchDuration = 45,
+    this.halvesCount = 2,
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json, String id) {
@@ -118,6 +126,10 @@ class TournamentModel extends Equatable {
               .toList() ??
           const [],
       adBanners: List<String>.from(json['adBanners'] ?? const []),
+      isFree: json['isFree'] ?? true,
+      entryInfo: json['entryInfo'],
+      matchDuration: json['matchDuration'] ?? 45,
+      halvesCount: json['halvesCount'] ?? 2,
     );
   }
 
@@ -148,6 +160,10 @@ class TournamentModel extends Equatable {
       if (sponsors.isNotEmpty)
         'sponsors': sponsors.map((s) => s.toJson()).toList(),
       if (adBanners.isNotEmpty) 'adBanners': adBanners,
+      'isFree': isFree,
+      if (entryInfo != null) 'entryInfo': entryInfo,
+      'matchDuration': matchDuration,
+      'halvesCount': halvesCount,
       // 📝 HINT AR: winnerTeamId يكتبه النظام (CF) عند الانتهاء — لا نرسله من العميل.
     };
   }
@@ -158,6 +174,7 @@ class TournamentModel extends Equatable {
         startDate, endDate, city, status, logoUrl, cupImageUrl, prizes,
         sponsorName, sponsorLogo, standings, isHomeAndAway, generationMode,
         numberOfGroups, playerFormat, winnerTeamId, winnerTeamName,
-        rules, sponsors, adBanners,
+        rules, sponsors, adBanners, isFree, entryInfo,
+        matchDuration, halvesCount,
       ];
 }

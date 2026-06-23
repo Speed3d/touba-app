@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
@@ -21,6 +23,8 @@ import '../tournaments/tournament_details_screen.dart';
 import 'team_management_screen.dart';
 import '../players/player_detail_screen.dart';
 import '../reports/submit_report_screen.dart';
+import '../challenges/create_challenge_screen.dart';
+import '../subscription/subscription_locked_sheet.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 
@@ -34,7 +38,8 @@ class TeamDetailsScreen extends StatefulWidget {
   State<TeamDetailsScreen> createState() => _TeamDetailsScreenState();
 }
 
-class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
+class _TeamDetailsScreenState extends State<TeamDetailsScreen>
+    with SingleTickerProviderStateMixin {
   // 📝 HINT AR: عضوية المُشاهد — فريقه الحالي (إن كان لاعباً مرتبطاً) لتحديد
   // أزرار الانضمام/الخروج (تدفّق: خروج إلزامي ثم انضمام).
   String? _myPlayerId;
@@ -42,14 +47,24 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
   String? _myCurrentTeamName;
   ReleaseRequestModel? _myRelease; // أحدث طلب خروج لي (إن وُجد)
   late final Future<List<TournamentModel>> _tournamentsFuture;
+  // 📝 HINT AR: تبويبا «التشكيلة» و«النقاط حسب البطولة».
+  late final TabController _tabController;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     context.read<TeamCubit>().fetchTeamDetails(widget.teamId);
     _resolveMyMembership();
     _tournamentsFuture =
         context.read<TournamentRepository>().getTournamentsByTeam(widget.teamId);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _resolveMyMembership() async {
@@ -99,14 +114,112 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
     }
   }
 
+  // 📝 HINT AR: تأكيد كلمة المرور (إعادة مصادقة Firebase) — للتأكد أن صاحب الحساب
+  // هو من يطلب الخروج فعلاً (بند 15). يُعيد true عند نجاح المصادقة.
+  Future<bool> _confirmPassword() async {
+    final fbUser = FirebaseAuth.instance.currentUser;
+    if (fbUser == null || fbUser.email == null || fbUser.email!.isEmpty) {
+      return false;
+    }
+    final controller = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('تأكيد كلمة المرور'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('للتأكد أنك صاحب الحساب، أدخل كلمة مرورك قبل طلب الخروج.'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              obscureText: true,
+              autofocus: true,
+              decoration: const InputDecoration(
+                  labelText: 'كلمة المرور', border: OutlineInputBorder()),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('تأكيد')),
+        ],
+      ),
+    );
+    if (ok != true || controller.text.isEmpty) return false;
+    try {
+      final cred = EmailAuthProvider.credential(
+          email: fbUser.email!, password: controller.text);
+      await fbUser.reauthenticateWithCredential(cred);
+      return true;
+    } on FirebaseAuthException {
+      if (mounted) ToobaSnackBar.error(context, 'كلمة المرور غير صحيحة');
+      return false;
+    } catch (_) {
+      if (mounted) ToobaSnackBar.error(context, 'تعذّر التحقّق من كلمة المرور');
+      return false;
+    }
+  }
+
+  // 📝 HINT AR: تحديث شعار الفريق (للكابتن من داخل صفحة الفريق) — اختيار مصدر،
+  // رفع، تحديث الرابط، ثم إعادة تحميل التفاصيل.
+  Future<void> _updateTeamLogo(String teamId) async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('اختيار من المعرض'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('التقاط صورة'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return;
+    final picked = await _picker.pickImage(
+        source: source, imageQuality: 70, maxWidth: 800);
+    if (picked == null || !mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final teamRepo = context.read<TeamRepository>();
+    final teamCubit = context.read<TeamCubit>();
+    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ تحديث الشعار...'));
+    try {
+      final url = await teamRepo.uploadTeamLogo(teamId, File(picked.path));
+      await teamRepo.updateTeamLogo(teamId, url);
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم تحديث الشعار'));
+      teamCubit.fetchTeamDetails(teamId);
+    } catch (_) {
+      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تحديث الشعار'));
+    }
+  }
+
   Future<void> _requestRelease(UserModel user) async {
     if (_myPlayerId == null ||
         _myCurrentTeamId == null ||
         _myCurrentTeamId!.isEmpty) {
       return;
     }
+    // 📝 HINT AR: نلتقط المراجع قبل أي await (تفادي استخدام context عبر فجوة async).
     final messenger = ScaffoldMessenger.of(context);
     final teamRepo = context.read<TeamRepository>();
+    // 📝 HINT AR: تأكيد كلمة المرور قبل إرسال الطلب (بند 15).
+    if (!await _confirmPassword()) return;
     try {
       await teamRepo.requestRelease(
         playerId: _myPlayerId!,
@@ -176,6 +289,11 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert),
                     onSelected: (val) {
+                      if (val == 'release') {
+                        // 📝 HINT AR: طلب خروج العضو الحالي (مع تأكيد كلمة المرور).
+                        if (currentUser != null) _requestRelease(currentUser);
+                        return;
+                      }
                       if (val != 'report') return;
                       final uid = FirebaseAuth.instance.currentUser?.uid;
                       if (uid == null) {
@@ -192,8 +310,22 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                         ),
                       );
                     },
-                    itemBuilder: (_) => const [
-                      PopupMenuItem(
+                    itemBuilder: (_) => [
+                      // 📝 HINT AR: «طلب الخروج» يظهر فقط للاعب العضو في هذا الفريق.
+                      if (isPlayerUser && amMemberHere)
+                        const PopupMenuItem(
+                          value: 'release',
+                          child: Row(
+                            children: [
+                              Icon(Icons.logout, color: Colors.orange,
+                                  size: 18),
+                              SizedBox(width: 8),
+                              Text('طلب الخروج من الفريق',
+                                  style: TextStyle(color: Colors.orange)),
+                            ],
+                          ),
+                        ),
+                      const PopupMenuItem(
                         value: 'report',
                         child: Row(
                           children: [
@@ -214,42 +346,67 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
               child: Column(
                 children: [
                   Center(
-                    child: Hero(
-                      tag: 'team_logo_${team.id}',
-                      child: Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.grey[800] : Colors.grey[200],
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: theme.colorScheme.primary, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.colorScheme.primary
-                                  .withValues(alpha: 0.3),
-                              blurRadius: 15,
-                              spreadRadius: 2,
+                    child: Stack(
+                      children: [
+                        Hero(
+                          tag: 'team_logo_${team.id}',
+                          child: Container(
+                            width: 140,
+                            height: 140,
+                            decoration: BoxDecoration(
+                              color:
+                                  isDark ? Colors.grey[800] : Colors.grey[200],
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: theme.colorScheme.primary, width: 3),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.3),
+                                  blurRadius: 15,
+                                  spreadRadius: 2,
+                                ),
+                              ],
                             ),
-                          ],
+                            child: ClipOval(
+                              child: team.logoUrl != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: team.logoUrl!,
+                                      fit: BoxFit.cover,
+                                      placeholder: (c, u) => const Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (c, u, e) =>
+                                          const Icon(Icons.shield, size: 60),
+                                    )
+                                  : Icon(Icons.shield,
+                                      size: 60,
+                                      color: isDark
+                                          ? Colors.grey[600]
+                                          : Colors.grey[400]),
+                            ),
+                          ),
                         ),
-                        child: ClipOval(
-                          child: team.logoUrl != null
-                              ? CachedNetworkImage(
-                                  imageUrl: team.logoUrl!,
-                                  fit: BoxFit.cover,
-                                  placeholder: (c, u) => const Center(
-                                      child: CircularProgressIndicator()),
-                                  errorWidget: (c, u, e) =>
-                                      const Icon(Icons.shield, size: 60),
-                                )
-                              : Icon(Icons.shield,
-                                  size: 60,
-                                  color: isDark
-                                      ? Colors.grey[600]
-                                      : Colors.grey[400]),
-                        ),
-                      ),
+                        // 📝 HINT AR: زر تغيير الشعار — للكابتن من داخل صفحة الفريق.
+                        if (isMyTeam)
+                          Positioned(
+                            bottom: 2,
+                            right: 2,
+                            child: GestureDetector(
+                              onTap: () => _updateTeamLogo(team.id),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                  border:
+                                      Border.all(color: Colors.white, width: 2),
+                                ),
+                                child: const Icon(Icons.camera_alt,
+                                    size: 18, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -274,15 +431,21 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
+                  // 📝 HINT AR: 4 كروت (لعب/فاز/خسر/تعادل) ليصحّ المجموع.
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _statCard(context, 'لعب', team.stats.played.toString()),
                       _statCard(context, 'فاز', team.stats.wins.toString()),
                       _statCard(context, 'خسر', team.stats.losses.toString()),
+                      _statCard(context, 'تعادل', team.stats.draws.toString()),
                     ],
                   ),
                   const SizedBox(height: 24),
+                  // 📝 HINT AR: معرض صور الفريق (إن وُجدت) — شريط أفقي.
+                  if (team.photos.isNotEmpty) ...[
+                    _teamPhotosStrip(team.photos),
+                    const SizedBox(height: 24),
+                  ],
                   // 📝 HINT AR: حالة اللاعب في هذا الفريق.
                   if (isPlayerUser && amMemberHere)
                     Container(
@@ -440,31 +603,44 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
                         ),
                       ),
                     ),
+                  // 📝 HINT AR: زر «اطلب تحدي» — لكابتن يتصفّح فريقاً آخر (بند 17).
+                  // مقفول بالاشتراك (التصفّح حرّ، الطلب يتطلّب اشتراكاً).
+                  if (currentUser != null &&
+                      currentUser.isCaptain &&
+                      !isMyTeam) ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          if (!currentUser.isSubscriptionActive) {
+                            SubscriptionLockedSheet.show(context,
+                                feature: 'طلب التحدّي');
+                            return;
+                          }
+                          Navigator.push(
+                            context,
+                            ToobaRoute.to(CreateChallengeScreen(
+                                targetTeamName: team.name)),
+                          );
+                        },
+                        icon: const Icon(Icons.sports_kabaddi),
+                        label: const Text('اطلب تحدي',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                   if (isPlayerUser || isMyTeam) const SizedBox(height: 24),
-                  // ── أزرار قابلة للطيّ: التشكيلة + النقاط حسب البطولة ──
-                  _expandable(
-                    context,
-                    icon: Icons.groups,
-                    title: 'التشكيلة (${players.length})',
-                    initiallyExpanded: true,
-                    children: players.isEmpty
-                        ? [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text('لا يوجد لاعبون مسجّلون بعد',
-                                  style: TextStyle(color: Colors.grey[600])),
-                            )
-                          ]
-                        : players.map((p) => _playerCard(context, p)).toList(),
-                  ),
-                  const SizedBox(height: 12),
-                  _expandable(
-                    context,
-                    icon: Icons.emoji_events,
-                    title: 'النقاط حسب البطولة',
-                    initiallyExpanded: false,
-                    children: [_tournamentsSection(context, team.id)],
-                  ),
+                  // ── تبويبان: التشكيلة + النقاط حسب البطولة ──
+                  _sectionTabs(context, players, team.id),
                   const SizedBox(height: 24),
                 ],
               ),
@@ -480,14 +656,9 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
     );
   }
 
-  // 📝 HINT AR: قسم قابل للطيّ (ExpansionTile) بعنوان وأيقونة.
-  Widget _expandable(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required List<Widget> children,
-    bool initiallyExpanded = false,
-  }) {
+  // 📝 HINT AR: كرت يحوي تبويبَي «التشكيلة» و«النقاط حسب البطولة».
+  Widget _sectionTabs(
+      BuildContext context, List<PlayerModel> players, String teamId) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Container(
@@ -502,57 +673,74 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Theme(
-        data: theme.copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          initiallyExpanded: initiallyExpanded,
-          leading: Icon(icon, color: theme.colorScheme.primary),
-          title: Text(title,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-          children: children,
-        ),
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            labelColor: theme.colorScheme.primary,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: theme.colorScheme.primary,
+            indicatorSize: TabBarIndicatorSize.label,
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            tabs: [
+              Tab(text: 'التشكيلة (${players.length})'),
+              const Tab(text: 'النقاط حسب البطولة'),
+            ],
+          ),
+          // 📝 HINT AR: محتوى التبويب (داخل ScrollView، لذا نبني المحتوى مباشرة
+          // بدل TabBarView الذي يحتاج ارتفاعاً محدوداً).
+          AnimatedBuilder(
+            animation: _tabController,
+            builder: (context, _) => Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+              child: _tabController.index == 0
+                  ? _lineupTabContent(context, players)
+                  : _tournamentsTabContent(context, teamId),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // 📝 HINT AR: نقاط الفريق ومركزه في كل بطولة شارك بها (حساب لحظي من standings).
-  Widget _tournamentsSection(BuildContext context, String teamId) {
-    final theme = Theme.of(context);
+  Widget _lineupTabContent(BuildContext context, List<PlayerModel> players) {
+    if (players.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text('لا يوجد لاعبون مسجّلون بعد',
+            style: TextStyle(color: Colors.grey[600])),
+      );
+    }
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text('النقاط حسب البطولة',
-              style: theme.textTheme.titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold)),
-        ),
-        const SizedBox(height: 12),
-        FutureBuilder<List<TournamentModel>>(
-          future: _tournamentsFuture,
-          builder: (context, snap) {
-            if (snap.connectionState == ConnectionState.waiting) {
-              return const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-            final tournaments = snap.data ?? [];
-            if (tournaments.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text('لم يشارك الفريق في أي بطولة بعد',
-                    style: TextStyle(color: Colors.grey[600])),
-              );
-            }
-            return Column(
-              children:
-                  tournaments.map((t) => _tournamentRow(context, t, teamId)).toList(),
-            );
-          },
-        ),
-      ],
+      children: players.map((p) => _playerCard(context, p)).toList(),
+    );
+  }
+
+  // 📝 HINT AR: نقاط الفريق ومركزه في كل بطولة شارك بها (حساب لحظي من standings).
+  Widget _tournamentsTabContent(BuildContext context, String teamId) {
+    return FutureBuilder<List<TournamentModel>>(
+      future: _tournamentsFuture,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final tournaments = snap.data ?? [];
+        if (tournaments.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text('لم يشارك الفريق في أي بطولة بعد',
+                style: TextStyle(color: Colors.grey[600])),
+          );
+        }
+        return Column(
+          children: tournaments
+              .map((t) => _tournamentRow(context, t, teamId))
+              .toList(),
+        );
+      },
     );
   }
 
@@ -665,6 +853,34 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
     return Colors.grey;
   }
 
+  // 📝 HINT AR: شريط أفقي لصور الفريق (cache-first).
+  Widget _teamPhotosStrip(List<String> photos) {
+    return SizedBox(
+      height: 110,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: photos.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, i) => ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: CachedNetworkImage(
+            imageUrl: photos[i],
+            width: 150,
+            height: 110,
+            fit: BoxFit.cover,
+            placeholder: (c, u) => Container(
+                width: 150, color: Colors.grey.shade200),
+            errorWidget: (c, u, e) => Container(
+                width: 150,
+                color: Colors.grey.shade200,
+                child: const Icon(Icons.image_not_supported,
+                    color: Colors.grey)),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _releaseStatusBox(String text, IconData icon, Color color) {
     return Container(
       width: double.infinity,
@@ -689,36 +905,39 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen> {
     );
   }
 
+  // 📝 HINT AR: كارت إحصاء قابل للتمدّد (Expanded) ليتّسع 4 كروت في الصف.
   Widget _statCard(BuildContext context, String title, String value) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(value,
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary)),
-          const SizedBox(height: 4),
-          Text(title,
-              style: TextStyle(
-                  fontSize: 14,
-                  color: isDark ? Colors.white70 : Colors.black54)),
-        ],
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[900] : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Text(value,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary)),
+            const SizedBox(height: 4),
+            Text(title,
+                style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.white70 : Colors.black54)),
+          ],
+        ),
       ),
     );
   }

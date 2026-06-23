@@ -9,12 +9,18 @@ import '../../cubits/tournament/tournament_cubit.dart';
 import '../../cubits/tournament/tournament_state.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/models/tournament_model.dart';
+import '../../../data/models/team_model.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import 'enter_result_screen.dart';
 import 'tournament_rules_editor.dart';
+import 'tournament_lineup_screen.dart';
+import 'tournament_lineups_review_screen.dart';
 import '../matches/match_detail_screen.dart';
+import '../../widgets/core/live_match_timer.dart';
+import '../../../data/services/fixtures_pdf_service.dart';
+import '../../../core/utils/formations.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 
@@ -75,6 +81,84 @@ class TournamentDetailsScreen extends StatelessWidget {
                       textAlign: TextAlign.center),
                   const SizedBox(height: 4),
                   Center(child: Text('${t.city} • ${_typeLabel(t.type)}')),
+                  // 📝 HINT AR: بطولة باشتراك (المرحلة 8) — الدخول يُدار من الأدمن.
+                  if (!t.isFree) ...[
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.amber.shade700),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.workspace_premium,
+                                size: 15, color: Colors.amber.shade800),
+                            const SizedBox(width: 4),
+                            Text(
+                              t.entryInfo?.isNotEmpty == true
+                                  ? 'بطولة باشتراك • ${t.entryInfo}'
+                                  : 'بطولة باشتراك',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.amber.shade900),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  // 📝 HINT AR: مراجعة تشكيلات الفرق (للمنظّم) — بند 8.
+                  if (canManage) ...[
+                    const SizedBox(height: 8),
+                    Center(
+                      child: OutlinedButton.icon(
+                        onPressed: () => Navigator.push(
+                          context,
+                          ToobaRoute.to(TournamentLineupsReviewScreen(
+                              tournamentId: t.id)),
+                        ),
+                        icon: const Icon(Icons.fact_check, size: 16),
+                        label: const Text('مراجعة تشكيلات الفرق'),
+                      ),
+                    ),
+                  ],
+                  // 📝 HINT AR: تشكيلتي في البطولة (لكابتن فريق مشارك) — بند 8.
+                  // تختفي بعد انتهاء البطولة (منع تغيير حقوق اللاعبين بأثر رجعي).
+                  if (t.status != 'finished' &&
+                      _myParticipatingTeam(state, currentUser) != null) ...[
+                    const SizedBox(height: 8),
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          final team =
+                              _myParticipatingTeam(state, currentUser)!;
+                          Navigator.push(
+                            context,
+                            ToobaRoute.to(TournamentLineupScreen(
+                              tournamentId: t.id,
+                              tournamentName: t.name,
+                              playerFormat: t.playerFormat,
+                              teamId: team.id,
+                              teamName: team.name,
+                            )),
+                          );
+                        },
+                        icon: const Icon(Icons.groups, size: 18),
+                        label: const Text('تشكيلتي في البطولة'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                   // 📝 HINT AR: تقديم طلب تحكيم — لأي مستخدم ليس منظّم/أدمن.
                   if (currentUser != null && !canManage &&
                       t.status != 'finished') ...[
@@ -94,11 +178,29 @@ class TournamentDetailsScreen extends StatelessWidget {
                   ],
                   _standingsTable(context, state),
                   const SizedBox(height: 24),
-                  Text('المباريات',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      Text('المباريات',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold)),
+                      const Spacer(),
+                      // 📝 HINT AR: تصدير جدول البطولة PDF (للمنظّم) — بند 6.
+                      if (canManage && state.matches.isNotEmpty)
+                        OutlinedButton.icon(
+                          onPressed: () => _exportSchedulePdf(context, state),
+                          icon: const Icon(Icons.picture_as_pdf, size: 16),
+                          label: const Text('تصدير PDF',
+                              style: TextStyle(fontSize: 12)),
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                          ),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   ..._matchTiles(context, state, canManage),
                   const SizedBox(height: 24),
@@ -442,17 +544,27 @@ class TournamentDetailsScreen extends StatelessWidget {
         ),
       );
       for (final m in byRound[round]!) {
-        tiles.add(_matchTile(context, m, canManage));
+        tiles.add(_matchTile(context, m, canManage, state));
       }
     }
     return tiles;
   }
 
-  Widget _matchTile(
-      BuildContext context, MatchModel m, bool canManage) {
+  Widget _matchTile(BuildContext context, MatchModel m, bool canManage,
+      TournamentDetailsLoaded state) {
     final theme = Theme.of(context);
+    final tournament = state.tournament;
     final finished = m.resultConfirmed;
     final hasDate = m.dateTime != null;
+    final isLive = m.status == 'live';
+    // 📝 HINT AR: هل المُشاهد كابتن أحد فريقَي هذه المباراة؟ (لتغيير خطته — بند 8)
+    final auth = context.read<AuthCubit>().state;
+    final uid = auth is AuthAuthenticated ? auth.user.id : null;
+    final isHomeCaptain =
+        uid != null && state.teamsById[m.homeTeamId]?.captainId == uid;
+    final isAwayCaptain =
+        uid != null && state.teamsById[m.awayTeamId]?.captainId == uid;
+    final isMatchCaptain = isHomeCaptain || isAwayCaptain;
     final dateLabel = hasDate
         ? DateFormat('EEE d MMM • HH:mm', 'ar').format(m.dateTime!)
         : 'موعد غير محدد';
@@ -505,10 +617,20 @@ class TournamentDetailsScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   // ── شارة التقدم ──
-                  if (!finished && !hasDate && canManage)
+                  if (isLive)
+                    LiveMatchTimer(
+                      startedAt: m.matchStartedAt,
+                      currentHalf: m.currentHalf,
+                      matchDuration: tournament.matchDuration,
+                      halvesCount: tournament.halvesCount,
+                      compact: true,
+                    )
+                  else if (!finished && !hasDate && canManage)
                     _badge('بدون موعد', Colors.orange.shade100,
-                        Colors.orange.shade700),
-                  if (!finished && hasDate && m.dateTime!.isAfter(DateTime.now()))
+                        Colors.orange.shade700)
+                  else if (!finished &&
+                      hasDate &&
+                      m.dateTime!.isAfter(DateTime.now()))
                     _badge('قادمة', Colors.blue.shade50, Colors.blue.shade700),
                   if (finished)
                     _badge('${m.homeScore} - ${m.awayScore}',
@@ -572,8 +694,72 @@ class TournamentDetailsScreen extends StatelessWidget {
                   ),
                 ),
               ],
+              // ── خطة الكابتن لهذه المباراة (بند 8) ──
+              if (isMatchCaptain && !canManage && !finished) ...[
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _pickMatchFormation(
+                        context, m, isHomeCaptain, tournament.playerFormat),
+                    icon: const Icon(Icons.dashboard_customize, size: 16),
+                    label: Text(
+                      (() {
+                        final f =
+                            isHomeCaptain ? m.homeFormation : m.awayFormation;
+                        return (f != null && f.isNotEmpty)
+                            ? 'خطة فريقي: $f'
+                            : 'تحديد خطة فريقي';
+                      })(),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                    ),
+                  ),
+                ),
+              ],
               // ── أزرار المنظّم ──
               if (canManage && !finished) ...[
+                const SizedBox(height: 8),
+                // ── تحكّم المباراة الحيّة ──
+                if (!isLive)
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => context
+                          .read<TournamentCubit>()
+                          .startMatch(m.tournamentId, m.id),
+                      icon: const Icon(Icons.play_circle_fill, size: 18),
+                      label: const Text('بدأ المباراة'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        visualDensity: VisualDensity.compact,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  )
+                else if (m.currentHalf < tournament.halvesCount)
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context
+                          .read<TournamentCubit>()
+                          .startNextHalf(
+                              m.tournamentId, m.id, m.currentHalf + 1),
+                      icon: const Icon(Icons.fast_forward, size: 18),
+                      label: Text('بدأ الشوط ${m.currentHalf + 1}'),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -681,6 +867,77 @@ class TournamentDetailsScreen extends StatelessWidget {
     } catch (e) {
       messenger.showSnackBar(ToobaSnackBar.buildError(
           e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+
+  // 📝 HINT AR: منتقي خطة الكابتن لمباراته (قوالب نظام البطولة) — بند 8.
+  void _pickMatchFormation(
+      BuildContext context, MatchModel m, bool isHome, int playerFormat) {
+    final cubit = context.read<TournamentCubit>();
+    final options = kFormationOptions[playerFormat] ??
+        [defaultFormationFor(playerFormat)];
+    final current = isHome ? m.homeFormation : m.awayFormation;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('اختر خطة فريقك لهذه المباراة',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 4),
+              Text('الصيغة: حارس-دفاع-وسط-هجوم',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final f in options)
+                    ChoiceChip(
+                      label: Text(f),
+                      selected: current == f,
+                      onSelected: (_) {
+                        Navigator.pop(ctx);
+                        cubit.setMatchFormation(m.tournamentId, m.id, isHome, f);
+                      },
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 📝 HINT AR: فريق الكابتن الحالي إن كان مشاركاً في هذه البطولة (لزر «تشكيلتي»).
+  TeamModel? _myParticipatingTeam(
+      TournamentDetailsLoaded state, UserModel? user) {
+    if (user == null) return null;
+    for (final team in state.teamsById.values) {
+      if (team.captainId == user.id) return team;
+    }
+    return null;
+  }
+
+  // 📝 HINT AR: تصدير جدول البطولة PDF ومشاركته (بند 6).
+  Future<void> _exportSchedulePdf(
+      BuildContext context, TournamentDetailsLoaded state) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ تجهيز التقرير...'));
+    try {
+      await FixturesPdfService.shareTournamentSchedule(
+        tournament: state.tournament,
+        matches: state.matches,
+      );
+    } catch (_) {
+      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تصدير التقرير'));
     }
   }
 

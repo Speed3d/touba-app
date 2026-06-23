@@ -111,6 +111,10 @@ class TeamModel extends Equatable {
   final List<RosterEntry> roster;
   final int playerCount;
   final String? formation; // خطة الفريق الأساسية «1-2-2-1» (يختارها الكابتن)
+  final List<String> photos; // معرض صور الفريق (حتى 5) — يديره الكابتن
+  // 📝 HINT AR: تعيين الكابتن الصريح للاعبين على خانات الخطة (playerId لكل خانة
+  // بترتيب formationSlots) — للتشكيلة التفاعلية على الملعب.
+  final List<String> lineupSlots;
 
   const TeamModel({
     required this.id,
@@ -131,6 +135,8 @@ class TeamModel extends Equatable {
     this.roster = const [],
     this.playerCount = 0,
     this.formation,
+    this.photos = const [],
+    this.lineupSlots = const [],
   }) : nameLower = nameLower ?? name;
 
   factory TeamModel.fromJson(Map<String, dynamic> json, String id) {
@@ -155,6 +161,8 @@ class TeamModel extends Equatable {
           .toList(),
       playerCount: json['playerCount'] ?? 0,
       formation: json['formation'],
+      photos: List<String>.from(json['photos'] ?? const []),
+      lineupSlots: List<String>.from(json['lineupSlots'] ?? const []),
     );
   }
 
@@ -178,6 +186,8 @@ class TeamModel extends Equatable {
       'roster': roster.map((e) => e.toJson()).toList(),
       'playerCount': playerCount,
       if (formation != null) 'formation': formation,
+      'photos': photos,
+      'lineupSlots': lineupSlots,
     };
   }
 
@@ -198,6 +208,8 @@ class TeamModel extends Equatable {
     List<RosterEntry>? roster,
     int? playerCount,
     String? formation,
+    List<String>? photos,
+    List<String>? lineupSlots,
   }) {
     return TeamModel(
       id: id,
@@ -218,6 +230,8 @@ class TeamModel extends Equatable {
       roster: roster ?? this.roster,
       playerCount: playerCount ?? this.playerCount,
       formation: formation ?? this.formation,
+      photos: photos ?? this.photos,
+      lineupSlots: lineupSlots ?? this.lineupSlots,
     );
   }
 
@@ -225,6 +239,6 @@ class TeamModel extends Equatable {
   List<Object?> get props => [
         id, name, nameLower, logoUrl, city, area, foundedYear, colorPrimary,
         colorSecondary, description, captainId, managerPhone, ratingPoints,
-        badges, stats, roster, playerCount, formation,
+        badges, stats, roster, playerCount, formation, photos, lineupSlots,
       ];
 }

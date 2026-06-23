@@ -47,6 +47,18 @@ class TeamManageCubit extends Cubit<TeamManageState> {
     }
   }
 
+  // 📝 HINT AR: حفظ الخطة + تعيين اللاعبين الصريح على خاناتها (تشكيلة تفاعلية).
+  Future<void> setLineup(String formation, List<String> slots) async {
+    try {
+      await _teamRepo.setLineup(teamId, formation, slots);
+      emit(const TeamManageActionSuccess('تم حفظ تشكيلة الفريق'));
+      await _refresh();
+    } catch (e) {
+      emit(TeamManageError(e.toString()));
+      await _refresh();
+    }
+  }
+
   // 📝 HINT AR: تعيين رقم قميص للاعب مع منع تكرار الرقم داخل الفريق.
   Future<void> setShirtNumber(PlayerModel p, int? number) async {
     final st = state;

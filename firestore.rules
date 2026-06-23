@@ -36,11 +36,6 @@ service cloud.firestore {
       return isAuthenticated() && (request.auth.token.admin == true || getUserType() == 'admin');
     }
 
-    // 📝 HINT AR: السوبر أدمن — Custom Claim فقط (للعمليات الأخطر).
-    function isSuperAdmin() {
-      return isAuthenticated() && request.auth.token.superAdmin == true;
-    }
-
     // 📝 HINT AR: صلاحية «منظّم بطولة» — Custom Claim organizer أو أدمن (C6).
     function isOrganizer() {
       return isAuthenticated() && (request.auth.token.organizer == true || isAdmin());
@@ -75,7 +70,8 @@ service cloud.firestore {
     // 📝 HINT AR: القراءة مفتوحة (يحمّلها التطبيق عند الإقلاع)، الكتابة للأدمن.
     match /settings/{docId} {
       allow read: if true;
-      allow write: if isSuperAdmin();
+      // 📝 HINT AR: إعدادات التطبيق (الأقسام/الاشتراك) يديرها الأدمن من لوحة التحكم.
+      allow write: if isAdmin();
     }
     match /appConfig/{docId} {
       allow read: if true;
@@ -84,6 +80,19 @@ service cloud.firestore {
     match /config/{docId} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // ─── أكواد التفعيل (الاشتراكات — المرحلة 8) ──────────────────────────
+    // 📝 HINT AR: يولّدها الأدمن ويقرؤها فقط. **الاستهلاك عبر Cloud Function**
+    // (`redeemActivationCode` بـ Admin SDK يتجاوز القواعد). العميل لا يقرأ/يكتب.
+    match /activation_codes/{code} {
+      allow read, create, update, delete: if isAdmin();
+    }
+
+    // 📝 HINT AR: سجل محاولات التفعيل (تدقيق) — يكتبه CF فقط، يقرؤه الأدمن.
+    match /activation_attempts/{attemptId} {
+      allow read: if isAdmin();
+      allow write: if false;
     }
 
     // ─── المدن والمناطق (لاختيار الموقع) ─────────────────────────────────
@@ -130,7 +139,10 @@ service cloud.firestore {
       allow update: if isAdmin()
                     || (isOwner(userId)
                         && !touches(['role', 'adminPermissions',
-                            'linkedPlayerId', 'playerCode']));
+                            'linkedPlayerId', 'playerCode',
+                            'subscriptionStatus', 'subscriptionExpiresAt',
+                            'subscriptionActivatedAt', 'activationFailedCount',
+                            'activationLockUntil']));
 
       allow delete: if isAdmin();
     }
@@ -174,7 +186,8 @@ service cloud.firestore {
                         && !touches(['careerStats', 'claimedByUid', 'teamToken']))
                     || (resource.data.claimedByUid == request.auth.uid
                         && changes(['name', 'photoUrl', 'preferredFoot',
-                                    'height', 'weight', 'birthDate', 'updatedAt']));
+                                    'height', 'weight', 'birthDate', 'bio',
+                                    'gallery', 'updatedAt']));
 
       allow delete: if isAdmin() || isTeamCaptain(resource.data.currentTeamId);
     }
@@ -249,10 +262,31 @@ service cloud.firestore {
       // 📝 HINT AR: التعديل (النتيجة/الأحداث/التأكيد) لمنظّم البطولة أو الأدمن.
       // أعلام النظام (statsApplied / appliedSnapshot) لا تُكتب من العميل —
       // يضبطها CF عند تأكيد النتيجة (resultConfirmed=true).
-      allow update: if (isAdmin() || isTournamentOrganizer(resource.data.tournamentId))
-                    && !touches(['statsApplied', 'appliedSnapshot']);
+      // + كابتن الفريق المضيف/الضيف يغيّر خطة فريقه لهذه المباراة فقط (بند 8):
+      //   homeFormation للمضيف، awayFormation للضيف — لا يمسّ أي حقل آخر.
+      allow update: if ((isAdmin() || isTournamentOrganizer(resource.data.tournamentId))
+                        && !touches(['statsApplied', 'appliedSnapshot']))
+                    || (isTeamCaptain(resource.data.homeTeamId)
+                        && changes(['homeFormation']))
+                    || (isTeamCaptain(resource.data.awayTeamId)
+                        && changes(['awayFormation']));
 
       allow delete: if isAdmin() || isTournamentOrganizer(resource.data.tournamentId);
+    }
+
+    // ─── تشكيلات البطولة (بند 8) ─────────────────────────────────────────
+    // 📝 HINT AR: الكابتن يكتب تشكيلة فريقه (status=pending)؛ المنظّم يراجع
+    // (status=approved/rejected). القراءة لأي مسجّل (المنظّم يراجع الكل).
+    match /tournament_lineups/{lineupId} {
+      allow read: if isAuthenticated();
+      allow create: if isTeamCaptain(request.resource.data.teamId)
+                    && request.resource.data.status == 'pending';
+      allow update: if isAdmin()
+                    || isTournamentOrganizer(resource.data.tournamentId)
+                    || (isTeamCaptain(resource.data.teamId)
+                        && request.resource.data.status == 'pending');
+      allow delete: if isAdmin()
+                    || isTournamentOrganizer(resource.data.tournamentId);
     }
 
     // ─── صفحات الحكّام (تُفعّل في المرحلة 3 — محجوزة الآن) ────────────────
@@ -323,8 +357,11 @@ service cloud.firestore {
     // 📝 HINT AR: محادثة بين طرفين فقط (participants). الطرفان يقرآن/يكتبان آخر
     // رسالة وعدّاد غير المقروء؛ لا أحد آخر. تغيير participants ممنوع.
     match /chats/{chatId} {
+      // 📝 HINT AR: نسمح بقراءة مستند غير موجود (resource==null) لأن createOrGetChat
+      // يفحص وجود المحادثة قبل إنشائها — وإلا يفشل القبول بـ PERMISSION_DENIED.
       allow read: if isAuthenticated()
-                  && request.auth.uid in resource.data.participants;
+                  && (resource == null
+                      || request.auth.uid in resource.data.participants);
       allow create: if isAuthenticated()
                     && request.auth.uid in request.resource.data.participants;
       allow update: if isAuthenticated()

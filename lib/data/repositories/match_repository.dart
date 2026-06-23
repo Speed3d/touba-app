@@ -102,6 +102,33 @@ class MatchRepository {
     });
   }
 
+  // 📝 HINT AR: بدء المباراة (للمنظّم) — status='live' + بدء مؤقّت الشوط الأول.
+  // المؤقّت خادمي: كل جهاز يحسب الدقيقة = now − matchStartedAt.
+  Future<void> startMatch(String matchId) async {
+    await _firestore.collection('matches').doc(matchId).update({
+      'status': 'live',
+      'currentHalf': 1,
+      'matchStartedAt': DateTime.now().toIso8601String(),
+    });
+  }
+
+  // 📝 HINT AR: بدء الشوط التالي (يقوده المنظّم يدوياً) — يُعيد ضبط بداية المؤقّت.
+  Future<void> startNextHalf(String matchId, int half) async {
+    await _firestore.collection('matches').doc(matchId).update({
+      'currentHalf': half,
+      'matchStartedAt': DateTime.now().toIso8601String(),
+    });
+  }
+
+  // 📝 HINT AR: تغيير خطة الكابتن لهذه المباراة (بند 8) — يكتب حقلاً واحداً فقط
+  // (homeFormation للمضيف أو awayFormation للضيف) مطابقاً لقاعدة `matches`.
+  Future<void> setCaptainFormation(
+      String matchId, bool isHome, String formation) async {
+    await _firestore.collection('matches').doc(matchId).update({
+      isHome ? 'homeFormation' : 'awayFormation': formation,
+    });
+  }
+
   // 📝 HINT AR: تأكيد النتيجة (للمنظّم) — يضبط resultConfirmed=true فتُشغَّل
   // الدالة السحابية التي تجمّع أحداث المباراة (الأهداف/الصناعة) في إحصائيات
   // اللاعبين. لا نلمس statsApplied (يكتبه النظام).

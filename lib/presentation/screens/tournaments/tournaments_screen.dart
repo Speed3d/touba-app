@@ -209,6 +209,10 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                           _miniBadge(finished ? 'منتهية' : 'جارية'),
                           const SizedBox(width: 6),
                           _miniBadge('${t.playerFormat} ضد ${t.playerFormat}'),
+                          if (!t.isFree) ...[
+                            const SizedBox(width: 6),
+                            _miniBadge('باشتراك'),
+                          ],
                         ],
                       ),
                       const Spacer(),

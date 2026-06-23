@@ -13,6 +13,7 @@ import '../legal/privacy_policy_screen.dart';
 import '../legal/terms_conditions_screen.dart';
 import '../profile/profile_screen.dart';
 import '../matches/referee_matches_screen.dart';
+import '../subscription/subscription_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 
@@ -44,6 +45,34 @@ class SettingsScreen extends StatelessWidget {
             _profileHeader(context, isDark, authState),
           if (authState is AuthVisitor) _visitorHeader(context, theme),
           const SizedBox(height: 20),
+
+          // ── كارت الاشتراك (للكابتن — المرحلة 8) ──
+          if (authState is AuthAuthenticated &&
+              authState.user.isCaptain) ...[
+            _card(context, isDark, [
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(Icons.workspace_premium,
+                    color: authState.user.isSubscriptionActive
+                        ? Colors.green
+                        : theme.colorScheme.primary),
+                title: const Text('اشتراكي'),
+                subtitle: Text(
+                    authState.user.isSubscriptionActive
+                        ? (authState.user.subscriptionStatus == 'free_trial'
+                            ? 'تجربة مجانية فعّالة'
+                            : 'مشترك فعّال')
+                        : 'غير مشترك — فعّل للتحدّيات',
+                    style: const TextStyle(fontSize: 12)),
+                trailing: const Icon(Icons.chevron_left, size: 20),
+                onTap: () => Navigator.push(
+                  context,
+                  ToobaRoute.to(const SubscriptionScreen()),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 16),
+          ],
 
           // ── كارت الحكم (لمن يملك صلاحية حكم فقط) ──
           if (authState is AuthAuthenticated &&

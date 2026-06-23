@@ -57,11 +57,25 @@ service firebase.storage {
       allow write: if isImage() && isValidSize() && (isTeamCaptain(teamId) || isAdmin());
     }
 
+    // ─── معرض صور الفريق (حتى 5) ─────────────────────────────────────────
+    // 📝 HINT AR: المسار: teams/{teamId}/gallery/{file}. الكتابة لكابتن الفريق.
+    match /teams/{teamId}/gallery/{fileName} {
+      allow read: if true;
+      allow write: if isImage() && isValidSize() && (isTeamCaptain(teamId) || isAdmin());
+    }
+
     // ─── صور اللاعبين (البطاقات) ─────────────────────────────────────────
     // 📝 HINT AR: المسار: players/{playerId}/photo/{file}. يرفعها الكابتن أو
     // اللاعب صاحب السجل. للتبسيط وتجنّب قراءات متداخلة مكلفة نكتفي بمصادقة +
     // صورة + حجم؛ تشديد الملكية الدقيق يُضاف لاحقاً عبر Cloud Function.
     match /players/{playerId}/photo/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImage() && isValidSize();
+    }
+
+    // 📝 HINT AR: معرض صور اللاعب (حتى 5). المسار: players/{playerId}/gallery/{file}.
+    // يرفعها اللاعب صاحب السجل (مصادق + صورة + حجم).
+    match /players/{playerId}/gallery/{fileName} {
       allow read: if true;
       allow write: if isAuthenticated() && isImage() && isValidSize();
     }
