@@ -279,17 +279,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (user.linkedPlayerId != null) ...[
                   const SizedBox(height: 16),
                   // 📝 HINT AR: بطاقة تفتح تعديل تفاصيل اللاعب الرياضية (بند 14).
-                  Container(
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.grey[900] : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4)),
-                      ],
-                    ),
+                  Material(
+                    color: isDark ? Colors.grey[900] : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    elevation: 1,
+                    shadowColor: Colors.black.withValues(alpha: 0.08),
                     clipBehavior: Clip.antiAlias,
                     child: ListTile(
                       onTap: () => Navigator.push(

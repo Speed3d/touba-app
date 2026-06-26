@@ -405,20 +405,11 @@ class SettingsScreen extends StatelessWidget {
       );
 
   Widget _card(BuildContext context, bool isDark, List<Widget> children) =>
-      Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: isDark ? Colors.grey[900] : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+      Material(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        elevation: 1,
+        shadowColor: Colors.black.withValues(alpha: 0.08),
         child: Column(children: children),
       );
 }

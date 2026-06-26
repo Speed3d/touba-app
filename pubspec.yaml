@@ -31,7 +31,6 @@ dependencies:
   cupertino_icons: ^1.0.6
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
-  lucide_icons: ^0.257.0
 
   # Media
   image_picker: ^1.2.2

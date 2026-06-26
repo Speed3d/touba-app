@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import '../../../data/models/tournament_model.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import '../../widgets/core/tooba_empty_state.dart';
@@ -125,7 +124,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 Positioned(
                   right: -10,
                   bottom: -10,
-                  child: Icon(LucideIcons.trophy,
+                  child: Icon(Icons.emoji_events,
                       size: 90, color: Colors.white.withValues(alpha: 0.12)),
                 ),
                 Padding(

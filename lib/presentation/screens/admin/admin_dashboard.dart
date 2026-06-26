@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'manage_locations_screen.dart';
 import 'manage_roles_screen.dart';
 import 'admin_reports_screen.dart';
@@ -28,7 +27,7 @@ class AdminDashboard extends StatelessWidget {
         children: [
           _buildAdminCard(
             context,
-            icon: LucideIcons.mapPin,
+            icon: Icons.location_on,
             title: 'إدارة المواقع',
             subtitle: 'المحافظات والمناطق المسموح باللعب فيها',
             color: Colors.teal,
@@ -39,7 +38,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.shieldCheck,
+            icon: Icons.verified_user,
             title: 'إدارة الصلاحيات',
             subtitle: 'منح ألقاب المنظمين والحكام',
             color: Colors.blue,
@@ -50,7 +49,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.flag,
+            icon: Icons.flag,
             title: 'البلاغات',
             subtitle: 'مراجعة البلاغات الواردة عن لاعبين وفرق',
             color: Colors.red,
@@ -60,7 +59,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.trophy,
+            icon: Icons.emoji_events,
             title: 'إدارة البطولات',
             subtitle: 'تعديل الأسماء والصور والكؤوس والجوائز',
             color: Colors.amber.shade800,
@@ -70,7 +69,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.image,
+            icon: Icons.image,
             title: 'إدارة الإعلانات',
             subtitle: 'بانرات سلايدر الصفحة الرئيسية',
             color: Colors.indigo,
@@ -80,7 +79,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.newspaper,
+            icon: Icons.article,
             title: 'إدارة الأخبار',
             subtitle: 'نشر وتعديل أخبار الصفحة الرئيسية',
             color: Colors.green.shade700,
@@ -90,7 +89,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.userCheck,
+            icon: Icons.how_to_reg,
             title: 'طلبات التحكيم',
             subtitle: 'موافقة/رفض طلبات الراغبين بالتحكيم',
             color: Colors.teal.shade700,
@@ -100,7 +99,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.scale,
+            icon: Icons.balance,
             title: 'نزاعات فكّ الارتباط',
             subtitle: 'طلبات خروج رفضها الكباتن وصعّدها اللاعبون',
             color: Colors.purple,
@@ -110,7 +109,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.swords,
+            icon: Icons.sports_mma,
             title: 'إدارة التحديات',
             subtitle: 'إلغاء طلبات التحدّي المتروكة (بلا متقدّمين منذ أيام)',
             color: Colors.deepOrange,
@@ -120,7 +119,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.layoutGrid,
+            icon: Icons.grid_view,
             title: 'إعدادات الأقسام',
             subtitle: 'إظهار/إخفاء أقسام التطبيق (مثل البطولات)',
             color: Colors.blueGrey,
@@ -130,7 +129,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.ticket,
+            icon: Icons.confirmation_number,
             title: 'أكواد التفعيل',
             subtitle: 'توليد أكواد الاشتراك + مدة التجربة + واتساب التفعيل',
             color: Colors.teal,
@@ -140,7 +139,7 @@ class AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           _buildAdminCard(
             context,
-            icon: LucideIcons.checkCircle,
+            icon: Icons.check_circle,
             title: 'توثيق الفرق',
             subtitle: 'قريباً...',
             color: Colors.amber.shade700,
@@ -179,7 +178,7 @@ class AdminDashboard extends StatelessWidget {
           padding: const EdgeInsets.only(top: 4),
           child: Text(subtitle, style: TextStyle(color: Colors.grey.shade600)),
         ),
-        trailing: const Icon(LucideIcons.chevronLeft, color: Colors.grey),
+        trailing: const Icon(Icons.chevron_left, color: Colors.grey),
         onTap: onTap,
       ),
     );

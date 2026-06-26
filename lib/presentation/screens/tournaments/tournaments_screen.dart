@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/tournament/tournament_cubit.dart';
@@ -92,7 +91,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
 
             if (state.tournaments.isEmpty) {
               return ToobaEmptyState(
-                icon: LucideIcons.trophy,
+                icon: Icons.emoji_events,
                 title: 'لا توجد بطولات بعد',
                 subtitle: canManage
                     ? 'أنشئ أول بطولة بزر «إنشاء بطولة» أدناه'
@@ -196,7 +195,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                 Positioned(
                   right: -20,
                   bottom: -20,
-                  child: Icon(LucideIcons.trophy,
+                  child: Icon(Icons.emoji_events,
                       size: 120, color: Colors.white.withValues(alpha: 0.12)),
                 ),
                 Padding(
