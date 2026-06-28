@@ -68,6 +68,40 @@ class FunctionsService {
     return Map<String, dynamic>.from(result.data as Map);
   }
 
+  /// 📝 HINT AR: تقييم الحكم (الوجبة 7 — النقطتان 9 و10). الفرض خادمي: المنظّم
+  /// أو الأدمن أو كابتن أحد فريقَي المباراة فقط، مرة واحدة، والحكم لا يقيّم نفسه.
+  /// ترمي FirebaseFunctionsException برسالة عربية واضحة عند الرفض.
+  Future<void> rateReferee({
+    required String matchId,
+    required String refereeId,
+    required int rating,
+  }) async {
+    final callable = _functions.httpsCallable('rateReferee');
+    await callable.call(<String, dynamic>{
+      'matchId': matchId,
+      'refereeId': refereeId,
+      'rating': rating,
+    });
+  }
+
+  /// 📝 HINT AR: تذكير كابتن بإرسال تشكيلته (الوجبة 7 — بند 2). للمنظّم/الأدمن.
+  Future<void> remindLineup(
+      String tournamentId, String teamId, String? message) async {
+    final callable = _functions.httpsCallable('remindLineup');
+    await callable.call(<String, dynamic>{
+      'tournamentId': tournamentId,
+      'teamId': teamId,
+      if (message != null && message.isNotEmpty) 'message': message,
+    });
+  }
+
+  /// 📝 HINT AR: توليد المرحلة الإقصائية يدوياً من المجموعات (احتياطي للمنظّم/
+  /// الأدمن). يتولّد تلقائياً عند اكتمال المجموعات؛ هذا للطوارئ.
+  Future<void> generateKnockout(String tournamentId) async {
+    final callable = _functions.httpsCallable('generateKnockout');
+    await callable.call(<String, dynamic>{'tournamentId': tournamentId});
+  }
+
   /// 📝 HINT AR: حذف الحساب الحالي نهائياً (مطلوب للمتجر). تحذف الدالة:
   /// مستند المستخدم + طلبات الانضمام + فكّ ربط سجل اللاعب + حساب المصادقة.
   /// ترفض إن كان المستخدم كابتن فريق (يجب حذف/نقل الفريق أولاً).

@@ -49,6 +49,11 @@ class UserModel extends Equatable {
   bool get isCaptain => role == 'captain';
   bool get isAdmin => role == 'admin';
 
+  /// 📝 HINT AR: حكم — إمّا بدور حكم مباشر أو بصفة منحها الأدمن/التسجيل. نقبل
+  /// الاثنين ليظهر بُعد الحكم فوراً بعد التسجيل قبل أن تنعكس صفة CF.
+  bool get isReferee =>
+      role == 'referee' || adminPermissions.contains('referee');
+
   /// 📝 HINT AR: الاشتراك فعّال إن لم ينتهِ تاريخه (يشمل التجربة المجانية).
   /// هذه هي قاعدة القفل الوحيدة (مقارنة لحظية، لا حاجة لقلب الحالة).
   bool get isSubscriptionActive =>

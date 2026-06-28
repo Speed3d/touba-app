@@ -242,6 +242,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           value: 'captain',
                           child: Text('كابتن (إنشاء وإدارة فريق)'),
                         ),
+                        // 📝 HINT AR: حساب حكم — صفحة عامة + إدارة المباريات
+                        // (يُمنح صفة الحكم تلقائياً عبر onUserCreated).
+                        DropdownMenuItem(
+                          value: 'referee',
+                          child: Text('حكم (إدارة المباريات)'),
+                        ),
                       ],
                       onChanged: (value) {
                         if (value != null) {

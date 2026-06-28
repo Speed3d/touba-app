@@ -51,6 +51,9 @@ class TournamentCubit extends Cubit<TournamentState> {
     List<UserModel> referees = const [],
     bool isFree = true,
     String? entryInfo,
+    // 📝 HINT AR: الوجبة 7 — حسم تعادل الإقصائي + عدد المتأهّلين من كل مجموعة.
+    String tieBreakMode = 'extratime_penalties',
+    int qualifiersPerGroup = 2,
   }) async {
     emit(TournamentLoading());
     try {
@@ -60,6 +63,14 @@ class TournamentCubit extends Cubit<TournamentState> {
       if (logoFile != null) {
         logoUrl = await _tournamentRepo.uploadTournamentImage(id, logoFile);
       }
+
+      // 📝 HINT AR: توزيع المجموعات (قرعة) — يُحفظ على المستند ليُعرض في التفاصيل.
+      Map<String, List<String>> groupsMap = const {};
+      if (type == 'groups') {
+        groupsMap = FixturesService.assignGroups(
+            teams.map((t) => t.id).toList(), numberOfGroups ?? 2);
+      }
+
       final tournament = TournamentModel(
         id: id,
         name: name,
@@ -78,24 +89,37 @@ class TournamentCubit extends Cubit<TournamentState> {
         entryInfo: entryInfo,
         matchDuration: matchDuration,
         halvesCount: halvesCount,
+        tieBreakMode: tieBreakMode,
+        qualifiersPerGroup: qualifiersPerGroup,
+        groups: groupsMap,
       );
       await _tournamentRepo.createTournament(tournament);
 
       final teamsById = {for (final t in teams) t.id: t};
-      
+
       List<Fixture> fixtures = [];
       if (type == 'league') {
-        fixtures = FixturesService.roundRobin(tournament.teamIds, isHomeAndAway: isHomeAndAway);
+        fixtures = FixturesService.roundRobin(tournament.teamIds,
+            isHomeAndAway: isHomeAndAway);
       } else if (type == 'knockout') {
-        fixtures = FixturesService.knockout(tournament.teamIds, isHomeAndAway: isHomeAndAway, generationMode: generationMode);
+        // 📝 HINT AR: شجرة كاملة بروابط ترقية + Bye (تصعد عبر CF عند التأكيد).
+        fixtures = FixturesService.knockout(tournament.teamIds,
+            isHomeAndAway: isHomeAndAway);
       } else if (type == 'groups') {
-        fixtures = FixturesService.groups(tournament.teamIds, numberOfGroups: numberOfGroups ?? 2, isHomeAndAway: isHomeAndAway);
+        // 📝 HINT AR: مرحلة المجموعات فقط؛ الإقصائي يُولَّد بعد اكتمالها (CF).
+        fixtures = FixturesService.groupFixtures(groupsMap,
+            isHomeAndAway: isHomeAndAway);
       }
 
-      // 📝 HINT AR: جدولة تلقائية — نمطان:
-      // • rounds: كل جولة بعد السابقة بـ roundIntervalDays.
-      // • daily: توقيت يومي ثابت (وقت startDate)، توزيع matchesPerDay/يوم
-      //   كلٌّ بفاصل matchGapMinutes. (قابلة للتعديل لاحقاً من المنظّم.)
+      // 📝 HINT AR: معرّف ثابت لكل مفتاح شجرة (للربط feed بين مباريات الإقصائي).
+      final idByKey = <String, String>{};
+      for (final f in fixtures) {
+        if (f.key.isNotEmpty) idByKey[f.key] = const Uuid().v4();
+      }
+      String nameOf(String teamId) =>
+          teamId.isEmpty ? '' : (teamsById[teamId]?.name ?? '');
+
+      // 📝 HINT AR: جدولة تلقائية — rounds (فاصل بين الجولات) أو daily (توقيت يومي).
       final matches = <MatchModel>[];
       for (var i = 0; i < fixtures.length; i++) {
         final f = fixtures[i];
@@ -113,25 +137,31 @@ class TournamentCubit extends Cubit<TournamentState> {
                 Duration(days: (f.round - 1) * roundIntervalDays));
           }
         }
+        final matchId =
+            f.key.isNotEmpty ? idByKey[f.key]! : const Uuid().v4();
         matches.add(MatchModel(
-          id: const Uuid().v4(),
+          id: matchId,
           tournamentId: id,
           round: f.round,
           homeTeamId: f.homeId,
           awayTeamId: f.awayId,
-          homeTeamName: teamsById[f.homeId]?.name ??
-              (f.homeId.startsWith('TBD') ? f.homeId : ''),
-          awayTeamName: teamsById[f.awayId]?.name ??
-              (f.awayId.startsWith('TBD') ? f.awayId : ''),
+          homeTeamName: nameOf(f.homeId),
+          awayTeamName: nameOf(f.awayId),
           homeTeamLogo: teamsById[f.homeId]?.logoUrl,
           awayTeamLogo: teamsById[f.awayId]?.logoUrl,
           dateTime: dt,
+          stage: f.stage,
+          groupName: f.groupName,
+          bracketRound: f.bracketRound,
+          homeFeedFrom:
+              f.homeFeedKey != null ? idByKey[f.homeFeedKey] : null,
+          awayFeedFrom:
+              f.awayFeedKey != null ? idByKey[f.awayFeedKey] : null,
         ));
       }
 
       // 📝 HINT AR: توزيع الحكّام عشوائياً — لا يتكرّر حكم في نفس التاريخ/الوقت.
-      final withReferees =
-          _distributeReferees(matches, referees);
+      final withReferees = _distributeReferees(matches, referees);
 
       if (withReferees.isNotEmpty) {
         await _matchRepo.createMatchesBatch(withReferees);
@@ -261,6 +291,11 @@ class TournamentCubit extends Cubit<TournamentState> {
     List<Map<String, dynamic>> awayLineup = const [],
     String? homeFormation,
     String? awayFormation,
+    // 📝 HINT AR: حسم تعادل الإقصائي (الوجبة 7).
+    String? decidedBy,
+    int? penaltyHome,
+    int? penaltyAway,
+    String? advancedTeamId,
   }) async {
     try {
       await _matchRepo.setResult(match.id, home, away,
@@ -269,7 +304,11 @@ class TournamentCubit extends Cubit<TournamentState> {
           homeLineup: homeLineup,
           awayLineup: awayLineup,
           homeFormation: homeFormation,
-          awayFormation: awayFormation);
+          awayFormation: awayFormation,
+          decidedBy: decidedBy,
+          penaltyHome: penaltyHome,
+          penaltyAway: penaltyAway,
+          advancedTeamId: advancedTeamId);
       emit(const TournamentActionSuccess(
           'تم حفظ النتيجة — يُحدَّث الترتيب والإحصائيات خلال ثوانٍ'));
       await fetchDetails(tournamentId);

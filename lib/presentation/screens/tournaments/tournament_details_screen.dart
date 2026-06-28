@@ -11,14 +11,19 @@ import '../../../data/models/match_model.dart';
 import '../../../data/models/tournament_model.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/models/user_model.dart';
+import '../../../data/models/tournament_lineup_model.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/tournament_repository.dart';
+import '../../../data/repositories/tournament_lineup_repository.dart';
+import '../../../data/services/functions_service.dart';
 import 'enter_result_screen.dart';
 import 'tournament_rules_editor.dart';
 import 'tournament_lineup_screen.dart';
 import 'tournament_lineups_review_screen.dart';
 import '../matches/match_detail_screen.dart';
 import '../../widgets/core/live_match_timer.dart';
+import '../../widgets/core/standings_view.dart';
+import '../../widgets/core/bracket_view.dart';
 import '../../../data/services/fixtures_pdf_service.dart';
 import '../../../core/utils/formations.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
@@ -37,7 +42,7 @@ class TournamentDetailsScreen extends StatelessWidget {
         authState is AuthAuthenticated ? authState.user : null;
 
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
       appBar: AppBar(
         title: const Text('تفاصيل البطولة'),
@@ -45,9 +50,11 @@ class TournamentDetailsScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         bottom: const TabBar(
+          isScrollable: true,
           tabs: [
             Tab(text: 'تفاصيل'),
             Tab(text: 'شروط وقوانين'),
+            Tab(text: 'الفرق المشاركة'),
           ],
         ),
       ),
@@ -121,7 +128,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                         onPressed: () => Navigator.push(
                           context,
                           ToobaRoute.to(TournamentLineupsReviewScreen(
-                              tournamentId: t.id)),
+                              tournamentId: t.id, canManage: true)),
                         ),
                         icon: const Icon(Icons.fact_check, size: 16),
                         label: const Text('مراجعة تشكيلات الفرق'),
@@ -159,8 +166,10 @@ class TournamentDetailsScreen extends StatelessWidget {
                       ),
                     ),
                   ],
-                  // 📝 HINT AR: تقديم طلب تحكيم — لأي مستخدم ليس منظّم/أدمن.
+                  // 📝 HINT AR: تقديم طلب تحكيم — لأي مستخدم ليس منظّم/أدمن وليس
+                  // حكماً أصلاً (الحكم يظهر تلقائياً في قائمة الحكّام للمنظّم).
                   if (currentUser != null && !canManage &&
+                      !currentUser.isReferee &&
                       t.status != 'finished') ...[
                     const SizedBox(height: 8),
                     Center(
@@ -176,7 +185,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                     _championBanner(context, t, state),
                     const SizedBox(height: 16),
                   ],
-                  _standingsTable(context, state),
+                  _standingsOrBracket(context, state),
                   const SizedBox(height: 24),
                   Row(
                     children: [
@@ -209,6 +218,8 @@ class TournamentDetailsScreen extends StatelessWidget {
                 ),
                 // ── تبويب «شروط وقوانين» ──
                 _rulesTab(context, state, canManage),
+                // ── تبويب «الفرق المشاركة» ──
+                _teamsTab(context, state, canManage),
               ],
             );
           }
@@ -363,6 +374,169 @@ class TournamentDetailsScreen extends StatelessWidget {
     );
   }
 
+  // 📝 HINT AR: تبويب «الفرق المشاركة» (بند 2) — كل الفرق مع حالة تشكيلتها (لم
+  // يُرسل / تم الإرسال / تم التحقق / مرفوضة). الضغط على فريق أرسل يفتح المراجعة
+  // (لاعبوها قابلون للنقر لفتح صفحاتهم)؛ وفريق لم يُرسل يفتح نافذة تذكير (للمنظّم).
+  Widget _teamsTab(
+      BuildContext context, TournamentDetailsLoaded state, bool canManage) {
+    final t = state.tournament;
+    return FutureBuilder<List<TournamentLineupModel>>(
+      future: context
+          .read<TournamentLineupRepository>()
+          .getLineupsForTournament(t.id),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final byTeam = {
+          for (final l in snap.data ?? <TournamentLineupModel>[]) l.teamId: l
+        };
+        return RefreshIndicator(
+          onRefresh: () =>
+              context.read<TournamentCubit>().fetchDetails(tournamentId),
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Text('حالة تشكيلات الفرق (${t.teamIds.length})',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(
+                  canManage
+                      ? 'اضغط فريقاً أرسل لمراجعة تشكيلته، أو فريقاً لم يُرسل لتذكيره.'
+                      : 'اضغط فريقاً أرسل لعرض تشكيلته.',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              const SizedBox(height: 12),
+              if (t.teamIds.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('لا فرق مشاركة',
+                      style: TextStyle(color: Colors.grey[600])),
+                )
+              else
+                ...t.teamIds.map((id) => _teamStatusCard(
+                    context, state, id, byTeam[id], canManage)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _teamStatusCard(BuildContext context, TournamentDetailsLoaded state,
+      String teamId, TournamentLineupModel? lineup, bool canManage) {
+    final team = state.teamsById[teamId];
+    final name = team?.name ?? '—';
+    Color color;
+    String label;
+    IconData icon;
+    if (lineup == null) {
+      color = Colors.orange;
+      label = 'لم يُرسل';
+      icon = Icons.hourglass_empty;
+    } else if (lineup.isApproved) {
+      color = Colors.green;
+      label = 'تم التحقق';
+      icon = Icons.verified;
+    } else if (lineup.isRejected) {
+      color = Colors.red;
+      label = 'مرفوضة';
+      icon = Icons.cancel;
+    } else {
+      color = Colors.blue;
+      label = 'تم الإرسال';
+      icon = Icons.send;
+    }
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: _teamLogo(team?.logoUrl, 18),
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Row(
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 4),
+            Text(label,
+                style: TextStyle(
+                    color: color,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold)),
+          ],
+        ),
+        trailing: Icon(
+            lineup == null && !canManage
+                ? Icons.lock_clock
+                : Icons.chevron_left,
+            color: Colors.grey[400]),
+        onTap: () {
+          if (lineup != null) {
+            Navigator.push(
+              context,
+              ToobaRoute.to(TournamentLineupsReviewScreen(
+                  tournamentId: state.tournament.id, canManage: canManage)),
+            );
+          } else if (canManage) {
+            _remindCaptain(context, state.tournament.id, teamId, name);
+          } else {
+            ToobaSnackBar.info(context, 'لم يُرسِل الكابتن تشكيلته بعد');
+          }
+        },
+      ),
+    );
+  }
+
+  // 📝 HINT AR: تذكير كابتن لم يُرسل تشكيلته (عبر CF remindLineup) مع رسالة اختيارية.
+  Future<void> _remindCaptain(BuildContext context, String tournamentId,
+      String teamId, String teamName) async {
+    final ctrl = TextEditingController();
+    final messenger = ScaffoldMessenger.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('تذكير فريق $teamName'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'سيصل تنبيه لكابتن الفريق بضرورة إرسال التشكيلة. إن لم تُرسَل '
+              'يمكنك إقصاء الفريق أو إدخال خسارة 3-0 يدوياً.',
+              style: TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: ctrl,
+              maxLines: 2,
+              decoration: const InputDecoration(
+                  hintText: 'رسالة مخصّصة (اختياري)',
+                  border: OutlineInputBorder()),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('إرسال التذكير')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await FunctionsService()
+          .remindLineup(tournamentId, teamId, ctrl.text.trim());
+      messenger.showSnackBar(
+          ToobaSnackBar.buildSuccess('أُرسل التذكير لكابتن $teamName'));
+    } catch (_) {
+      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر إرسال التذكير'));
+    }
+  }
+
   // 📝 HINT AR: بانر تتويج البطل عند انتهاء البطولة — كأس/شعار البطل + الجوائز
   // + الراعي (يضبطها الأدمن من «إدارة البطولات»).
   Widget _championBanner(
@@ -449,65 +623,66 @@ class TournamentDetailsScreen extends StatelessWidget {
     }
   }
 
-  Widget _standingsTable(BuildContext context, TournamentDetailsLoaded state) {
-    final standings = state.standings;
-    if (standings.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        alignment: Alignment.center,
-        child: Text('سيظهر الترتيب بعد إدخال أول نتيجة',
-            style: TextStyle(color: Colors.grey[600])),
-      );
-    }
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columnSpacing: 16,
-          columns: const [
-            DataColumn(label: Text('#')),
-            DataColumn(label: Text('الفريق')),
-            DataColumn(label: Text('ل')),
-            DataColumn(label: Text('ف')),
-            DataColumn(label: Text('ت')),
-            DataColumn(label: Text('خ')),
-            DataColumn(label: Text('±')),
-            DataColumn(label: Text('نقاط')),
-          ],
-          rows: List.generate(standings.length, (i) {
-            final s = Map<String, dynamic>.from(standings[i]);
-            final team = state.teamsById[s['teamId']];
-            final total = standings.length;
-            return DataRow(cells: [
-              DataCell(Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _rankDot(i + 1, total),
-                  const SizedBox(width: 4),
-                  Text('${i + 1}'),
-                ],
-              )),
-              DataCell(Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _teamLogo(team?.logoUrl, 12),
-                  const SizedBox(width: 6),
-                  Text(team?.name ?? '—'),
-                ],
-              )),
-              DataCell(Text('${s['played'] ?? 0}')),
-              DataCell(Text('${s['won'] ?? 0}')),
-              DataCell(Text('${s['drawn'] ?? 0}')),
-              DataCell(Text('${s['lost'] ?? 0}')),
-              DataCell(Text('${s['gd'] ?? 0}')),
-              DataCell(Text('${s['points'] ?? 0}',
-                  style: const TextStyle(fontWeight: FontWeight.bold))),
-            ]);
-          }),
-        ),
-      ),
+  // 📝 HINT AR: الترتيب (دوري/مجموعات) و/أو شجرة الإقصائي (الوجبة 7). الدوري:
+  // جدول واحد. المجموعات: جدول لكل مجموعة + الشجرة إن وُلِّدت. الإقصائي: الشجرة فقط.
+  Widget _standingsOrBracket(
+      BuildContext context, TournamentDetailsLoaded state) {
+    final t = state.tournament;
+    final knockoutMatches =
+        state.matches.where((m) => m.stage == 'knockout').toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (t.type != 'knockout')
+          StandingsView(
+              standings: t.standings, teamsById: state.teamsById),
+        if (knockoutMatches.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _sectionTitle(context, 'المرحلة الإقصائية', Icons.account_tree),
+          const SizedBox(height: 8),
+          BracketView(
+            matches: knockoutMatches,
+            onMatchTap: (m) => Navigator.push(
+                context, ToobaRoute.to(MatchDetailScreen(match: m))),
+          ),
+        ],
+        // 📝 HINT AR: زر توليد الإقصائي يدوياً (للطوارئ) — للمنظّم في بطولة مجموعات
+        // اكتملت ولم يُولَّد إقصائيها تلقائياً.
+        if (t.type == 'groups' &&
+            !t.bracketGenerated &&
+            (currentUserCanManage(context, t)))
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: OutlinedButton.icon(
+              onPressed: () => _generateKnockout(context, t.id),
+              icon: const Icon(Icons.account_tree, size: 16),
+              label: const Text('توليد المرحلة الإقصائية'),
+            ),
+          ),
+      ],
     );
+  }
+
+  bool currentUserCanManage(BuildContext context, TournamentModel t) {
+    final auth = context.read<AuthCubit>().state;
+    final user = auth is AuthAuthenticated ? auth.user : null;
+    return user != null && (user.isAdmin || t.organizerUid == user.id);
+  }
+
+  Future<void> _generateKnockout(
+      BuildContext context, String tournamentId) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final cubit = context.read<TournamentCubit>();
+    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ توليد المرحلة...'));
+    try {
+      await FunctionsService().generateKnockout(tournamentId);
+      messenger.showSnackBar(
+          ToobaSnackBar.buildSuccess('تم توليد المرحلة الإقصائية'));
+      await cubit.fetchDetails(tournamentId);
+    } catch (_) {
+      messenger.showSnackBar(ToobaSnackBar.buildError(
+          'تعذّر التوليد — تأكّد من اكتمال مباريات المجموعات'));
+    }
   }
 
   List<Widget> _matchTiles(
@@ -574,12 +749,12 @@ class TournamentDetailsScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: finished
-            ? () => Navigator.push(
-                  context,
-                  ToobaRoute.to(MatchDetailScreen(match: m)),
-                )
-            : null,
+        // 📝 HINT AR: تُفتح تفاصيل المباراة لكل الحالات (WS2) — للمنظّم لوحة تحكّم
+        // حيّة، وللمشاهد النتيجة اللحظية والمؤقّت.
+        onTap: () => Navigator.push(
+          context,
+          ToobaRoute.to(MatchDetailScreen(match: m)),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Column(
@@ -814,22 +989,6 @@ class TournamentDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  // 📝 HINT AR: دائرة خضراء للمراكز الأولى (ترقية)، حمراء للأخيرة (هبوط).
-  Widget _rankDot(int rank, int total) {
-    Color? color;
-    if (rank <= 2) {
-      color = Colors.green;
-    } else if (total >= 4 && rank >= total - 1) {
-      color = Colors.red;
-    }
-    if (color == null) return const SizedBox(width: 10);
-    return Container(
-      width: 10,
-      height: 10,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 
@@ -1079,11 +1238,6 @@ class TournamentDetailsScreen extends StatelessWidget {
           combined,
         );
   }
-}
-
-// 📝 HINT AR: امتداد مساعد لقراءة standings كقائمة من الحالة.
-extension on TournamentDetailsLoaded {
-  List<dynamic> get standings => tournament.standings;
 }
 
 /// 📝 HINT AR: سلايدر صور إعلانات تلقائي للبطولة (PageView بلا اعتمادية إضافية)

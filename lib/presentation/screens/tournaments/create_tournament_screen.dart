@@ -33,6 +33,9 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
   bool _isHomeAndAway = false;
   String _generationMode = 'full_tree';
   int _numberOfGroups = 2;
+  // 📝 HINT AR: الوجبة 7 — حسم تعادل الإقصائي + عدد المتأهّلين من كل مجموعة.
+  String _tieBreakMode = 'extratime_penalties';
+  int _qualifiersPerGroup = 2;
   int _playerFormat = 6; // 6/8/11 — عدد اللاعبين الأساسيين المطلوب
   bool _isFree = true; // بطولة مجانية أو باشتراك (المرحلة 8)
   final _entryInfoController = TextEditingController(); // رسوم/تواصل الدخول
@@ -165,6 +168,8 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
           entryInfo: _isFree || _entryInfoController.text.trim().isEmpty
               ? null
               : _entryInfoController.text.trim(),
+          tieBreakMode: _tieBreakMode,
+          qualifiersPerGroup: _qualifiersPerGroup,
           referees: _referees
               .where((r) => _selectedReferees.contains(r.id))
               .toList(),
@@ -590,6 +595,55 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                       decoration: const InputDecoration(labelText: 'عدد المجموعات'),
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() => _numberOfGroups = int.tryParse(v) ?? 2),
+                                    ),
+                                  ),
+                                // 📝 HINT AR: المتأهّلون من كل مجموعة (للمجموعات) —
+                                // يُبنى منهم الإقصائي بالتزاوج القياسي (A1×B2...).
+                                if (_tournamentType == 'groups')
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    child: DropdownButtonFormField<int>(
+                                      initialValue: _qualifiersPerGroup,
+                                      decoration: const InputDecoration(
+                                          labelText: 'المتأهّلون من كل مجموعة'),
+                                      items: const [
+                                        DropdownMenuItem(
+                                            value: 1, child: Text('الأول فقط')),
+                                        DropdownMenuItem(
+                                            value: 2,
+                                            child: Text('الأول والثاني')),
+                                        DropdownMenuItem(
+                                            value: 3,
+                                            child: Text('الأول والثاني والثالث')),
+                                      ],
+                                      onChanged: (v) => setState(
+                                          () => _qualifiersPerGroup = v ?? 2),
+                                    ),
+                                  ),
+                                // 📝 HINT AR: حسم التعادل في الأدوار الإقصائية.
+                                if (_tournamentType == 'knockout' ||
+                                    _tournamentType == 'groups')
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    child: DropdownButtonFormField<String>(
+                                      initialValue: _tieBreakMode,
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'حسم التعادل (الأدوار الإقصائية)'),
+                                      items: const [
+                                        DropdownMenuItem(
+                                            value: 'extratime_penalties',
+                                            child: Text(
+                                                'أشواط إضافية ثم جزاءات')),
+                                        DropdownMenuItem(
+                                            value: 'penalties',
+                                            child: Text('جزاءات مباشرة')),
+                                      ],
+                                      onChanged: (v) => setState(() =>
+                                          _tieBreakMode =
+                                              v ?? 'extratime_penalties'),
                                     ),
                                   ),
                               ],

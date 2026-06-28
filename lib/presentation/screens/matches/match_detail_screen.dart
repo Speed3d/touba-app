@@ -1,14 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/models/player_model.dart';
+import '../../../data/models/team_model.dart';
+import '../../../data/models/tournament_model.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../../../data/repositories/match_repository.dart';
+import '../../../data/repositories/team_repository.dart';
+import '../../../data/repositories/tournament_repository.dart';
+import '../../../data/services/functions_service.dart';
+import '../../cubits/auth/auth_cubit.dart';
+import '../../cubits/auth/auth_state.dart';
+import '../../cubits/tournament/tournament_cubit.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../widgets/core/pitch_formation_view.dart';
 import '../../widgets/core/formation_share_sheet.dart';
+import '../../widgets/core/live_match_timer.dart';
+import '../referee/referee_profile_screen.dart';
+import '../tournaments/enter_result_screen.dart';
+import '../../../app/router/tooba_route.dart';
 
 /// 📝 HINT AR: تفاصيل المباراة — النتيجة + تشكيلة الفريقين مع أيقونات الأحداث
 /// (هدف/صناعة/بطاقة/تبديل/...) بجانب اسم كل لاعب، بأسلوب جدول الدوريات.
@@ -28,18 +41,36 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
   List<PlayerModel> _awayPlayers = [];
   bool _showHomeFormation = true;
   bool _loading = true;
+  bool _busy = false; // قيد تنفيذ إجراء حيّ (لتعطيل الأزرار)
+
+  // 📝 HINT AR: المباراة الحيّة قابلة للتحديث (WS2) — نُعيد جلبها بعد كل إجراء.
+  late MatchModel _match;
+  TournamentModel? _tournament; // للمدّة/الأشواط/منظّم البطولة
+
+  // 📝 HINT AR: سياق صلاحية تقييم الحكم (الوجبة 7 — D): منظّم البطولة + كابتنا
+  // الفريقين. التقييم محصور بهؤلاء + الأدمن، مرة واحدة، والحكم لا يقيّم نفسه.
+  String? _organizerUid;
+  String? _homeCaptainId;
+  String? _awayCaptainId;
+  bool _alreadyRated = false;
 
   @override
   void initState() {
     super.initState();
+    _match = widget.match;
     _loadNames();
   }
 
   Future<void> _loadNames() async {
+    // 📝 HINT AR: نلتقط كل المستودعات قبل أي await (تفادي استخدام context عبر فجوة).
+    final playerRepo = context.read<PlayerRepository>();
+    final teamRepo = context.read<TeamRepository>();
+    final tournRepo = context.read<TournamentRepository>();
+    final matchRepo = context.read<MatchRepository>();
+    final m = _match;
     try {
-      final repo = context.read<PlayerRepository>();
-      final home = await repo.getPlayersByTeam(widget.match.homeTeamId);
-      final away = await repo.getPlayersByTeam(widget.match.awayTeamId);
+      final home = await playerRepo.getPlayersByTeam(m.homeTeamId);
+      final away = await playerRepo.getPlayersByTeam(m.awayTeamId);
       _homePlayers = home;
       _awayPlayers = away;
       for (final p in [...home, ...away]) {
@@ -48,7 +79,129 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
         _positions[p.id] = p.position;
       }
     } catch (_) {}
+    // 📝 HINT AR: نحمّل البطولة والفريقين دائماً (للتحكّم الحيّ + سياق التقييم).
+    try {
+      final results = await Future.wait([
+        tournRepo.getTournamentById(m.tournamentId),
+        teamRepo.getTeamById(m.homeTeamId),
+        teamRepo.getTeamById(m.awayTeamId),
+      ]);
+      _tournament = results[0] as TournamentModel;
+      _organizerUid = _tournament?.organizerUid;
+      _homeCaptainId = (results[1] as TeamModel).captainId;
+      _awayCaptainId = (results[2] as TeamModel).captainId;
+    } catch (_) {}
+    // 📝 HINT AR: هل قيّمت الحكم مسبقاً؟ (لمباراة منتهية لها حكم).
+    if (m.resultConfirmed && m.refereeId != null && m.refereeId!.isNotEmpty) {
+      try {
+        final uid = FirebaseAuth.instance.currentUser?.uid;
+        if (uid != null) {
+          _alreadyRated = (await matchRepo.getMyRefereeRating(m.id, uid)) != null;
+        }
+      } catch (_) {}
+    }
     if (mounted) setState(() => _loading = false);
+  }
+
+  // 📝 HINT AR: المنظّم/الأدمن — يتحكّم بالمباراة الحيّة وإدخال النتيجة.
+  bool get _canManage {
+    final auth = context.read<AuthCubit>().state;
+    final user = auth is AuthAuthenticated ? auth.user : null;
+    if (user == null) return false;
+    return user.isAdmin || _organizerUid == user.id;
+  }
+
+  int get _halves => _tournament?.halvesCount ?? 2;
+
+  // 📝 HINT AR: نُعيد جلب المباراة بعد كل إجراء حيّ ليُحدَّث العرض فوراً.
+  Future<void> _refreshMatch() async {
+    try {
+      final m = await context.read<MatchRepository>().getMatchById(_match.id);
+      if (mounted) setState(() => _match = m);
+    } catch (_) {}
+  }
+
+  // ── الإجراءات الحيّة (WS2) ───────────────────────────────────────────
+  Future<void> _runLive(Future<void> Function() action) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await action();
+      await _refreshMatch();
+    } catch (_) {
+      if (mounted) ToobaSnackBar.error(context, 'تعذّر تنفيذ الإجراء');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _startMatch() => _runLive(
+      () => context.read<MatchRepository>().startMatch(_match.id));
+
+  void _changeLiveScore(bool isHome, int delta) {
+    final h = (_match.homeScore + (isHome ? delta : 0)).clamp(0, 99);
+    final a = (_match.awayScore + (!isHome ? delta : 0)).clamp(0, 99);
+    _runLive(() =>
+        context.read<MatchRepository>().updateLiveScore(_match.id, h, a));
+  }
+
+  void _startNextHalf() => _runLive(() => context
+      .read<MatchRepository>()
+      .startNextHalf(_match.id, _match.currentHalf + 1));
+
+  Future<void> _confirmHalf() async {
+    final h = _match.currentHalf;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('تأكيد نتيجة الشوط $h'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Text(
+            'نتيجة الشوط $h: ${_match.homeTeamName} ${_match.homeScore} - '
+            '${_match.awayScore} ${_match.awayTeamName}'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('تأكيد')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await _runLive(() => context.read<MatchRepository>().confirmHalf(
+        _match.id, h, _match.homeScore, _match.awayScore));
+  }
+
+  // 📝 HINT AR: إنهاء وتأكيد النتيجة النهائية — يفتح ورقة المباراة (أحداث تفصيلية
+  // + حسم تعادل الإقصائي) التي تؤكّد النتيجة فتُشغّل المحرّك مرة واحدة.
+  Future<void> _openFinalEntry() async {
+    final repoT = context.read<TournamentRepository>();
+    final repoM = context.read<MatchRepository>();
+    final repoTeam = context.read<TeamRepository>();
+    await Navigator.push(
+      context,
+      ToobaRoute.to(BlocProvider(
+        create: (_) => TournamentCubit(repoT, repoM, repoTeam),
+        child: EnterResultScreen(
+            match: _match, tournamentId: _match.tournamentId),
+      )),
+    );
+    await _refreshMatch();
+  }
+
+  // 📝 HINT AR: هل المُشاهد مؤهَّل لتقييم الحكم؟ (المنظّم/الأدمن/كابتن أحد الفريقين،
+  // وليس الحكم نفسه). الفرض النهائي خادمي في CF rateReferee — هذا للعرض فقط.
+  bool _canRate(MatchModel m) {
+    final auth = context.read<AuthCubit>().state;
+    final user = auth is AuthAuthenticated ? auth.user : null;
+    if (user == null) return false;
+    if (user.id == m.refereeId) return false;
+    return user.isAdmin ||
+        _organizerUid == user.id ||
+        _homeCaptainId == user.id ||
+        _awayCaptainId == user.id;
   }
 
   // 📝 HINT AR: اسم اللاعب مسبوقاً بمركزه (بند 7) — «المهاجم - صلاح».
@@ -63,7 +216,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final m = widget.match;
+    final m = _match;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -117,17 +270,38 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                     ),
                   ),
                 ],
-                const SizedBox(height: 20),
-                if (!m.resultConfirmed)
+                const SizedBox(height: 16),
+                // ── حالة/تحكّم المباراة الحيّة (WS2) ──
+                if (m.status == 'live') ...[
+                  _liveStatusBanner(m),
+                  const SizedBox(height: 12),
+                ],
+                if (m.periodScores.isNotEmpty) ...[
+                  _periodScoresRow(m),
+                  const SizedBox(height: 12),
+                ],
+                if (_canManage && !m.resultConfirmed) ...[
+                  _liveControls(m),
+                  const SizedBox(height: 16),
+                ],
+                if (m.resultConfirmed)
+                  _lineupCard(m)
+                else if (m.status == 'live')
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Text('لم تُلعب المباراة بعد',
-                          style: TextStyle(color: Colors.grey[600])),
+                      padding: const EdgeInsets.all(16),
+                      child: Text('المباراة جارية الآن',
+                          style: TextStyle(color: Colors.grey[700])),
                     ),
                   )
                 else
-                  _lineupCard(m),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text('لم تبدأ المباراة بعد',
+                          style: TextStyle(color: Colors.grey[600])),
+                    ),
+                  ),
                 // تقييم الحكم (لمباراة منتهية لها حكم).
                 if (m.resultConfirmed &&
                     m.refereeId != null &&
@@ -261,33 +435,55 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
             padding: const EdgeInsets.all(14),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.sports, size: 18),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text('الحكم: ${m.refereeName ?? "—"}',
-                          style:
-                              const TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    if (count > 0) ...[
-                      const Icon(Icons.star, color: Colors.amber, size: 16),
-                      const SizedBox(width: 2),
-                      Text('${avg.toStringAsFixed(1)} ($count)',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold)),
+                InkWell(
+                  onTap: () => Navigator.push(
+                    context,
+                    ToobaRoute.to(RefereeProfileScreen(
+                        refereeUid: m.refereeId!,
+                        refereeName: m.refereeName)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.sports, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text('الحكم: ${m.refereeName ?? "—"}',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline)),
+                      ),
+                      if (count > 0) ...[
+                        const Icon(Icons.star, color: Colors.amber, size: 16),
+                        const SizedBox(width: 2),
+                        Text('${avg.toStringAsFixed(1)} ($count)',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold)),
+                      ],
+                      const SizedBox(width: 4),
+                      Icon(Icons.chevron_left,
+                          size: 18, color: Colors.grey[400]),
                     ],
-                  ],
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _rateReferee(m),
-                    icon: const Icon(Icons.star_outline, size: 18),
-                    label: const Text('قيّم أداء الحكم'),
                   ),
                 ),
+                // 📝 HINT AR: زر التقييم للمؤهَّلين فقط (منظّم/أدمن/كابتن الفريقين)
+                // ولمرة واحدة؛ غيرهم يرى المتوسط فقط بلا زر.
+                if (_canRate(m)) ...[
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: _alreadyRated
+                        ? OutlinedButton.icon(
+                            onPressed: null,
+                            icon: const Icon(Icons.check, size: 18),
+                            label: const Text('قيّمت هذا الحكم'),
+                          )
+                        : OutlinedButton.icon(
+                            onPressed: () => _rateReferee(m),
+                            icon: const Icon(Icons.star_outline, size: 18),
+                            label: const Text('قيّم أداء الحكم'),
+                          ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -347,17 +543,188 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     if (selected == null || !mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     try {
-      await repo.rateReferee(
+      // 📝 HINT AR: التقييم عبر CF (فرض الصلاحية + مرة واحدة + لا تقييم للنفس).
+      await FunctionsService().rateReferee(
         refereeId: m.refereeId!,
         matchId: m.id,
-        raterId: uid,
         rating: selected,
       );
       messenger.showSnackBar(ToobaSnackBar.buildSuccess('شكراً لتقييمك!'));
-      if (mounted) setState(() {}); // لتحديث المتوسط
-    } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر إرسال التقييم'));
+      if (mounted) setState(() => _alreadyRated = true);
+    } catch (e) {
+      messenger.showSnackBar(ToobaSnackBar.buildError(_rateError(e)));
     }
+  }
+
+  // 📝 HINT AR: استخراج رسالة CF العربية الواضحة (مسبقاً/نفسك/غير مؤهَّل...).
+  String _rateError(Object e) {
+    if (e is FirebaseFunctionsException && (e.message ?? '').isNotEmpty) {
+      return e.message!;
+    }
+    return 'تعذّر إرسال التقييم';
+  }
+
+  // ── ودجات المباراة الحيّة (WS2) ─────────────────────────────────────
+  Widget _liveStatusBanner(MatchModel m) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.red.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.red.shade300),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                    color: Colors.red, shape: BoxShape.circle)),
+            const SizedBox(width: 6),
+            const Text('مباشر',
+                style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13)),
+            const SizedBox(width: 10),
+            LiveMatchTimer(
+              startedAt: m.matchStartedAt,
+              currentHalf: m.currentHalf,
+              matchDuration: _tournament?.matchDuration ?? 45,
+              halvesCount: _halves,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _periodScoresRow(MatchModel m) {
+    final parts = m.periodScores.map((e) {
+      final p = Map<String, dynamic>.from(e);
+      return 'ش${p['period']}: ${p['home']}-${p['away']}';
+    }).join('    ');
+    return Center(
+      child: Text(parts,
+          style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+    );
+  }
+
+  // 📝 HINT AR: لوحة تحكّم المنظّم/الأدمن — بدء المباراة، النتيجة اللحظية، إنهاء
+  // الأشواط، والتأكيد النهائي (يفتح ورقة المباراة). تُعرض فقط للمؤهَّل وللمباراة
+  // غير المؤكّدة.
+  Widget _liveControls(MatchModel m) {
+    if (m.status == 'upcoming') {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: _busy ? null : _startMatch,
+          icon: const Icon(Icons.play_circle_fill),
+          label: const Text('بدأ المباراة'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+        ),
+      );
+    }
+    if (m.status != 'live') return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.brightness == Brightness.dark
+            ? Colors.grey[900]
+            : Colors.grey[100],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          const Text('تحكّم المباراة الحيّة',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              _liveTeamStepper(m.homeTeamName, m.homeScore, true),
+              Container(
+                  width: 1,
+                  height: 50,
+                  color: Colors.grey.withValues(alpha: 0.3)),
+              _liveTeamStepper(m.awayTeamName, m.awayScore, false),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _confirmHalf,
+                icon: const Icon(Icons.flag, size: 16),
+                label: Text('انتهاء الشوط ${m.currentHalf}',
+                    style: const TextStyle(fontSize: 12)),
+              ),
+              if (m.currentHalf < _halves)
+                OutlinedButton.icon(
+                  onPressed: _busy ? null : _startNextHalf,
+                  icon: const Icon(Icons.fast_forward, size: 16),
+                  label: Text('بدأ الشوط ${m.currentHalf + 1}',
+                      style: const TextStyle(fontSize: 12)),
+                ),
+              ElevatedButton.icon(
+                onPressed: _busy ? null : _openFinalEntry,
+                icon: const Icon(Icons.sports_score, size: 16),
+                label: const Text('إنهاء وتأكيد النتيجة',
+                    style: TextStyle(fontSize: 12)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _liveTeamStepper(String name, int score, bool isHome) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: _busy ? null : () => _changeLiveScore(isHome, -1),
+                icon: const Icon(Icons.remove_circle_outline),
+                color: Colors.red,
+                visualDensity: VisualDensity.compact,
+              ),
+              Text('$score',
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold)),
+              IconButton(
+                onPressed: _busy ? null : () => _changeLiveScore(isHome, 1),
+                icon: const Icon(Icons.add_circle),
+                color: Colors.green,
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _scoreHeader(MatchModel m) {
@@ -380,7 +747,10 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                     color: Colors.white, fontWeight: FontWeight.bold)),
           ),
           Text(
-            m.resultConfirmed ? '${m.homeScore} - ${m.awayScore}' : 'ضد',
+            // 📝 HINT AR: نعرض السكور أثناء «جارية» أيضاً (WS2) — «ضد» للقادمة فقط.
+            (m.resultConfirmed || m.status == 'live')
+                ? '${m.homeScore} - ${m.awayScore}'
+                : 'ضد',
             style: const TextStyle(
                 color: Colors.white,
                 fontSize: 26,

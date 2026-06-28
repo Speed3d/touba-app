@@ -13,6 +13,7 @@ import '../legal/privacy_policy_screen.dart';
 import '../legal/terms_conditions_screen.dart';
 import '../profile/profile_screen.dart';
 import '../matches/referee_matches_screen.dart';
+import '../referee/referee_profile_screen.dart';
 import '../subscription/subscription_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
@@ -74,9 +75,9 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
           ],
 
-          // ── كارت الحكم (لمن يملك صلاحية حكم فقط) ──
+          // ── كارت الحكم (لمن يملك صلاحية/دور حكم) ──
           if (authState is AuthAuthenticated &&
-              authState.user.adminPermissions.contains('referee')) ...[
+              authState.user.isReferee) ...[
             _card(context, isDark, [
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -89,6 +90,23 @@ class SettingsScreen extends StatelessWidget {
                   context,
                   ToobaRoute.to(RefereeMatchesScreen(
                       refereeUid: authState.user.id)),
+                ),
+              ),
+              const Divider(height: 1),
+              // 📝 HINT AR: صفحة الحكم العامة (تعديل المدينة/النبذة لصاحبها).
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading:
+                    Icon(Icons.badge_outlined, color: theme.colorScheme.primary),
+                title: const Text('صفحتي كحكم'),
+                subtitle: const Text('الصفحة العامة + تعديل بياناتي',
+                    style: TextStyle(fontSize: 12)),
+                trailing: const Icon(Icons.chevron_left, size: 20),
+                onTap: () => Navigator.push(
+                  context,
+                  ToobaRoute.to(RefereeProfileScreen(
+                      refereeUid: authState.user.id,
+                      refereeName: authState.user.name)),
                 ),
               ),
             ]),

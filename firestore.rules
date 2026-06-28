@@ -130,8 +130,9 @@ service cloud.firestore {
       allow get, list: if isAuthenticated();
 
       // 📝 HINT AR: الإنشاء لصاحب الحساب فقط، ويُمنع تعيين دور أدمن ذاتياً.
+      // role=referee مسموح (حساب حكم) — onUserCreated يمنحه الصفة وينشئ ملفه.
       allow create: if isOwner(userId)
-                    && request.resource.data.role in ['user', 'captain'];
+                    && request.resource.data.role in ['user', 'captain', 'referee'];
 
       // 📝 HINT AR: التعديل لصاحبه (بلا تصعيد صلاحيات) أو للأدمن. المستخدم لا
       // يغيّر role / adminPermissions / linkedPlayerId / playerCode بنفسه
@@ -243,10 +244,13 @@ service cloud.firestore {
 
       // 📝 HINT AR: التعديل لمنظّم البطولة أو الأدمن؛ الترتيب (standings) وحقول
       // الفائز (winnerTeamId/winnerTeamName) يكتبها النظام (CF) حصراً.
+      // 📝 HINT AR: standings/winner/bracketGenerated/groups يكتبها النظام (CF)؛
+      // groups يُضبط مرة عند الإنشاء فقط. organizerUid لا يتغيّر.
       allow update: if isAdmin()
                     || (resource.data.organizerUid == request.auth.uid
                         && !touches(['standings', 'organizerUid',
-                            'winnerTeamId', 'winnerTeamName']));
+                            'winnerTeamId', 'winnerTeamName',
+                            'bracketGenerated', 'groups']));
 
       allow delete: if resource.data.organizerUid == request.auth.uid || isAdmin();
     }
@@ -317,15 +321,13 @@ service cloud.firestore {
     }
 
     // ─── تقييمات الحكّام (Referee Ratings) ───────────────────────────────
-    // 📝 HINT AR: أي مستخدم مسجّل يقيّم الحكم بعد المباراة (1..5). مُعرّف المستند
-    // = matchId_raterId يمنع التكرار. المتوسط يُجمَّع في refereeProfiles عبر CF.
+    // 📝 HINT AR: التقييم يتم عبر Cloud Function `rateReferee` حصراً (فرض خادمي:
+    // المنظّم/الأدمن/كابتن أحد فريقَي المباراة فقط، مرة واحدة، والحكم لا يقيّم
+    // نفسه). لذا كتابة العميل ممنوعة تماماً؛ القراءة للمسجّلين. المتوسط يُجمَّع
+    // في refereeProfiles عبر onRefereeRatingWritten.
     match /referee_ratings/{ratingId} {
       allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated()
-                    && request.resource.data.raterId == request.auth.uid
-                    && request.resource.data.rating is int
-                    && request.resource.data.rating >= 1
-                    && request.resource.data.rating <= 5;
+      allow create, update: if false;
       allow delete: if isAdmin();
     }
 

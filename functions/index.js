@@ -77,12 +77,16 @@ function applyOutcomeToStats(stats, o, sign) {
   }
 }
 // 📝 HINT AR: تحديث صفّ فريق في جدول ترتيب البطولة (مع التراجع عبر sign).
-function updateStanding(standings, teamId, gf, ga, o, sign, rule) {
+// group = اسم المجموعة (للمجموعات) ليُفرز كل صفّ ضمن مجموعته.
+function updateStanding(standings, teamId, gf, ga, o, sign, rule, group) {
   let e = standings.find((s) => s.teamId === teamId);
   if (!e) {
     e = {teamId, played: 0, won: 0, drawn: 0, lost: 0,
       gf: 0, ga: 0, gd: 0, points: 0};
+    if (group) e.group = group;
     standings.push(e);
+  } else if (group && !e.group) {
+    e.group = group;
   }
   e.played += sign;
   e.gf += sign * gf;
@@ -96,9 +100,11 @@ function updateStanding(standings, teamId, gf, ga, o, sign, rule) {
     e.drawn += sign; e.points += sign * (rule.draw != null ? rule.draw : 1);
   }
 }
-// 📝 HINT AR: فرز الترتيب: النقاط ← فارق الأهداف ← الأهداف المسجّلة.
+// 📝 HINT AR: فرز الترتيب: المجموعة ← النقاط ← فارق الأهداف ← الأهداف المسجّلة.
 function sortStandings(s) {
-  s.sort((a, b) => (b.points - a.points) || (b.gd - a.gd) || (b.gf - a.gf));
+  s.sort((a, b) =>
+    String(a.group || "").localeCompare(String(b.group || "")) ||
+    (b.points - a.points) || (b.gd - a.gd) || (b.gf - a.gf));
 }
 
 // ============================================================================
@@ -121,6 +127,10 @@ exports.onMatchResultConfirmed = onDocumentUpdated(
     const matchRef = event.data.after.ref;
     const {homeTeamId, awayTeamId, tournamentId} = after;
     if (!homeTeamId || !awayTeamId) return;
+    // 📝 HINT AR: مرحلة المباراة — الترتيب يُحدَّث لمباريات الدوري/المجموعات فقط
+    // (الإقصائي بلا جدول ترتيب). groupName لإسناد صفّ كل فريق لمجموعته.
+    const stage = after.stage || "league";
+    const groupName = after.groupName || null;
 
     // اجمع معرّفات اللاعبين من البصمتين (لقراءتهم مرّة واحدة).
     const playerIds = new Set();
@@ -170,11 +180,10 @@ exports.onMatchResultConfirmed = onDocumentUpdated(
         playerStats[pid] = playerDocs[pid].exists ?
           (playerDocs[pid].data().careerStats || zeroCareer()) : zeroCareer();
       }
-      // 📝 HINT AR: نحسب جدول الترتيب للدوري والمجموعات (الإقصائي بلا ترتيب).
-      const hasStandings = tournDoc && tournDoc.exists &&
-          (tournDoc.data().type === "league" ||
-           tournDoc.data().type === "groups");
-      const standings = hasStandings ?
+      // 📝 HINT AR: جدول الترتيب لمباريات الدوري/المجموعات فقط (الإقصائي بلا ترتيب
+      // حتى داخل بطولة المجموعات). يُسند الصفّ لمجموعته عبر groupName.
+      const isStandingsMatch = stage === "league" || stage === "group";
+      const standings = (isStandingsMatch && tournDoc && tournDoc.exists) ?
         (tournDoc.data().standings || []) : null;
       const rule = (tournDoc && tournDoc.exists &&
           tournDoc.data().pointsRule) || {win: 3, draw: 1, loss: 0};
@@ -193,8 +202,10 @@ exports.onMatchResultConfirmed = onDocumentUpdated(
         homeRating += sign * RATING[ho.toUpperCase()];
         awayRating += sign * RATING[ao.toUpperCase()];
         if (standings) {
-          updateStanding(standings, homeTeamId, hs, as, ho, sign, rule);
-          updateStanding(standings, awayTeamId, as, hs, ao, sign, rule);
+          updateStanding(
+            standings, homeTeamId, hs, as, ho, sign, rule, groupName);
+          updateStanding(
+            standings, awayTeamId, as, hs, ao, sign, rule, groupName);
         }
         // إحصائيات اللاعبين من أحداث المباراة (الهدف بالخطأ لا يُحتسب للاعب).
         for (const ev of (snap.events || [])) {
@@ -237,18 +248,70 @@ exports.onMatchResultConfirmed = onDocumentUpdated(
     // 📝 HINT AR: ملاحظة — عدد المباريات للاعب (matches) يحتاج تشكيلة لكل
     // مباراة (lineup) وهي خارج نطاق MVP؛ يُضاف في المرحلة 2.
 
-    // ── كشف بطل البطولة (T3) ──────────────────────────────────────────
-    // 📝 HINT AR: بعد تأكيد نتيجة، إن أصبحت كل مباريات البطولة مؤكّدة نُنهيها
-    // ونحدّد الفائز (متصدّر الترتيب). idempotent: ضبط منتهية مراراً غير ضار.
+    // ── ترقية الإقصائي + تقدّم البطولة (الوجبة 7) ─────────────────────
     if (desired && tournamentId) {
+      // 📝 HINT AR: مباراة إقصائية مؤكّدة → يصعد فائزها لخانة المباراة التالية
+      // (homeFeedFrom/awayFeedFrom). يُعاد الحساب عند تعديل النتيجة (تصحيح).
+      if (stage === "knockout") {
+        try {
+          await advanceKnockoutWinner(matchRef.id, after);
+        } catch (e) {
+          logger.warn("تعذّر ترقية الفائز", {error: `${e}`});
+        }
+      }
+      // 📝 HINT AR: مجموعات اكتملت → توليد الإقصائي؛ وإلا كشف البطل عند الاكتمال.
       try {
-        await finalizeTournamentIfDone(tournamentId);
+        await maybeAdvanceTournament(tournamentId);
       } catch (e) {
-        logger.warn("تعذّر كشف بطل البطولة", {tournamentId, error: `${e}`});
+        logger.warn("تعذّر تقدّم البطولة", {tournamentId, error: `${e}`});
       }
     }
   },
 );
+
+// 📝 HINT AR: يصعّد فائز مباراة إقصائية إلى خانته في المباراة التالية. الفائز =
+// advancedTeamId (للتعادل المحسوم بالجزاءات/الإضافي) وإلا الأعلى نتيجةً. نبحث عن
+// المباريات التي تُغذّى من هذه (feed) ونملأ خانتها. معرّف المباراة فريد عالمياً
+// فلا حاجة لفلترة tournamentId (فهرس مفرد تلقائي على homeFeedFrom/awayFeedFrom).
+async function advanceKnockoutWinner(matchId, m) {
+  let winnerId = m.advancedTeamId || null;
+  if (!winnerId) {
+    const hs = m.homeScore || 0;
+    const as = m.awayScore || 0;
+    if (hs > as) winnerId = m.homeTeamId;
+    else if (as > hs) winnerId = m.awayTeamId;
+    else return; // تعادل بلا متأهّل محدّد — ننتظر تحديد المنظّم
+  }
+  const isHome = winnerId === m.homeTeamId;
+  const winnerName = isHome ? m.homeTeamName : m.awayTeamName;
+  const winnerLogo = (isHome ? m.homeTeamLogo : m.awayTeamLogo) || null;
+
+  const [homeChildren, awayChildren] = await Promise.all([
+    db.collection("matches").where("homeFeedFrom", "==", matchId).get(),
+    db.collection("matches").where("awayFeedFrom", "==", matchId).get(),
+  ]);
+  const batch = db.batch();
+  homeChildren.forEach((d) => batch.update(d.ref, {
+    homeTeamId: winnerId, homeTeamName: winnerName, homeTeamLogo: winnerLogo,
+  }));
+  awayChildren.forEach((d) => batch.update(d.ref, {
+    awayTeamId: winnerId, awayTeamName: winnerName, awayTeamLogo: winnerLogo,
+  }));
+  if (!homeChildren.empty || !awayChildren.empty) await batch.commit();
+}
+
+// 📝 HINT AR: بعد كل نتيجة — إن كانت بطولة مجموعات لم يُولَّد إقصائيها بعد، نحاول
+// توليده (يتحقق داخلياً من اكتمال المجموعات)؛ وإلا نحاول إنهاء البطولة وكشف البطل.
+async function maybeAdvanceTournament(tournamentId) {
+  const tDoc = await db.collection("tournaments").doc(tournamentId).get();
+  if (!tDoc.exists) return;
+  const t = tDoc.data();
+  if (t.type === "groups" && !t.bracketGenerated) {
+    await generateKnockoutFromGroupsInternal(tournamentId);
+    return;
+  }
+  await finalizeTournamentIfDone(tournamentId);
+}
 
 // 📝 HINT AR: يُنهي البطولة ويحدّد الفائز إن اكتملت كل مبارياتها.
 async function finalizeTournamentIfDone(tournamentId) {
@@ -265,21 +328,26 @@ async function finalizeTournamentIfDone(tournamentId) {
   const t = tournDoc.data();
   if (t.status === "finished") return; // مُنهاة سابقاً
 
-  // الفائز: متصدّر الترتيب (للدوري) وإلا فائز المباراة الأخيرة (إقصائي).
+  // الفائز: متصدّر الترتيب (للدوري) وإلا فائز النهائي الإقصائي (للإقصائي/المجموعات).
   let winnerTeamId = null;
-  const standings = t.standings || [];
-  if (standings.length > 0) {
-    winnerTeamId = standings[0].teamId || null;
+  if (t.type === "league") {
+    const standings = t.standings || [];
+    if (standings.length > 0) winnerTeamId = standings[0].teamId || null;
   } else {
-    // إقصائي: فائز آخر مباراة (الأعلى round).
-    let last = null;
+    // إقصائي/مجموعات: فائز النهائي (أعلى bracketRound ضمن مباريات الإقصائي).
+    let finalMatch = null;
     matchesSnap.docs.forEach((d) => {
       const m = d.data();
-      if (!last || (m.round || 0) > (last.round || 0)) last = m;
+      if ((m.stage || "") !== "knockout") return;
+      if (!finalMatch ||
+          (m.bracketRound || 0) > (finalMatch.bracketRound || 0)) {
+        finalMatch = m;
+      }
     });
-    if (last) {
-      winnerTeamId = (last.homeScore >= last.awayScore) ?
-        last.homeTeamId : last.awayTeamId;
+    if (finalMatch) {
+      winnerTeamId = finalMatch.advancedTeamId ||
+        ((finalMatch.homeScore >= finalMatch.awayScore) ?
+          finalMatch.homeTeamId : finalMatch.awayTeamId);
     }
   }
 
@@ -304,6 +372,179 @@ async function finalizeTournamentIfDone(tournamentId) {
     endDate: admin.firestore.FieldValue.serverTimestamp(),
   });
 }
+
+// ============================================================================
+// ترقية المجموعات → إقصائي (الوجبة 7) — بناء الشجرة من المتأهّلين
+// ============================================================================
+// 📝 HINT AR: ترتيب البذور القياسي (مطابق fixtures_service.dart).
+function seedOrderJs(size) {
+  let order = [1];
+  while (order.length < size) {
+    const n = order.length * 2;
+    const next = [];
+    for (const s of order) {
+      next.push(s);
+      next.push(n + 1 - s);
+    }
+    order = next;
+  }
+  return order;
+}
+
+// 📝 HINT AR: يبني شجرة إقصائية من بذور مرتّبة (الأقوى أولاً) + دعم Bye.
+function buildBracketJs(seeds) {
+  const n = seeds.length;
+  if (n < 2) return [];
+  let p = 1;
+  while (p < n) p *= 2;
+  const order = seedOrderJs(p);
+  const teamOf = (seed) => (seed <= n ? seeds[seed - 1] : "__BYE__");
+  const fixtures = [];
+  let counter = 0;
+  let round = 1;
+  let advancers = [];
+  for (let i = 0; i < p; i += 2) {
+    const a = teamOf(order[i]);
+    const b = teamOf(order[i + 1]);
+    const aBye = a === "__BYE__";
+    const bBye = b === "__BYE__";
+    if (aBye && bBye) continue;
+    else if (aBye) advancers.push({team: b});
+    else if (bBye) advancers.push({team: a});
+    else {
+      const key = `K${round}_${counter++}`;
+      fixtures.push({round, homeId: a, awayId: b, bracketRound: round, key});
+      advancers.push({feed: key});
+    }
+  }
+  while (advancers.length > 1) {
+    round++;
+    counter = 0;
+    const next = [];
+    for (let i = 0; i < advancers.length; i += 2) {
+      const s1 = advancers[i];
+      const s2 = advancers[i + 1];
+      const key = `K${round}_${counter++}`;
+      fixtures.push({
+        round, homeId: s1.team || "", awayId: s2.team || "",
+        bracketRound: round, key,
+        homeFeedKey: s1.feed || null, awayFeedKey: s2.feed || null,
+      });
+      next.push({feed: key});
+    }
+    advancers = next;
+  }
+  return fixtures;
+}
+
+// 📝 HINT AR: يولّد المرحلة الإقصائية من المجموعات بعد اكتمالها (idempotent عبر
+// bracketGenerated). البذور = متأهّلو كل مجموعة بترتيب القوّة (المتصدّرون ثم
+// الوصفاء...) فيُنتج التزاوج القياسي A1×B2، B1×A2.
+async function generateKnockoutFromGroupsInternal(tournamentId) {
+  const tRef = db.collection("tournaments").doc(tournamentId);
+  const tDoc = await tRef.get();
+  if (!tDoc.exists) return;
+  const t = tDoc.data();
+  if (t.type !== "groups" || t.bracketGenerated === true) return;
+
+  const groups = t.groups || {};
+  const groupNames = Object.keys(groups).sort();
+  if (groupNames.length === 0) return;
+
+  const groupMatches = await db.collection("matches")
+    .where("tournamentId", "==", tournamentId)
+    .where("stage", "==", "group").get();
+  if (groupMatches.empty) return;
+  if (!groupMatches.docs.every((d) => d.data().resultConfirmed === true)) {
+    return; // المجموعات لم تكتمل بعد
+  }
+
+  const standings = t.standings || [];
+  const q = t.qualifiersPerGroup || 2;
+  const byGroup = {};
+  for (const g of groupNames) byGroup[g] = [];
+  for (const row of standings) {
+    if (row.group && byGroup[row.group]) byGroup[row.group].push(row);
+  }
+  for (const g of groupNames) {
+    byGroup[g].sort((a, b) =>
+      (b.points - a.points) || (b.gd - a.gd) || (b.gf - a.gf));
+  }
+  // البذور: كل المتصدّرين (بترتيب المجموعات) ثم الوصفاء ثم الثوالث...
+  const seeds = [];
+  for (let rank = 0; rank < q; rank++) {
+    for (const g of groupNames) {
+      if (byGroup[g][rank]) seeds.push(byGroup[g][rank].teamId);
+    }
+  }
+  if (seeds.length < 2) return;
+
+  const bracket = buildBracketJs(seeds);
+
+  const teamDocs = {};
+  await Promise.all(seeds.map(async (id) => {
+    teamDocs[id] = await db.collection("teams").doc(id).get();
+  }));
+  const nameOf = (id) =>
+    (id && teamDocs[id] && teamDocs[id].exists) ?
+      (teamDocs[id].data().name || "") : "";
+  const logoOf = (id) =>
+    (id && teamDocs[id] && teamDocs[id].exists) ?
+      (teamDocs[id].data().logoUrl || null) : null;
+
+  const idByKey = {};
+  for (const f of bracket) {
+    if (f.key) idByKey[f.key] = db.collection("matches").doc().id;
+  }
+  const fv = admin.firestore.FieldValue;
+  const batch = db.batch();
+  for (const f of bracket) {
+    const mid = f.key ? idByKey[f.key] : db.collection("matches").doc().id;
+    batch.set(db.collection("matches").doc(mid), {
+      tournamentId,
+      round: f.round,
+      stage: "knockout",
+      bracketRound: f.bracketRound,
+      homeTeamId: f.homeId || "",
+      awayTeamId: f.awayId || "",
+      homeTeamName: nameOf(f.homeId),
+      awayTeamName: nameOf(f.awayId),
+      homeTeamLogo: logoOf(f.homeId),
+      awayTeamLogo: logoOf(f.awayId),
+      homeFeedFrom: f.homeFeedKey ? idByKey[f.homeFeedKey] : null,
+      awayFeedFrom: f.awayFeedKey ? idByKey[f.awayFeedKey] : null,
+      status: "upcoming",
+      homeScore: 0,
+      awayScore: 0,
+      events: [],
+      lineup: [],
+      resultConfirmed: false,
+      decidedBy: "none",
+      createdAt: fv.serverTimestamp(),
+      updatedAt: fv.serverTimestamp(),
+    });
+  }
+  batch.update(tRef, {bracketGenerated: true, updatedAt: fv.serverTimestamp()});
+  await batch.commit();
+}
+
+// 📝 HINT AR: توليد يدوي للمرحلة الإقصائية (زر احتياطي للمنظّم/الأدمن).
+exports.generateKnockout = onCall(async (request) => {
+  const uid = request.auth && request.auth.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "سجّل الدخول أولاً");
+  const tournamentId = (request.data || {}).tournamentId;
+  if (!tournamentId) {
+    throw new HttpsError("invalid-argument", "معرّف البطولة مطلوب");
+  }
+  const tDoc = await db.collection("tournaments").doc(tournamentId).get();
+  if (!tDoc.exists) throw new HttpsError("not-found", "البطولة غير موجودة");
+  const isAdmin = request.auth.token && request.auth.token.admin === true;
+  if (!isAdmin && tDoc.data().organizerUid !== uid) {
+    throw new HttpsError("permission-denied", "للمنظّم أو الأدمن فقط");
+  }
+  await generateKnockoutFromGroupsInternal(tournamentId);
+  return {success: true};
+});
 
 // ============================================================================
 // 2) منح/سحب صلاحية لمستخدم (للأدمن فقط) — C6
@@ -1327,3 +1568,153 @@ exports.onTournamentLineupWritten = onDocumentWritten(
     }
   },
 );
+
+// ============================================================================
+// 22) عند إنشاء مستخدم بدور «حكم» — منح صفة الحكم + إنشاء ملف الحكم العام (D)
+// ============================================================================
+// 📝 HINT AR: التسجيل المباشر كحكم يُنشئ مستند users بـ role='referee'. هذه الدالة
+// تمنحه صفة الحكم (Custom Claim + adminPermissions ليظهر في getReferees) وتُنشئ
+// refereeProfiles/{uid} (صفحته العامة). idempotent (set/merge + arrayUnion).
+exports.onUserCreated = onDocumentCreated("users/{uid}", async (event) => {
+  const data = event.data && event.data.data();
+  if (!data || data.role !== "referee") return;
+  const uid = event.params.uid;
+  const fv = admin.firestore.FieldValue;
+
+  try {
+    const user = await admin.auth().getUser(uid);
+    const claims = Object.assign({}, user.customClaims || {});
+    claims.referee = true;
+    await admin.auth().setCustomUserClaims(uid, claims);
+  } catch (e) {
+    logger.warn("تعذّر منح صفة الحكم عند التسجيل", {uid, error: `${e}`});
+  }
+
+  await db.collection("users").doc(uid).set({
+    adminPermissions: fv.arrayUnion("referee"),
+    updatedAt: fv.serverTimestamp(),
+  }, {merge: true});
+
+  await db.collection("refereeProfiles").doc(uid).set({
+    name: data.name || "حكم",
+    photoUrl: data.profileImage || null,
+    city: data.city || null,
+    rating: 0,
+    ratingCount: 0,
+    createdAt: fv.serverTimestamp(),
+    updatedAt: fv.serverTimestamp(),
+  }, {merge: true});
+});
+
+// ============================================================================
+// 23) تقييم الحكم — callable مع فرض خادمي (D، النقطتان 9 و10)
+// ============================================================================
+// 📝 HINT AR: التقييم محصور بـ: منظّم البطولة، أو الأدمن، أو كابتن أحد فريقَي
+// المباراة فقط؛ مرة واحدة (معرّف matchId_raterId)؛ والحكم لا يقيّم نفسه. القاعدة
+// تمنع كتابة العميل المباشرة (referee_ratings) فالكتابة هنا عبر Admin SDK فقط،
+// ثم onRefereeRatingWritten يجمّع المتوسط في refereeProfiles.
+exports.rateReferee = onCall(async (request) => {
+  const uid = request.auth && request.auth.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "سجّل الدخول أولاً");
+  const {matchId, refereeId, rating} = request.data || {};
+  if (!matchId || !refereeId) {
+    throw new HttpsError("invalid-argument", "بيانات غير صالحة");
+  }
+  const r = Number(rating);
+  if (!Number.isInteger(r) || r < 1 || r > 5) {
+    throw new HttpsError("invalid-argument", "التقييم من 1 إلى 5");
+  }
+  if (uid === refereeId) {
+    throw new HttpsError("permission-denied", "لا يمكنك تقييم نفسك");
+  }
+
+  const matchSnap = await db.collection("matches").doc(matchId).get();
+  if (!matchSnap.exists) {
+    throw new HttpsError("not-found", "المباراة غير موجودة");
+  }
+  const m = matchSnap.data();
+  if (m.refereeId !== refereeId) {
+    throw new HttpsError("invalid-argument", "هذا الحكم ليس حكم المباراة");
+  }
+  if (m.resultConfirmed !== true) {
+    throw new HttpsError("failed-precondition", "المباراة لم تنتهِ بعد");
+  }
+
+  // ── فرض الصلاحية: أدمن / منظّم البطولة / كابتن أحد الفريقين ──
+  let allowed = request.auth.token && request.auth.token.admin === true;
+  if (!allowed && m.tournamentId) {
+    const t = await db.collection("tournaments").doc(m.tournamentId).get();
+    if (t.exists && t.data().organizerUid === uid) allowed = true;
+  }
+  if (!allowed) {
+    for (const tid of [m.homeTeamId, m.awayTeamId]) {
+      if (!tid) continue;
+      const teamSnap = await db.collection("teams").doc(tid).get();
+      if (teamSnap.exists && teamSnap.data().captainId === uid) {
+        allowed = true;
+        break;
+      }
+    }
+  }
+  if (!allowed) {
+    // fallback: دور أدمن في Firestore.
+    const u = await db.collection("users").doc(uid).get();
+    if (u.exists && u.data().role === "admin") allowed = true;
+  }
+  if (!allowed) {
+    throw new HttpsError(
+      "permission-denied",
+      "التقييم للمنظّم أو الأدمن أو كابتن الفريق فقط");
+  }
+
+  // ── مرة واحدة فقط (لا تعديل) ──
+  const ratingRef = db.collection("referee_ratings").doc(`${matchId}_${uid}`);
+  const existing = await ratingRef.get();
+  if (existing.exists) {
+    throw new HttpsError("already-exists", "قيّمت هذا الحكم مسبقاً");
+  }
+  await ratingRef.set({
+    refereeId,
+    matchId,
+    raterId: uid,
+    rating: r,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+  return {success: true};
+});
+
+// ============================================================================
+// 24) تذكير كابتن بإرسال تشكيلته (الوجبة 7 — بند 2) — للمنظّم/الأدمن
+// ============================================================================
+// 📝 HINT AR: قاعدة الإشعارات تمنع العميل من إشعار غيره، فالتذكير عبر CF. يتحقق
+// أن المستدعي منظّم البطولة أو أدمن ثم يُرسل إشعاراً لكابتن الفريق المعنيّ.
+exports.remindLineup = onCall(async (request) => {
+  const uid = request.auth && request.auth.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "سجّل الدخول أولاً");
+  const {tournamentId, teamId, message} = request.data || {};
+  if (!tournamentId || !teamId) {
+    throw new HttpsError("invalid-argument", "بيانات غير صالحة");
+  }
+  const tDoc = await db.collection("tournaments").doc(tournamentId).get();
+  if (!tDoc.exists) throw new HttpsError("not-found", "البطولة غير موجودة");
+  const isAdmin = request.auth.token && request.auth.token.admin === true;
+  if (!isAdmin && tDoc.data().organizerUid !== uid) {
+    throw new HttpsError("permission-denied", "للمنظّم أو الأدمن فقط");
+  }
+  const teamDoc = await db.collection("teams").doc(teamId).get();
+  if (!teamDoc.exists) throw new HttpsError("not-found", "الفريق غير موجود");
+  const captainId = teamDoc.data().captainId;
+  if (!captainId) throw new HttpsError("failed-precondition", "لا كابتن للفريق");
+
+  const body = (message && String(message).trim()) ||
+    `يرجى إرسال تشكيلة فريقك في بطولة «${tDoc.data().name || ""}» — قد ` +
+    "يُقصى الفريق أو يخسر مباراته القادمة 3-0 إن لم تُرسَل.";
+  await _sendUserNotification(
+    captainId,
+    "تذكير: أرسل تشكيلتك ⚠️",
+    body,
+    "lineup_reminder",
+    {tournamentId, teamId},
+  );
+  return {success: true};
+});

@@ -49,7 +49,9 @@ class TournamentRepository {
 
   // ─── طلبات التحكيم (Referee Applications) ────────────────────────────
 
-  // 📝 HINT AR: تقديم طلب تحكيم لبطولة (يستلمه الأدمن). نمنع التكرار.
+  // 📝 HINT AR: تقديم طلب تحكيم لبطولة (يستلمه الأدمن). يُقدَّم مرة واحدة: نمنع
+  // التكرار إن كان هناك طلب pending أو approved (الوجبة 7 — النقطة 3). بعد الرفض
+  // يُسمح بإعادة التقديم (طلب rejected لا يحجب).
   Future<void> applyAsReferee({
     required String userId,
     required String userName,
@@ -60,11 +62,14 @@ class TournamentRepository {
         .collection('referee_applications')
         .where('userId', isEqualTo: userId)
         .where('tournamentId', isEqualTo: tournament.id)
-        .where('status', isEqualTo: 'pending')
+        .where('status', whereIn: ['pending', 'approved'])
         .limit(1)
         .get();
     if (existing.docs.isNotEmpty) {
-      throw Exception('لديك طلب تحكيم قيد المراجعة لهذه البطولة');
+      final status = existing.docs.first.data()['status'];
+      throw Exception(status == 'approved'
+          ? 'تمت الموافقة على تحكيمك في هذه البطولة مسبقاً'
+          : 'لديك طلب تحكيم قيد المراجعة لهذه البطولة');
     }
     await _firestore.collection('referee_applications').add({
       'userId': userId,

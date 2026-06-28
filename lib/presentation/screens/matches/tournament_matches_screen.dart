@@ -8,6 +8,7 @@ import '../../widgets/core/tooba_match_card.dart';
 import '../../widgets/core/tooba_empty_state.dart';
 import '../../widgets/core/tooba_shimmer.dart';
 import 'match_detail_screen.dart';
+import '../tournaments/tournament_standings_screen.dart';
 import '../../../app/router/tooba_route.dart';
 
 /// 📝 HINT AR: مباريات بطولة واحدة فقط — ثلاثة تبويبات (جارية/قادمة/انتهت)
@@ -66,7 +67,65 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
           ],
         ),
       ),
-      body: FutureBuilder<List<MatchModel>>(
+      body: Column(
+        children: [
+          _standingsCard(context),
+          Expanded(child: _matchesBody()),
+        ],
+      ),
+    );
+  }
+
+  // 📝 HINT AR: كارت «جدول الترتيب» (بند 11) — يفتح الجدول/الشجرة حسب نوع البطولة.
+  Widget _standingsCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final isKnockout = widget.tournament.type == 'knockout';
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Material(
+        color: theme.colorScheme.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () => Navigator.push(
+            context,
+            ToobaRoute.to(TournamentStandingsScreen(
+                tournament: widget.tournament)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              children: [
+                Icon(isKnockout ? Icons.account_tree : Icons.leaderboard,
+                    color: theme.colorScheme.primary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(isKnockout ? 'مخطط البطولة' : 'جدول الترتيب',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15)),
+                      Text(
+                          isKnockout
+                              ? 'شجرة المواجهات حتى الكأس'
+                              : 'ترتيب الفرق ونقاطها',
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.grey[600])),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_left, color: Colors.grey[400]),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _matchesBody() {
+    return FutureBuilder<List<MatchModel>>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -120,8 +179,7 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
             ),
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _buildList(BuildContext context, List<MatchModel> matches,

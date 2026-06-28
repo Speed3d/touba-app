@@ -66,25 +66,47 @@ class _MatchesScreenState extends State<MatchesScreen> {
               subtitle: 'ستظهر هنا البطولات ومبارياتها',
             );
           }
-          // الجارية أولاً ثم المنتهية.
-          tournaments.sort((a, b) {
-            if (a.status == b.status) return 0;
-            if (a.status == 'ongoing') return -1;
-            if (b.status == 'ongoing') return 1;
-            return 0;
-          });
+          // 📝 HINT AR: فصل صريح (بند 11) — جارية / منتهية / أخرى بعناوين.
+          final ongoing =
+              tournaments.where((t) => t.status == 'ongoing').toList();
+          final finished =
+              tournaments.where((t) => t.status == 'finished').toList();
+          final others = tournaments
+              .where((t) => t.status != 'ongoing' && t.status != 'finished')
+              .toList();
           return RefreshIndicator(
             onRefresh: _reload,
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.all(16),
-              itemCount: tournaments.length,
-              itemBuilder: (context, i) => _card(tournaments[i]),
+              children: [
+                if (ongoing.isNotEmpty) ...[
+                  _header('بطولات جارية'),
+                  ...ongoing.map(_card),
+                  const SizedBox(height: 8),
+                ],
+                if (finished.isNotEmpty) ...[
+                  _header('بطولات منتهية'),
+                  ...finished.map(_card),
+                  const SizedBox(height: 8),
+                ],
+                if (others.isNotEmpty) ...[
+                  _header('بطولات أخرى'),
+                  ...others.map(_card),
+                ],
+              ],
             ),
           );
         },
       ),
     );
   }
+
+  Widget _header(String title) => Padding(
+        padding: const EdgeInsets.only(bottom: 10, top: 4, right: 4),
+        child: Text(title,
+            style:
+                const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+      );
 
   Widget _card(TournamentModel t) {
     final finished = t.status == 'finished';

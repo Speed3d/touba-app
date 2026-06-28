@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/tournament_lineup_model.dart';
 import '../../../data/repositories/tournament_lineup_repository.dart';
+import '../../../data/repositories/player_repository.dart';
 import '../../widgets/core/pitch_formation_view.dart';
 import '../../widgets/core/tooba_empty_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../players/player_detail_screen.dart';
+import '../../../app/router/tooba_route.dart';
 
 /// 📝 HINT AR: مراجعة المنظّم لتشكيلات البطولة (بند 8). يعرض تشكيلة كل فريق على
 /// الملعب + الاحتياط، ويقبلها أو يرفضها (مع ملاحظة). الإشعار للكابتن عبر CF.
 class TournamentLineupsReviewScreen extends StatefulWidget {
   final String tournamentId;
-  const TournamentLineupsReviewScreen({super.key, required this.tournamentId});
+  // 📝 HINT AR: المنظّم/الأدمن يقبل/يرفض؛ غيره يرى التشكيلات للقراءة فقط (بند 2).
+  final bool canManage;
+  const TournamentLineupsReviewScreen({
+    super.key,
+    required this.tournamentId,
+    this.canManage = false,
+  });
 
   @override
   State<TournamentLineupsReviewScreen> createState() =>
@@ -20,11 +29,26 @@ class TournamentLineupsReviewScreen extends StatefulWidget {
 class _TournamentLineupsReviewScreenState
     extends State<TournamentLineupsReviewScreen> {
   late Future<List<TournamentLineupModel>> _future;
+  // 📝 HINT AR: تشكيلات يعيد المنظّم البتّ بها (أُظهر أزرارها بعد «تغيير القرار»).
+  final Set<String> _editing = {};
 
   @override
   void initState() {
     super.initState();
     _future = _load();
+  }
+
+  // 📝 HINT AR: فتح صفحة اللاعب عند الضغط عليه على الملعب (بند 2) — يجلب سجله الكامل.
+  Future<void> _openPlayer(String playerId) async {
+    if (playerId.isEmpty) return;
+    final repo = context.read<PlayerRepository>();
+    try {
+      final p = await repo.getPlayerById(playerId);
+      if (!mounted) return;
+      Navigator.push(context, ToobaRoute.to(PlayerDetailScreen(player: p)));
+    } catch (_) {
+      if (mounted) ToobaSnackBar.error(context, 'تعذّر فتح صفحة اللاعب');
+    }
   }
 
   Future<List<TournamentLineupModel>> _load() => context
@@ -45,6 +69,7 @@ class _TournamentLineupsReviewScreenState
       await repo.review(l.id, status, note: note);
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(
           status == 'approved' ? 'قُبلت التشكيلة' : 'رُفضت التشكيلة'));
+      _editing.remove(l.id); // أعد إخفاء الأزرار بعد القرار
       _reload();
     } catch (_) {
       messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تحديث الحالة'));
@@ -146,11 +171,14 @@ class _TournamentLineupsReviewScreenState
             Text('الخطة: ${l.formation ?? "—"}',
                 style: TextStyle(color: Colors.grey[600], fontSize: 12)),
             const SizedBox(height: 10),
-            // الملعب (الأساسيون بترتيب الخانات)
+            // الملعب (الأساسيون بترتيب الخانات) — الضغط على لاعب يفتح صفحته.
             PitchFormationView(
               players: l.starters,
               formation: l.formation,
               bySlotOrder: true,
+              onSlotTap: (i) {
+                if (i < l.starters.length) _openPlayer(l.starters[i].playerId);
+              },
             ),
             const SizedBox(height: 10),
             if (l.subs.isNotEmpty) ...[
@@ -161,10 +189,11 @@ class _TournamentLineupsReviewScreenState
                 spacing: 6,
                 runSpacing: 6,
                 children: l.subs
-                    .map((s) => Chip(
+                    .map((s) => ActionChip(
                           label: Text(s.name,
                               style: const TextStyle(fontSize: 12)),
                           visualDensity: VisualDensity.compact,
+                          onPressed: () => _openPlayer(s.playerId),
                         ))
                     .toList(),
               ),
@@ -177,35 +206,47 @@ class _TournamentLineupsReviewScreenState
                     style: const TextStyle(
                         color: Colors.red, fontStyle: FontStyle.italic)),
               ),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed:
-                        l.isApproved ? null : () => _review(l, 'approved'),
-                    icon: const Icon(Icons.check, size: 18,
-                        color: Colors.green),
-                    label: const Text('قبول',
-                        style: TextStyle(color: Colors.green)),
-                    style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.green)),
+            // 📝 HINT AR: بند 1 — بعد البتّ تختفي أزرار القبول/الرفض ويظهر «تغيير
+            // القرار» (للطوارئ). أثناء «قيد المراجعة» أو بعد «تغيير القرار» تظهر.
+            if (widget.canManage &&
+                (l.isPending || _editing.contains(l.id)))
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _review(l, 'approved'),
+                      icon: const Icon(Icons.check,
+                          size: 18, color: Colors.green),
+                      label: const Text('قبول',
+                          style: TextStyle(color: Colors.green)),
+                      style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.green)),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed:
-                        l.isRejected ? null : () => _review(l, 'rejected'),
-                    icon:
-                        const Icon(Icons.close, size: 18, color: Colors.red),
-                    label: const Text('رفض',
-                        style: TextStyle(color: Colors.red)),
-                    style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.red)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _review(l, 'rejected'),
+                      icon: const Icon(Icons.close,
+                          size: 18, color: Colors.red),
+                      label: const Text('رفض',
+                          style: TextStyle(color: Colors.red)),
+                      style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.red)),
+                    ),
                   ),
+                ],
+              )
+            else if (widget.canManage)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => setState(() => _editing.add(l.id)),
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('تغيير القرار',
+                      style: TextStyle(fontSize: 12)),
                 ),
-              ],
-            ),
+              ),
           ],
         ),
       ),

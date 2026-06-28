@@ -70,6 +70,20 @@ class MatchModel extends Equatable {
   final String? awayFormation;
   final bool resultConfirmed;
   final bool statsApplied; // علم النظام (CF) — للعرض فقط
+  // 📝 HINT AR: الوجبة 7 — مرحلة المباراة وبنية الشجرة الإقصائية.
+  final String stage; // league | group | knockout
+  final String? groupName; // اسم المجموعة (لمباريات المجموعات)
+  final int bracketRound; // ترتيب الدور الإقصائي (1=الأول ... النهائي)
+  // 📝 HINT AR: المباراة التي يملأ فائزها هذه الخانة (للترقية وعرض TBD).
+  final String? homeFeedFrom;
+  final String? awayFeedFrom;
+  // 📝 HINT AR: حسم التعادل في الإقصائي + المتأهّل (يصعد في الشجرة).
+  final String decidedBy; // none | extratime | penalties
+  final int? penaltyHome;
+  final int? penaltyAway;
+  final String? advancedTeamId;
+  // 📝 HINT AR: نتائج الأشواط للعرض (مثل «ش١: 1-0») — لا تُشغّل المحرّك (WS2).
+  final List<dynamic> periodScores; // [{period, home, away}]
 
   const MatchModel({
     required this.id,
@@ -98,7 +112,26 @@ class MatchModel extends Equatable {
     this.awayFormation,
     this.resultConfirmed = false,
     this.statsApplied = false,
+    this.stage = 'league',
+    this.groupName,
+    this.bracketRound = 0,
+    this.homeFeedFrom,
+    this.awayFeedFrom,
+    this.decidedBy = 'none',
+    this.penaltyHome,
+    this.penaltyAway,
+    this.advancedTeamId,
+    this.periodScores = const [],
   });
+
+  // 📝 HINT AR: هل الفريقان حقيقيان؟ (خانة TBD تحمل معرّفاً يبدأ بـ TBD/BYE).
+  bool get hasRealTeams =>
+      homeTeamId.isNotEmpty &&
+      awayTeamId.isNotEmpty &&
+      !homeTeamId.startsWith('TBD') &&
+      !homeTeamId.startsWith('BYE') &&
+      !awayTeamId.startsWith('TBD') &&
+      !awayTeamId.startsWith('BYE');
 
   factory MatchModel.fromJson(Map<String, dynamic> json, String id) {
     return MatchModel(
@@ -134,6 +167,16 @@ class MatchModel extends Equatable {
       awayFormation: json['awayFormation'],
       resultConfirmed: json['resultConfirmed'] ?? false,
       statsApplied: json['statsApplied'] ?? false,
+      stage: json['stage'] ?? 'league',
+      groupName: json['groupName'],
+      bracketRound: json['bracketRound'] ?? 0,
+      homeFeedFrom: json['homeFeedFrom'],
+      awayFeedFrom: json['awayFeedFrom'],
+      decidedBy: json['decidedBy'] ?? 'none',
+      penaltyHome: json['penaltyHome'],
+      penaltyAway: json['penaltyAway'],
+      advancedTeamId: json['advancedTeamId'],
+      periodScores: json['periodScores'] ?? const [],
     );
   }
 
@@ -167,6 +210,16 @@ class MatchModel extends Equatable {
       if (homeFormation != null) 'homeFormation': homeFormation,
       if (awayFormation != null) 'awayFormation': awayFormation,
       'resultConfirmed': resultConfirmed,
+      'stage': stage,
+      if (groupName != null) 'groupName': groupName,
+      'bracketRound': bracketRound,
+      if (homeFeedFrom != null) 'homeFeedFrom': homeFeedFrom,
+      if (awayFeedFrom != null) 'awayFeedFrom': awayFeedFrom,
+      'decidedBy': decidedBy,
+      if (penaltyHome != null) 'penaltyHome': penaltyHome,
+      if (penaltyAway != null) 'penaltyAway': penaltyAway,
+      if (advancedTeamId != null) 'advancedTeamId': advancedTeamId,
+      if (periodScores.isNotEmpty) 'periodScores': periodScores,
     };
   }
 
@@ -205,6 +258,16 @@ class MatchModel extends Equatable {
       awayFormation: awayFormation,
       resultConfirmed: resultConfirmed,
       statsApplied: statsApplied,
+      stage: stage,
+      groupName: groupName,
+      bracketRound: bracketRound,
+      homeFeedFrom: homeFeedFrom,
+      awayFeedFrom: awayFeedFrom,
+      decidedBy: decidedBy,
+      penaltyHome: penaltyHome,
+      penaltyAway: penaltyAway,
+      advancedTeamId: advancedTeamId,
+      periodScores: periodScores,
     );
   }
 
@@ -216,6 +279,8 @@ class MatchModel extends Equatable {
         homeScore, awayScore, events, lineup,
         homeLineup, awayLineup, homeFormation, awayFormation,
         resultConfirmed, statsApplied,
+        stage, groupName, bracketRound, homeFeedFrom, awayFeedFrom,
+        decidedBy, penaltyHome, penaltyAway, advancedTeamId, periodScores,
       ];
 }
 

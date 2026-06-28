@@ -23,7 +23,7 @@ class ChatsListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('محادثاتي'), centerTitle: true),
       body: uid == null
-          ? const Center(child: Text('سجّل الدخول لعرض المحادثات'))
+          ? _visitorView(context)
           : StreamBuilder<List<ChatModel>>(
               stream: repo.streamUserChats(uid),
               builder: (context, snap) {
@@ -56,6 +56,42 @@ class ChatsListScreen extends StatelessWidget {
                 );
               },
             ),
+    );
+  }
+
+  // 📝 HINT AR: الزائر لا محادثات له — نوجّهه لتسجيل الدخول/إنشاء حساب.
+  // logout() يصدر AuthUnauthenticated فيُظهر AuthWrapper شاشة الدخول.
+  Widget _visitorView(BuildContext context) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.forum_outlined, size: 64, color: Colors.grey.shade400),
+            const SizedBox(height: 12),
+            const Text('سجّل الدخول لعرض محادثاتك',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 6),
+            Text('المحادثات تُفتح بين كباتن الفرق عند قبول تحدٍّ',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () => context.read<AuthCubit>().logout(),
+              icon: const Icon(Icons.login),
+              label: const Text('تسجيل الدخول / إنشاء حساب'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

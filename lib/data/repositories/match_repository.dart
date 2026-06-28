@@ -31,6 +31,34 @@ class MatchRepository {
     return snap.docs.map((d) => MatchModel.fromJson(d.data(), d.id)).toList();
   }
 
+  // 📝 HINT AR: قراءة مباراة واحدة (لتحديث شاشة التفاصيل بعد إجراء حيّ).
+  Future<MatchModel> getMatchById(String matchId) async {
+    final doc = await _firestore.collection('matches').doc(matchId).get();
+    if (!doc.exists) throw Exception('المباراة غير موجودة');
+    return MatchModel.fromJson(doc.data()!, doc.id);
+  }
+
+  // 📝 HINT AR: تحديث النتيجة اللحظية أثناء «جارية» (WS2) — تُعرض للمشاهد فوراً
+  // لكن **لا تُشغّل** المحرّك (resultConfirmed يبقى false حتى التأكيد النهائي).
+  Future<void> updateLiveScore(
+      String matchId, int homeScore, int awayScore) async {
+    await _firestore.collection('matches').doc(matchId).update({
+      'homeScore': homeScore,
+      'awayScore': awayScore,
+    });
+  }
+
+  // 📝 HINT AR: تأكيد نتيجة شوط للعرض (مثل «ش١: 1-0») — يُضاف لـ periodScores ولا
+  // يُشغّل المحرّك. period = رقم الشوط (1/2)، home/away نتيجته التراكمية.
+  Future<void> confirmHalf(
+      String matchId, int period, int homeScore, int awayScore) async {
+    await _firestore.collection('matches').doc(matchId).update({
+      'periodScores': FieldValue.arrayUnion([
+        {'period': period, 'home': homeScore, 'away': awayScore}
+      ]),
+    });
+  }
+
   // 📝 HINT AR: تعيين حكم لمباراة (للمنظّم/الأدمن) — يحدّث refereeId + الاسم.
   Future<void> assignReferee(
       String matchId, String? refereeId, String? refereeName) async {
@@ -51,25 +79,8 @@ class MatchRepository {
     return snap.docs.map((d) => MatchModel.fromJson(d.data(), d.id)).toList();
   }
 
-  // 📝 HINT AR: تقييم الحكم بعد المباراة (1..5). مُعرّف المستند يمنع التكرار؛
-  // المتوسط يُجمَّع في refereeProfiles عبر Cloud Function.
-  Future<void> rateReferee({
-    required String refereeId,
-    required String matchId,
-    required String raterId,
-    required int rating,
-  }) async {
-    await _firestore
-        .collection('referee_ratings')
-        .doc('${matchId}_$raterId')
-        .set({
-      'refereeId': refereeId,
-      'matchId': matchId,
-      'raterId': raterId,
-      'rating': rating,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-  }
+  // 📝 HINT AR: التقييم يتم عبر Cloud Function `rateReferee` (FunctionsService) —
+  // الكتابة المباشرة ممنوعة بالقاعدة (فرض الصلاحية + مرة واحدة + لا تقييم للنفس).
 
   // 📝 HINT AR: تقييمي السابق لحكم هذه المباراة (إن وُجد) — لعرضه مسبقاً.
   Future<int?> getMyRefereeRating(String matchId, String raterId) async {
@@ -143,6 +154,12 @@ class MatchRepository {
     List<Map<String, dynamic>> awayLineup = const [],
     String? homeFormation,
     String? awayFormation,
+    // 📝 HINT AR: حسم تعادل الإقصائي (الوجبة 7) — النتيجة تبقى تعادلاً لكن
+    // advancedTeamId يصعد في الشجرة (يقرؤه CF). للمباراة غير المتعادلة null.
+    String? decidedBy,
+    int? penaltyHome,
+    int? penaltyAway,
+    String? advancedTeamId,
   }) async {
     await _firestore.collection('matches').doc(matchId).update({
       'homeScore': homeScore,
@@ -153,6 +170,10 @@ class MatchRepository {
       if (awayLineup.isNotEmpty) 'awayLineup': awayLineup,
       if (homeFormation != null) 'homeFormation': homeFormation,
       if (awayFormation != null) 'awayFormation': awayFormation,
+      if (decidedBy != null) 'decidedBy': decidedBy,
+      if (penaltyHome != null) 'penaltyHome': penaltyHome,
+      if (penaltyAway != null) 'penaltyAway': penaltyAway,
+      if (advancedTeamId != null) 'advancedTeamId': advancedTeamId,
       'status': 'finished',
       'resultConfirmed': true,
     });

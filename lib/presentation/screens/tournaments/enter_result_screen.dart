@@ -45,10 +45,31 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
   TeamModel? _awayTeam;
   bool _loading = true;
 
+  // 📝 HINT AR: حسم تعادل الإقصائي (الوجبة 7) — يظهر فقط لمباراة إقصائية متعادلة.
+  String _decidedBy = 'extratime_penalties';
+  String? _advancedTeamId;
+  int _penHome = 0;
+  int _penAway = 0;
+
+  bool get _isKnockout => widget.match.stage == 'knockout';
+  bool get _isDraw =>
+      _scoreFor(_homePlayers, _awayPlayers) ==
+      _scoreFor(_awayPlayers, _homePlayers);
+
   @override
   void initState() {
     super.initState();
     _loadRosters();
+    // 📝 HINT AR: نبدأ بطريقة الحسم المعتمدة عند إنشاء البطولة (إن توفّرت الحالة).
+    final st = context.read<TournamentCubit>().state;
+    if (st is TournamentDetailsLoaded) {
+      _decidedBy = st.tournament.tieBreakMode;
+    }
+    // قيم الجزاءات الموجودة مسبقاً (عند تعديل نتيجة محسومة).
+    _advancedTeamId = widget.match.advancedTeamId;
+    if (widget.match.decidedBy != 'none') _decidedBy = widget.match.decidedBy;
+    _penHome = widget.match.penaltyHome ?? 0;
+    _penAway = widget.match.penaltyAway ?? 0;
   }
 
   Future<void> _loadRosters() async {
@@ -157,6 +178,13 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
   }
 
   void _save() {
+    // 📝 HINT AR: الإقصائي لا يقبل تعادلاً — يجب تحديد المتأهّل (يصعد في الشجرة).
+    if (_isKnockout && _isDraw &&
+        (_advancedTeamId == null || _advancedTeamId!.isEmpty)) {
+      ToobaSnackBar.warning(
+          context, 'حدّد الفريق المتأهّل (لا يجوز تعادل في دور إقصائي)');
+      return;
+    }
     final events = <Map<String, dynamic>>[];
     void addFor(List<PlayerModel> players, String teamId) {
       for (final p in players) {
@@ -223,6 +251,10 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
           awayLineup: snap(_awayPlayers),
           homeFormation: _homeTeam?.formation,
           awayFormation: _awayTeam?.formation,
+          decidedBy: _isKnockout && _isDraw ? _decidedBy : null,
+          penaltyHome: _isKnockout && _isDraw ? _penHome : null,
+          penaltyAway: _isKnockout && _isDraw ? _penAway : null,
+          advancedTeamId: _isKnockout && _isDraw ? _advancedTeamId : null,
         );
   }
 
@@ -276,6 +308,11 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                   _teamSection(m.homeTeamName, _homePlayers),
                   const SizedBox(height: 16),
                   _teamSection(m.awayTeamName, _awayPlayers),
+                  // 📝 HINT AR: حسم التعادل — يظهر فقط لمباراة إقصائية متعادلة.
+                  if (_isKnockout && _isDraw) ...[
+                    const SizedBox(height: 16),
+                    _tieBreakCard(m),
+                  ],
                   const SizedBox(height: 8),
                   Text(
                     'النتيجة تُحسب تلقائياً من الأهداف. قاعدة: إنذاران = طرد.',
@@ -285,6 +322,124 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                 ],
               ),
       ),
+    );
+  }
+
+  // 📝 HINT AR: بطاقة حسم تعادل الإقصائي — طريقة الحسم + ركلات الترجيح + المتأهّل.
+  // النتيجة الأصلية تبقى تعادلاً؛ المتأهّل (advancedTeamId) يصعد في الشجرة عبر CF.
+  Widget _tieBreakCard(MatchModel m) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.amber.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.amber.shade700),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.account_tree, color: Colors.amber.shade800, size: 18),
+              const SizedBox(width: 6),
+              const Text('حسم التعادل (دور إقصائي)',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const Text('طريقة الحسم:', style: TextStyle(fontSize: 13)),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 8,
+            children: [
+              ChoiceChip(
+                label: const Text('أشواط إضافية ثم جزاءات'),
+                selected: _decidedBy == 'extratime_penalties',
+                onSelected: (_) =>
+                    setState(() => _decidedBy = 'extratime_penalties'),
+              ),
+              ChoiceChip(
+                label: const Text('جزاءات مباشرة'),
+                selected: _decidedBy == 'penalties',
+                onSelected: (_) => setState(() => _decidedBy = 'penalties'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text('ركلات الترجيح (اختياري):', style: TextStyle(fontSize: 13)),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(child: _penStepper(m.homeTeamName, true)),
+              const SizedBox(width: 12),
+              Expanded(child: _penStepper(m.awayTeamName, false)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text('الفريق المتأهّل للدور التالي:',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 8,
+            children: [
+              ChoiceChip(
+                label: Text(m.homeTeamName),
+                selected: _advancedTeamId == m.homeTeamId,
+                selectedColor: theme.colorScheme.primary.withValues(alpha: 0.25),
+                onSelected: (_) =>
+                    setState(() => _advancedTeamId = m.homeTeamId),
+              ),
+              ChoiceChip(
+                label: Text(m.awayTeamName),
+                selected: _advancedTeamId == m.awayTeamId,
+                selectedColor: theme.colorScheme.primary.withValues(alpha: 0.25),
+                onSelected: (_) =>
+                    setState(() => _advancedTeamId = m.awayTeamId),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _penStepper(String teamName, bool isHome) {
+    final value = isHome ? _penHome : _penAway;
+    return Column(
+      children: [
+        Text(teamName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 11)),
+        const SizedBox(height: 2),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _miniBtn(Icons.remove, () => setState(() {
+                  if (isHome) {
+                    _penHome = (_penHome - 1).clamp(0, 99);
+                  } else {
+                    _penAway = (_penAway - 1).clamp(0, 99);
+                  }
+                })),
+            Container(
+              width: 24,
+              alignment: Alignment.center,
+              child: Text('$value',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
+            ),
+            _miniBtn(Icons.add, () => setState(() {
+                  if (isHome) {
+                    _penHome = (_penHome + 1).clamp(0, 99);
+                  } else {
+                    _penAway = (_penAway + 1).clamp(0, 99);
+                  }
+                }), color: Colors.green),
+          ],
+        ),
+      ],
     );
   }
 

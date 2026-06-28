@@ -53,6 +53,11 @@ class TournamentModel extends Equatable {
   final String? entryInfo; // نص رسوم/تواصل الدخول (يُعرض على البطولة المدفوعة)
   final int matchDuration; // مدّة الشوط بالدقائق (30 أو 45) — للمؤقّت الحيّ
   final int halvesCount; // عدد الأشواط (1 أو 2)
+  // 📝 HINT AR: الوجبة 7 — إعداد المجموعات والإقصائي (يُعرض في التفاصيل للشفافية).
+  final int qualifiersPerGroup; // كم يتأهّل من كل مجموعة (1/2/3)
+  final String tieBreakMode; // extratime_penalties | penalties (للإقصائي)
+  final Map<String, List<String>> groups; // توزيع المجموعات {«A»: [teamIds]}
+  final bool bracketGenerated; // هل وُلِّد إقصائي المجموعات؟ (idempotency)
 
   const TournamentModel({
     required this.id,
@@ -86,6 +91,10 @@ class TournamentModel extends Equatable {
     this.entryInfo,
     this.matchDuration = 45,
     this.halvesCount = 2,
+    this.qualifiersPerGroup = 2,
+    this.tieBreakMode = 'extratime_penalties',
+    this.groups = const {},
+    this.bracketGenerated = false,
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json, String id) {
@@ -130,6 +139,13 @@ class TournamentModel extends Equatable {
       entryInfo: json['entryInfo'],
       matchDuration: json['matchDuration'] ?? 45,
       halvesCount: json['halvesCount'] ?? 2,
+      qualifiersPerGroup: json['qualifiersPerGroup'] ?? 2,
+      tieBreakMode: json['tieBreakMode'] ?? 'extratime_penalties',
+      groups: (json['groups'] as Map?)?.map(
+            (k, v) => MapEntry(k.toString(), List<String>.from(v ?? const [])),
+          ) ??
+          const {},
+      bracketGenerated: json['bracketGenerated'] ?? false,
     );
   }
 
@@ -164,6 +180,10 @@ class TournamentModel extends Equatable {
       if (entryInfo != null) 'entryInfo': entryInfo,
       'matchDuration': matchDuration,
       'halvesCount': halvesCount,
+      'qualifiersPerGroup': qualifiersPerGroup,
+      'tieBreakMode': tieBreakMode,
+      if (groups.isNotEmpty) 'groups': groups,
+      'bracketGenerated': bracketGenerated,
       // 📝 HINT AR: winnerTeamId يكتبه النظام (CF) عند الانتهاء — لا نرسله من العميل.
     };
   }
@@ -176,5 +196,6 @@ class TournamentModel extends Equatable {
         numberOfGroups, playerFormat, winnerTeamId, winnerTeamName,
         rules, sponsors, adBanners, isFree, entryInfo,
         matchDuration, halvesCount,
+        qualifiersPerGroup, tieBreakMode, groups, bracketGenerated,
       ];
 }
