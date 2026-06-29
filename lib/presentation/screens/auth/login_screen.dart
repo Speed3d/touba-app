@@ -5,6 +5,7 @@ import '../../cubits/auth/auth_state.dart';
 import 'register_screen.dart';
 import 'forgot_password_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../widgets/core/decorated_background.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,8 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: DecoratedBackground(
+        showOrbs: true,
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -84,11 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: 'البريد الإلكتروني',
                       prefixIcon: const Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -111,7 +108,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
@@ -167,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: const Text(
                           'تسجيل الدخول',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       );
                     },
@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  
+
                   // Visitor Mode
                   TextButton(
                     onPressed: () {

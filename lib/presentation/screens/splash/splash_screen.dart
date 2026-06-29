@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/services/preferences_service.dart';
 import '../auth/auth_wrapper.dart';
 import '../onboarding/onboarding_screen.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: شاشة البداية — شعار متحرّك ثم توجيه: إن لم تُعرض شاشات التعريف
 /// من قبل → Onboarding، وإلا → AuthWrapper (الذي يقرّر الدخول/الرئيسية).
@@ -58,47 +59,52 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.primary,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fade,
-          child: ScaleTransition(
-            scale: _scale,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    width: 96,
-                    height: 96,
-                    errorBuilder: (_, __, ___) => const Icon(
-                      Icons.sports_soccer,
-                      size: 96,
-                      color: Colors.green,
+      backgroundColor: Colors.transparent,
+      body: DecoratedBackground(
+        showOrbs: true,
+        child: Center(
+          child: FadeTransition(
+            opacity: _fade,
+            child: ScaleTransition(
+              scale: _scale,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 96,
+                      height: 96,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.sports_soccer,
+                        size: 96,
+                        color: Colors.green,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'طوبة',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 24),
+                  const Text(
+                    'طوبة',
+                    style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'منصة كرة القدم الشعبية',
-                  style: TextStyle(color: Colors.white70, fontSize: 15),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    'منصة كرة القدم الشعبية',
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

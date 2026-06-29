@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../widgets/core/decorated_background.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,7 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+
   bool _obscurePassword = true;
   // 📝 HINT AR: «لاعب» = حساب user عادي (يطالب بسجل لاعب لاحقاً)؛ «كابتن» = captain.
   String _selectedRole = 'user';
@@ -50,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final appBarTextColor = isDark ? Colors.white : theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
           'إنشاء حساب جديد',
@@ -64,7 +65,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         iconTheme: IconThemeData(color: appBarTextColor),
         centerTitle: true,
       ),
-      body: SafeArea(
+      body: DecoratedBackground(
+        showOrbs: true,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Form(
@@ -109,14 +111,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // Name Field
                 TextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'الاسم الكامل',
-                    prefixIcon: const Icon(Icons.person_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    prefixIcon: Icon(Icons.person_outline),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -131,14 +128,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'البريد الإلكتروني',
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    prefixIcon: Icon(Icons.email_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -156,14 +148,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'رقم الهاتف',
-                    prefixIcon: const Icon(Icons.phone_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    prefixIcon: Icon(Icons.phone_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -186,7 +173,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -194,11 +183,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -228,7 +212,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Colors.grey.withValues(alpha: 0.3),
                     ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: _selectedRole,
@@ -288,7 +273,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: const Text(
                         'تسجيل الحساب',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     );
                   },

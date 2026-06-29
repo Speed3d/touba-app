@@ -104,7 +104,7 @@ class AppTheme {
     final cardElevation =
         isGlass ? DesignTokens.elevationNone : DesignTokens.elevationSmall;
     final buttonRadius =
-        isGlass ? DesignTokens.radiusLarge : DesignTokens.radiusMedium;
+        isGlass ? DesignTokens.radiusMedium : DesignTokens.radiusSmall;
 
     return ThemeData(
       useMaterial3: true,
@@ -459,7 +459,7 @@ class AppTheme {
     final cardElevation =
         isGlass ? DesignTokens.elevationNone : DesignTokens.elevationSmall;
     final buttonRadius =
-        isGlass ? DesignTokens.radiusLarge : DesignTokens.radiusMedium;
+        isGlass ? DesignTokens.radiusMedium : DesignTokens.radiusSmall;
 
     return ThemeData(
       useMaterial3: true,

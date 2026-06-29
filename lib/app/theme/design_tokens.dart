@@ -39,11 +39,11 @@ class DesignTokens {
   ///  زوايا صغيرة - للعناصر الصغيرة مثل Chips و Tags
   static const double radiusXSmall = 4.0;
 
-  ///  زوايا صغيرة - للأزرار الصغيرة وحقول الإدخال
-  static const double radiusSmall = 8.0;
+  ///  زوايا صغيرة - للأزرار والحقول (12px بدلاً من 8px)
+  static const double radiusSmall = 12.0;
 
-  ///  زوايا متوسطة - للكروت في الوضع Classic
-  static const double radiusMedium = 12.0;
+  ///  زوايا متوسطة - للكروت العادية والأزرار الكبيرة
+  static const double radiusMedium = 16.0;
 
   ///  زوايا كبيرة - للكروت في الوضع Glass
   static const double radiusLarge = 16.0;

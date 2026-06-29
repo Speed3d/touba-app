@@ -8,6 +8,7 @@ import '../home/home_screen.dart';
 import '../teams/teams_screen.dart';
 import '../chat/chats_list_screen.dart';
 import '../settings/settings_screen.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: الشاشة الجذر بشريط تنقّل سفلي «عائم» بـ4 أزرار:
 /// الرئيسية / الفريق / المحادثات / الإعدادات.
@@ -44,7 +45,11 @@ class _MainScreenState extends State<MainScreen> {
     final uid = st is AuthAuthenticated ? st.user.id : null;
 
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      backgroundColor: Colors.transparent,
+      body: DecoratedBackground(
+        showOrbs: _currentIndex == 0, // اظهر الدوائر فقط في الرئيسية
+        child: IndexedStack(index: _currentIndex, children: _pages),
+      ),
       bottomNavigationBar: uid == null
           ? _nav(const {})
           : StreamBuilder<int>(
