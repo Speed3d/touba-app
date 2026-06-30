@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'tooba_card.dart';
+import '../../../app/theme/app_colors.dart';
 import 'tooba_team_avatar.dart';
 
 /// 📝 HINT AR: بطاقة مباراة. تُعرض في قائمة المباريات وتفاصيل البطولة.
@@ -33,128 +34,80 @@ class ToobaMatchCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final hasResult = homeScore != null && awayScore != null;
 
-    return ToobaCard(
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+      ),
+      padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // ── شريط الحالة / الموعد ──
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (isLive)
-                _liveBadge()
-              else ...[
-                Icon(
-                  dateTime != null
-                      ? Icons.calendar_month
-                      : Icons.sports_soccer_outlined,
-                  size: 13,
-                  color: Colors.grey,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  timeText,
-                  style: TextStyle(
-                    color: dateTime != null && !hasResult
-                        ? theme.colorScheme.primary
-                        : Colors.grey,
-                    fontSize: 13,
-                    fontWeight: dateTime != null && !hasResult
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // ── الفريقان والنتيجة ──
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // الفريق المضيف
               Expanded(
-                child: Column(
-                  children: [
-                    ToobaTeamAvatar(logoUrl: homeTeamLogo ?? '', radius: 28),
-                    const SizedBox(height: 8),
-                    Text(
-                      homeTeamName,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+                child: Text(homeTeamName,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: isDark ? Colors.white : Colors.black87),
+                    textAlign: TextAlign.right),
               ),
-
-              // النتيجة أو VS
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: hasResult
-                    ? Text(
-                        '$homeScore - $awayScore',
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
-                        ),
-                      )
-                    : const Text(
-                        'VS',
+              const SizedBox(width: 12),
+              Column(
+                children: [
+                  if (hasResult || isLive)
+                    Text('${homeScore ?? 0} - ${awayScore ?? 0}',
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                        ),
+                            fontWeight: FontWeight.w900,
+                            fontSize: 20,
+                            color: isDark ? Colors.white : Colors.black87))
+                  else
+                    Text('vs',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16,
+                            color: isDark ? const Color(0xFF6A8898) : Colors.grey)),
+                  const SizedBox(height: 4),
+                  if (isLive)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFFF4B4B).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4)),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.circle, color: Color(0xFFFF4B4B), size: 6),
+                          SizedBox(width: 4),
+                          Text('مباشر',
+                              style: TextStyle(
+                                  color: Color(0xFFFF4B4B),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold)),
+                        ],
                       ),
+                    )
+                  else if (dateTime != null)
+                    Text(DateFormat('MMM d, h:mm a').format(dateTime!),
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: isDark ? const Color(0xFF6A8898) : Colors.grey)),
+                ],
               ),
-
-              // الفريق الضيف
+              const SizedBox(width: 12),
               Expanded(
-                child: Column(
-                  children: [
-                    ToobaTeamAvatar(logoUrl: awayTeamLogo ?? '', radius: 28),
-                    const SizedBox(height: 8),
-                    Text(
-                      awayTeamName,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+                child: Text(awayTeamName,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: isDark ? Colors.white : Colors.black87),
+                    textAlign: TextAlign.left),
               ),
             ],
           ),
-
-          // ── التاريخ والوقت الكامل (إن توفّر وليست المباراة منتهية) ──
-          if (dateTime != null && !hasResult) ...[
-            const SizedBox(height: 10),
-            Divider(height: 1, color: Colors.grey.shade200),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.access_time,
-                    size: 13, color: theme.colorScheme.primary),
-                const SizedBox(width: 4),
-                Text(
-                  DateFormat('EEEE، d MMMM yyyy • HH:mm', 'ar')
-                      .format(dateTime!),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );

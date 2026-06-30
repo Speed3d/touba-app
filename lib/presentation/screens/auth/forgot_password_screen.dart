@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
@@ -72,10 +73,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     labelText: 'البريد الإلكتروني',
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[300]!),
+                      ),
                     filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    fillColor: isDark ? AppColors.surfaceDark : Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -100,7 +102,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         backgroundColor: theme.colorScheme.primary,
                         foregroundColor: Colors.white,
@@ -119,8 +121,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.grey[900] : Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: isDark ? AppColors.surfaceDark : Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
                     children: [
@@ -142,7 +144,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),

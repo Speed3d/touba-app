@@ -24,11 +24,11 @@ class AppColors {
 
   // الألوان الأساسية - أخضر الملعب (Primary Green)
   static const Color primaryLight =
-      Color(0xFF16A34A); // أخضر الملعب (Green 600)
+      Color(0xFF00D166); // أخضر الملعب
   static const Color primaryLightVariant =
-      Color(0xFF15803D); // أخضر أغمق للحالات النشطة
+      Color(0xFF00924A); // أخضر أغمق للحالات النشطة
   static const Color primaryContainer =
-      Color(0xFFDCFCE7); // أخضر فاتح جداً للخلفيات
+      Color(0xFFE6F9EE); // أخضر فاتح جداً للخلفيات
 
   // اللون الأساسي العام - يُستخدم في Splash Screen والأماكن العامة
   static const Color primary = primaryLight;
@@ -48,8 +48,8 @@ class AppColors {
 
   // ألوان الخلفية - رمادي فاتح نظيف
   static const Color backgroundLight =
-      Color(0xFFF8FAFC); // Slate 50 - نظيف وخفيف
-  static const Color bgLight = Color(0xFFF8FAFC); // اسم بديل
+      Color(0xFFF4F7F9); // فاتح نظيف
+  static const Color bgLight = Color(0xFFF4F7F9); // اسم بديل
   static const Color surfaceLight = Color(0xFFFFFFFF); // أبيض للبطاقات
   static const Color cardLight = Color(0xFFFFFFFF);
 
@@ -100,25 +100,25 @@ class AppColors {
 
   //////////////////////////////  اخضر  ///////////////////////////////////
   // الألوان الأساسية للوضع الليلي - أخضر ساطع
-  static const Color primaryDark = Color(0xFF4ADE80); // Green 400
-  static const Color primaryDarkVariant = Color(0xFF22C55E); // Green 500
-  static const Color primaryContainerDark = Color(0xFF14532D); // Green 900
+  static const Color primaryDark = Color(0xFF00D166); // Green
+  static const Color primaryDarkVariant = Color(0xFF00924A); // Green Darker
+  static const Color primaryContainerDark = Color(0xFF0A3018); // Green Background
 
   // الألوان الثانوية للوضع الليلي - ذهبي ساطع
   static const Color secondaryDark = Color(0xFFFCD34D); // Amber 300
   static const Color secondaryDarkVariant = Color(0xFFFBBF24); // Amber 400
   static const Color secondaryContainerDark = Color(0xFF78350F); // Amber 900
 
-  // ألوان الخلفية للوضع الليلي - رمادي داكن دافئ (لون ليل الملعب)
-  static const Color backgroundDark = Color(0xFF0C1117);
-  static const Color bgDark = Color(0xFF0C1117);
-  static const Color surfaceDark = Color(0xFF161D27); // طبقة كروت تعلو الخلفية
-  static const Color cardDark = Color(0xFF161D27);
+  // 📝 HINT AR: ألوان الخلفية للوضع الليلي - تم تفتيحها قليلاً لعدم جعلها سوداء بالكامل
+  static const Color backgroundDark = Color(0xFF0F172A); // Slate 900
+  static const Color bgDark = Color(0xFF0F172A);
+  static const Color surfaceDark = Color(0xFF1E293B); // طبقة كروت تعلو الخلفية Slate 800
+  static const Color cardDark = Color(0xFF1E293B);
 
-  // لون الكارت في الوضع الكلاسيكي الداكن
-  static const Color cardDarkClassic = Color(0xFF161D27);
-  // لون حدود الكارت في الوضع الكلاسيكي الداكن و الكروت المرتفعة
-  static const Color cardBorderDarkClassic = Color(0xFF1E2A38);
+  // 📝 HINT AR: لون الكارت في الوضع الكلاسيكي الداكن
+  static const Color cardDarkClassic = Color(0xFF1E293B);
+  // 📝 HINT AR: لون حدود الكارت في الوضع الكلاسيكي الداكن
+  static const Color cardBorderDarkClassic = Color(0xFF334155); // Slate 700
 
   // ============= ألوان الوضع الزجاجي الداكن (Dark Glass Mode) =============
   // لون الكارت في الوضع الزجاجي الداكن - رمادي داكن شفاف
@@ -131,15 +131,15 @@ class AppColors {
   // لون الزجاج الشفاف للتراكب في الوضع الداكن
   static const Color glassOverlayDark = Color(0xFF1E293B);
 
-  // ألوان النص للوضع الليلي
+  // 📝 HINT AR: ألوان النص للوضع الليلي
   static const Color textPrimaryDark =
-      Color(0xFFF0F6FF); // أبيض مطفي لراحة العين
-  static const Color textSecondaryDark = Color(0xFF94A3B8); // رمادي فضي
+      Color(0xFFF8FAFC); // أبيض مريح للعين Slate 50
+  static const Color textSecondaryDark = Color(0xFF94A3B8); // رمادي Slate 400
   static const Color textHintDark = Color(0xFF64748B); // Slate 500
 
-  // ألوان الحدود للوضع الليلي
-  static const Color borderDark = Color(0xFF1E2A38);
-  static const Color dividerDark = Color(0xFF1E2A38);
+  // 📝 HINT AR: ألوان الحدود للوضع الليلي
+  static const Color borderDark = Color(0xFF334155);
+  static const Color dividerDark = Color(0xFF334155);
 
   // ============= Special Colors =============
   // ألوان التدرج للوضع النهاري - من البنفسجي الفاتح إلى الوردي
@@ -196,14 +196,14 @@ class AppColors {
 
   // ============= Bottom Navigation Colors =============
 
-  // ألوان شريط التنقل السفلي
-  static const Color bottomNavBackground = Color(0xFFFFFFFF); // أبيض صافي
-  static const Color bottomNavBackgroundDark = Color(0xFF161D27); // طبقة علوية
+  // 📝 HINT AR: ألوان شريط التنقل السفلي - محدثة لتناسب درجات الوضع النهاري والليلي
+  static const Color bottomNavBackground = Color(0xFFFFFFFF); // أبيض صافي للنهاري
+  static const Color bottomNavBackgroundDark = Color(0xFF1E293B); // طبقة علوية لليلي
 
   static const Color bottomNavSelected = primaryLight;
   static const Color bottomNavSelectedDark = primaryDark;
-  static const Color bottomNavUnselected = Color(0xFF94A3B8); // Slate 400
-  static const Color bottomNavUnselectedDark = Color(0xFF475569); // Slate 600
+  static const Color bottomNavUnselected = Color(0xFF64748B); // Slate 500
+  static const Color bottomNavUnselectedDark = Color(0xFF94A3B8); // Slate 400
 
   // ============= Helper Methods =============
 

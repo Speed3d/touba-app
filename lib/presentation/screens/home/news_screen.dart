@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:intl/intl.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/news_model.dart';
 import '../../../data/repositories/home_repository.dart';
 import '../../widgets/core/tooba_shimmer.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../app/router/tooba_route.dart';
+import 'news_detail_screen.dart';
 
-/// 📝 HINT AR: شاشة الأخبار — تُفتح من «كارت الأخبار» في الرئيسية. تعرض الأخبار
-/// المنشورة بنفس الصيغة (صورة + عنوان + تفاصيل + إعجاب + مشاركة + مدّة النشر).
+/// شاشة الأخبار المحسّنة (Stunning UI)
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
 
@@ -19,101 +21,134 @@ class NewsScreen extends StatefulWidget {
 }
 
 class _NewsScreenState extends State<NewsScreen> {
-  late Future<List<NewsModel>> _news;
-
-  @override
-  void initState() {
-    super.initState();
-    _news = context.read<HomeRepository>().getPublishedNews();
-  }
-
-  Future<void> _reload() async {
-    setState(() {
-      _news = context.read<HomeRepository>().getPublishedNews();
-    });
-    await _news;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('الأخبار'), centerTitle: true),
-      body: RefreshIndicator(
-        onRefresh: _reload,
-        child: FutureBuilder<List<NewsModel>>(
-          future: _news,
-          builder: (context, snap) {
-            if (snap.connectionState == ConnectionState.waiting) {
-              return const ToobaShimmerList(count: 4, tileHeight: 200);
-            }
-            final news = snap.data ?? [];
-            if (news.isEmpty) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 120),
-                  Icon(Icons.newspaper_outlined,
-                      size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: Text('لا توجد أخبار حالياً',
-                        style: TextStyle(color: Colors.grey[600])),
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: false,
+            pinned: true,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            elevation: 0,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text(
+                'آخر الأخبار',
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 22,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      theme.primaryColor.withValues(alpha: 0.1),
+                      theme.scaffoldBackgroundColor,
+                    ],
                   ),
-                ],
+                ),
+              ),
+            ),
+            iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+          ),
+          StreamBuilder<List<NewsModel>>(
+            stream: context.read<HomeRepository>().getPublishedNewsStream(limit: 30),
+            builder: (context, snap) {
+              if (snap.connectionState == ConnectionState.waiting) {
+                return const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: ToobaShimmerList(count: 4, tileHeight: 250),
+                  ),
+                );
+              }
+
+              final news = snap.data ?? [];
+              if (news.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.newspaper_rounded, size: 80, color: Colors.grey.withValues(alpha: 0.3)),
+                      const SizedBox(height: 16),
+                      Text(
+                        'لا توجد أخبار حالياً',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final n = news[index];
+                      final isFeatured = index == 0; // أول خبر نعطيه تصميم مميز (Featured)
+                      return _NewsCard(news: n, isFeatured: isFeatured);
+                    },
+                    childCount: news.length,
+                  ),
+                ),
               );
-            }
-            return ListView(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              children: news
-                  .map((n) =>
-                      _NewsCard(news: n, onChanged: () => setState(() {})))
-                  .toList(),
-            );
-          },
-        ),
+            },
+          ),
+        ],
       ),
     );
   }
 }
 
-/// 📝 HINT AR: بطاقة خبر — صورة + عنوان + مقال + إعجاب (متفائل) + مشاركة.
 class _NewsCard extends StatefulWidget {
   final NewsModel news;
-  final VoidCallback onChanged;
-  const _NewsCard({required this.news, required this.onChanged});
+  final bool isFeatured;
+  const _NewsCard({required this.news, this.isFeatured = false});
 
   @override
   State<_NewsCard> createState() => _NewsCardState();
 }
 
 class _NewsCardState extends State<_NewsCard> {
-  late NewsModel _news = widget.news;
   bool _busy = false;
 
   Future<void> _toggleLike() async {
     final authState = context.read<AuthCubit>().state;
     if (authState is! AuthAuthenticated) {
-      ToobaSnackBar.info(context, 'سجّل الدخول للإعجاب');
+      ToobaSnackBar.info(context, 'سجّل الدخول لتتمكن من الإعجاب');
       return;
     }
     if (_busy) return;
+    
     final uid = authState.user.id;
-    final liked = _news.likedBy(uid);
-    setState(() {
-      _busy = true;
-      final newLikes = List<String>.from(_news.likes);
-      liked ? newLikes.remove(uid) : newLikes.add(uid);
-      _news = _news.copyWith(likes: newLikes);
-    });
+    final liked = widget.news.likedBy(uid);
+    
+    setState(() => _busy = true);
+    
     try {
-      await context.read<HomeRepository>().toggleLike(_news.id, uid, !liked);
+      // Optimitistic update happens via Stream rebuilding, but toggle triggers the backend.
+      await context.read<HomeRepository>().toggleLike(widget.news.id, uid, !liked);
     } catch (_) {
-      setState(() {
-        final revert = List<String>.from(_news.likes);
-        liked ? revert.add(uid) : revert.remove(uid);
-        _news = _news.copyWith(likes: revert);
-      });
+      if (!mounted) return;
+      ToobaSnackBar.error(context, 'حدث خطأ أثناء الإعجاب');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -121,14 +156,10 @@ class _NewsCardState extends State<_NewsCard> {
 
   Future<void> _share() async {
     final repo = context.read<HomeRepository>();
-    final text = '${_news.title}\n\n${_news.body}\n\n📲 عبر تطبيق طوبة';
-    await Share.share(text);
+    final text = '📰 ${widget.news.title}\n\n${widget.news.body}\n\n📲 عبر تطبيق طوبة للمحترفين';
     try {
-      await repo.incrementShare(_news.id);
-      if (mounted) {
-        setState(
-            () => _news = _news.copyWith(shareCount: _news.shareCount + 1));
-      }
+      await Share.share(text);
+      await repo.incrementShare(widget.news.id);
     } catch (_) {}
   }
 
@@ -136,127 +167,286 @@ class _NewsCardState extends State<_NewsCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    
     final uid = (context.read<AuthCubit>().state is AuthAuthenticated)
         ? (context.read<AuthCubit>().state as AuthAuthenticated).user.id
         : null;
-    final liked = _news.likedBy(uid);
+    final liked = widget.news.likedBy(uid);
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (_news.imageUrl != null && _news.imageUrl!.isNotEmpty)
-            ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
-              child: CachedNetworkImage(
-                imageUrl: _news.imageUrl!,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: (c, u) =>
-                    Container(height: 180, color: Colors.grey.shade200),
-                errorWidget: (c, u, e) => Container(
-                  height: 180,
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.image_not_supported,
-                      color: Colors.grey),
+    if (widget.isFeatured) {
+      return _buildFeaturedCard(context, isDark, liked);
+    }
+    return _buildStandardCard(context, isDark, liked);
+  }
+
+  Widget _buildFeaturedCard(BuildContext context, bool isDark, bool liked) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, ToobaRoute.to(NewsDetailScreen(news: widget.news))),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // صورة الخبر المميز كاملة كخلفية
+              if (widget.news.imageUrl != null && widget.news.imageUrl!.isNotEmpty)
+                CachedNetworkImage(
+                  imageUrl: widget.news.imageUrl!,
+                  height: 320,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (c, u) => Container(height: 320, color: Colors.grey.shade300),
+                  errorWidget: (c, u, e) => Container(height: 320, color: Colors.grey.shade300),
+                )
+              else
+                Container(
+                  height: 320,
+                  width: double.infinity,
+                  color: Theme.of(context).primaryColor,
+                  child: const Icon(Icons.newspaper, size: 60, color: Colors.white54),
+                ),
+              
+              // تدرج لوني للنص
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.3),
+                        Colors.black.withValues(alpha: 0.9),
+                      ],
+                      stops: const [0.4, 0.7, 1.0],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_news.title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
-                if (_news.body.isNotEmpty) ...[
-                  const SizedBox(height: 6),
-                  Text(_news.body,
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: isDark ? Colors.white70 : Colors.black87,
-                          height: 1.5)),
-                ],
-                const SizedBox(height: 10),
-                Row(
+              
+              // محتوى الخبر
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    InkWell(
-                      onTap: _toggleLike,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 4),
-                        child: Row(
-                          children: [
-                            Icon(
-                              liked
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: liked ? Colors.red : Colors.grey,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 4),
-                            Text('${_news.likeCount}',
-                                style: TextStyle(
-                                    color: Colors.grey[700], fontSize: 13)),
-                          ],
-                        ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      child: const Text('الأبرز', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                     ),
-                    const SizedBox(width: 8),
-                    InkWell(
-                      onTap: _share,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 4),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.share_outlined,
-                                color: Colors.grey, size: 19),
-                            const SizedBox(width: 4),
-                            Text('${_news.shareCount}',
-                                style: TextStyle(
-                                    color: Colors.grey[700], fontSize: 13)),
-                          ],
-                        ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.news.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        height: 1.3,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const Spacer(),
-                    if (_news.createdAt != null)
-                      Text(_relativeTime(_news.createdAt!),
-                          style: TextStyle(
-                              color: Colors.grey[500], fontSize: 11)),
+                    if (widget.news.body.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        widget.news.body,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 14,
+                          height: 1.4,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    _buildInteractionsRow(isDark: true, liked: liked, isFeatured: true),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  String _relativeTime(DateTime dt) {
+  Widget _buildStandardCard(BuildContext context, bool isDark, bool liked) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, ToobaRoute.to(NewsDetailScreen(news: widget.news))),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.news.imageUrl != null && widget.news.imageUrl!.isNotEmpty)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                child: CachedNetworkImage(
+                  imageUrl: widget.news.imageUrl!,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (c, u) => Container(height: 180, color: isDark ? Colors.grey[800] : Colors.grey.shade200),
+                  errorWidget: (c, u, e) => Container(height: 180, color: isDark ? Colors.grey[800] : Colors.grey.shade200),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.news.title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 17,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  if (widget.news.body.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.news.body,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        height: 1.5,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  const Divider(height: 1, thickness: 1),
+                  const SizedBox(height: 12),
+                  _buildInteractionsRow(isDark: isDark, liked: liked, isFeatured: false),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInteractionsRow({required bool isDark, required bool liked, required bool isFeatured}) {
+    final textColor = isFeatured ? Colors.white70 : (isDark ? Colors.grey[400]! : Colors.grey[600]!);
+    final iconColor = isFeatured ? Colors.white : (isDark ? Colors.grey[400]! : Colors.grey[500]!);
+
+    return Row(
+      children: [
+        _InteractionButton(
+          icon: liked ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+          iconColor: liked ? Colors.redAccent : iconColor,
+          label: '${widget.news.likeCount}',
+          textColor: textColor,
+          onTap: _toggleLike,
+        ),
+        const SizedBox(width: 16),
+        _InteractionButton(
+          icon: Icons.share_rounded,
+          iconColor: iconColor,
+          label: '${widget.news.shareCount}',
+          textColor: textColor,
+          onTap: _share,
+        ),
+        const Spacer(),
+        if (widget.news.createdAt != null)
+          Row(
+            children: [
+              Icon(Icons.access_time_rounded, size: 14, color: textColor.withValues(alpha: 0.6)),
+              const SizedBox(width: 4),
+              Text(
+                _formatDate(widget.news.createdAt!),
+                style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+
+  String _formatDate(DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 60) return 'قبل ${diff.inMinutes} دقيقة';
-    if (diff.inHours < 24) return 'قبل ${diff.inHours} ساعة';
-    if (diff.inDays < 30) return 'قبل ${diff.inDays} يوم';
-    return 'قبل ${(diff.inDays / 30).floor()} شهر';
+    if (diff.inMinutes < 60) {
+      return diff.inMinutes <= 1 ? 'الآن' : 'منذ ${diff.inMinutes} دقيقة';
+    }
+    if (diff.inHours < 24) {
+      return 'منذ ${diff.inHours} ${diff.inHours == 1 ? 'ساعة' : 'ساعات'}';
+    }
+    if (diff.inDays < 7) {
+      return 'منذ ${diff.inDays} ${diff.inDays == 1 ? 'يوم' : 'أيام'}';
+    }
+    // عرض التاريخ الفعلي إذا مر عليه أكثر من أسبوع
+    return DateFormat('yyyy/MM/dd', 'en').format(dt);
+  }
+}
+
+class _InteractionButton extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final Color textColor;
+  final VoidCallback onTap;
+
+  const _InteractionButton({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.textColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor, size: 22),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

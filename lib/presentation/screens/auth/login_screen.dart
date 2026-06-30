@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
@@ -119,10 +120,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[300]!),
                       ),
                       filled: true,
-                      fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                      fillColor: isDark ? AppColors.surfaceDark : Colors.white,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -159,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           backgroundColor: theme.colorScheme.primary,
                           foregroundColor: Colors.white,

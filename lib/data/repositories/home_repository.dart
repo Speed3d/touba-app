@@ -68,6 +68,18 @@ class HomeRepository {
   // ─── الأخبار (News) ───────────────────────────────────────────────────
 
   // 📝 HINT AR: الأخبار المنشورة، الأحدث أولاً (يحتاج فهرس مركّب).
+  
+  // 📝 HINT AR: جلب الأخبار كـ Stream لتحديث شريط الأخبار المتحرك تلقائياً
+  Stream<List<NewsModel>> getPublishedNewsStream({int limit = 10}) {
+    return _firestore
+        .collection('news')
+        .where('isPublished', isEqualTo: true)
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => NewsModel.fromJson(d.data(), d.id)).toList());
+  }
+
   Future<List<NewsModel>> getPublishedNews({int limit = 20}) async {
     final snap = await _firestore
         .collection('news')

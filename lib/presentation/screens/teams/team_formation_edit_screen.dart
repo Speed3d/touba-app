@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -92,7 +93,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
     if (url == null || url.isEmpty) return null;
     return url.startsWith('assets/')
         ? AssetImage(url) as ImageProvider
-        : CachedNetworkImageProvider(url);
+        : ImageHelper.getProvider(url);
   }
 
   LineupPlayer _toLineup(PlayerModel p) => LineupPlayer(

@@ -1,6 +1,8 @@
+import '../../../core/utils/image_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../data/models/match_model.dart';
@@ -637,7 +639,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
-            ? Colors.grey[900]
+            ? AppColors.surfaceDark
             : Colors.grey[100],
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
@@ -917,7 +919,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     if (photo != null && photo.isNotEmpty) {
       provider = photo.startsWith('assets/')
           ? AssetImage(photo) as ImageProvider
-          : CachedNetworkImageProvider(photo);
+          : ImageHelper.getProvider(photo);
     }
     return CircleAvatar(
       radius: 11,

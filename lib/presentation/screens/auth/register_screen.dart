@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
@@ -206,8 +207,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.grey[900] : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
+                    color: isDark ? AppColors.surfaceDark : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: Colors.grey.withValues(alpha: 0.3),
                     ),
@@ -265,7 +266,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         backgroundColor: theme.colorScheme.primary,
                         foregroundColor: Colors.white,

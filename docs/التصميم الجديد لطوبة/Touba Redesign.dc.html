@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:'Cairo',sans-serif; direction:rtl; background:#020810; min-height:100vh; }
+    ::-webkit-scrollbar { width:0; height:0; }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.18);opacity:1} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    @keyframes cardIn { from{opacity:0;transform:scale(.85) rotate(-4deg)} 60%{transform:scale(1.04) rotate(1deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+  </style>
+</helmet>
+
+<!-- Page wrapper -->
+<div style="min-height:100vh;background:linear-gradient(140deg,#020810 0%,#040D1C 100%);display:flex;flex-direction:column;align-items:center;padding:32px 16px 48px;">
+
+  <!-- Header badge -->
+  <div style="display:flex;align-items:center;gap:8px;background:rgba(0,209,102,.08);border:1px solid rgba(0,209,102,.18);border-radius:50px;padding:7px 18px;margin-bottom:14px;animation:fadeUp .5s ease both;">
+    <div style="width:7px;height:7px;background:#00D166;border-radius:50%;animation:blink 1.4s ease infinite;"></div>
+    <span style="font-size:12px;color:#00D166;font-weight:700;letter-spacing:1px;">PROTOTYPE · طوبة · التصميم الجديد</span>
+  </div>
+  <h1 style="color:white;font-size:26px;font-weight:900;margin:0 0 6px;animation:fadeUp .5s ease .1s both;">مستوحى من FotMob · خط Cairo</h1>
+  <p style="color:#3A5068;font-size:13px;margin:0 0 28px;animation:fadeUp .5s ease .2s both;">اضغط على أي عنصر للتنقّل · اضغط «تبديل» لرؤية حالة الفريق</p>
+
+  <!-- Phone frame -->
+  <div style="width:390px;height:848px;background:#060D18;border-radius:52px;border:1.5px solid #1A2A3A;overflow:hidden;position:relative;box-shadow:0 60px 120px rgba(0,0,0,.85),0 0 0 1px #0A1628,inset 0 1px 0 rgba(255,255,255,.04);">
+
+    <!-- Dynamic Island -->
+    <div style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#060D18;border-radius:20px;z-index:200;border:1px solid #1A2A3A;"></div>
+
+    <!-- Status bar -->
+    <div style="position:absolute;top:0;left:0;right:0;height:52px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 10px;z-index:150;">
+      <span style="font-size:13px;font-weight:800;color:white;">٩:٤١</span>
+      <div style="display:flex;align-items:center;gap:5px;">
+        <svg width="17" height="12" fill="white" viewBox="0 0 17 12"><rect x="0" y="4" width="3" height="8" rx=".5"/><rect x="4.5" y="2.5" width="3" height="9.5" rx=".5"/><rect x="9" y="1" width="3" height="11" rx=".5"/><rect x="13.5" y="0" width="3" height="12" rx=".5"/></svg>
+        <svg width="16" height="12" fill="white" viewBox="0 0 16 12"><path d="M8 2.5C5 2.5 2.5 4 1 6.5l-1-1C1.8 3 4.7 1 8 1s6.2 2 8 4.5l-1 1C13.5 4 11 2.5 8 2.5z"/><path d="M8 6c-1.5 0-2.8.7-3.7 1.8l-1-1C4.6 5.3 6.2 4.5 8 4.5s3.4.8 4.7 2.3l-1 1C10.8 6.7 9.5 6 8 6z"/><circle cx="8" cy="10" r="1.5"/></svg>
+        <svg width="25" height="12" fill="none" viewBox="0 0 25 12"><rect x=".5" y="1" width="21" height="10" rx="3" stroke="white" stroke-opacity=".35" stroke-width="1"/><rect x="1.5" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5v3c.9-.6 1.5-1 1.5-1.5S23.9 5.1 23 4.5z" fill="white" fill-opacity=".4"/></svg>
+      </div>
+    </div>
+
+    <!-- Content area -->
+    <div style="position:absolute;inset:0;overflow:hidden;">
+
+      <!-- ══════════ SPLASH ══════════ -->
+      <sc-if value="{{ isSplash }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#060D18 0%,#06121E 40%,#0A1E12 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;">
+          <!-- Rings -->
+          <div style="position:relative;width:188px;height:188px;display:flex;align-items:center;justify-content:center;">
+            <div style="position:absolute;width:188px;height:188px;border-radius:50%;border:1.5px solid rgba(0,209,102,.05);animation:pulse 3s ease-in-out infinite;"></div>
+            <div style="position:absolute;width:148px;height:148px;border-radius:50%;border:1.5px solid rgba(0,209,102,.1);animation:pulse 3s ease-in-out .35s infinite;"></div>
+            <div style="position:absolute;width:110px;height:110px;border-radius:50%;border:1.5px solid rgba(0,209,102,.18);animation:pulse 3s ease-in-out .7s infinite;"></div>
+            <!-- Logo -->
+            <div style="width:80px;height:80px;background:linear-gradient(135deg,#00D166 0%,#00924A 100%);border-radius:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 52px rgba(0,209,102,.45),0 16px 32px rgba(0,0,0,.4);font-size:38px;">⚽</div>
+          </div>
+          <!-- Name -->
+          <div style="text-align:center;animation:fadeUp .9s ease .4s both;">
+            <div style="font-size:50px;font-weight:900;color:white;letter-spacing:-3px;line-height:1;">طوبة</div>
+            <div style="font-size:13px;color:#1E4030;letter-spacing:5px;margin-top:4px;">TOUBA FOOTBALL</div>
+          </div>
+          <div style="font-size:14px;color:#2A4A38;animation:fadeUp .9s ease .7s both;">منصة كرة القدم الشعبية العراقية</div>
+          <!-- CTA -->
+          <div onClick="{{ startApp }}" style="margin-top:20px;background:linear-gradient(135deg,#00D166 0%,#00924A 100%);color:white;font-size:17px;font-weight:800;padding:16px 60px;border-radius:50px;cursor:pointer;box-shadow:0 12px 32px rgba(0,209,102,.38);animation:fadeUp .9s ease 1s both;font-family:'Cairo',sans-serif;user-select:none;">ابدأ الآن ⚡</div>
+          <div style="font-size:12px;color:#1A3028;animation:fadeUp .9s ease 1.2s both;">v2.0 · 2026</div>
+        </div>
+      </sc-if>
+
+      <!-- ══════════ MAIN APP ══════════ -->
+      <sc-if value="{{ showMain }}" hint-placeholder-val="{{ false }}">
+
+        <!-- Scrollable content (above bottom nav) -->
+        <div style="position:absolute;top:0;left:0;right:0;bottom:70px;overflow:hidden;">
+
+          <!-- ── HOME ── -->
+          <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute;inset:0;overflow-y:auto;background:#060D18;">
+              <!-- AppBar -->
+              <div style="padding:54px 20px 14px;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:26px;font-weight:900;color:#00D166;line-height:1;">طوبة ⚽</div>
+                  <div style="font-size:12px;color:#3A5060;margin-top:2px;">أهلاً بك، أحمد</div>
+                </div>
+                <div style="position:relative;width:44px;height:44px;background:#0D1826;border:1px solid #1A2A3A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;">
+                  🔔
+                  <div style="position:absolute;top:2px;right:2px;width:9px;height:9px;background:#FF4B4B;border-radius:50%;border:2px solid #060D18;"></div>
+                </div>
+              </div>
+
+              <!-- Banner carousel -->
+              <div style="margin:0 16px;position:relative;">
+                <sc-if value="{{ banner0 }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:168px;background:linear-gradient(135deg,#0A3020 0%,#143828 50%,#0F2C1A 100%);border-radius:22px;overflow:hidden;position:relative;cursor:pointer;">
+                    <div style="position:absolute;top:-15px;right:-15px;font-size:110px;opacity:.08;">🏆</div>
+                    <div style="position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;">
+                      <div style="font-size:10px;color:#00D166;font-weight:700;letter-spacing:2px;margin-bottom:6px;">📢 بطولة مميزة</div>
+                      <div style="font-size:22px;font-weight:900;color:white;line-height:1.2;">بطولة بغداد الكبرى</div>
+                      <div style="font-size:12px;color:#6A8878;margin-top:6px;">٨ فرق · تسجيل مفتوح</div>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ banner1 }}" hint-placeholder-val="{{ false }}">
+                  <div style="height:168px;background:linear-gradient(135deg,#1A0B32 0%,#240F48 50%,#1A0B38 100%);border-radius:22px;overflow:hidden;position:relative;cursor:pointer;">
+                    <div style="position:absolute;top:-15px;right:-15px;font-size:110px;opacity:.08;">⭐</div>
+                    <div style="position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;">
+                      <div style="font-size:10px;color:#A855F7;font-weight:700;letter-spacing:2px;margin-bottom:6px;">🏅 مسابقة خاصة</div>
+                      <div style="font-size:22px;font-weight:900;color:white;line-height:1.2;">دوري رمضان السداسي</div>
+                      <div style="font-size:12px;color:#6A5888;margin-top:6px;">٦ × ٦ · رمضان المقبل</div>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ banner2 }}" hint-placeholder-val="{{ false }}">
+                  <div style="height:168px;background:linear-gradient(135deg,#1A0C08 0%,#2A1408 50%,#201008 100%);border-radius:22px;overflow:hidden;position:relative;cursor:pointer;">
+                    <div style="position:absolute;top:-15px;right:-15px;font-size:110px;opacity:.08;">🎖️</div>
+                    <div style="position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;">
+                      <div style="font-size:10px;color:#F59E0B;font-weight:700;letter-spacing:2px;margin-bottom:6px;">🎯 نهائي قادم</div>
+                      <div style="font-size:22px;font-weight:900;color:white;line-height:1.2;">كأس المحلة الثالثة</div>
+                      <div style="font-size:12px;color:#886A38;margin-top:6px;">النهائي الجمعة · ٥ م</div>
+                    </div>
+                  </div>
+                </sc-if>
+                <!-- Dots -->
+                <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;">
+                  <div onClick="{{ setBanner0 }}" style="{{ dot0Style }}"></div>
+                  <div onClick="{{ setBanner1 }}" style="{{ dot1Style }}"></div>
+                  <div onClick="{{ setBanner2 }}" style="{{ dot2Style }}"></div>
+                </div>
+              </div>
+
+              <!-- Quick action chips -->
+              <div style="display:flex;gap:8px;margin:16px 16px 0;overflow-x:auto;padding-bottom:2px;">
+                <div onClick="{{ goMatches }}" style="flex-shrink:0;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;min-width:68px;">
+                  <span style="font-size:22px;">⚽</span>
+                  <span style="font-size:10px;color:#6A8898;white-space:nowrap;font-weight:600;">المباريات</span>
+                </div>
+                <div onClick="{{ goTournamentDetails }}" style="flex-shrink:0;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;min-width:68px;">
+                  <span style="font-size:22px;">🏆</span>
+                  <span style="font-size:10px;color:#6A8898;white-space:nowrap;font-weight:600;">البطولات</span>
+                </div>
+                <div onClick="{{ goTeams }}" style="flex-shrink:0;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;min-width:68px;">
+                  <span style="font-size:22px;">🛡️</span>
+                  <span style="font-size:10px;color:#6A8898;white-space:nowrap;font-weight:600;">الفرق</span>
+                </div>
+                <div onClick="{{ openPlayerCard }}" style="flex-shrink:0;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;min-width:68px;">
+                  <span style="font-size:22px;">🃏</span>
+                  <span style="font-size:10px;color:#6A8898;white-space:nowrap;font-weight:600;">بطاقتي</span>
+                </div>
+                <div style="flex-shrink:0;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;min-width:68px;">
+                  <span style="font-size:22px;">📊</span>
+                  <span style="font-size:10px;color:#6A8898;white-space:nowrap;font-weight:600;">الترتيب</span>
+                </div>
+              </div>
+
+              <!-- News section -->
+              <div style="margin-top:22px;padding:0 16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                  <div style="font-size:15px;font-weight:800;color:white;">📰 آخر الأخبار</div>
+                  <div style="font-size:12px;color:#00D166;cursor:pointer;font-weight:600;">عرض الكل ›</div>
+                </div>
+                <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;">
+                  <div style="flex-shrink:0;width:195px;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;overflow:hidden;cursor:pointer;">
+                    <div style="height:96px;background:linear-gradient(135deg,#0A2030 0%,#0D3040 100%);display:flex;align-items:center;justify-content:center;font-size:40px;">🏅</div>
+                    <div style="padding:12px;">
+                      <div style="font-size:13px;font-weight:700;color:white;line-height:1.4;margin-bottom:5px;">نجوم المنصور يحققون الفوز في نهائي الكأس</div>
+                      <div style="font-size:11px;color:#3A5060;">منذ ٣ ساعات</div>
+                    </div>
+                  </div>
+                  <div style="flex-shrink:0;width:195px;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;overflow:hidden;cursor:pointer;">
+                    <div style="height:96px;background:linear-gradient(135deg,#201008 0%,#301808 100%);display:flex;align-items:center;justify-content:center;font-size:40px;">⚽</div>
+                    <div style="padding:12px;">
+                      <div style="font-size:13px;font-weight:700;color:white;line-height:1.4;margin-bottom:5px;">تسجيل الفرق مفتوح لبطولة الخريف</div>
+                      <div style="font-size:11px;color:#3A5060;">أمس</div>
+                    </div>
+                  </div>
+                  <div style="flex-shrink:0;width:195px;background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;overflow:hidden;cursor:pointer;">
+                    <div style="height:96px;background:linear-gradient(135deg,#102008 0%,#183010 100%);display:flex;align-items:center;justify-content:center;font-size:40px;">🎯</div>
+                    <div style="padding:12px;">
+                      <div style="font-size:13px;font-weight:700;color:white;line-height:1.4;margin-bottom:5px;">أفضل هدّاف الأسبوع: علي ٣ أهداف</div>
+                      <div style="font-size:11px;color:#3A5060;">٢ أيام</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ongoing tournaments -->
+              <div style="margin-top:22px;padding:0 16px 24px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                  <div style="font-size:15px;font-weight:800;color:white;">🏆 البطولات الجارية</div>
+                  <div onClick="{{ goTournamentDetails }}" style="font-size:12px;color:#00D166;cursor:pointer;font-weight:600;">عرض الكل ›</div>
+                </div>
+                <div onClick="{{ goTournamentDetails }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+                  <div style="width:52px;height:52px;background:linear-gradient(135deg,#1A3020,#0A2010);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid #2A4030;flex-shrink:0;">🏆</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:15px;font-weight:800;color:white;margin-bottom:3px;">بطولة بغداد الكبرى</div>
+                    <div style="font-size:12px;color:#3A5060;margin-bottom:7px;">الجولة ٣ من ٤ · ٨ فرق</div>
+                    <div style="display:flex;gap:6px;">
+                      <div style="background:rgba(0,209,102,.1);border:1px solid rgba(0,209,102,.2);border-radius:6px;padding:2px 8px;font-size:10px;color:#00D166;font-weight:700;">جارية</div>
+                      <div style="background:#0A1620;border-radius:6px;padding:2px 8px;font-size:10px;color:#3A5060;">٨ × ٨</div>
+                    </div>
+                  </div>
+                  <div style="color:#2A3A4A;font-size:20px;flex-shrink:0;">›</div>
+                </div>
+                <div onClick="{{ goTournamentDetails }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;padding:14px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+                  <div style="width:52px;height:52px;background:linear-gradient(135deg,#201A30,#150A28);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid #2A2040;flex-shrink:0;">⭐</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:15px;font-weight:800;color:white;margin-bottom:3px;">دوري الشباب المحلي</div>
+                    <div style="font-size:12px;color:#3A5060;margin-bottom:7px;">الجولة ١ من ٦ · ٦ فرق</div>
+                    <div style="display:flex;gap:6px;">
+                      <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:6px;padding:2px 8px;font-size:10px;color:#F59E0B;font-weight:700;">قريباً</div>
+                      <div style="background:#0A1620;border-radius:6px;padding:2px 8px;font-size:10px;color:#3A5060;">٦ × ٦</div>
+                    </div>
+                  </div>
+                  <div style="color:#2A3A4A;font-size:20px;flex-shrink:0;">›</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ── TEAMS ── -->
+          <sc-if value="{{ isTeams }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;overflow-y:auto;background:#060D18;">
+              <div style="padding:54px 20px 14px;display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:22px;font-weight:900;color:white;">الفرق 🛡️</div>
+                <div onClick="{{ toggleTeam }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:20px;padding:6px 14px;font-size:11px;color:#00D166;cursor:pointer;font-weight:700;">تبديل الحالة 🔄</div>
+              </div>
+
+              <!-- NO TEAM STATE -->
+              <sc-if value="{{ noTeam }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:0 16px;display:flex;flex-direction:column;gap:18px;">
+                  <!-- Pitch visual -->
+                  <div style="width:100%;height:196px;background:linear-gradient(180deg,#0A3018 0%,#0D4020 100%);border-radius:20px;border:1px solid #1A4028;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;">
+                    <div style="width:75%;height:68%;border:1.5px solid rgba(255,255,255,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;">
+                      <div style="width:46px;height:46px;border-radius:50%;border:1.5px solid rgba(255,255,255,.1);"></div>
+                      <div style="position:absolute;top:0;bottom:0;left:50%;width:1.5px;background:rgba(255,255,255,.08);transform:translateX(-50%);"></div>
+                      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:28px;opacity:.35;">⚽</div>
+                    </div>
+                    <div style="position:absolute;bottom:14px;font-size:11px;color:rgba(255,255,255,.2);">ملعبك ينتظرك</div>
+                  </div>
+                  <!-- Heading -->
+                  <div style="text-align:center;">
+                    <div style="font-size:23px;font-weight:900;color:white;margin-bottom:8px;">ليس لديك فريق بعد؟</div>
+                    <div style="font-size:14px;color:#3A5060;line-height:1.65;">أسّس فريقك وانضم للبطولات المحلية<br/>في منطقتك الآن</div>
+                  </div>
+                  <!-- CTAs -->
+                  <div onClick="{{ toggleTeam }}" style="background:linear-gradient(135deg,#00D166 0%,#00924A 100%);color:white;font-size:17px;font-weight:800;padding:18px;border-radius:16px;text-align:center;cursor:pointer;box-shadow:0 10px 28px rgba(0,209,102,.3);font-family:'Cairo',sans-serif;">⚽ أسّس فريقك الآن</div>
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;color:white;font-size:16px;font-weight:700;padding:16px;border-radius:16px;text-align:center;cursor:pointer;font-family:'Cairo',sans-serif;">انضم إلى فريق موجود</div>
+                  <!-- Popular teams -->
+                  <div>
+                    <div style="font-size:15px;font-weight:800;color:white;margin-bottom:12px;">الفرق الشعبية ⚡</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <div onClick="{{ goTeamDetails }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;">
+                        <div style="width:46px;height:46px;background:linear-gradient(135deg,#1A3050,#0A2040);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid #2A4060;flex-shrink:0;">🦅</div>
+                        <div style="flex:1;">
+                          <div style="font-size:15px;font-weight:700;color:white;">نجوم المنصور</div>
+                          <div style="font-size:12px;color:#3A5060;margin-top:2px;">١١ لاعب · بغداد</div>
+                        </div>
+                        <div style="font-size:12px;color:#00D166;background:rgba(0,209,102,.1);padding:5px 12px;border-radius:8px;font-weight:700;">انضم</div>
+                      </div>
+                      <div onClick="{{ goTeamDetails }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;">
+                        <div style="width:46px;height:46px;background:linear-gradient(135deg,#301520,#200A18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid #402030;flex-shrink:0;">🐯</div>
+                        <div style="flex:1;">
+                          <div style="font-size:15px;font-weight:700;color:white;">شباب الكرادة</div>
+                          <div style="font-size:12px;color:#3A5060;margin-top:2px;">٩ لاعبين · الرصافة</div>
+                        </div>
+                        <div style="font-size:12px;color:#00D166;background:rgba(0,209,102,.1);padding:5px 12px;border-radius:8px;font-weight:700;">انضم</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- HAS TEAM STATE -->
+              <sc-if value="{{ hasTeam }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 16px;">
+                  <!-- Team banner -->
+                  <div style="background:linear-gradient(135deg,#0A3020 0%,#0D4528 100%);border-radius:22px;padding:22px;border:1px solid #1A4028;position:relative;overflow:hidden;margin-bottom:16px;">
+                    <div style="position:absolute;top:-25px;right:-25px;font-size:140px;opacity:.05;">🛡️</div>
+                    <div style="display:flex;align-items:center;gap:16px;position:relative;">
+                      <div style="width:72px;height:72px;background:linear-gradient(135deg,#1A5040,#0A3020);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;border:3px solid rgba(0,209,102,.4);flex-shrink:0;">🦅</div>
+                      <div>
+                        <div style="font-size:22px;font-weight:900;color:white;">نجوم المنصور</div>
+                        <div style="font-size:13px;color:#00D166;margin-top:3px;">⚡ أنت الكابتن</div>
+                        <div style="font-size:12px;color:#3A5060;margin-top:2px;">بغداد · تأسّس ٢٠٢٢</div>
+                      </div>
+                    </div>
+                    <!-- Stats -->
+                    <div style="display:flex;gap:0;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06);">
+                      <div style="flex:1;text-align:center;">
+                        <div style="font-size:24px;font-weight:900;color:white;">١١</div>
+                        <div style="font-size:10px;color:#3A5060;margin-top:2px;">لاعب</div>
+                      </div>
+                      <div style="width:1px;background:rgba(255,255,255,.06);"></div>
+                      <div style="flex:1;text-align:center;">
+                        <div style="font-size:24px;font-weight:900;color:#F59E0B;">٧</div>
+                        <div style="font-size:10px;color:#3A5060;margin-top:2px;">انتصار</div>
+                      </div>
+                      <div style="width:1px;background:rgba(255,255,255,.06);"></div>
+                      <div style="flex:1;text-align:center;">
+                        <div style="font-size:24px;font-weight:900;color:#00D166;">٨٤</div>
+                        <div style="font-size:10px;color:#3A5060;margin-top:2px;">تصنيف</div>
+                      </div>
+                      <div style="width:1px;background:rgba(255,255,255,.06);"></div>
+                      <div style="flex:1;text-align:center;">
+                        <div style="font-size:24px;font-weight:900;color:white;">٣</div>
+                        <div style="font-size:10px;color:#3A5060;margin-top:2px;">بطولة</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Roster -->
+                  <div style="font-size:15px;font-weight:800;color:white;margin-bottom:12px;">التشكيلة 👥</div>
+                  <div style="display:flex;flex-direction:column;gap:9px;">
+                    <div onClick="{{ openPlayerCard }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;">
+                      <div style="position:relative;width:44px;height:44px;background:linear-gradient(135deg,#0A2030,#152535);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid #1A3040;flex-shrink:0;">
+                        👤
+                        <div style="position:absolute;bottom:-2px;right:-2px;width:17px;height:17px;background:#16A34A;border-radius:50%;border:2px solid #0D1826;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;font-weight:900;">٩</div>
+                      </div>
+                      <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:700;color:white;">علي محمد الحسيني</div>
+                        <div style="font-size:12px;color:#3A5060;margin-top:2px;">مهاجم · ١٢ هدف</div>
+                      </div>
+                      <div style="background:rgba(0,209,102,.1);border-radius:10px;padding:6px 10px;text-align:center;">
+                        <div style="font-size:17px;font-weight:900;color:#00D166;">٨٧</div>
+                        <div style="font-size:8px;color:#3A5060;">تقييم</div>
+                      </div>
+                    </div>
+                    <div onClick="{{ openPlayerCard }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;">
+                      <div style="position:relative;width:44px;height:44px;background:linear-gradient(135deg,#0A2030,#152535);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid #1A3040;flex-shrink:0;">
+                        👤
+                        <div style="position:absolute;bottom:-2px;right:-2px;width:17px;height:17px;background:#1D4ED8;border-radius:50%;border:2px solid #0D1826;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;font-weight:900;">٥</div>
+                      </div>
+                      <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:700;color:white;">حسين عبد الرزاق</div>
+                        <div style="font-size:12px;color:#3A5060;margin-top:2px;">وسط · ٥ صناعات</div>
+                      </div>
+                      <div style="background:rgba(0,209,102,.1);border-radius:10px;padding:6px 10px;text-align:center;">
+                        <div style="font-size:17px;font-weight:900;color:#00D166;">٧٩</div>
+                        <div style="font-size:8px;color:#3A5060;">تقييم</div>
+                      </div>
+                    </div>
+                    <div onClick="{{ openPlayerCard }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;">
+                      <div style="position:relative;width:44px;height:44px;background:linear-gradient(135deg,#0A2030,#152535);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid #1A3040;flex-shrink:0;">
+                        👤
+                        <div style="position:absolute;bottom:-2px;right:-2px;width:17px;height:17px;background:#7C3AED;border-radius:50%;border:2px solid #0D1826;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;font-weight:900;">١</div>
+                      </div>
+                      <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:700;color:white;">محمد ياسين</div>
+                        <div style="font-size:12px;color:#3A5060;margin-top:2px;">حارس مرمى · ٦ مباريات</div>
+                      </div>
+                      <div style="background:rgba(0,209,102,.1);border-radius:10px;padding:6px 10px;text-align:center;">
+                        <div style="font-size:17px;font-weight:900;color:#00D166;">٧٢</div>
+                        <div style="font-size:8px;color:#3A5060;">تقييم</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Action buttons -->
+                  <div style="display:flex;gap:10px;margin-top:14px;padding-bottom:24px;">
+                    <div style="flex:1;background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
+                      <div style="font-size:22px;margin-bottom:4px;">⚙️</div>
+                      <div style="font-size:12px;color:#6A8898;font-weight:600;">إدارة الفريق</div>
+                    </div>
+                    <div style="flex:1;background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
+                      <div style="font-size:22px;margin-bottom:4px;">⚔️</div>
+                      <div style="font-size:12px;color:#6A8898;font-weight:600;">التحديات</div>
+                    </div>
+                    <div style="flex:1;background:#0D1826;border:1px solid #1A2A3A;border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
+                      <div style="font-size:22px;margin-bottom:4px;">📤</div>
+                      <div style="font-size:12px;color:#6A8898;font-weight:600;">مشاركة</div>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- ── MATCHES ── -->
+          <sc-if value="{{ isMatches }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;overflow-y:auto;background:#060D18;">
+              <div style="padding:54px 20px 14px;">
+                <div style="font-size:22px;font-weight:900;color:white;">المباريات ⚽</div>
+              </div>
+              <!-- Tab bar -->
+              <div style="display:flex;margin:0 16px;background:#0D1826;border-radius:14px;padding:4px;border:1px solid #1A2A3A;">
+                <div onClick="{{ setMatchTab0 }}" style="{{ mTab0Style }}">مباشر <sc-if value="{{ matchTabLive }}" hint-placeholder-val="{{ true }}"><span style="display:inline-block;width:6px;height:6px;background:currentColor;border-radius:50%;margin-right:3px;vertical-align:middle;animation:blink .9s infinite;"></span></sc-if></div>
+                <div onClick="{{ setMatchTab1 }}" style="{{ mTab1Style }}">قادمة</div>
+                <div onClick="{{ setMatchTab2 }}" style="{{ mTab2Style }}">منتهية</div>
+              </div>
+              <!-- Match cards -->
+              <div style="padding:12px 16px;display:flex;flex-direction:column;gap:10px;">
+
+                <!-- LIVE tab -->
+                <sc-if value="{{ matchTabLive }}" hint-placeholder-val="{{ true }}">
+                  <!-- Live match 1 -->
+                  <div style="background:#0D1826;border:1.5px solid rgba(255,75,75,.35);border-radius:18px;overflow:hidden;">
+                    <div style="background:rgba(255,75,75,.08);padding:9px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,75,75,.15);">
+                      <div style="width:7px;height:7px;background:#FF4B4B;border-radius:50%;animation:blink .8s infinite;"></div>
+                      <div style="font-size:11px;color:#FF4B4B;font-weight:700;letter-spacing:.5px;">مباشر · الدقيقة ٦٧</div>
+                      <div style="margin-right:auto;font-size:11px;color:#3A5060;">بطولة بغداد الكبرى</div>
+                    </div>
+                    <div style="padding:18px;display:flex;align-items:center;gap:10px;">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:7px;">
+                        <div style="width:50px;height:50px;background:linear-gradient(135deg,#1A3050,#0A2040);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #2A4060;">🦅</div>
+                        <div style="font-size:14px;font-weight:800;color:white;text-align:right;">نجوم المنصور</div>
+                      </div>
+                      <div style="text-align:center;flex-shrink:0;min-width:80px;">
+                        <div style="font-size:38px;font-weight:900;color:white;letter-spacing:-2px;line-height:1;">٢ - ١</div>
+                        <div style="font-size:9px;color:#FF4B4B;margin-top:5px;font-weight:700;letter-spacing:1px;">● مباشر</div>
+                      </div>
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:7px;">
+                        <div style="width:50px;height:50px;background:linear-gradient(135deg,#301520,#200A18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #402030;">🐯</div>
+                        <div style="font-size:14px;font-weight:800;color:white;">شباب الكرادة</div>
+                      </div>
+                    </div>
+                    <div style="padding:6px 16px 13px;display:flex;justify-content:space-between;border-top:1px solid #1A2A3A;">
+                      <div style="font-size:11px;color:#3A5060;">⚽ علي ٣٤'، ٥٨'</div>
+                      <div style="font-size:11px;color:#3A5060;">⚽ حسن ٤١'</div>
+                    </div>
+                  </div>
+                  <!-- Live match 2 -->
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:18px;overflow:hidden;">
+                    <div style="background:rgba(255,75,75,.05);padding:9px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1A2A3A;">
+                      <div style="width:7px;height:7px;background:#FF4B4B;border-radius:50%;animation:blink .8s .4s infinite;"></div>
+                      <div style="font-size:11px;color:#FF4B4B;font-weight:700;">مباشر · الدقيقة ٤٣</div>
+                      <div style="margin-right:auto;font-size:11px;color:#3A5060;">دوري الشباب</div>
+                    </div>
+                    <div style="padding:18px;display:flex;align-items:center;gap:10px;">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:7px;">
+                        <div style="width:50px;height:50px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;">🌙</div>
+                        <div style="font-size:14px;font-weight:800;color:white;text-align:right;">فتيان الكاظمية</div>
+                      </div>
+                      <div style="text-align:center;flex-shrink:0;min-width:80px;">
+                        <div style="font-size:38px;font-weight:900;color:white;letter-spacing:-2px;line-height:1;">٠ - ٠</div>
+                        <div style="font-size:9px;color:#FF4B4B;margin-top:5px;font-weight:700;letter-spacing:1px;">● مباشر</div>
+                      </div>
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:7px;">
+                        <div style="width:50px;height:50px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;">⭐</div>
+                        <div style="font-size:14px;font-weight:800;color:white;">صقور الأعظمية</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- UPCOMING tab -->
+                <sc-if value="{{ matchTabUpcoming }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:18px;overflow:hidden;">
+                    <div style="background:#0A1620;padding:9px 16px;border-bottom:1px solid #1A2A3A;display:flex;justify-content:space-between;align-items:center;">
+                      <div style="font-size:11px;color:#F59E0B;font-weight:700;">الجمعة ٤ يوليو · ٥:٠٠ م</div>
+                      <div style="font-size:11px;color:#3A5060;">نهائي البطولة</div>
+                    </div>
+                    <div style="padding:18px;display:flex;align-items:center;gap:10px;">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:7px;">
+                        <div style="width:50px;height:50px;background:linear-gradient(135deg,#1A3050,#0A2040);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #2A4060;">🦅</div>
+                        <div style="font-size:14px;font-weight:800;color:white;text-align:right;">نجوم المنصور</div>
+                      </div>
+                      <div style="text-align:center;flex-shrink:0;min-width:80px;">
+                        <div style="font-size:26px;font-weight:900;color:#3A5060;">VS</div>
+                        <div style="font-size:10px;color:#00D166;margin-top:8px;background:rgba(0,209,102,.1);padding:3px 12px;border-radius:6px;font-weight:700;">قادمة</div>
+                      </div>
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:7px;">
+                        <div style="width:50px;height:50px;background:linear-gradient(135deg,#301520,#200A18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #402030;">🐯</div>
+                        <div style="font-size:14px;font-weight:800;color:white;">شباب الكرادة</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:18px;overflow:hidden;">
+                    <div style="background:#0A1620;padding:9px 16px;border-bottom:1px solid #1A2A3A;display:flex;justify-content:space-between;align-items:center;">
+                      <div style="font-size:11px;color:#6A8898;font-weight:700;">السبت ٥ يوليو · ٦:٠٠ م</div>
+                      <div style="font-size:11px;color:#3A5060;">دوري الشباب</div>
+                    </div>
+                    <div style="padding:18px;display:flex;align-items:center;gap:10px;">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:7px;">
+                        <div style="width:50px;height:50px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;">🌙</div>
+                        <div style="font-size:14px;font-weight:800;color:white;text-align:right;">فتيان الكاظمية</div>
+                      </div>
+                      <div style="text-align:center;flex-shrink:0;min-width:80px;">
+                        <div style="font-size:26px;font-weight:900;color:#3A5060;">VS</div>
+                        <div style="font-size:10px;color:#6A8898;margin-top:8px;background:#0A1620;padding:3px 12px;border-radius:6px;font-weight:700;">قادمة</div>
+                      </div>
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:7px;">
+                        <div style="width:50px;height:50px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;">⭐</div>
+                        <div style="font-size:14px;font-weight:800;color:white;">صقور الأعظمية</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- FINISHED tab -->
+                <sc-if value="{{ matchTabFinished }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:18px;overflow:hidden;">
+                    <div style="background:#0A1620;padding:9px 16px;border-bottom:1px solid #1A2A3A;display:flex;justify-content:space-between;">
+                      <div style="font-size:11px;color:#3A5060;">الأربعاء ٢ يوليو</div>
+                      <div style="font-size:11px;color:#3A5060;">بطولة بغداد · ج٣</div>
+                    </div>
+                    <div style="padding:18px;display:flex;align-items:center;gap:10px;">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:7px;">
+                        <div style="width:50px;height:50px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;">🌙</div>
+                        <div style="font-size:14px;font-weight:800;color:#6A8898;text-align:right;">فتيان الكاظمية</div>
+                      </div>
+                      <div style="text-align:center;flex-shrink:0;min-width:80px;">
+                        <div style="font-size:38px;font-weight:900;color:white;letter-spacing:-2px;line-height:1;">١ - ٣</div>
+                        <div style="font-size:10px;color:#3A5060;margin-top:5px;">منتهية</div>
+                      </div>
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:7px;">
+                        <div style="width:50px;height:50px;background:linear-gradient(135deg,#1A3050,#0A2040);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #2A4060;">🦅</div>
+                        <div style="font-size:14px;font-weight:800;color:white;">نجوم المنصور</div>
+                      </div>
+                    </div>
+                    <div style="padding:4px 16px 12px;display:flex;justify-content:space-between;border-top:1px solid #1A2A3A;">
+                      <div style="font-size:11px;color:#3A5060;">⚽ حسن ٢٣'</div>
+                      <div style="font-size:11px;color:#3A5060;">⚽ علي ١٢'، ٣٤' · محمد ٧٨'</div>
+                    </div>
+                  </div>
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:18px;overflow:hidden;">
+                    <div style="background:#0A1620;padding:9px 16px;border-bottom:1px solid #1A2A3A;display:flex;justify-content:space-between;">
+                      <div style="font-size:11px;color:#3A5060;">الثلاثاء ١ يوليو</div>
+                      <div style="font-size:11px;color:#3A5060;">دوري الشباب · ج١</div>
+                    </div>
+                    <div style="padding:18px;display:flex;align-items:center;gap:10px;">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end;gap:7px;">
+                        <div style="width:50px;height:50px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;">⭐</div>
+                        <div style="font-size:14px;font-weight:800;color:white;text-align:right;">صقور الأعظمية</div>
+                      </div>
+                      <div style="text-align:center;flex-shrink:0;min-width:80px;">
+                        <div style="font-size:38px;font-weight:900;color:white;letter-spacing:-2px;line-height:1;">٢ - ٢</div>
+                        <div style="font-size:10px;color:#F59E0B;margin-top:5px;font-weight:600;">تعادل</div>
+                      </div>
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:7px;">
+                        <div style="width:50px;height:50px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;">🌙</div>
+                        <div style="font-size:14px;font-weight:800;color:white;">فتيان الكاظمية</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ── SETTINGS ── -->
+          <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;overflow-y:auto;background:#060D18;">
+              <div style="background:linear-gradient(180deg,#0D1826 0%,#060D18 100%);padding:54px 20px 22px;">
+                <div style="display:flex;align-items:center;gap:16px;">
+                  <div style="width:72px;height:72px;background:linear-gradient(135deg,#00D166,#00700A);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid rgba(0,209,102,.4);flex-shrink:0;">👤</div>
+                  <div style="flex:1;">
+                    <div style="font-size:22px;font-weight:900;color:white;">أحمد الخفاجي</div>
+                    <div style="font-size:13px;color:#00D166;margin-top:3px;">⚡ كابتن فريق</div>
+                    <div style="font-size:12px;color:#3A5060;margin-top:2px;">بغداد · مشترك منذ ٢٠٢٢</div>
+                  </div>
+                  <div style="width:38px;height:38px;background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;">✏️</div>
+                </div>
+                <!-- Stats mini -->
+                <div style="display:flex;margin-top:18px;background:#0A1620;border-radius:14px;border:1px solid #1A2A3A;overflow:hidden;">
+                  <div style="flex:1;text-align:center;padding:13px 8px;border-left:1px solid #1A2A3A;">
+                    <div style="font-size:20px;font-weight:900;color:white;">٢٤</div>
+                    <div style="font-size:10px;color:#3A5060;margin-top:2px;">مباراة</div>
+                  </div>
+                  <div style="flex:1;text-align:center;padding:13px 8px;border-left:1px solid #1A2A3A;">
+                    <div style="font-size:20px;font-weight:900;color:#F59E0B;">١٢</div>
+                    <div style="font-size:10px;color:#3A5060;margin-top:2px;">هدف</div>
+                  </div>
+                  <div style="flex:1;text-align:center;padding:13px 8px;">
+                    <div style="font-size:20px;font-weight:900;color:#00D166;">٨٤</div>
+                    <div style="font-size:10px;color:#3A5060;margin-top:2px;">تقييم</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Settings list -->
+              <div style="padding:0 16px 24px;display:flex;flex-direction:column;gap:12px;">
+                <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;overflow:hidden;">
+                  <div style="padding:10px 16px;font-size:11px;font-weight:700;color:#2A3A4A;letter-spacing:1px;border-bottom:1px solid #1A2A3A;">الحساب</div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #1A2A3A;cursor:pointer;">
+                    <div style="width:36px;height:36px;background:rgba(0,209,102,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;">👤</div>
+                    <div style="flex:1;font-size:15px;color:white;font-weight:600;">الملف الشخصي</div>
+                    <div style="color:#2A3A4A;font-size:18px;">›</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;">
+                    <div style="width:36px;height:36px;background:rgba(245,158,11,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;">💎</div>
+                    <div style="flex:1;">
+                      <div style="font-size:15px;color:white;font-weight:600;">الاشتراك</div>
+                      <div style="font-size:11px;color:#F59E0B;margin-top:2px;">تجربة مجانية فعّالة</div>
+                    </div>
+                    <div style="color:#2A3A4A;font-size:18px;">›</div>
+                  </div>
+                </div>
+                <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;overflow:hidden;">
+                  <div style="padding:10px 16px;font-size:11px;font-weight:700;color:#2A3A4A;letter-spacing:1px;border-bottom:1px solid #1A2A3A;">التفضيلات</div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #1A2A3A;cursor:pointer;">
+                    <div style="width:36px;height:36px;background:rgba(99,102,241,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;">🌙</div>
+                    <div style="flex:1;font-size:15px;color:white;font-weight:600;">المظهر</div>
+                    <div style="background:#00D166;border-radius:16px;padding:4px 12px;font-size:11px;color:white;font-weight:700;">داكن</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;">
+                    <div style="width:36px;height:36px;background:rgba(59,130,246,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;">🌍</div>
+                    <div style="flex:1;font-size:15px;color:white;font-weight:600;">اللغة</div>
+                    <div style="font-size:13px;color:#3A5060;">العربية ›</div>
+                  </div>
+                </div>
+                <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:16px;overflow:hidden;">
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #1A2A3A;cursor:pointer;">
+                    <div style="width:36px;height:36px;background:rgba(16,185,129,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;">📜</div>
+                    <div style="flex:1;font-size:15px;color:white;font-weight:600;">سياسة الخصوصية</div>
+                    <div style="color:#2A3A4A;font-size:18px;">›</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;">
+                    <div style="width:36px;height:36px;background:rgba(239,68,68,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;">🚪</div>
+                    <div style="flex:1;font-size:15px;color:#EF4444;font-weight:600;">تسجيل الخروج</div>
+                  </div>
+                </div>
+                <div style="text-align:center;font-size:11px;color:#1A2A3A;padding:4px;">طوبة v2.0.0 · 2026</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ── TEAM DETAILS ── -->
+          <sc-if value="{{ isTeamDetails }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;overflow-y:auto;background:#060D18;">
+              <div style="padding:54px 20px 14px;display:flex;align-items:center;gap:12px;">
+                <div onClick="{{ goTeams }}" style="width:40px;height:40px;background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:white;">‹</div>
+                <div style="font-size:18px;font-weight:800;color:white;">تفاصيل الفريق</div>
+              </div>
+              <div style="margin:0 16px;background:linear-gradient(135deg,#0A3020 0%,#0D4520 100%);border-radius:22px;padding:24px;border:1px solid #1A4028;position:relative;overflow:hidden;">
+                <div style="position:absolute;top:-30px;right:-30px;font-size:170px;opacity:.04;">🛡️</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;">
+                  <div style="width:88px;height:88px;background:linear-gradient(135deg,#1A5040,#0A3020);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;border:3px solid rgba(0,209,102,.4);">🦅</div>
+                  <div style="text-align:center;">
+                    <div style="font-size:24px;font-weight:900;color:white;">نجوم المنصور</div>
+                    <div style="font-size:13px;color:#3A5060;margin-top:5px;">📍 بغداد، المنصور · تأسّس ٢٠٢٢</div>
+                  </div>
+                  <div style="display:flex;gap:28px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06);width:100%;justify-content:center;">
+                    <div style="text-align:center;"><div style="font-size:24px;font-weight:900;color:white;">١١</div><div style="font-size:10px;color:#3A5060;margin-top:2px;">لاعب</div></div>
+                    <div style="text-align:center;"><div style="font-size:24px;font-weight:900;color:#F59E0B;">٧</div><div style="font-size:10px;color:#3A5060;margin-top:2px;">انتصار</div></div>
+                    <div style="text-align:center;"><div style="font-size:24px;font-weight:900;color:#00D166;">٨٤</div><div style="font-size:10px;color:#3A5060;margin-top:2px;">تصنيف</div></div>
+                    <div style="text-align:center;"><div style="font-size:24px;font-weight:900;color:white;">٣</div><div style="font-size:10px;color:#3A5060;margin-top:2px;">بطولة</div></div>
+                  </div>
+                </div>
+              </div>
+              <div style="margin:14px 16px;">
+                <div style="background:linear-gradient(135deg,#00D166 0%,#00924A 100%);color:white;font-size:16px;font-weight:800;padding:16px;border-radius:14px;text-align:center;cursor:pointer;font-family:'Cairo',sans-serif;box-shadow:0 8px 24px rgba(0,209,102,.28);">طلب انضمام ⚡</div>
+              </div>
+              <div style="padding:0 16px 24px;">
+                <div style="font-size:15px;font-weight:800;color:white;margin-bottom:12px;">التشكيلة (١١)</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div onClick="{{ openPlayerCard }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                    <div style="width:8px;height:8px;background:#F59E0B;border-radius:50%;flex-shrink:0;"></div>
+                    <div style="font-size:12px;color:#3A5060;font-weight:700;width:18px;flex-shrink:0;">٩</div>
+                    <div style="width:38px;height:38px;background:#152030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👤</div>
+                    <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:white;">علي محمد</div><div style="font-size:11px;color:#3A5060;">مهاجم</div></div>
+                    <div style="font-size:14px;font-weight:900;color:#00D166;">٨٧</div>
+                  </div>
+                  <div onClick="{{ openPlayerCard }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                    <div style="width:8px;height:8px;background:#3B82F6;border-radius:50%;flex-shrink:0;"></div>
+                    <div style="font-size:12px;color:#3A5060;font-weight:700;width:18px;flex-shrink:0;">٥</div>
+                    <div style="width:38px;height:38px;background:#152030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👤</div>
+                    <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:white;">حسين عبد الرزاق</div><div style="font-size:11px;color:#3A5060;">وسط</div></div>
+                    <div style="font-size:14px;font-weight:900;color:#00D166;">٧٩</div>
+                  </div>
+                  <div onClick="{{ openPlayerCard }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                    <div style="width:8px;height:8px;background:#8B5CF6;border-radius:50%;flex-shrink:0;"></div>
+                    <div style="font-size:12px;color:#3A5060;font-weight:700;width:18px;flex-shrink:0;">١</div>
+                    <div style="width:38px;height:38px;background:#152030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👤</div>
+                    <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:white;">محمد ياسين</div><div style="font-size:11px;color:#3A5060;">حارس مرمى</div></div>
+                    <div style="font-size:14px;font-weight:900;color:#00D166;">٧٢</div>
+                  </div>
+                  <div onClick="{{ openPlayerCard }}" style="background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                    <div style="width:8px;height:8px;background:#10B981;border-radius:50%;flex-shrink:0;"></div>
+                    <div style="font-size:12px;color:#3A5060;font-weight:700;width:18px;flex-shrink:0;">٤</div>
+                    <div style="width:38px;height:38px;background:#152030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👤</div>
+                    <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:white;">كريم صالح</div><div style="font-size:11px;color:#3A5060;">مدافع</div></div>
+                    <div style="font-size:14px;font-weight:900;color:#00D166;">٧٥</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ── TOURNAMENT DETAILS ── -->
+          <sc-if value="{{ isTournamentDetails }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;overflow-y:auto;background:#060D18;">
+              <div style="padding:54px 20px 14px;display:flex;align-items:center;gap:12px;">
+                <div onClick="{{ goHome }}" style="width:40px;height:40px;background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:white;">‹</div>
+                <div style="font-size:18px;font-weight:800;color:white;">تفاصيل البطولة</div>
+              </div>
+              <!-- Tournament hero -->
+              <div style="margin:0 16px;background:linear-gradient(135deg,#0A2030 0%,#0D3040 100%);border-radius:22px;padding:22px;border:1px solid #1A3040;position:relative;overflow:hidden;">
+                <div style="position:absolute;top:-20px;right:-20px;font-size:130px;opacity:.05;">🏆</div>
+                <div style="display:flex;align-items:center;gap:16px;position:relative;">
+                  <div style="width:72px;height:72px;background:linear-gradient(135deg,#1A4030,#0A3020);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;border:2px solid rgba(0,209,102,.25);flex-shrink:0;">🏆</div>
+                  <div>
+                    <div style="font-size:20px;font-weight:900;color:white;">بطولة بغداد الكبرى</div>
+                    <div style="font-size:12px;color:#3A5060;margin-top:5px;">٨ × ٨ · دوري ذهاب وإياب</div>
+                    <div style="display:flex;gap:6px;margin-top:9px;">
+                      <div style="background:rgba(0,209,102,.1);border:1px solid rgba(0,209,102,.2);border-radius:6px;padding:3px 10px;font-size:10px;color:#00D166;font-weight:700;">جارية</div>
+                      <div style="background:#0A1620;border-radius:6px;padding:3px 10px;font-size:10px;color:#3A5060;">الجولة ٣ من ٤</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Standings table -->
+              <div style="margin:16px 16px 0;">
+                <div style="font-size:15px;font-weight:800;color:white;margin-bottom:12px;">جدول الترتيب 📊</div>
+                <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:18px;overflow:hidden;">
+                  <!-- Header -->
+                  <div style="display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid #1A2A3A;">
+                    <div style="width:22px;font-size:10px;color:#2A3A4A;font-weight:700;">#</div>
+                    <div style="flex:1;font-size:10px;color:#2A3A4A;font-weight:700;margin-right:10px;">الفريق</div>
+                    <div style="width:26px;text-align:center;font-size:10px;color:#2A3A4A;">ل</div>
+                    <div style="width:26px;text-align:center;font-size:10px;color:#2A3A4A;">ف</div>
+                    <div style="width:26px;text-align:center;font-size:10px;color:#2A3A4A;">ت</div>
+                    <div style="width:26px;text-align:center;font-size:10px;color:#2A3A4A;">خ</div>
+                    <div style="width:30px;text-align:center;font-size:10px;color:#00D166;font-weight:700;">ن</div>
+                  </div>
+                  <!-- Row 1 - Winner -->
+                  <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid #1A2A3A;border-right:3px solid #00D166;">
+                    <div style="width:22px;font-size:14px;font-weight:900;color:#00D166;">١</div>
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;margin-right:10px;">
+                      <div style="width:28px;height:28px;background:linear-gradient(135deg,#1A3050,#0A2040);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🦅</div>
+                      <div style="font-size:13px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">نجوم المنصور</div>
+                    </div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٦</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#00D166;font-weight:700;">٥</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">١</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٠</div>
+                    <div style="width:30px;text-align:center;font-size:15px;font-weight:900;color:white;">١٦</div>
+                  </div>
+                  <!-- Row 2 -->
+                  <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid #1A2A3A;border-right:3px solid #00D166;">
+                    <div style="width:22px;font-size:14px;font-weight:900;color:#6A8898;">٢</div>
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;margin-right:10px;">
+                      <div style="width:28px;height:28px;background:linear-gradient(135deg,#301520,#200A18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🐯</div>
+                      <div style="font-size:13px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">شباب الكرادة</div>
+                    </div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٦</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#00D166;font-weight:700;">٤</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">١</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">١</div>
+                    <div style="width:30px;text-align:center;font-size:15px;font-weight:900;color:white;">١٣</div>
+                  </div>
+                  <!-- Row 3 -->
+                  <div style="display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid #1A2A3A;border-right:3px solid transparent;">
+                    <div style="width:22px;font-size:14px;font-weight:900;color:#6A8898;">٣</div>
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;margin-right:10px;">
+                      <div style="width:28px;height:28px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🌙</div>
+                      <div style="font-size:13px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">فتيان الكاظمية</div>
+                    </div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٦</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٣</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٠</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٣</div>
+                    <div style="width:30px;text-align:center;font-size:15px;font-weight:900;color:#6A8898;">٩</div>
+                  </div>
+                  <!-- Row 4 - Last -->
+                  <div style="display:flex;align-items:center;padding:12px 14px;border-right:3px solid #FF4B4B;background:rgba(255,75,75,.03);">
+                    <div style="width:22px;font-size:14px;font-weight:900;color:#FF4B4B;">٤</div>
+                    <div style="flex:1;display:flex;align-items:center;gap:8px;margin-right:10px;">
+                      <div style="width:28px;height:28px;background:#1A2030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">⭐</div>
+                      <div style="font-size:13px;font-weight:700;color:#6A8898;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">صقور الأعظمية</div>
+                    </div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٦</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">١</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#6A8898;">٠</div>
+                    <div style="width:26px;text-align:center;font-size:13px;color:#FF4B4B;">٥</div>
+                    <div style="width:30px;text-align:center;font-size:15px;font-weight:900;color:#FF4B4B;">٣</div>
+                  </div>
+                </div>
+                <!-- Legend -->
+                <div style="display:flex;gap:14px;margin-top:9px;padding:0 2px;">
+                  <div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:8px;border-radius:50%;background:#00D166;"></div><div style="font-size:10px;color:#3A5060;">متأهل</div></div>
+                  <div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:8px;border-radius:50%;background:#FF4B4B;"></div><div style="font-size:10px;color:#3A5060;">الأخير</div></div>
+                  <div style="font-size:10px;color:#2A3A4A;">ل=لعب · ف=فاز · ت=تعادل · خ=خسر · ن=نقاط</div>
+                </div>
+              </div>
+              <!-- Recent matches -->
+              <div style="padding:16px 16px 24px;">
+                <div style="font-size:15px;font-weight:800;color:white;margin-bottom:12px;">آخر المباريات</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;padding:13px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <div style="font-size:13px;font-weight:700;color:white;flex:1;text-align:right;">نجوم المنصور</div>
+                    <div style="text-align:center;min-width:64px;">
+                      <div style="font-size:17px;font-weight:900;color:white;">٢ - ١</div>
+                      <div style="font-size:10px;color:#3A5060;">ج٣</div>
+                    </div>
+                    <div style="font-size:13px;font-weight:700;color:#6A8898;flex:1;">شباب الكرادة</div>
+                  </div>
+                  <div style="background:#0D1826;border:1px solid #1A2A3A;border-radius:12px;padding:13px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <div style="font-size:13px;font-weight:700;color:#6A8898;flex:1;text-align:right;">فتيان الكاظمية</div>
+                    <div style="text-align:center;min-width:64px;">
+                      <div style="font-size:17px;font-weight:900;color:white;">١ - ٣</div>
+                      <div style="font-size:10px;color:#3A5060;">ج٣</div>
+                    </div>
+                    <div style="font-size:13px;font-weight:700;color:white;flex:1;">صقور الأعظمية</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+
+        <!-- ══ BOTTOM NAV ══ -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:70px;background:#060D18;border-top:1px solid #1A2A3A;display:flex;align-items:center;justify-content:space-around;padding:0 4px 8px;z-index:50;">
+          <div onClick="{{ goHome }}" style="{{ navHomeStyle }}">
+            <div style="font-size:22px;">🏠</div>
+            <div style="{{ navHomeLabelStyle }}">الرئيسية</div>
+            <sc-if value="{{ navActiveHome }}" hint-placeholder-val="{{ true }}"><div style="width:4px;height:4px;background:#00D166;border-radius:50%;"></div></sc-if>
+          </div>
+          <div onClick="{{ goTeams }}" style="{{ navTeamsStyle }}">
+            <div style="font-size:22px;">🛡️</div>
+            <div style="{{ navTeamsLabelStyle }}">الفرق</div>
+            <sc-if value="{{ navActiveTeams }}" hint-placeholder-val="{{ false }}"><div style="width:4px;height:4px;background:#00D166;border-radius:50%;"></div></sc-if>
+          </div>
+          <div onClick="{{ goMatches }}" style="{{ navMatchesStyle }}">
+            <div style="font-size:22px;">⚽</div>
+            <div style="{{ navMatchesLabelStyle }}">المباريات</div>
+            <sc-if value="{{ navActiveMatches }}" hint-placeholder-val="{{ false }}"><div style="width:4px;height:4px;background:#00D166;border-radius:50%;"></div></sc-if>
+          </div>
+          <div onClick="{{ goSettings }}" style="{{ navSettingsStyle }}">
+            <div style="font-size:22px;">⚙️</div>
+            <div style="{{ navSettingsLabelStyle }}">الإعدادات</div>
+            <sc-if value="{{ navActiveSettings }}" hint-placeholder-val="{{ false }}"><div style="width:4px;height:4px;background:#00D166;border-radius:50%;"></div></sc-if>
+          </div>
+        </div>
+
+      </sc-if>
+
+      <!-- ══════════ FIFA PLAYER CARD OVERLAY ══════════ -->
+      <sc-if value="{{ showPlayerCard }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:rgba(2,8,15,.93);backdrop-filter:blur(20px);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+          <div onClick="{{ closePlayerCard }}" style="position:absolute;top:62px;right:20px;width:38px;height:38px;background:#0D1826;border:1px solid #1A2A3A;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#6A8898;">✕</div>
+          <div style="font-size:12px;color:#3A5060;margin-bottom:14px;letter-spacing:2px;font-weight:600;">بطاقة اللاعب</div>
+          <!-- Card -->
+          <div style="width:246px;background:linear-gradient(160deg,#1A1400 0%,#2C2000 40%,#1C1200 100%);border-radius:22px;border:1px solid rgba(212,168,0,.25);padding:24px 20px;position:relative;overflow:hidden;box-shadow:0 0 80px rgba(212,168,0,.18),0 32px 64px rgba(0,0,0,.7);animation:cardIn .5s ease both;">
+            <!-- Glow -->
+            <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(212,168,0,.1) 0%,transparent 70%);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(212,168,0,.06) 0%,transparent 70%);pointer-events:none;"></div>
+            <!-- Rating + Position -->
+            <div style="position:relative;">
+              <div style="font-size:54px;font-weight:900;color:#D4A800;line-height:1;letter-spacing:-3px;">٨٧</div>
+              <div style="font-size:17px;font-weight:800;color:#D4A800;letter-spacing:2px;margin-top:2px;">مهاجم</div>
+              <div style="font-size:12px;color:rgba(212,168,0,.45);margin-top:4px;">🇮🇶 العراق</div>
+            </div>
+            <!-- Avatar -->
+            <div style="text-align:center;margin:14px 0 12px;">
+              <div style="width:88px;height:88px;background:radial-gradient(circle,rgba(212,168,0,.07),transparent);border-radius:50%;border:2px solid rgba(212,168,0,.18);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:44px;">👤</div>
+              <div style="font-size:20px;font-weight:900;color:white;margin-top:12px;">علي محمد</div>
+              <div style="font-size:12px;color:rgba(212,168,0,.55);margin-top:3px;">🦅 نجوم المنصور</div>
+            </div>
+            <!-- Divider -->
+            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,0,.25),transparent);margin:12px 0;"></div>
+            <!-- Stats grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+              <div style="text-align:center;background:rgba(212,168,0,.05);border-radius:10px;padding:10px 4px;border:1px solid rgba(212,168,0,.1);">
+                <div style="font-size:22px;font-weight:900;color:#D4A800;">١٢</div>
+                <div style="font-size:9px;color:rgba(212,168,0,.45);margin-top:2px;">أهداف</div>
+              </div>
+              <div style="text-align:center;background:rgba(212,168,0,.05);border-radius:10px;padding:10px 4px;border:1px solid rgba(212,168,0,.1);">
+                <div style="font-size:22px;font-weight:900;color:#D4A800;">٨</div>
+                <div style="font-size:9px;color:rgba(212,168,0,.45);margin-top:2px;">صناعة</div>
+              </div>
+              <div style="text-align:center;background:rgba(212,168,0,.05);border-radius:10px;padding:10px 4px;border:1px solid rgba(212,168,0,.1);">
+                <div style="font-size:22px;font-weight:900;color:#D4A800;">١٨</div>
+                <div style="font-size:9px;color:rgba(212,168,0,.45);margin-top:2px;">مباراة</div>
+              </div>
+              <div style="text-align:center;background:rgba(212,168,0,.05);border-radius:10px;padding:10px 4px;border:1px solid rgba(212,168,0,.1);">
+                <div style="font-size:22px;font-weight:900;color:#D4A800;">٢</div>
+                <div style="font-size:9px;color:rgba(212,168,0,.45);margin-top:2px;">إنذار</div>
+              </div>
+              <div style="text-align:center;background:rgba(212,168,0,.05);border-radius:10px;padding:10px 4px;border:1px solid rgba(212,168,0,.1);">
+                <div style="font-size:22px;font-weight:900;color:#D4A800;">٠</div>
+                <div style="font-size:9px;color:rgba(212,168,0,.45);margin-top:2px;">طرد</div>
+              </div>
+              <div style="text-align:center;background:rgba(212,168,0,.05);border-radius:10px;padding:10px 4px;border:1px solid rgba(212,168,0,.1);">
+                <div style="font-size:22px;font-weight:900;color:#D4A800;">٤.٩</div>
+                <div style="font-size:9px;color:rgba(212,168,0,.45);margin-top:2px;">تقييم</div>
+              </div>
+            </div>
+            <!-- Share -->
+            <div style="margin-top:14px;text-align:center;background:rgba(212,168,0,.08);border:1px solid rgba(212,168,0,.18);border-radius:10px;padding:11px;cursor:pointer;">
+              <div style="font-size:13px;font-weight:700;color:#D4A800;">📤 مشاركة البطاقة</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <!-- Color palette -->
+  <div style="margin-top:32px;width:390px;animation:fadeUp .6s ease .3s both;">
+    <div style="font-size:12px;color:#1A2A3A;text-align:center;margin-bottom:12px;letter-spacing:1px;">نظام الألوان</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+      <div style="display:flex;align-items:center;gap:5px;background:#0D1826;border-radius:8px;padding:7px 11px;"><div style="width:14px;height:14px;background:#00D166;border-radius:3px;"></div><div style="font-size:10px;color:#3A5060;">#00D166 أخضر</div></div>
+      <div style="display:flex;align-items:center;gap:5px;background:#0D1826;border-radius:8px;padding:7px 11px;"><div style="width:14px;height:14px;background:#060D18;border:1px solid #1A2A3A;border-radius:3px;"></div><div style="font-size:10px;color:#3A5060;">#060D18 خلفية</div></div>
+      <div style="display:flex;align-items:center;gap:5px;background:#0D1826;border-radius:8px;padding:7px 11px;"><div style="width:14px;height:14px;background:#FF4B4B;border-radius:3px;"></div><div style="font-size:10px;color:#3A5060;">#FF4B4B مباشر</div></div>
+      <div style="display:flex;align-items:center;gap:5px;background:#0D1826;border-radius:8px;padding:7px 11px;"><div style="width:14px;height:14px;background:#F59E0B;border-radius:3px;"></div><div style="font-size:10px;color:#3A5060;">#F59E0B ذهبي</div></div>
+      <div style="display:flex;align-items:center;gap:5px;background:#0D1826;border-radius:8px;padding:7px 11px;"><div style="width:14px;height:14px;background:#D4A800;border-radius:3px;"></div><div style="font-size:10px;color:#3A5060;">#D4A800 FIFA</div></div>
+    </div>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:#1A2A3A;">خط Cairo · FotMob-inspired · RTL · Dark + Light</div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+class Component extends DCLogic {
+  state = {
+    screen: 'splash',
+    hasTeam: false,
+    matchTab: 0,
+    showPlayerCard: false,
+    bannerIndex: 0,
+  };
+
+  componentDidMount() {
+    this._banner = setInterval(() => {
+      this.setState(s => ({ bannerIndex: (s.bannerIndex + 1) % 3 }));
+    }, 3200);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._banner);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const sc = s.screen;
+    const bi = s.bannerIndex;
+    const mt = s.matchTab || 0;
+
+    const navBase = { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', padding: '8px 4px', userSelect: 'none' };
+    const labelBase = { fontSize: '10px', fontWeight: 700, fontFamily: "'Cairo', sans-serif" };
+    const tabBase = { flex: 1, textAlign: 'center', padding: '10px 6px', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', userSelect: 'none', fontFamily: "'Cairo', sans-serif" };
+    const dotBase = { height: '6px', borderRadius: '3px', cursor: 'pointer', transition: 'all 0.35s' };
+
+    const navHome   = sc === 'home';
+    const navTeams  = sc === 'teams' || sc === 'teamDetails';
+    const navMatches= sc === 'matches';
+    const navSets   = sc === 'settings';
+
+    return {
+      // splash
+      isSplash: sc === 'splash',
+      startApp: () => this.setState({ screen: 'home' }),
+
+      // main
+      showMain: sc !== 'splash',
+      isHome: sc === 'home',
+      isTeams: sc === 'teams',
+      isMatches: sc === 'matches',
+      isSettings: sc === 'settings',
+      isTeamDetails: sc === 'teamDetails',
+      isTournamentDetails: sc === 'tournamentDetails',
+
+      // nav handlers
+      goHome: () => this.setState({ screen: 'home' }),
+      goTeams: () => this.setState({ screen: 'teams' }),
+      goMatches: () => this.setState({ screen: 'matches' }),
+      goSettings: () => this.setState({ screen: 'settings' }),
+      goTeamDetails: () => this.setState({ screen: 'teamDetails' }),
+      goTournamentDetails: () => this.setState({ screen: 'tournamentDetails' }),
+      goBack: () => this.setState({ screen: 'home' }),
+
+      // nav styles
+      navActiveHome: navHome,
+      navActiveTeams: navTeams,
+      navActiveMatches: navMatches,
+      navActiveSettings: navSets,
+      navHomeStyle: navBase,
+      navTeamsStyle: navBase,
+      navMatchesStyle: navBase,
+      navSettingsStyle: navBase,
+      navHomeLabelStyle:    { ...labelBase, color: navHome    ? '#00D166' : '#2A3A4A' },
+      navTeamsLabelStyle:   { ...labelBase, color: navTeams   ? '#00D166' : '#2A3A4A' },
+      navMatchesLabelStyle: { ...labelBase, color: navMatches ? '#00D166' : '#2A3A4A' },
+      navSettingsLabelStyle:{ ...labelBase, color: navSets    ? '#00D166' : '#2A3A4A' },
+
+      // teams
+      hasTeam: s.hasTeam,
+      noTeam: !s.hasTeam,
+      toggleTeam: () => this.setState(s => ({ hasTeam: !s.hasTeam })),
+
+      // match tabs
+      matchTabLive:     mt === 0,
+      matchTabUpcoming: mt === 1,
+      matchTabFinished: mt === 2,
+      setMatchTab0: () => this.setState({ matchTab: 0 }),
+      setMatchTab1: () => this.setState({ matchTab: 1 }),
+      setMatchTab2: () => this.setState({ matchTab: 2 }),
+      mTab0Style: { ...tabBase, background: mt === 0 ? '#00D166' : 'transparent', color: mt === 0 ? 'white' : '#3A5060' },
+      mTab1Style: { ...tabBase, background: mt === 1 ? '#00D166' : 'transparent', color: mt === 1 ? 'white' : '#3A5060' },
+      mTab2Style: { ...tabBase, background: mt === 2 ? '#00D166' : 'transparent', color: mt === 2 ? 'white' : '#3A5060' },
+
+      // banner
+      banner0: bi === 0,
+      banner1: bi === 1,
+      banner2: bi === 2,
+      setBanner0: () => this.setState({ bannerIndex: 0 }),
+      setBanner1: () => this.setState({ bannerIndex: 1 }),
+      setBanner2: () => this.setState({ bannerIndex: 2 }),
+      dot0Style: { ...dotBase, width: bi === 0 ? '20px' : '6px', background: bi === 0 ? '#00D166' : '#1A2A3A' },
+      dot1Style: { ...dotBase, width: bi === 1 ? '20px' : '6px', background: bi === 1 ? '#00D166' : '#1A2A3A' },
+      dot2Style: { ...dotBase, width: bi === 2 ? '20px' : '6px', background: bi === 2 ? '#00D166' : '#1A2A3A' },
+
+      // player card
+      showPlayerCard: s.showPlayerCard,
+      openPlayerCard:  () => this.setState({ showPlayerCard: true }),
+      closePlayerCard: () => this.setState({ showPlayerCard: false }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

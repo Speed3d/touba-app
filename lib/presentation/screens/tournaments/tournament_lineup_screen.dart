@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -99,7 +100,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
     if (url == null || url.isEmpty) return null;
     return url.startsWith('assets/')
         ? AssetImage(url) as ImageProvider
-        : CachedNetworkImageProvider(url);
+        : ImageHelper.getProvider(url);
   }
 
   LineupPlayer _toLineup(PlayerModel p) => LineupPlayer(

@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -279,7 +280,7 @@ class _NewsEditorState extends State<_NewsEditor> {
                       : (n?.imageUrl != null && n!.imageUrl!.isNotEmpty
                           ? DecorationImage(
                               image:
-                                  CachedNetworkImageProvider(n.imageUrl!),
+                                  ImageHelper.getProvider(n.imageUrl!),
                               fit: BoxFit.cover)
                           : null),
                 ),

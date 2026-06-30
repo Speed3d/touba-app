@@ -1,4 +1,6 @@
+import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -106,7 +108,7 @@ class ChatsListScreen extends StatelessWidget {
         radius: 24,
         backgroundColor: Colors.grey.shade200,
         backgroundImage: (photo != null && photo.isNotEmpty)
-            ? CachedNetworkImageProvider(photo)
+            ? ImageHelper.getProvider(photo)
             : null,
         child: (photo == null || photo.isEmpty)
             ? const Icon(Icons.shield, color: Colors.grey)

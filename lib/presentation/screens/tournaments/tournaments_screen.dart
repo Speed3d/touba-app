@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -182,7 +183,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
               // 📝 HINT AR: صورة البطولة كخلفية (إن وُجدت) تحت تدرّج معتم.
               image: (t.logoUrl != null && t.logoUrl!.isNotEmpty)
                   ? DecorationImage(
-                      image: CachedNetworkImageProvider(t.logoUrl!),
+                      image: ImageHelper.getProvider(t.logoUrl!),
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(
                           Colors.black.withValues(alpha: 0.45),

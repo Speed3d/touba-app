@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -280,10 +281,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   // 📝 HINT AR: بطاقة تفتح تعديل تفاصيل اللاعب الرياضية (بند 14).
                   Material(
-                    color: isDark ? Colors.grey[900] : Colors.white,
+                    color: isDark ? AppColors.surfaceDark : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     elevation: 1,
-                    shadowColor: Colors.black.withValues(alpha: 0.08),
+                    shadowColor: isDark ? Colors.transparent : Colors.black.withValues(alpha: 0.05),
                     clipBehavior: Clip.antiAlias,
                     child: ListTile(
                       onTap: () => Navigator.push(
@@ -470,7 +471,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _infoCard(bool isDark, List<Widget> children) => Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[900] : Colors.white,
+          color: isDark ? AppColors.surfaceDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

@@ -1,5 +1,7 @@
+import '../../../core/utils/image_helper.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -336,7 +338,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                       radius: 40,
                       backgroundColor: Colors.grey.shade100,
                       backgroundImage: s.logoUrl.isNotEmpty
-                          ? CachedNetworkImageProvider(s.logoUrl)
+                          ? ImageHelper.getProvider(s.logoUrl)
                           : null,
                       child: s.logoUrl.isEmpty
                           ? const Icon(Icons.handshake, color: Colors.grey)
@@ -546,7 +548,7 @@ class TournamentDetailsScreen extends StatelessWidget {
         ? CircleAvatar(
             radius: 34,
             backgroundColor: Colors.white24,
-            backgroundImage: CachedNetworkImageProvider(t.cupImageUrl!),
+            backgroundImage: ImageHelper.getProvider(t.cupImageUrl!),
           )
         : const Icon(Icons.emoji_events, color: Colors.white, size: 48);
     return Container(
@@ -1182,7 +1184,7 @@ class TournamentDetailsScreen extends StatelessWidget {
       radius: radius,
       backgroundColor: Colors.grey.shade200,
       backgroundImage:
-          (url != null && url.isNotEmpty) ? CachedNetworkImageProvider(url) : null,
+          (url != null && url.isNotEmpty) ? ImageHelper.getProvider(url) : null,
       child: (url == null || url.isEmpty)
           ? Icon(Icons.shield, size: radius, color: Colors.grey.shade400)
           : null,

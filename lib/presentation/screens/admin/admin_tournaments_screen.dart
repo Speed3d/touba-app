@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +68,7 @@ class _AdminTournamentsScreenState extends State<AdminTournamentsScreen> {
         leading: CircleAvatar(
           backgroundColor: Colors.grey.shade200,
           backgroundImage: (t.logoUrl != null && t.logoUrl!.isNotEmpty)
-              ? CachedNetworkImageProvider(t.logoUrl!)
+              ? ImageHelper.getProvider(t.logoUrl!)
               : null,
           child: (t.logoUrl == null || t.logoUrl!.isEmpty)
               ? const Icon(Icons.emoji_events, color: Colors.grey)
@@ -289,7 +290,7 @@ class _TournamentEditorState extends State<_TournamentEditor> {
       img = DecorationImage(image: FileImage(picked), fit: BoxFit.cover);
     } else if (existing != null && existing.isNotEmpty) {
       img = DecorationImage(
-          image: CachedNetworkImageProvider(existing), fit: BoxFit.cover);
+          image: ImageHelper.getProvider(existing), fit: BoxFit.cover);
     }
     return GestureDetector(
       onTap: onTap,

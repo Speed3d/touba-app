@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -270,7 +271,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
             color: Colors.grey.shade200,
             image: imageUrl.isNotEmpty
                 ? DecorationImage(
-                    image: CachedNetworkImageProvider(imageUrl),
+                    image: ImageHelper.getProvider(imageUrl),
                     fit: BoxFit.cover)
                 : null,
           ),

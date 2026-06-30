@@ -1,6 +1,8 @@
+import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
@@ -355,7 +357,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                             height: 140,
                             decoration: BoxDecoration(
                               color:
-                                  isDark ? Colors.grey[800] : Colors.grey[200],
+                                  isDark ? const Color(0xFF1A3050) : Colors.grey[200],
                               shape: BoxShape.circle,
                               border: Border.all(
                                   color: theme.colorScheme.primary, width: 3),
@@ -663,7 +665,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
     final isDark = theme.brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+        color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -767,7 +769,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+        color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
             color: isChampion
@@ -914,7 +916,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[900] : Colors.white,
+          color: isDark ? AppColors.surfaceDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -951,21 +953,21 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
       if (player.photoUrl!.startsWith('assets/')) {
         imageProvider = AssetImage(player.photoUrl!);
       } else {
-        imageProvider = CachedNetworkImageProvider(player.photoUrl!);
+        imageProvider = ImageHelper.getProvider(player.photoUrl!);
       }
     }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: isDark ? Colors.grey[900] : Colors.white,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
       child: ListTile(
         onTap: () => Navigator.push(
           context,
           ToobaRoute.to(PlayerDetailScreen(player: player)),
         ),
         leading: CircleAvatar(
-          backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+          backgroundColor: isDark ? const Color(0xFF1A3050) : Colors.grey[200],
           backgroundImage: imageProvider,
           child: imageProvider == null
               ? const Icon(Icons.person, color: Colors.grey)

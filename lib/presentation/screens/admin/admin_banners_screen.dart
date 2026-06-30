@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -379,7 +380,7 @@ class _BannerEditorState extends State<_BannerEditor> {
                         image: FileImage(_image!), fit: BoxFit.cover)
                     : (b != null && b.imageUrl.isNotEmpty
                         ? DecorationImage(
-                            image: CachedNetworkImageProvider(b.imageUrl),
+                            image: ImageHelper.getProvider(b.imageUrl),
                             fit: BoxFit.cover)
                         : null),
               ),
@@ -492,7 +493,7 @@ class _BannerEditorState extends State<_BannerEditor> {
                 scrollDirection: Axis.horizontal,
                 children: [
                   ..._existingExtras.asMap().entries.map((e) => _extraThumb(
-                        CachedNetworkImageProvider(e.value),
+                        ImageHelper.getProvider(e.value),
                         () => setState(() => _existingExtras.removeAt(e.key)),
                       )),
                   ..._newExtras.asMap().entries.map((e) => _extraThumb(

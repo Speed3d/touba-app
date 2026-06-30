@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../cubits/theme_cubit.dart';
@@ -234,7 +235,7 @@ class SettingsScreen extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 44,
-          backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+          backgroundColor: isDark ? const Color(0xFF1A3050) : Colors.grey[200],
           backgroundImage: _imageProvider(user.profileImage),
           child: _imageProvider(user.profileImage) == null
               ? Icon(Icons.person,
@@ -423,11 +424,15 @@ class SettingsScreen extends StatelessWidget {
       );
 
   Widget _card(BuildContext context, bool isDark, List<Widget> children) =>
-      Material(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        elevation: 1,
-        shadowColor: Colors.black.withValues(alpha: 0.08),
-        child: Column(children: children),
+      Container(
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.surfaceDark : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(children: children),
+        ),
       );
 }

@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -23,7 +24,7 @@ class PlayerDetailScreen extends StatelessWidget {
     if (player.photoUrl != null && player.photoUrl!.isNotEmpty) {
       img = player.photoUrl!.startsWith('assets/')
           ? AssetImage(player.photoUrl!)
-          : CachedNetworkImageProvider(player.photoUrl!) as ImageProvider;
+          : ImageHelper.getProvider(player.photoUrl!) as ImageProvider;
     }
 
     return Scaffold(

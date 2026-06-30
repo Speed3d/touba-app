@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../app/theme/app_colors.dart';
 
 /// 📝 HINT AR: عنصر واحد في شريط التنقّل العائم.
 class ToobaNavItem {
@@ -9,9 +10,8 @@ class ToobaNavItem {
   const ToobaNavItem(this.icon, this.activeIcon, this.label);
 }
 
-/// 📝 HINT AR: شريط تنقّل سفلي «عائم» بنمط طوبة (مستوحى من حرفي العراق، لكن بثيم
-/// طوبة وبلا اعتماديات زجاجية). العنصر المُحدَّد يتمدّد ويُظهر تسميته بحركة
-/// انزلاقية، ويدعم شارات (مثل عدّاد الرسائل غير المقروءة على «المحادثات»).
+/// 📝 HINT AR: شريط تنقّل سفلي «عائم» بنمط طوبة المحدث. العنصر المُحدَّد يتمدّد
+/// ويُظهر تسميته بحركة انزلاقية، ويدعم شارات (مثل عدّاد الرسائل).
 class ToobaBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -36,27 +36,31 @@ class ToobaBottomNav extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.only(
-        left: 16,
-        right: 16,
+        left: 20,
+        right: 20,
         top: 6,
-        bottom: bottomPad > 0 ? bottomPad + 6 : 16,
+        bottom: bottomPad > 0 ? bottomPad + 6 : 24,
       ),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withValues(alpha: 0.45)
-                : Colors.black.withValues(alpha: 0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-            spreadRadius: 1,
+                ? Colors.black.withValues(alpha: 0.6)
+                : Colors.black.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+            spreadRadius: 0,
           ),
         ],
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.transparent,
+          width: 1,
+        ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(
@@ -71,7 +75,7 @@ class ToobaBottomNav extends StatelessWidget {
   Widget _item(BuildContext context, int index, bool isDark, ThemeData theme) {
     final item = items[index];
     final selected = index == currentIndex;
-    final active = theme.colorScheme.primary;
+    final active = AppColors.primary;
     final inactive = isDark ? Colors.white60 : Colors.black54;
     final count = badges[index] ?? 0;
 
@@ -84,14 +88,14 @@ class ToobaBottomNav extends StatelessWidget {
         }
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeOutQuart,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
         padding:
-            EdgeInsets.symmetric(horizontal: selected ? 14 : 10, vertical: 8),
+            EdgeInsets.symmetric(horizontal: selected ? 16 : 12, vertical: 10),
         decoration: BoxDecoration(
           color:
-              selected ? active.withValues(alpha: 0.14) : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
+              selected ? active.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -106,34 +110,34 @@ class ToobaBottomNav extends StatelessWidget {
                     top: -5,
                     right: -7,
                     child: Container(
-                      padding: const EdgeInsets.all(3),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Colors.red,
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: isDark ? Colors.grey[900]! : Colors.white,
+                            color: isDark ? AppColors.surfaceDark : Colors.white,
                             width: 1.5),
                       ),
                       constraints:
-                          const BoxConstraints(minWidth: 16, minHeight: 16),
+                          const BoxConstraints(minWidth: 18, minHeight: 18),
                       child: Text(count > 9 ? '9+' : '$count',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 8,
+                              fontSize: 9,
                               fontWeight: FontWeight.bold)),
                     ),
                   ),
               ],
             ),
-            // النص يظهر فقط للعنصر المُحدَّد (بحركة انزلاقية).
+            // 📝 HINT AR: النص يظهر فقط للعنصر المُحدَّد (بحركة انزلاقية).
             if (selected) ...[
               const SizedBox(width: 8),
               Text(item.label,
                   style: TextStyle(
                       color: active,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12)),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13)),
             ],
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../cubits/auth/auth_cubit.dart';
@@ -109,17 +110,22 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _bubble(ChatMessageModel m) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     if (m.isSystem) {
       return Center(
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 6),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(12)),
+              color: isDark ? AppColors.surfaceDark : Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.transparent),
+          ),
           child: Text(m.content,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+              style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[400] : Colors.grey[700])),
         ),
       );
     }
@@ -129,14 +135,20 @@ class _ChatScreenState extends State<ChatScreen> {
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
           color: mine
-              ? Theme.of(context).colorScheme.primary
-              : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(14),
+              ? const Color(0xFF00D166).withValues(alpha: isDark ? 0.2 : 1)
+              : (isDark ? AppColors.surfaceDark : Colors.grey.shade200),
+          border: mine
+              ? Border.all(color: isDark ? const Color(0xFF00D166).withValues(alpha: 0.5) : Colors.transparent)
+              : Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.transparent),
+          borderRadius: BorderRadius.circular(16).copyWith(
+            bottomRight: mine ? const Radius.circular(0) : const Radius.circular(16),
+            bottomLeft: !mine ? const Radius.circular(0) : const Radius.circular(16),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,14 +158,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey[700])),
+                      color: isDark ? Colors.grey[400] : Colors.grey[700])),
             Text(m.content,
-                style: TextStyle(color: mine ? Colors.white : Colors.black87)),
-            const SizedBox(height: 2),
+                style: TextStyle(color: mine ? (isDark ? const Color(0xFF00D166) : Colors.white) : (isDark ? Colors.white : Colors.black87))),
+            const SizedBox(height: 4),
             Text(time,
                 style: TextStyle(
                     fontSize: 9,
-                    color: mine ? Colors.white70 : Colors.grey)),
+                    color: mine ? (isDark ? const Color(0xFF00D166).withValues(alpha: 0.7) : Colors.white70) : (isDark ? Colors.grey[500] : Colors.grey))),
           ],
         ),
       ),
@@ -161,6 +173,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _inputBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -176,6 +189,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 decoration: InputDecoration(
                   hintText: 'اكتب رسالة…',
                   filled: true,
+                  fillColor: isDark ? AppColors.surfaceDark : Colors.grey[100],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,

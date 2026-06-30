@@ -1,4 +1,6 @@
+import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -118,11 +120,16 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
 
   Widget _openCard(ChallengeModel c) {
     final applied = _uid != null && c.applicantCaptainIds.contains(_uid);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -218,11 +225,16 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
   }
 
   Widget _mySentCard(ChallengeModel c) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -307,11 +319,16 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
 
   Widget _appliedCard(ChallengeModel c) {
     final iAmMatched = c.isMatched && c.matchedCaptainId == _uid;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             _logo(c.requesterLogo, 18),
@@ -626,7 +643,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
         radius: radius,
         backgroundColor: Colors.grey.shade200,
         backgroundImage: (url != null && url.isNotEmpty)
-            ? CachedNetworkImageProvider(url)
+            ? ImageHelper.getProvider(url)
             : null,
         child: (url == null || url.isEmpty)
             ? Icon(Icons.shield, size: radius, color: Colors.grey.shade400)

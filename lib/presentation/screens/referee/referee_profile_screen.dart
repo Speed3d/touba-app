@@ -1,3 +1,4 @@
+import '../../../core/utils/image_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
                     radius: 48,
                     backgroundColor: Colors.grey.shade200,
                     backgroundImage: (photo != null && photo.isNotEmpty)
-                        ? CachedNetworkImageProvider(photo)
+                        ? ImageHelper.getProvider(photo)
                         : null,
                     child: (photo == null || photo.isEmpty)
                         ? Icon(Icons.sports, size: 48, color: Colors.grey[500])
