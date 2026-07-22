@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'legal_scaffold.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: سياسة الخصوصية — مطلوبة لمتجري Apple وGoogle. النص مسوّدة
 /// واضحة تعكس بيانات طوبة الفعلية؛ راجعها قانونياً قبل النشر النهائي.
@@ -8,62 +9,42 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const LegalScaffold(
-      title: 'سياسة الخصوصية',
+    return LegalScaffold(
+      title: AppLocalizations.of(context)!.privacyPolicyTitle,
       lastUpdated: '17 حزيران 2026',
-      intro:
-          'تحترم منصة «طوبة» خصوصيتك. توضّح هذه السياسة أنواع البيانات التي '
-          'نجمعها، وكيف نستخدمها ونحميها عند استخدامك للتطبيق. باستخدامك «طوبة» '
-          'فإنك توافق على ما ورد في هذه السياسة.',
+      intro: AppLocalizations.of(context)!.privacyPolicyIntro,
       sections: [
         LegalSection(
-          '1. البيانات التي نجمعها',
-          'عند إنشاء حساب نجمع: الاسم، البريد الإلكتروني، رقم الهاتف، وصورة '
-              'الملف الشخصي (اختيارية). عند ارتباطك بسجل لاعب أو فريق قد تُحفظ '
-              'بياناتك الكروية (المركز، الرقم، الفريق) وإحصائياتك (الأهداف، '
-              'الصناعة، البطاقات) التي يُنشئها النظام من نتائج المباريات. كما '
-              'نجمع تلقائياً بيانات استخدام وتحليلات وتقارير أعطال عبر خدمات '
-              'Google Firebase لتحسين أداء التطبيق.',
+          AppLocalizations.of(context)!.ppSec1Title,
+          AppLocalizations.of(context)!.ppSec1Body,
         ),
         LegalSection(
-          '2. كيف نستخدم بياناتك',
-          'نستخدم بياناتك لتشغيل حسابك، وإدارة الفرق والبطولات والمباريات، '
-              'وعرض بطاقتك وإحصائياتك، والتواصل معك عند الحاجة، وإرسال إشعارات '
-              'متعلقة بنشاطك (مثل قبول طلب انضمام أو نتيجة مباراة)، وتحسين '
-              'الخدمة وحمايتها من إساءة الاستخدام.',
+          AppLocalizations.of(context)!.ppSec2Title,
+          AppLocalizations.of(context)!.ppSec2Body,
         ),
         LegalSection(
-          '3. مشاركة البيانات',
-          'لا نبيع بياناتك الشخصية لأي طرف. تُعالَج بعض البيانات لدى مزوّدي '
-              'الخدمة (Google Firebase للاستضافة والمصادقة والتحليلات). تظهر '
-              'بعض المعلومات علناً داخل التطبيق بطبيعتها (اسم الفريق، اسم '
-              'اللاعب، الإحصائيات، الترتيب). لا يُعرض رقم هاتف مسؤول الفريق علناً.',
+          AppLocalizations.of(context)!.ppSec3Title,
+          AppLocalizations.of(context)!.ppSec3Body,
         ),
         LegalSection(
-          '4. حقوقك والتحكم ببياناتك',
-          'يمكنك تعديل بيانات ملفك الشخصي في أي وقت من شاشة «تعديل الملف». '
-              'كما يمكنك حذف حسابك نهائياً من إعدادات الحساب؛ عند الحذف تُزال '
-              'بياناتك الشخصية المرتبطة بالحساب وفق ما يسمح به القانون.',
+          AppLocalizations.of(context)!.ppSec4Title,
+          AppLocalizations.of(context)!.ppSec4Body,
         ),
         LegalSection(
-          '5. أمن البيانات والاحتفاظ بها',
-          'نتّخذ إجراءات تقنية لحماية بياناتك (قواعد أمان على الخادم، التحقق من '
-              'سلامة الطلبات عبر App Check). نحتفظ ببياناتك طالما حسابك فعّال أو '
-              'بالقدر اللازم لتقديم الخدمة والالتزام بالأنظمة.',
+          AppLocalizations.of(context)!.ppSec5Title,
+          AppLocalizations.of(context)!.ppSec5Body,
         ),
         LegalSection(
-          '6. الأطفال',
-          'التطبيق غير موجّه للأطفال دون 13 عاماً، ولا نجمع بياناتهم عن قصد. '
-              'إن تبيّن خلاف ذلك، نحذف البيانات فور علمنا.',
+          AppLocalizations.of(context)!.ppSec6Title,
+          AppLocalizations.of(context)!.ppSec6Body,
         ),
         LegalSection(
-          '7. تغييرات على هذه السياسة',
-          'قد نحدّث هذه السياسة من حين لآخر، وسننشر النسخة المحدّثة داخل '
-              'التطبيق مع تحديث تاريخ «آخر تحديث» أعلاه.',
+          AppLocalizations.of(context)!.ppSec7Title,
+          AppLocalizations.of(context)!.ppSec7Body,
         ),
         LegalSection(
-          '8. التواصل',
-          'لأي استفسار حول الخصوصية، تواصل معنا عبر: senanxsh@gmail.com',
+          AppLocalizations.of(context)!.ppSec8Title,
+          AppLocalizations.of(context)!.ppSec8Body,
         ),
       ],
     );

@@ -9,6 +9,7 @@ import '../teams/teams_screen.dart';
 import '../chat/chats_list_screen.dart';
 import '../settings/settings_screen.dart';
 import '../../widgets/core/decorated_background.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: الشاشة الجذر بشريط تنقّل سفلي «عائم» بـ4 أزرار:
 /// الرئيسية / الفريق / المحادثات / الإعدادات.
@@ -32,12 +33,15 @@ class _MainScreenState extends State<MainScreen> {
     SettingsScreen(),
   ];
 
-  static const List<ToobaNavItem> _items = [
-    ToobaNavItem(Icons.home_outlined, Icons.home, 'الرئيسية'),
-    ToobaNavItem(Icons.shield_outlined, Icons.shield, 'الفريق'),
-    ToobaNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 'المحادثات'),
-    ToobaNavItem(Icons.settings_outlined, Icons.settings, 'الإعدادات'),
-  ];
+  List<ToobaNavItem> _getItems(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [
+      ToobaNavItem(Icons.home_outlined, Icons.home, loc.navHome),
+      ToobaNavItem(Icons.shield_outlined, Icons.shield, loc.navTeam),
+      ToobaNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, loc.navChats),
+      ToobaNavItem(Icons.settings_outlined, Icons.settings, loc.settings),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
     return ToobaBottomNav(
       currentIndex: _currentIndex,
       onTap: (i) => setState(() => _currentIndex = i),
-      items: _items,
+      items: _getItems(context),
       badges: badges,
     );
   }

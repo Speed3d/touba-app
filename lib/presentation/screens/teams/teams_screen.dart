@@ -2,7 +2,7 @@ import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import '../players/player_detail_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
@@ -19,6 +19,7 @@ import 'create_team_screen.dart';
 import 'team_details_screen.dart';
 import '../challenges/challenges_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة الفرق — تبويبان: «فريقي» (فريق المستخدم) و«الفرق الشعبية»
 /// (بقية الفرق). الزائر يرى «الفرق الشعبية» فقط. زر «تأسيس فريق» يظهر فقط
@@ -95,8 +96,8 @@ class _TeamsScreenState extends State<TeamsScreen> {
     final isVisitor = user == null;
 
     final tabs = <Tab>[
-      if (!isVisitor) const Tab(text: 'فريقي'),
-      const Tab(text: 'الفرق الشعبية'),
+      if (!isVisitor) Tab(text: AppLocalizations.of(context)!.myTeamTab),
+      Tab(text: AppLocalizations.of(context)!.popularTeamsTab),
     ];
 
     return DefaultTabController(
@@ -104,7 +105,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          title: const Text('الفرق'),
+          title: Text(AppLocalizations.of(context)!.teamsTitle),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -138,7 +139,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                       });
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('تأسيس فريق'),
+                    label: Text(AppLocalizations.of(context)!.createTeam),
                   );
                 },
               )
@@ -223,7 +224,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                 const Center(child: Text('⚽', style: TextStyle(fontSize: 40))),
                 Positioned(
                   bottom: 14,
-                  child: Text('ملعبك ينتظرك',
+                  child: Text(AppLocalizations.of(context)!.yourPitchAwaits,
                       style: TextStyle(
                           color: isDark ? Colors.white60 : Colors.black54,
                           fontSize: 12,
@@ -233,7 +234,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          Text('ليس لديك فريق بعد؟',
+          Text(AppLocalizations.of(context)!.dontHaveTeamYet,
               style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
@@ -241,8 +242,8 @@ class _TeamsScreenState extends State<TeamsScreen> {
           const SizedBox(height: 8),
           Text(
               user.role == 'captain'
-                  ? 'أسّس فريقك وانضم للبطولات المحلية\nفي منطقتك الآن'
-                  : 'انضم إلى فريق موجود وانطلق نحو\nالبطولات المحلية',
+                  ? AppLocalizations.of(context)!.createTeamSubtitleCaptain
+                  : AppLocalizations.of(context)!.joinExistingTeamSubtitle,
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 14,
@@ -256,6 +257,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                   context,
                   ToobaRoute.to(const CreateTeamScreen()),
                 ).then((_) {
+                  if (!mounted) return;
                   _refreshMyTeam();
                   context.read<TeamCubit>().fetchTeams();
                 });
@@ -277,8 +279,8 @@ class _TeamsScreenState extends State<TeamsScreen> {
                   ],
                 ),
                 alignment: Alignment.center,
-                child: const Text('⚽ أسّس فريقك الآن',
-                    style: TextStyle(
+                child: Text(AppLocalizations.of(context)!.createYourTeamNow,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold)),
@@ -300,7 +302,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                     color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[300]!),
               ),
               alignment: Alignment.center,
-              child: Text('انضم إلى فريق موجود',
+              child: Text(AppLocalizations.of(context)!.joinExistingTeamBtn,
                   style: TextStyle(
                       color: isDark ? Colors.white : Colors.black87,
                       fontSize: 16,
@@ -380,7 +382,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                   const SizedBox(width: 4),
                   Text(
                     team.area != null && team.area!.isNotEmpty
-                        ? '${team.city} • ${team.area}'
+                        ? AppLocalizations.of(context)!.cityAndAreaX(team.city, team.area!)
                         : team.city,
                     style: TextStyle(
                         fontSize: 13,
@@ -393,13 +395,13 @@ class _TeamsScreenState extends State<TeamsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _statBadge('تقييم', team.ratingPoints.toString(), true),
+                  _statBadge(AppLocalizations.of(context)!.rating, team.ratingPoints.toString(), true),
                   const SizedBox(width: 12),
-                  _statBadge('لعب', team.stats.played.toString(), false),
+                  _statBadge(AppLocalizations.of(context)!.playedCount, team.stats.played.toString(), false),
                   const SizedBox(width: 12),
-                  _statBadge('فاز', team.stats.wins.toString(), false),
+                  _statBadge(AppLocalizations.of(context)!.winsCount, team.stats.wins.toString(), false),
                   const SizedBox(width: 12),
-                  _statBadge('بطولات', team.badges.length.toString(), false),
+                  _statBadge(AppLocalizations.of(context)!.tournamentsCount, team.badges.length.toString(), false),
                 ],
               ),
             ],
@@ -431,7 +433,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      isCaptain ? 'إدارة الفريق' : 'عرض الفريق',
+                      isCaptain ? AppLocalizations.of(context)!.manageTeam : AppLocalizations.of(context)!.viewTeam,
                       style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.bold,
@@ -454,7 +456,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        'التحديات',
+                        AppLocalizations.of(context)!.challengesTab,
                         style: TextStyle(
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.bold,
@@ -475,11 +477,11 @@ class _TeamsScreenState extends State<TeamsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('التشكيلة',
+                Text(AppLocalizations.of(context)!.roster,
                     style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white : Colors.black87)),
-                Text('${team.playerCount} لاعب',
+                Text(AppLocalizations.of(context)!.playerCountX(team.playerCount.toString()),
                     style: TextStyle(
                         fontSize: 13,
                         color: isDark ? Colors.white54 : Colors.black54)),
@@ -506,7 +508,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
                   }).catchError((_) {
                       if (!context.mounted) return;
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('اللاعب غير موجود')));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.playerNotFound)));
                   });
                 },
                 child: Container(
@@ -614,26 +616,26 @@ class _TeamsScreenState extends State<TeamsScreen> {
         final r = snap.data;
         if (r == null) return const SizedBox.shrink();
         if (r.status == 'pending') {
-          return _statusBox('طلب خروجك قيد مراجعة الكابتن', Icons.hourglass_top,
+          return _statusBox(AppLocalizations.of(context)!.yourExitRequestPending, Icons.hourglass_top,
               Colors.blue);
         }
         if (r.status == 'rejected' && r.escalated) {
-          return _statusBox('طلبك مُصعّد للإدارة — بانتظار القرار', Icons.gavel,
+          return _statusBox(AppLocalizations.of(context)!.yourRequestEscalated, Icons.gavel,
               Colors.purple);
         }
         if (r.status == 'rejected') {
           return Column(
             children: [
               _statusBox(
-                  'رفض كابتنك طلب الخروج', Icons.cancel, Colors.red),
+                  AppLocalizations.of(context)!.captainRejectedYourRequest, Icons.cancel, Colors.red),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () => _escalate(r.id),
                   icon: const Icon(Icons.gavel, color: Colors.purple),
-                  label: const Text('تصعيد الطلب للإدارة',
-                      style: TextStyle(color: Colors.purple)),
+                  label: Text(AppLocalizations.of(context)!.escalateRequestToAdmin,
+                      style: const TextStyle(color: Colors.purple)),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     side: const BorderSide(color: Colors.purple),
@@ -681,28 +683,14 @@ class _TeamsScreenState extends State<TeamsScreen> {
     final messenger = ScaffoldMessenger.of(context);
     try {
       await context.read<TeamRepository>().escalateReleaseRequest(releaseId);
+      if (!mounted) return;
       messenger.showSnackBar(
-          ToobaSnackBar.buildSuccess('تم تصعيد طلبك للإدارة'));
+          ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.requestEscalatedSuccess));
       _refreshMyTeam();
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر التصعيد'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToEscalate));
     }
-  }
-
-  Widget _miniStat(String label, String value) {
-    final theme = Theme.of(context);
-    return Column(
-      children: [
-        Text(value,
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary)),
-        const SizedBox(height: 2),
-        Text(label,
-            style: const TextStyle(fontSize: 12, color: Colors.grey)),
-      ],
-    );
   }
 
   // ── تبويب «الفرق الشعبية» ──────────────────────────────────────────────
@@ -717,7 +705,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
             onChanged: (val) =>
                 setState(() => _searchQuery = val.toLowerCase()),
             decoration: InputDecoration(
-              hintText: 'ابحث عن فريق...',
+              hintText: AppLocalizations.of(context)!.searchForTeam,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -738,9 +726,9 @@ class _TeamsScreenState extends State<TeamsScreen> {
               if (state is TeamError) {
                 return ToobaEmptyState(
                   icon: Icons.wifi_off_rounded,
-                  title: 'تعذّر تحميل الفرق',
+                  title: AppLocalizations.of(context)!.failedToLoadTeams,
                   subtitle: state.message,
-                  actionLabel: 'إعادة المحاولة',
+                  actionLabel: AppLocalizations.of(context)!.retry,
                   onAction: () => context.read<TeamCubit>().fetchTeams(),
                 );
               }
@@ -751,17 +739,17 @@ class _TeamsScreenState extends State<TeamsScreen> {
                 }).toList();
 
                 if (state.teams.isEmpty) {
-                  return const ToobaEmptyState(
+                  return ToobaEmptyState(
                     icon: Icons.shield_outlined,
-                    title: 'لا توجد فرق مسجّلة بعد',
-                    subtitle: 'لم يُسجَّل أي فريق في المنصة بعد',
+                    title: AppLocalizations.of(context)!.noTeamsRegisteredYet,
+                    subtitle: AppLocalizations.of(context)!.noTeamsRegisteredInPlatform,
                   );
                 }
                 if (filtered.isEmpty) {
                   return ToobaEmptyState(
                     icon: Icons.search_off_rounded,
-                    title: 'لا توجد نتائج',
-                    subtitle: 'لا يوجد فريق يطابق "$_searchQuery"',
+                    title: AppLocalizations.of(context)!.noResultsFound,
+                    subtitle: AppLocalizations.of(context)!.noTeamMatchesX(_searchQuery),
                   );
                 }
 
@@ -786,16 +774,16 @@ class _TeamsScreenState extends State<TeamsScreen> {
                     padding: const EdgeInsets.all(16.0),
                     children: [
                       if (showMine) ...[
-                        _sectionLabel('فريقي'),
+                        _sectionLabel(AppLocalizations.of(context)!.myTeamTab),
                         const SizedBox(height: 8),
                         _teamTile(myTeam, isDark, theme, isMine: true),
                         const SizedBox(height: 12),
-                        _sectionLabel('فرق أخرى'),
+                        _sectionLabel(AppLocalizations.of(context)!.otherTeamsLabel),
                         const SizedBox(height: 8),
                         if (others.isEmpty)
                           Padding(
                             padding: const EdgeInsets.all(16),
-                            child: Text('لا توجد فرق أخرى بعد',
+                            child: Text(AppLocalizations.of(context)!.noOtherTeamsYet,
                                 style: TextStyle(color: Colors.grey[600])),
                           ),
                       ],
@@ -862,7 +850,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
               Flexible(
                 child: Text(
                   team.area != null && team.area!.isNotEmpty
-                      ? '${team.city} • ${team.area}'
+                      ? AppLocalizations.of(context)!.cityAndAreaX(team.city, team.area!)
                       : team.city,
                   style: const TextStyle(fontSize: 12),
                   overflow: TextOverflow.ellipsis,
@@ -871,7 +859,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
               const SizedBox(width: 12),
               Icon(Icons.group, size: 14, color: theme.colorScheme.primary),
               const SizedBox(width: 4),
-              Text('${team.playerCount} لاعب',
+              Text(AppLocalizations.of(context)!.playerCountX(team.playerCount.toString()),
                   style: const TextStyle(fontSize: 12)),
             ],
           ),

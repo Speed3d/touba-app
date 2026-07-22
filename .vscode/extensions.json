@@ -1,0 +1,9 @@
+{
+  "//": "📝 إضافات موصى بها — يعرضها VS Code تلقائياً عند فتح المشروع على أي جهاز.",
+  "recommendations": [
+    "dart-code.dart-code",
+    "dart-code.flutter",
+    "toba.vsfire",
+    "esbenp.prettier-vscode"
+  ]
+}

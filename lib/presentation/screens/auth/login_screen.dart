@@ -7,6 +7,7 @@ import 'register_screen.dart';
 import 'forgot_password_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../widgets/core/decorated_background.dart';
+import '../../../l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'مرحباً بك في طوبة',
+                    AppLocalizations.of(context)!.welcomeToTooba,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'سجل دخولك للمتابعة',
+                    AppLocalizations.of(context)!.signInToContinue,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: isDark ? Colors.white70 : Colors.black54,
                     ),
@@ -85,15 +86,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      labelText: 'البريد الإلكتروني',
+                      labelText: AppLocalizations.of(context)!.email,
                       prefixIcon: const Icon(Icons.email_outlined),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال البريد الإلكتروني';
+                        return AppLocalizations.of(context)!.pleaseEnterEmail;
                       }
                       if (!value.contains('@')) {
-                        return 'البريد الإلكتروني غير صالح';
+                        return AppLocalizations.of(context)!.invalidEmail;
                       }
                       return null;
                     },
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      labelText: 'كلمة المرور',
+                      labelText: AppLocalizations.of(context)!.password,
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -128,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال كلمة المرور';
+                        return AppLocalizations.of(context)!.pleaseEnterPassword;
                       }
                       return null;
                     },
@@ -145,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ToobaRoute.to(const ForgotPasswordScreen()),
                         );
                       },
-                      child: const Text('نسيت كلمة المرور؟'),
+                      child: Text(AppLocalizations.of(context)!.forgotPasswordQ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -166,9 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           backgroundColor: theme.colorScheme.primary,
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text(
-                          'تسجيل الدخول',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.login,
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       );
@@ -181,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'ليس لديك حساب؟',
+                        AppLocalizations.of(context)!.dontHaveAccount,
                         style: TextStyle(
                           color: isDark ? Colors.white70 : Colors.black54,
                         ),
@@ -193,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ToobaRoute.to(const RegisterScreen()),
                           );
                         },
-                        child: const Text('إنشاء حساب جديد'),
+                        child: Text(AppLocalizations.of(context)!.createNewAccount),
                       ),
                     ],
                   ),
@@ -206,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.grey,
                     ),
-                    child: const Text('تخطي والمتابعة كزائر'),
+                    child: Text(AppLocalizations.of(context)!.continueAsVisitor),
                   ),
                 ],
               ),

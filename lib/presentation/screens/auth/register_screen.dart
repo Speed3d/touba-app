@@ -5,6 +5,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../widgets/core/decorated_background.dart';
+import '../../../l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -55,7 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
-          'إنشاء حساب جديد',
+          AppLocalizations.of(context)!.createNewAccount,
           style: TextStyle(
             color: appBarTextColor,
             fontWeight: FontWeight.bold,
@@ -92,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'انضم إلى مجتمع طوبة',
+                  AppLocalizations.of(context)!.joinToobaCommunity,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -101,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'سجل الآن وابدأ رحلتك الكروية معنا',
+                  AppLocalizations.of(context)!.registerNowStartJourney,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: isDark ? Colors.white70 : Colors.black54,
                   ),
@@ -112,13 +113,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // Name Field
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'الاسم الكامل',
-                    prefixIcon: Icon(Icons.person_outline),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.fullName,
+                    prefixIcon: const Icon(Icons.person_outline),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'يرجى إدخال اسمك';
+                      return AppLocalizations.of(context)!.pleaseEnterName;
                     }
                     return null;
                   },
@@ -129,16 +130,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'البريد الإلكتروني',
-                    prefixIcon: Icon(Icons.email_outlined),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.email,
+                    prefixIcon: const Icon(Icons.email_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'يرجى إدخال البريد الإلكتروني';
+                      return AppLocalizations.of(context)!.pleaseEnterEmail;
                     }
                     if (!value.contains('@')) {
-                      return 'البريد الإلكتروني غير صالح';
+                      return AppLocalizations.of(context)!.invalidEmail;
                     }
                     return null;
                   },
@@ -149,16 +150,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'رقم الهاتف',
-                    prefixIcon: Icon(Icons.phone_outlined),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.phone,
+                    prefixIcon: const Icon(Icons.phone_outlined),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'يرجى إدخال رقم الهاتف';
+                      return AppLocalizations.of(context)!.pleaseEnterPhone;
                     }
                     if (value.length < 10) {
-                      return 'رقم الهاتف قصير جداً';
+                      return AppLocalizations.of(context)!.phoneTooShort;
                     }
                     return null;
                   },
@@ -170,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'كلمة المرور',
+                    labelText: AppLocalizations.of(context)!.password,
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -187,10 +188,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'يرجى إدخال كلمة المرور';
+                      return AppLocalizations.of(context)!.pleaseEnterPassword;
                     }
                     if (value.length < 6) {
-                      return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                      return AppLocalizations.of(context)!.passwordTooShort;
                     }
                     return null;
                   },
@@ -199,7 +200,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // Role Selection
                 Text(
-                  'نوع الحساب:',
+                  AppLocalizations.of(context)!.accountType,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -219,20 +220,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: DropdownButton<String>(
                       value: _selectedRole,
                       isExpanded: true,
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: 'user',
-                          child: Text('لاعب (البحث عن فرق ومباريات)'),
+                          child: Text(AppLocalizations.of(context)!.rolePlayer),
                         ),
                         DropdownMenuItem(
                           value: 'captain',
-                          child: Text('كابتن (إنشاء وإدارة فريق)'),
+                          child: Text(AppLocalizations.of(context)!.roleCaptain),
                         ),
                         // 📝 HINT AR: حساب حكم — صفحة عامة + إدارة المباريات
                         // (يُمنح صفة الحكم تلقائياً عبر onUserCreated).
                         DropdownMenuItem(
                           value: 'referee',
-                          child: Text('حكم (إدارة المباريات)'),
+                          child: Text(AppLocalizations.of(context)!.roleReferee),
                         ),
                       ],
                       onChanged: (value) {
@@ -272,9 +273,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         foregroundColor: Colors.white,
                         elevation: 2,
                       ),
-                      child: const Text(
-                        'تسجيل الحساب',
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)!.registerAccount,
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     );

@@ -1,0 +1,4 @@
+[submodule "craftsman_backup"]
+	path = craftsman_backup
+	url = https://github.com/Speed3d/test_app.git
+	branch = main

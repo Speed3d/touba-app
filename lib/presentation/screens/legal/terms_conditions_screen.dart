@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'legal_scaffold.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: الشروط والأحكام — مطلوبة للمتجرين. مسوّدة واضحة تعكس طبيعة
 /// طوبة؛ راجعها قانونياً قبل النشر النهائي.
@@ -8,63 +9,46 @@ class TermsConditionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const LegalScaffold(
-      title: 'الشروط والأحكام',
+    return LegalScaffold(
+      title: AppLocalizations.of(context)!.termsConditionsTitle,
       lastUpdated: '17 حزيران 2026',
-      intro:
-          'مرحباً بك في «طوبة». باستخدامك للتطبيق فإنك توافق على هذه الشروط '
-          'والأحكام. يُرجى قراءتها بعناية.',
+      intro: AppLocalizations.of(context)!.termsIntro,
       sections: [
         LegalSection(
-          '1. طبيعة الخدمة',
-          '«طوبة» منصة لتنظيم كرة القدم الشعبية والهواة: إنشاء الفرق، إدارة '
-              'اللاعبين، تنظيم البطولات والمباريات، وعرض الترتيب والإحصائيات.',
+          AppLocalizations.of(context)!.tcSec1Title,
+          AppLocalizations.of(context)!.tcSec1Body,
         ),
         LegalSection(
-          '2. الحساب ومسؤوليتك',
-          'أنت مسؤول عن دقة بياناتك وعن الحفاظ على سرّية حسابك وكل ما يجري '
-              'تحته. يجب أن تكون البيانات التي تدخلها صحيحة وغير منتحلة لهوية '
-              'الغير.',
+          AppLocalizations.of(context)!.tcSec2Title,
+          AppLocalizations.of(context)!.tcSec2Body,
         ),
         LegalSection(
-          '3. الأدوار والصلاحيات',
-          'يدير الكابتن فريقه ولاعبيه. تُمنح صلاحيات تنظيم البطولات وتأكيد '
-              'النتائج من إدارة المنصة. تأكيد نتيجة المباراة من اختصاص المنظّم '
-              'حصراً، والإحصائيات يحسبها النظام تلقائياً ولا يجوز التلاعب بها.',
+          AppLocalizations.of(context)!.tcSec3Title,
+          AppLocalizations.of(context)!.tcSec3Body,
         ),
         LegalSection(
-          '4. الاستخدام المقبول',
-          'يُمنع استخدام التطبيق في أي نشاط مخالف للقانون، أو نشر محتوى مسيء '
-              'أو صور غير لائقة، أو انتحال صفة الغير، أو محاولة العبث ببيانات '
-              'الفرق والبطولات والإحصائيات. نحتفظ بحق إزالة المحتوى المخالف '
-              'وإيقاف الحسابات المخالفة.',
+          AppLocalizations.of(context)!.tcSec4Title,
+          AppLocalizations.of(context)!.tcSec4Body,
         ),
         LegalSection(
-          '5. المحتوى الذي ترفعه',
-          'تبقى ملكية المحتوى الذي ترفعه (كالصور) لك، وتمنح المنصة ترخيصاً '
-              'لعرضه داخل التطبيق لأغراض تشغيل الخدمة. أنت مسؤول عن امتلاكك '
-              'حقوق ما ترفعه.',
+          AppLocalizations.of(context)!.tcSec5Title,
+          AppLocalizations.of(context)!.tcSec5Body,
         ),
         LegalSection(
-          '6. البلاغات',
-          'يمكنك الإبلاغ عن أي محتوى أو سلوك مخالف عبر أدوات الإبلاغ في '
-              'التطبيق، وستراجعه الإدارة وتتخذ الإجراء المناسب.',
+          AppLocalizations.of(context)!.tcSec6Title,
+          AppLocalizations.of(context)!.tcSec6Body,
         ),
         LegalSection(
-          '7. إخلاء المسؤولية',
-          'تُقدَّم الخدمة «كما هي». نبذل جهداً لضمان دقة البيانات لكننا لا '
-              'نضمن خلوها من الأخطاء، ولا نتحمّل مسؤولية أي نزاعات تنشأ بين '
-              'الفرق أو اللاعبين خارج المنصة.',
+          AppLocalizations.of(context)!.tcSec7Title,
+          AppLocalizations.of(context)!.tcSec7Body,
         ),
         LegalSection(
-          '8. إنهاء الخدمة',
-          'يحق لك حذف حسابك في أي وقت. ويحق للإدارة إيقاف أو إنهاء الحسابات '
-              'المخالفة لهذه الشروط.',
+          AppLocalizations.of(context)!.tcSec8Title,
+          AppLocalizations.of(context)!.tcSec8Body,
         ),
         LegalSection(
-          '9. القانون المطبّق والتواصل',
-          'تخضع هذه الشروط لأنظمة جمهورية العراق. لأي استفسار: '
-              'senanxsh@gmail.com',
+          AppLocalizations.of(context)!.tcSec9Title,
+          AppLocalizations.of(context)!.tcSec9Body,
         ),
       ],
     );

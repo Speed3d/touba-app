@@ -1,0 +1,54 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "//": "📝 الافتراضي (F5): يشغّل على الجهاز المختار من شريط الأسفل (محاكي أندرويد/iPhone/جهاز حقيقي). إن كان الجهاز Chrome يُختار منفذ الويب تلقائياً حسب النظام — ماك 5001 / ويندوز 5000 — تفادياً لتصادم AirPlay على macOS. على المحاكي/الموبايل يُتجاهَل web-port فلا يؤثّر.",
+      "name": "طوبة (الجهاز المختار)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": ["--web-port=5001"],
+      "windows": {
+        "toolArgs": ["--web-port=5000"]
+      }
+    },
+    {
+      "//": "📝 وضع profile لقياس الأداء — نفس منطق المنفذ التلقائي.",
+      "name": "طوبة (profile) — الجهاز المختار",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "toolArgs": ["--web-port=5001"],
+      "windows": {
+        "toolArgs": ["--web-port=5000"]
+      }
+    },
+    {
+      "//": "📝 وضع release للتجربة النهائية قبل البناء.",
+      "name": "طوبة (release) — الجهاز المختار",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release"
+    },
+    {
+      "//": "⚠️ الويب مؤجّل: firebase_options.dart بلا فرع web — سيفشل الإقلاع حتى يُضاف. مُبقىً للاستخدام بعد تفعيل الويب. المنفذ 5001 لأن 5000 محجوز بـ AirPlay/Control Center على macOS.",
+      "name": "🌐 Web (Chrome :5001) — ماك [مؤجّل]",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "toolArgs": ["--web-port=5001"]
+    },
+    {
+      "//": "⚠️ الويب مؤجّل — انظر الملاحظة أعلاه. المنفذ 5000 على ويندوز.",
+      "name": "🌐 Web (Chrome :5000) — ويندوز [مؤجّل]",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "toolArgs": ["--web-port=5000"]
+    }
+  ]
+}

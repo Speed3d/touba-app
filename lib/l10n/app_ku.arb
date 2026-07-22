@@ -1,0 +1,1771 @@
+{
+  "appTitle": "تۆپ",
+
+  "@@locale": "ku",
+
+  "tournaments": "پاڵەوانێتییەکان",
+  "teams": "تیمەکان",
+  "matches": "یارییەکان",
+  "profile": "هەژمارەکەم",
+  "home": "سەرەکی",
+  "settings": "ڕێکخستنەکان",
+
+  "welcomeMessage": "بەخێربێیت بۆ پلاتفۆرمی تۆپ، گۆڕەپانی تۆپی پێی میللی",
+
+  "save": "پاشەکەوتکردن",
+  "cancel": "هەڵوەشاندنەوە",
+  "confirm": "دڵنیابوونەوە",
+  "close": "داخستن",
+  "retry": "هەوڵدانەوە",
+  "delete": "سڕینەوە",
+  "loading": "باردەکرێت...",
+  "noData": "داتا نییە",
+  "error": "هەڵەیەک ڕوویدا",
+  "search": "گەڕان",
+
+  "login": "چوونەژوورەوە",
+  "register": "دروستکردنی هەژمار",
+  "logout": "چوونەدەرەوە",
+  "email": "ئیمەیڵ",
+  "phone": "ژمارەی مۆبایل",
+  "password": "تێپەڕوشە",
+  "welcomeToTooba": "بەخێربێیت بۆ تۆپ",
+  "signInToContinue": "بچۆ ژوورەوە بۆ بەردەوامبوون",
+  "pleaseEnterEmail": "تکایە ئیمەیڵەکەت بنووسە",
+  "invalidEmail": "ئیمەیڵەکە نادروستە",
+  "pleaseEnterPassword": "تکایە تێپەڕوشە بنووسە",
+  "forgotPasswordQ": "تێپەڕوشەت بیرچووە؟",
+  "dontHaveAccount": "هەژمارت نییە؟",
+  "createNewAccount": "دروستکردنی هەژماری نوێ",
+  "continueAsVisitor": "بازدان و بەردەوامبوون وەک میوان",
+  "joinToobaCommunity": "پەیوەندی بە کۆمەڵگەی تۆپەوە بکە",
+  "registerNowStartJourney": "ئێستا خۆت تۆمار بکە و دەست بە گەشتە وەرزشییەکەت بکە",
+  "pleaseEnterName": "تکایە ناوەکەت بنووسە",
+  "pleaseEnterPhone": "تکایە ژمارەی مۆبایلەکەت بنووسە",
+  "phoneTooShort": "ژمارەی مۆبایلەکە کورتە",
+  "passwordTooShort": "تێپەڕوشە دەبێت بەلایەنی کەمەوە ٦ پیت بێت",
+  "accountType": "جۆری هەژمار:",
+  "rolePlayer": "یاریزان (گەڕان بۆ تیم و یارییەکان)",
+  "roleCaptain": "کاپتن (دروستکردن و بەڕێوەبردنی تیم)",
+  "roleReferee": "ناوبژیوان (بەڕێوەبردنی یارییەکان)",
+  "registerAccount": "تۆمارکردنی هەژمار",
+  "resetPasswordTitle": "گێڕانەوەی تێپەڕوشە",
+  "resetPasswordSent": "بەستەری گێڕانەوەی تێپەڕوشە نێردرا بۆ ئیمەیڵەکەت ئەگەر تۆمارکرابێت لای ئێمە.",
+  "enterEmailToReset": "ئیمەیڵە تۆمارکراوەکەت لە خوارەوە بنووسە و بەستەرێکت بۆ دەنێرین بۆ دروستکردنی تێپەڕوشەیەکی نوێ.",
+  "sendLink": "ناردنی بەستەر",
+  "havingTroubleResetting": "کێشەت هەیە لە گێڕانەوەی هەژمارەکەت؟",
+  "contactAdminComingSoon": "ئەم تایبەتمەندییە بەم زووانە چالاک دەکرێت بۆ پەیوەندیکردن بە بەڕێوەبەرایەتییەوە.",
+  "contactAdmin": "پەیوەندی بە بەڕێوەبەرەوە بکە",
+  "fullName": "ناوی تەواو",
+  "name": "ناو",
+  "editProfile": "دەستکاریکردنی پڕۆفایل",
+  "deleteAccount": "سڕینەوەی هەژمار",
+  "deleteAccountConfirm": "هەژمارەکەت و زانیارییە کەسییەکانت بە یەکجاری دەسڕێنەوە و ناکرێت بگەڕێندرێتەوە.",
+
+  "createTeam": "تیمەکەت دروست بکە",
+  "teamName": "ناوی تیم",
+  "myTeam": "تیمەکەم",
+  "joinTeam": "داواکاری پەیوەندیکردن",
+  "manageTeam": "بەڕێوەبردنی تیم",
+  "teamMembers": "پێکهاتە",
+  "noTeamsYet": "تا ئێستا هیچ تیمێک تۆمار نەکراوە",
+  "noTeamsHint": "تیمەکەت دروست بکە بە دوگمەی «دروستکردنی تیم» لە خوارەوە",
+  "noTeamsSearch": "هیچ تیمێک نییە بگونجێت لەگەڵ گەڕانەکەت",
+  "foundTeams": "تا ئێستا هیچ تیمێک لە پلاتفۆرمەکە تۆمار نەکراوە",
+
+  "createTournament": "دروستکردنی پاڵەوانێتی",
+  "tournamentName": "ناوی پاڵەوانێتی",
+  "tournamentType": "سیستەمی پاڵەوانێتی",
+  "league": "خول (League)",
+  "knockout": "دەرکردنی دۆڕاو (Knockout)",
+  "groups": "کۆمەڵەکان (Groups)",
+  "noTournamentsYet": "تا ئێستا پاڵەوانێتی نییە",
+  "noTournamentsHint": "یەکەم پاڵەوانێتی دروست بکە بە دوگمەی خوارەوە",
+  "ongoingTournaments": "پاڵەوانێتییە بەردەوامەکان",
+  "otherTournaments": "پاڵەوانێتییەکانی تر",
+  "ongoing": "بەردەوامە",
+
+  "addPlayer": "یاریزان زیاد بکە",
+  "playerCard": "کارتی یاریزان",
+  "position": "شوێن",
+  "goals": "گۆڵەکان",
+  "assists": "ئەسیستەکان",
+  "yellowCards": "کارتە زەردەکان",
+  "redCards": "کارتە سوورەکان",
+  "matchesPlayed": "یارییەکان",
+  "rating": "هەڵسەنگاندن",
+  "preferredFoot": "پێی پەسەندکراو",
+  "height": "باڵا",
+  "weight": "کێش",
+  "claimByCode": "بەستنەوەی هەژمار بە کۆد",
+
+  "enterScore": "ئەنجام تۆمار بکە",
+  "standings": "ڕیزبەندی",
+  "result": "ئەنجام",
+  "homeTeam": "تیمی خانەخوێ",
+  "awayTeam": "تیمی میوان",
+  "live": "ڕاستەوخۆ",
+  "upcoming": "داهاتوو",
+  "finished": "کۆتایی هات",
+  "round": "گەڕ",
+  "noLiveMatches": "لە ئێستادا یاری ڕاستەوخۆ نییە",
+  "noUpcomingMatches": "یاری داهاتوو نییە",
+  "noFinishedMatches": "یاری کۆتایی هاتوو نییە",
+
+  "notifications": "ئاگانامەکان",
+  "noNotifications": "ئاگانامە نییە",
+  "noNotificationsHint": "ئاگانامەکانی پاڵەوانێتی و تیمەکان لێرە پێت دەگات",
+  "markAllRead": "هەمووی وەک خوێندراوە نیشان بکە",
+
+  "submitReport": "ناردنی ڕاپۆرت",
+  "reportReason": "هۆکاری ڕاپۆرت",
+  "reportDescription": "وردەکاری زیاتر",
+  "offensiveContent": "ناوەڕۆکی نەشیاو",
+  "inappropriateBehavior": "ڕەفتاری نەشیاو",
+  "misleadingInfo": "زانیاری چەواشەکارانە",
+  "otherReason": "تر",
+  "reportSubmitted": "ڕاپۆرتەکە بە سەرکەوتوویی نێردرا",
+  "reportAboutPlayer": "ڕاپۆرت لەسەر ئەم یاریزانە",
+  "reportAboutTeam": "ڕاپۆرت لەسەر ئەم تیمە",
+
+  "darkMode": "دۆخی تاریک",
+  "language": "زمان",
+  "arabic": "العربية",
+  "english": "English",
+  "kurdish": "كوردی",
+  "appVersion": "وەشانی بەرنامە",
+  "privacyPolicy": "سیاسەتی تایبەتمەندی",
+  "termsConditions": "مەرج و ڕێنماییەکان",
+  "toubaFootball": "TOUBA FOOTBALL",
+  "iraqiAmateurFootballPlatform": "پلاتفۆرمی تۆپی پێی میللی عێراقی",
+  "mySubscription": "بەشداریکردنم",
+  "activeFreeTrial": "تاقیکردنەوەی بێبەرامبەر چالاکە",
+  "activeSubscriber": "بەشداربووی چالاک",
+  "notSubscribedActivate": "بەشدارنەبوو — چالاک بکە بۆ بەرەنگارییەکان",
+  "myRefereeMatches": "یارییەکانم وەک ناوبژیوان",
+  "assignedMatches": "یارییە دیاریکراوەکان",
+  "myRefereeProfile": "پەڕەی ناوبژیوانی من",
+  "publicProfileAndEdit": "پەڕەی گشتی + دەستکاریکردنی زانیارییەکان",
+  "appearance": "ڕووکار",
+  "aboutAppAndPolicies": "دەربارەی بەرنامە و سیاسەتەکان",
+  "account": "هەژمار",
+  "deleteAccountSub": "سڕینەوەی یەکجاری هەژمار و زانیارییەکانت",
+  "youAreVisitor": "تۆ وەک میوان تۆمارکراوی",
+  "generalError": "هەڵەیەکی چاوەڕواننەکراو ڕوویدا",
+  "toobaPlatform": "پلاتفۆرمی تۆپ ⚽",
+  "teamCaptain": "کاپتنی تیم",
+  "platformAdmin": "بەڕێوەبەری پلاتفۆرم",
+  "player": "یاریزان",
+  "captainOfTeam": "کاپتنی تیمی ",
+  "captainNoTeam": "کاپتن (بێ تیم)",
+  "playerWithTeam": "یاریزان لەگەڵ تیمی ",
+  "playerNoTeam": "یاریزان (بێ تیم)",
+  "profileAndPlayerDetails": "پرۆفایل و زانیاری یاریزان",
+  "viewAndEditData": "بینین و دەستکاریکردنی زانیارییەکانت",
+  "registeredAsVisitor": "تۆ وەک میوان تۆمارکراوی",
+  "loginOrRegister": "چوونەژوورەوە / دروستکردنی هەژمار",
+  "confirmLogoutMsg": "دڵنیای کە دەتەوێت بچیتە دەرەوە؟",
+  "deleteAccountPermanently": "سڕینەوەی هەژمار بە یەکجاری",
+  "deleteAccountPermanentlyMsg": "هەژمارەکەت و زانیارییە کەسییەکانت بە یەکجاری دەسڕێنەوە و ناکرێت بگەڕێندرێتەوە.\n\nتێبینی: ئەگەر کاپتنی تیمیت، سەرەتا تیمەکەت بسڕەوە یان کاپتنییەکە بگوازەوە.",
+  "deletingAccount": "هەژمار دەسڕێتەوە...",
+  "accountDeleted": "هەژمارەکەت سڕایەوە",
+  "permanentDelete": "سڕینەوەی یەکجاری",
+  "captainDeleteError": "تۆ کاپتنی تیمیت — سەرەتا تیمەکەت بسڕەوە یان کاپتنییەکە بگوازەوە.",
+  "deleteAccountError": "سڕینەوەی هەژمار سەرکەوتوو نەبوو — دواتر هەوڵ بدەرەوە.",
+  
+  "skip": "بازدان",
+  "formYourTeam": "تیمەکەت دروست بکە",
+  "formYourTeamDesc": "تیمەکەت تۆمار بکە، یاریزانەکانت زیاد بکە، و پێکهاتەکەت لە یەک شوێنەوە بەڕێوەببرە.",
+  "organizeTournaments": "پاڵەوانێتییەکانت ڕێکبخە",
+  "organizeTournamentsDesc": "خول و پاڵەوانێتی بە خشتەی ئۆتۆماتیکی و ڕیزبەندی ڕاستەوخۆ کە لەگەڵ هەر ئەنجامێک نوێ دەبێتەوە.",
+  "trackStats": "ئامارەکانت بپارێزە",
+  "trackStatsDesc": "گۆڵ، ئەسیست، کارت، و کارتی یاریزان بۆ هەر ئەندامێک — بە شێوەیەکی ئۆتۆماتیکی هەژمار دەکرێت.",
+  "startNow": "ئێستا دەست پێبکە",
+  "next": "دواتر",
+
+  "navHome": "سەرەکی",
+  "navTeam": "تیم",
+  "navChats": "نامەکان",
+
+  "visitor": "میوان",
+  "welcomeUser": "بەخێربێیت، {userName}",
+  "@welcomeUser": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "matches": "یارییەکان",
+  "tournaments": "پاڵەوانێتییەکان",
+  "news": "هەواڵەکان",
+  "myCard": "کارتەکەم",
+  "mustLoginFirst": "پێویستە سەرەتا بچیتە ژوورەوە",
+  "noPlayerCardCurrently": "لە ئێستادا کارتی یاریزانت نییە",
+  "playerNotFound": "یاریزان نەدۆزرایەوە",
+  "errorFetchingCard": "هەڵە لە وەرگرتنی کارتدا",
+  "urgent": "پەلە",
+  "ongoingTournaments": "🏆 پاڵەوانێتییە بەردەوامەکان",
+  "viewAll": "هەمووی ببینە ›",
+
+  "baghdadMajorTournament": "پاڵەوانێتی گەورەی بەغداد",
+  "localYouthLeague": "خولی ناوخۆیی لاوان",
+  "round3of4_8teams": "گەڕی ٣ لە ٤ · ٨ تیم",
+  "round1of6_6teams": "گەڕی ١ لە ٦ · ٦ تیم",
+  "ongoing": "بەردەوامە",
+  "comingSoon": "بەم زووانە",
+
+  "latestNews": "دوایین هەواڵەکان",
+  "noNewsCurrently": "لە ئێستادا هیچ هەواڵێک نییە",
+  "loginToLike": "بچۆ ژوورەوە بۆ ئەوەی بتوانیت لایک بکەیت",
+  "errorLiking": "هەڵەیەک ڕوویدا لە کاتی لایک کردن",
+  "viaToobaApp": "لە ڕێگەی ئەپی تۆپ پرۆ",
+  "featured": "تایبەت",
+  "justNow": "ئێستا",
+  "minutesAgo": "پێش {count} خولەک",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "oneHourAgo": "پێش ١ کاتژمێر",
+  "hoursAgo": "پێش {count} کاتژمێر",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "oneDayAgo": "پێش ١ ڕۆژ",
+  "daysAgo": "پێش {count} ڕۆژ",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "likeCount": "لایک ({count})",
+  "@likeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareCount": "هاوبەشکردن ({count})",
+  "@shareCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorOpeningLink": "هەڵە لە کردنەوەی بەستەرەکە",
+  "bannerDetails": "وردەکاری ڕیکلام",
+  "contactCall": "پەیوەندیکردن",
+  "contactWhatsapp": "واتساپ",
+  "contactFacebook": "فەیسبووک",
+  "contactInstagram": "ئینستاگرام",
+  "contactWebsite": "ماڵپەڕ",
+  "notifications": "ئاگادارکەرەوەکان",
+  "readAll": "خوێندنەوەی هەمووی",
+  "errorPrefix": "هەڵە: {message}",
+  "@errorPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noNotificationsYet": "هێشتا هیچ ئاگادارکەرەوەیەک نییە",
+  "challengeChat": "چاتی ڕکابەری",
+  "yesterday": "دوێنێ",
+
+  "chooseReadyAvatar": "هەڵبژاردنی ئاڤاتاری ئامادە",
+  "chooseFromGallery": "هەڵبژاردن لە گەلەری",
+  "takePhoto": "گرتنی وێنە",
+  "chooseReadyImage": "هەڵبژاردنی وێنەی ئامادە",
+  "chooseYourAvatar": "ئاڤاتارەکەت هەڵبژێرە",
+  "confirmImage": "پەسەندکردنی وێنە",
+
+  "footRight": "ڕاست",
+  "footLeft": "چەپ",
+  "footBoth": "هەردووکیان",
+  "failedToLoadPlayer": "نەتوانرا زانیاری یاریزان داببەزێنرێت",
+  "chooseBirthDate": "بەرواری لەدایکبوون هەڵبژێرە",
+  "detailsSaved": "زانیارییەکانت پاشەکەوت کران",
+  "failedToSaveDetails": "نەتوانرا زانیارییەکان پاشەکەوت بکرێن",
+  "playerDetails": "وردەکاری یاریزان",
+  "preferredFoot": "پێی دڵخواز",
+  "heightCm": "باڵا (سم)",
+  "weightKg": "کێش (کگم)",
+  "birthDate": "بەرواری لەدایکبوون",
+  "notSpecified": "دیارینەکراوە",
+  "ageYears": "تەمەن {age} ساڵ",
+  "@ageYears": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "bioTitle": "ژیاننامە",
+  "bioHint": "کورتەیەک لەسەر شێوازی یاریت بنووسە...",
+  "yourGallery": "گەلەرییەکەت ({count}/{max})",
+  "@yourGallery": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "saveDetails": "پاشەکەوتکردنی وردەکارییەکان",
+
+  "referee": "ناوبژیوان",
+  "refereeProfile": "پڕۆفایلی ناوبژیوان",
+  "editMyData": "دەستکاریکردنی زانیارییەکانم",
+  "matchesManaged": "یارییە بەڕێوەچووەکان",
+  "averageRating": "تێکڕای هەڵسەنگاندن",
+  "bioLabel": "ژیاننامە",
+  "matchesList": "یارییەکان",
+  "noMatchesManaged": "هێشتا هیچ یارییەکی بەڕێوەنەبردووە",
+  "matchLive": "ڕاستەوخۆ",
+  "city": "شار",
+  "bioExperience": "ژیاننامە/ئەزموون",
+  "cancel": "پاشگەزبوونەوە",
+  "save": "پاشەکەوتکردن",
+  "dataSavedSuccessfully": "زانیارییەکانت بە سەرکەوتوویی پاشەکەوت کران",
+  "failedToSave": "نەتوانرا پاشەکەوت بکرێت",
+
+  "matchesTab": "یارییەکان",
+  "tournamentsTab": "پاڵەوانێتییەکان",
+  "liveTab": "ڕاستەوخۆ",
+  "upcomingTab": "داهاتوو",
+  "finishedTab": "کۆتاییهاتوو",
+  "failedToLoadTournaments": "نەتوانرا پاڵەوانێتییەکان داببەزێنرێت",
+  "noTournaments": "هیچ پاڵەوانێتییەک نییە",
+  "noTournamentsFound": "لە ئێستادا هیچ پاڵەوانێتییەک نەدۆزرایەوە",
+  "ongoingTournaments": "پاڵەوانێتییە بەردەوامەکان",
+  "upcomingTournaments": "پاڵەوانێتییە داهاتووەکان",
+  "finishedTournaments": "پاڵەوانێتییە کۆتاییهاتووەکان",
+  "statusFinished": "کۆتاییهاتوو",
+  "statusOngoing": "بەردەوامە",
+  "teamsCountText": "{count} تیم",
+  "@teamsCountText": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchesFound": "هیچ یارییەک نییە",
+  "errorTitle": "هەڵە",
+
+  "matchDetails": "وردەکارییەکانی یاری",
+  "detailsTab": "وردەکارییەکان",
+  "formationsTab": "پێکهاتەی تیمەکان",
+  "roundX": "گەڕی {round}",
+  "@roundX": {
+    "placeholders": {
+      "round": {
+        "type": "String"
+      }
+    }
+  },
+  "refereeNameX": "ناوبژیوان: {name}",
+  "@refereeNameX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "halfX": "گ{half}",
+  "@halfX": {
+    "placeholders": {
+      "half": {
+        "type": "String"
+      }
+    }
+  },
+  "startMatch": "دەستپێکردنی یاری",
+  "liveMatchControl": "کۆنتڕۆڵکردنی یاری ڕاستەوخۆ",
+  "endHalfX": "کۆتاییهاتنی گێمی {half}",
+  "@endHalfX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "startHalfX": "دەستپێکردنی گێمی {half}",
+  "@startHalfX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "endAndConfirmResult": "کۆتاییهێنان و پشتڕاستکردنەوەی ئەنجام",
+  "confirmHalfResultX": "پشتڕاستکردنەوەی ئەنجامی گێمی {half}",
+  "@confirmHalfResultX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "halfResultText": "ئەنجامی گێمی {half}: {homeName} {homeScore} - {awayScore} {awayName}",
+  "@halfResultText": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      },
+      "homeName": {
+        "type": "String"
+      },
+      "homeScore": {
+        "type": "int"
+      },
+      "awayScore": {
+        "type": "int"
+      },
+      "awayName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirm": "پشتڕاستکردنەوە",
+  "matchInProgress": "یاری لە ئێستادا بەڕێوەدەچێت",
+  "matchNotStarted": "هێشتا یارییەکە دەستیپێنەکردووە",
+  "ratedThisReferee": "هەڵسەنگاندنم بۆ ئەم ناوبژیوانە کردووە",
+  "rateRefereePerformance": "هەڵسەنگاندنی ئاستی ناوبژیوان",
+  "loginToRate": "چوونەژوورەوە بۆ هەڵسەنگاندن",
+  "rateReferee": "هەڵسەنگاندنی ناوبژیوان",
+  "send": "ناردن",
+  "thanksForRating": "سوپاس بۆ هەڵسەنگاندنەکەت!",
+  "failedToSendRating": "نەتوانرا هەڵسەنگاندنەکە بنێردرێت",
+  "formationForThisMatch": "پێکهاتە بۆ ئەم یارییە",
+  "formationWithPlan": "پێکهاتە بۆ ئەم یارییە • پلانی {plan}",
+  "@formationWithPlan": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "currentTeamFormationNotSaved": "پێکهاتەی ئێستای تیم (هێشتا بۆ ئەم یارییە پاشەکەوت نەکراوە)",
+  "shareFormation": "هاوبەشیکردنی پێکهاتە",
+  "formationOfTeam": "پێکهاتەی {teamName}",
+  "@formationOfTeam": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "planX": "پلانی {plan}",
+  "@planX": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "noEventsRecorded": "هیچ ڕووداوێک بۆ ئەم یارییە تۆمار نەکراوە",
+  "versus": "دژی",
+  "actionFailed": "نەتوانرا کارەکە ئەنجام بدرێت",
+
+  "playerCard": "کارتی یاریزان",
+  "loginFirst": "پێویستە سەرەتا بچیتە ژوورەوە",
+  "reportThisPlayer": "ڕاپۆرتکردنی ئەم یاریزانە",
+  "verifiedAccount": "هەژماری پشتڕاستکراوە",
+  "technicalDetails": "وردەکارییە هونەرییەکان",
+  "preferredFoot": "قاچی دڵخواز",
+  "age": "تەمەن",
+  "height": "باڵا",
+  "weight": "کێش",
+  "status": "دۆخ",
+  "yearsOldX": "{years} ساڵ",
+  "@yearsOldX": {
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "cmX": "{cm} سم",
+  "@cmX": {
+    "placeholders": {
+      "cm": {
+        "type": "String"
+      }
+    }
+  },
+  "kgX": "{kg} کگم",
+  "@kgX": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "footLeft": "چەپ",
+  "footRight": "ڕاست",
+  "footBoth": "هەردووکیان",
+  "statusInjured": "پێکراو",
+  "statusSuspended": "سڕکراو",
+  "statusActive": "چالاک",
+  "gallery": "پێشانگا",
+
+  "myRefereeMatches": "یارییەکانم وەک ناوبژیوان",
+  "noMatchesAssignedToYou": "هیچ یارییەکت بۆ دیاری نەکراوە",
+  "tournamentOrganizerAssignsMatches": "ڕێکخەری پاڵەوانێتییەکە یارییەکانت بۆ دیاری دەکات",
+  "unspecifiedDate": "کاتی دیارینەکراو",
+  "tournamentScheme": "پلانى پاڵەوانێتی",
+  "standingsTable": "خشتەی ڕیزبەندی",
+  "knockoutTreeUpToCup": "درەختی دەرکردن تا جام",
+  "teamsRankingAndPoints": "ڕیزبەندی تیمەکان و خاڵەکان",
+  "liveMatchesTab": "ڕاستەوخۆ",
+  "upcomingMatchesTab": "داهاتوو",
+  "finishedMatchesTab": "کۆتاییهاتوو",
+  "failedToLoadMatches": "نەتوانرا یارییەکان باربکرێن",
+  "noLiveMatchesNow": "لە ئێستادا هیچ یارییەکی ڕاستەوخۆ نییە",
+  "noUpcomingMatches": "هیچ یارییەکی داهاتوو نییە",
+  "noFinishedMatches": "هیچ یارییەکی کۆتاییهاتوو نییە",
+  "today": "ئەمڕۆ",
+  "tomorrow": "سبەی",
+  "todayAtTime": "ئەمڕۆ {time}",
+  "@todayAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tomorrowAtTime": "سبەی {time}",
+  "@tomorrowAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+
+  "userNotRegistered": "بەکارهێنەر تۆمار نەکراوە",
+
+  "teamsTitle": "تیمەکان",
+  "myTeamTab": "تیمی من",
+  "popularTeamsTab": "تیمە میللییەکان",
+  "createTeam": "دروستکردنی تیم",
+  "yourPitchAwaits": "یاریگاکەت چاوەڕێتە",
+  "dontHaveTeamYet": "هێشتا تیمت نییە؟",
+  "createTeamSubtitleCaptain": "تیمەکەت دروست بکە و بەشداری پاڵەوانێتییە ناوخۆییەکان بکە\nلە ناوچەکەتدا",
+  "joinExistingTeamSubtitle": "پەیوەندی بکە بە تیمێکی هەبوو و دەستپێبکە بەرەو\nپاڵەوانێتییە ناوخۆییەکان",
+  "createYourTeamNow": "⚽ ئێستا تیمەکەت دروست بکە",
+  "joinExistingTeamBtn": "پەیوەندیکردن بە تیمێکی هەبوو",
+  "playerCountX": "{count} یاریزان",
+  "@playerCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "manageTeam": "بەڕێوەبردنی تیم",
+  "viewTeam": "بینینی تیم",
+  "challengesTab": "تەحەدییەکان",
+  "roster": "پێکهاتە",
+  "playerNotFound": "یاریزان نەدۆزرایەوە",
+  "yourExitRequestPending": "داواکاری دەرچوونەکەت چاوەڕێی پێداچوونەوەی کاپتنە",
+  "yourRequestEscalated": "داواکارییەکەت بەرزکرایەوە بۆ بەڕێوەبەر — چاوەڕێی بڕیار",
+  "captainRejectedYourRequest": "کاپتنەکەت داواکاری دەرچوونەکەی ڕەتکردەوە",
+  "escalateRequestToAdmin": "بەرزکردنەوەی داواکاری بۆ بەڕێوەبەر",
+  "requestEscalatedSuccess": "داواکارییەکەت بەرزکرایەوە بۆ بەڕێوەبەر",
+  "failedToEscalate": "نەتوانرا بەرزبکرێتەوە",
+  "searchForTeam": "گەڕان بۆ تیمێک...",
+  "failedToLoadTeams": "نەتوانرا تیمەکان باربکرێن",
+  "noTeamsRegisteredYet": "هێشتا هیچ تیمێک تۆمار نەکراوە",
+  "noTeamsRegisteredInPlatform": "هیچ تیمێک هێشتا لە پلاتفۆرمەکە تۆمار نەکراوە",
+  "noResultsFound": "هیچ ئەنجامێک نەدۆزرایەوە",
+  "noTeamMatchesX": "هیچ تیمێک هاوتا نییە لەگەڵ \"{query}\"",
+  "@noTeamMatchesX": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "otherTeamsLabel": "تیمەکانی تر",
+  "noOtherTeamsYet": "هیچ تیمێکی تر نییە",
+  "playedCount": "یاریکراو",
+  "winsCount": "بردنەوە",
+  "tournamentsCount": "پاڵەوانێتییەکان",
+  "cityAndAreaX": "{city} • {area}",
+  "@cityAndAreaX": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseSelectCity": "تکایە شارێک هەڵبژێرە",
+  "selectTwoTeamsAtLeast": "لایەنی کەم دوو تیم هەڵبژێرە",
+  "teamHasNotEnoughStarters": "تیمی «{team}» تەنها {starters} یاریزانی سەرەکی هەیە — پێویستە {format} بێت",
+  "@teamHasNotEnoughStarters": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "starters": {
+        "type": "String"
+      },
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToValidateTeamLineups": "نەتوانرا پێداچوونەوە بۆ پێکهاتەی تیمەکان بکرێت",
+  "chooseFromGallery": "هەڵبژاردن لە وێنەکان",
+  "takePhoto": "وێنەگرتن",
+  "tournamentStartDateHelp": "بەرواری دەستپێکردنی پاڵەوانێتی",
+  "tournamentCreatedAndScheduleGenerated": "پاڵەوانێتی دروستکرا و خشتەی یارییەکان ئامادەکرا!",
+  "createTournamentTitle": "دروستکردنی پاڵەوانێتی",
+  "tournamentImageOptional": "وێنەی پاڵەوانێتی (ئارەزوومەندانە)",
+  "tournamentNameInputLabel": "ناوی پاڵەوانێتی",
+  "pleaseEnterTournamentName": "تکایە ناوی پاڵەوانێتی بنووسە",
+  "tournamentStartDateOptional": "بەرواری دەستپێکردنی پاڵەوانێتی (ئارەزوومەندانە)",
+  "systemWillScheduleMatches": "سیستەم بەشێوەیەکی خۆکارانە خشتەی یارییەکان ڕێکدەخات",
+  "schedulingMode": "شێوازی خشتەدانان",
+  "intervalBetweenRounds": "ماوەی نێوان گەڕەکان",
+  "fixedDailyTime": "کاتی جێگیری ڕۆژانە",
+  "roundsIntervalLabel": "ماوەی نێوان گەڕەکان",
+  "daily": "ڕۆژانە",
+  "everyThreeDays": "هەر ٣ ڕۆژ جارێک",
+  "weekly": "هەفتانە",
+  "everyTwoWeeks": "هەر دوو هەفتە جارێک",
+  "matchesPerDay": "ژمارەی یارییەکان لە ڕۆژێکدا",
+  "oneMatch": "یەک یاری",
+  "twoMatches": "دوو یاری",
+  "threeMatches": "سێ یاری",
+  "intervalBetweenDailyMatches": "ماوەی نێوان یارییەکانی ڕۆژانە",
+  "oneHour": "کاتژمێرێک",
+  "oneAndHalfHours": "کاتژمێر و نیوێک",
+  "twoHours": "دوو کاتژمێر",
+  "halfDuration": "ماوەی گێم",
+  "thirtyMinutes": "٣٠ خولەک",
+  "fortyFiveMinutes": "٤٥ خولەک",
+  "halvesCount": "ژمارەی گێمەکان",
+  "oneHalf": "یەک گێم",
+  "twoHalves": "دوو گێم",
+  "cityLabel": "شار",
+  "tournamentSystem": "سیستەمی پاڵەوانێتی",
+  "leagueSystem": "خول (League)",
+  "knockoutSystem": "چوونەدەرەوەی دۆڕاو (Knockout)",
+  "groupsSystem": "کۆمەڵەکان (Groups)",
+  "startersCount": "ژمارەی یاریزانە سەرەکییەکان",
+  "sixASide": "شەش یاریزانی (٦ یاریزان)",
+  "eightASide": "هەشت یاریزانی (٨ یاریزان)",
+  "elevenASide": "١١ یاریزان",
+  "homeAndAwaySystem": "سیستەمی چوون و هاتن",
+  "homeAndAwaySubtitle": "هەر ڕووبەڕووبوونەوەیەک دوو جار یاری دەکرێت",
+  "freeTournamentOption": "پاڵەوانێتی بێبەرامبەر",
+  "freeTournamentSubtitle": "ئەدمین دەتوانێت هەر تیمێک زیاد بکات",
+  "paidTournamentSubtitle": "بە پارە — تیم دوای پێدانی رسومات زیاد دەکرێت",
+  "entryFeesOrContact": "رسومات/پەیوەندیکردن بۆ بەشداریکردن",
+  "knockoutGenerationMethod": "شێوازی دروستکردنی یارییە کۆتاییەکان",
+  "generateFullTree": "دروستکردنی تەواوی خشتەکە لە پێشدا (TBD)",
+  "generateRoundByRound": "دروستکردنی گەڕ بە گەڕ",
+  "groupsCountLabel": "ژمارەی کۆمەڵەکان",
+  "qualifiersPerGroup": "سەرکەوتووەکان لە هەر کۆمەڵەیەک",
+  "firstOnly": "تەنها یەکەم",
+  "firstAndSecond": "یەکەم و دووەم",
+  "firstSecondThird": "یەکەم و دووەم و سێیەم",
+  "tieBreakRules": "یەکلاکردنەوەی یەکسانبوون",
+  "extraTimeThenPenalties": "کاتی زیادکراو پاشان لێدانی سزا",
+  "straightToPenalties": "ڕاستەوخۆ لێدانی سزا",
+  "participatingTeamsCountX": "تیمە بەشداربووەکان ({count})",
+  "@participatingTeamsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "noTeamsYetCreateFirst": "هێشتا هیچ تیمێک نییە — سەرەتا لە بەشی تیمەکان تیمێک دروست بکە",
+  "cityAndCaptainX": "{city} • کاپتن: {name}",
+  "@cityAndCaptainX": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "refereesCountX": "ناوبژیوانان ({count})",
+  "@refereesCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "systemDistributesRefereesRandomly": "سیستەم بە هەڕەمەکی دابەشیان دەکات بەسەر یارییەکاندا بێ ئەوەی یەک ناوبژیوان لە هەمان کاتدا دوو یاری بەڕێوەببات.",
+  "noRefereesAdminMustGrant": "هیچ ناوبژیوانێک نییە — ئەدمین دەبێت ڕۆڵی ناوبژیوانی بدات بە بەکارهێنەران",
+  "createTournamentAndGenerateScheduleBtn": "دروستکردنی پاڵەوانێتی و خشتەی یارییەکان",
+
+  "selectAdvancedTeamNoDrawInKnockout": "تیمی سەرکەوتوو دیاری بکە (لە قۆناغی دەرکردن یەکسانبوون نییە)",
+  "enterResultTitle": "تۆمارکردنی ئەنجام",
+  "saveAndConfirmResultBtn": "پاشەکەوتکردن و پشتڕاستکردنەوەی ئەنجام",
+  "resultCalculatedAutomatically": "ئەنجامەکە بەپێی گۆڵەکان هەژمار دەکرێت. یاسا: دوو کارتی زەرد = کارتی سوور.",
+  "tieBreakKnockoutStage": "یەکلاکردنەوەی یەکسانبوون (قۆناغی دەرکردن)",
+  "tieBreakMethod": "شێوازی یەکلاکردنەوە:",
+  "penaltyShootoutOptional": "لێدانەکانی یەکلاکردنەوە (ئارەزوومەندانە):",
+  "advancedTeamToNextRound": "تیمی سەرکەوتوو بۆ قۆناغی داهاتوو:",
+  "noPlayersRegisteredInTeam": "هیچ یاریزانێک لەم تیمەدا تۆمار نەکراوە",
+  "goalEvent": "گۆڵ",
+  "assistEvent": "ئەسیست",
+  "yellowCardEvent": "زەرد",
+  "redCardEvent": "سوور",
+  "penaltyEvent": "لێدانی سزا",
+  "ownGoalEvent": "گۆڵ لەخۆ",
+  "injuryEvent": "پێکان",
+
+  "tournamentDetailsTitle": "وردەکارییەکانی پاڵەوانێتی",
+  "noMatches": "هیچ یارییەک نییە",
+
+  "selectPlayerForSlotX": "یاریزان بۆ پێگەی {slot} هەڵبژێرە",
+  "@selectPlayerForSlotX": {
+    "placeholders": {
+      "slot": { "type": "String" }
+    }
+  },
+  "removePlayerFromSlot": "یاریزان لەم پێگەیە لابدە",
+  "assignedToAnotherSlot": " • دیاریکراوە بۆ پێگەیەکی تر",
+  "chooseFormation": "پلان هەڵبژێرە (گۆڵپارێز-بەرگری-ناوەڕاست-هێرشبەر)",
+  "customFormation": "پلانی تایبەت",
+  "customFormationGoalieFixed": "پلانی تایبەت (گۆڵپارێز جێگیرە)",
+  "defenders": "بەرگریکاران",
+  "attackers": "هێرشبەران",
+  "midfieldAndTotalX": "ناوەڕاست: {mid}  •  کۆی گشتی: {total}",
+  "@midfieldAndTotalX": {
+    "placeholders": {
+      "mid": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "applyFormationBtn": "جێبەجێکردنی پلان",
+  "assignPlayerToEverySlot": "یاریزانێک بۆ هەموو پێگەکانی پێکهاتەکە دیاری بکە",
+  "failedToDetermineCaptain": "نەتوانرا کاپتن دیاری بکرێت",
+  "lineupSentForReview": "پێکهاتەکە نێردرا بۆ پێداچوونەوە لەلایەن ڕێکخەرەوە",
+  "failedToSendLineup": "ناردنی پێکهاتەکە سەرکەوتوو نەبوو",
+  "tournamentLineupTitle": "پێکهاتەی پاڵەوانێتی",
+  "formationLabel": "پلان",
+  "changeFormationBtn": "گۆڕین",
+  "tapCircleToAssignPlayer": "کرتە لە هەر بازنەیەکی یاریگاکە بکە بۆ دیاریکردنی یاریزانێک",
+  "subsCountX": "یەدەگ ({count})",
+  "@subsCountX": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "sendingBtn": "ناردن...",
+  "sendForReviewBtn": "ناردن بۆ پێداچوونەوە",
+  "lineupApproved": "پێکهاتەکەت پەسەند کرا",
+  "lineupRejectedWithNote": "پێکهاتەکەت ڕەتکرایەوە — {note}",
+  "@lineupRejectedWithNote": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "lineupRejected": "پێکهاتەکەت ڕەتکرایەوە",
+  "lineupPendingReview": "پێکهاتەکەت لەژێر پێداچوونەوەدایە",
+  "allPlayersAssignedAsStarters": "هەموو یاریزانەکان وەک سەرەکی دیاریکراون",
+
+  "failedToOpenPlayerProfile": "نەتوانرا پڕۆفایلی یاریزان بکرێتەوە",
+  "lineupApprovedMsg": "پێکهاتەکە پەسەند کرا",
+  "lineupRejectedMsg": "پێکهاتەکە ڕەتکرایەوە",
+  "failedToUpdateStatus": "نەتوانرا دۆخەکە نوێ بکرێتەوە",
+  "rejectionReasonOptional": "هۆکاری ڕەتکردنەوە (ئارەزوومەندانە)",
+  "rejectionReasonExample": "نموونە: یاریزانی سەرەکی کەمە",
+  "rejectLineupBtn": "ڕەتکردنەوەی پێکهاتەکە",
+  "reviewLineupsTitle": "پێداچوونەوە بە پێکهاتەکان",
+  "noLineupsSentYet": "هێشتا هیچ پێکهاتەیەک نەنێردراوە",
+  "lineupsWillAppearHereWhenSent": "پێکهاتەی کاپتنەکان لێرە دەردەکەون کاتێک دەنێردرێن",
+  "approvedStatus": "پەسەندکراو",
+  "rejectedStatus": "ڕەتکراوە",
+  "pendingReviewStatus": "لەژێر پێداچوونەوەدایە",
+  "formationX": "پلان: {formation}",
+  "@formationX": {
+    "placeholders": {
+      "formation": { "type": "String" }
+    }
+  },
+  "subsLabel": "یەدەگ:",
+  "yourNoteX": "تێبینییەکەت: {note}",
+  "@yourNoteX": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "acceptBtn": "پەسەندکردن",
+  "rejectBtn": "ڕەتکردنەوە",
+  "changeDecisionBtn": "گۆڕینی بڕیار",
+
+  "failedToUploadBannerImage": "نەتوانرا وێنەی بانەرەکە بەرزبکرێتەوە",
+  "failedToUploadSponsorLogo": "نەتوانرا لۆگۆی سپۆنسەر بەرزبکرێتەوە",
+  "sponsorNameTitle": "ناوی سپۆنسەر",
+  "sponsorNameExample": "نموونە: کۆمپانیای سپۆنسەر",
+  "addBtn": "زیادکردن",
+  "failedToSaveChanges": "نەتوانرا گۆڕانکارییەکان پاشەکەوت بکرێت",
+  "editRulesAndSponsorsTitle": "دەستکاریکردنی مەرج و سپۆنسەرەکان",
+  "rulesAndTermsLabel": "مەرج و یاساکان",
+  "writeRulesAndTermsHere": "مەرج و یاساکانی پاڵەوانێتی لێرە بنووسە...",
+  "adBannersSection": "بانەری ڕیکلامەکان",
+  "sponsorsSection": "سپۆنسەرەکان",
+  "imageLabel": "وێنە",
+  "sponsorLabel": "سپۆنسەر",
+
+  "standingsTableTitle": "خشتەی ڕیزبەندی",
+  "knockoutStageLabel": "قۆناغی کۆتایی",
+  "bracketNotGeneratedYet": "هێشتا درەختی یارییەکان دروستنەکراوە",
+
+  "reportSentSuccess": "ڕاپۆرتەکە نێردرا — تیمەکەمان بە زوویی پێداچوونەوەی بۆ دەکات",
+  "reportSentFailed": "نەتوانرا ڕاپۆرتەکە بنێردرێت — تکایە دووبارە هەوڵبدەرەوە",
+  "submitReportTitle": "ناردنی ڕاپۆرت",
+  "reportAboutTarget": "ڕاپۆرت دەربارەی {label}",
+  "@reportAboutTarget": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "reportReasonLabel": "هۆکاری ڕاپۆرت",
+  "problemDescriptionOptional": "وەسفکردنی کێشە (ئارەزوومەندانە)",
+  "explainProblemInDetailHint": "کێشەکە بە وردتر ڕوون بکەرەوە...",
+  "falseReportsWarning": "تێبینی: ڕاپۆرتی درۆ یان بێمانا ڕەنگە ببێتە هۆی سنووردارکردنی هەژمارەکەت.",
+  "submitReportBtn": "ناردنی ڕاپۆرت",
+
+  "offensiveContentLabel": "ناوەڕۆکی نەشیاو",
+  "inappropriateBehaviorLabel": "ڕەفتاری نەگۆنجاو",
+  "misleadingInfoLabel": "زانیاری چەواشەکار",
+  "otherReasonLabel": "تر",
+  "playerLabel": "یاریزان",
+  "teamLabel": "تیم",
+  "userLabel": "بەکارهێنەر",
+
+  "lastUpdatedDate": "دوایین نوێکردنەوە: {date}",
+  "@lastUpdatedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "toubaPlatform": "پلاتفۆرمی طوبة ⚽",
+
+  "privacyPolicyTitle": "سیاسەتی تایبەتمەندی",
+  "privacyPolicyIntro": "طوبة ڕێز لە تایبەتمەندییەکانت دەگرێت. ئەم سیاسەتە ئەو جۆرە زانیارییانە ڕوون دەکاتەوە کە کۆی دەکەینەوە، وە چۆن بەکاریان دەهێنین و دەیانپارێزین لە کاتی بەکارهێنانی ئەپەکە. بە بەکارهێنانی طوبة، تۆ ڕازی دەبیت بەم سیاسەتە.",
+  "ppSec1Title": "1. ئەو داتایانەی کۆی دەکەینەوە",
+  "ppSec1Body": "لە کاتی دروستکردنی هەژمار، کۆی دەکەینەوە: ناو، ئیمەیڵ، ژمارە تەلەفۆن، و وێنەی پرۆفایل (ئارەزوومەندانە). کاتێک بە یاریزانێک یان تیمێکەوە دەبەسترێیتەوە، زانیارییە وەرزشییەکانت (شوێن، ژمارە، تیم) و ئامارەکانت (گۆڵەکان، ئەسیست، کارتەکان) کە لەلایەن سیستمەکەوە لە ئەنجامی یارییەکان دروستکراون ڕەنگە پاشەکەوت بکرێن. هەروەها خۆکارانە زانیاری بەکارهێنان و شیکاری و ڕاپۆرتی کێشەکان لە ڕێگەی خزمەتگوزاری Google Firebase کۆدەکەینەوە بۆ باشترکردنی ئەپەکە.",
+  "ppSec2Title": "2. چۆن داتاکانت بەکاردەهێنین",
+  "ppSec2Body": "ئێمە داتاکانت بەکاردەهێنین بۆ بەڕێوەبردنی هەژمارەکەت، بەڕێوەبردنی تیمەکان، پاڵەوانێتییەکان و یارییەکان، پیشاندانی کارتەکەت و ئامارەکانت، پەیوەندیکردن پێتەوە لە کاتی پێویستدا، ناردنی ئاگادارکەرەوەی پەیوەندیدار بە چالاکییەکانت (وەک قبوڵکردنی داواکاری یان ئەنجامی یاری)، وە باشترکردن و پاراستنی خزمەتگوزارییەکە لە خراپ بەکارهێنان.",
+  "ppSec3Title": "3. هاوبەشکردنی داتا",
+  "ppSec3Body": "ئێمە زانیارییە کەسییەکانت نافرۆشین بە هیچ لایەنێک. هەندێک زانیاری پرۆسێس دەکرێن لەلایەن دابینکەرانی خزمەتگوزارییەوە (Google Firebase بۆ هۆستینگ، سەلماندن، و شیکاری). هەندێک زانیاری بە شێوەیەکی ئاسایی لە ناو ئەپەکەدا گشتین (ناوی تیم، ناوی یاریزان، ئامارەکان، ڕیزبەندی). ژمارەی تەلەفۆنی بەڕێوەبەری تیمەکە بە شێوەیەکی گشتی پیشان نادرێت.",
+  "ppSec4Title": "4. مافەکانت و کۆنترۆڵی داتاکانت",
+  "ppSec4Body": "دەتوانیت هەرکاتێک بتەوێت داتای پرۆفایلەکەت دەستکاری بکەیت لە شاشەی 'دەستکاریکردنی پرۆفایل'. هەروەها دەتوانیت هەژمارەکەت بە یەکجاری بسڕیتەوە لە ڕێکخستنەکانی هەژمار؛ لە کاتی سڕینەوەدا، ئەو داتا کەسییانەی پەیوەندییان بە هەژمارەکەوە هەیە دەسڕێنەوە بەپێی ئەوەی یاسا ڕێگەی پێدەدات.",
+  "ppSec5Title": "5. ئاسایشی داتا و هێشتنەوەی",
+  "ppSec5Body": "ئێمە ڕێوشوێنی تەکنیکی دەگرینەبەر بۆ پاراستنی داتاکانت (ڕێساکانی ئاسایشی سێرڤەر، پشتڕاستکردنەوەی سەلامەتی داواکارییەکان لە ڕێگەی App Check). ئێمە داتاکانت دەپارێزین تا ئەو کاتەی هەژمارەکەت چالاکە یان تا ئەو کاتەی پێویستە بۆ پێشکەشکردنی خزمەتگوزارییەکە و پابەندبوون بە ڕێنماییەکان.",
+  "ppSec6Title": "6. منداڵان",
+  "ppSec6Body": "ئەپەکە ئاراستەی منداڵانی خوار 13 ساڵ نەکراوە، وە بە ئەنقەست داتاکانیان کۆناکەینەوە. ئەگەر پێچەوانەی ئەوە دەرکەوت، دەستبەجێ داتاکە دەسڕینەوە.",
+  "ppSec7Title": "7. گۆڕانکاری لەم سیاسەتەدا",
+  "ppSec7Body": "لەوانەیە ناوبەناو ئەم سیاسەتە نوێ بکەینەوە، و وەشانی نوێکراوە لە ناو ئەپەکەدا بڵاو دەکەینەوە لەگەڵ نوێکردنەوەی بەرواری 'دوایین نوێکردنەوە' لە سەرەوە.",
+  "ppSec8Title": "8. پەیوەندیکردن",
+  "ppSec8Body": "بۆ هەر پرسیارێک سەبارەت بە تایبەتمەندی، پەیوەندیمان پێوە بکە لە: senanxsh@gmail.com",
+
+  "termsConditionsTitle": "مەرج و ڕێنماییەکان",
+  "termsIntro": "بەخێربێیت بۆ طوبة. بە بەکارهێنانی ئەپەکە، تۆ ڕازی دەبیت بەم مەرج و ڕێنماییانە. تکایە بە وردی بیانخوێنەرەوە.",
+  "tcSec1Title": "1. سروشتی خزمەتگوزارییەکە",
+  "tcSec1Body": "طوبة پلاتفۆرمێکە بۆ ڕێکخستنی تۆپی پێی ئاماتۆر: دروستکردنی تیم، بەڕێوەبردنی یاریزانان، ڕێکخستنی پاڵەوانێتی و یارییەکان، و پیشاندانی ڕیزبەندی و ئامارەکان.",
+  "tcSec2Title": "2. هەژمار و بەرپرسیارێتی تۆ",
+  "tcSec2Body": "تۆ بەرپرسیاریت لە دروستی داتاکانت و پاراستنی نهێنی هەژمارەکەت و هەر شتێک کە لە ژێر ئەوەدا ڕوودەدات. ئەو داتایانەی کە دەیکەیتە ژوورەوە دەبێت ڕاست بن و ساختەی کەسانی تر نەبن.",
+  "tcSec3Title": "3. ڕۆڵ و دەسەڵاتەکان",
+  "tcSec3Body": "کاپتن تیمەکەی و یاریزانەکانی بەڕێوەدەبات. دەسەڵاتی ڕێکخستنی پاڵەوانێتی و پشتڕاستکردنەوەی ئەنجامەکان لەلایەن بەڕێوەبەرایەتی پلاتفۆرمەکەوە دەبەخشرێت. پشتڕاستکردنەوەی ئەنجامی یارییەکە تەنها لە ئەستۆی ڕێکخەرە، و ئامارەکان بە شێوەیەکی خۆکار لەلایەن سیستمەکەوە هەژمار دەکرێن و ناکرێت یارییان پێبکرێت.",
+  "tcSec4Title": "4. بەکارهێنانی قبوڵکراو",
+  "tcSec4Body": "بەکارهێنانی ئەپەکە بۆ هەر چالاکییەکی نایاسایی، بڵاوکردنەوەی ناوەڕۆکی نەشیاو یان وێنەی نەگۆنجاو، ساختەکردنی کەسانی تر، یان هەوڵدان بۆ یاریپێکردنی داتای تیم، پاڵەوانێتی، یان ئامارەکان قەدەغەیە. ئێمە مافی سڕینەوەی ناوەڕۆکی پێشێلکار و ڕاگرتنی هەژمارە پێشێلکارەکانمان هەیە.",
+  "tcSec5Title": "5. ئەو ناوەڕۆکەی کە بڵاوی دەکەیتەوە",
+  "tcSec5Body": "تۆ خاوەندارێتی ئەو ناوەڕۆکە دەپارێزیت کە بەرزی دەکەیتەوە (وەک وێنە)، و تۆ مۆڵەت دەدەیت بە پلاتفۆرمەکە بۆ پیشاندانی لە ناو ئەپەکەدا بە مەبەستی بەڕێوەبردنی خزمەتگوزارییەکە. تۆ بەرپرسیاریت لەوەی کە خاوەنی مافی ئەوەیت کە بەرزی دەکەیتەوە.",
+  "tcSec6Title": "6. ڕاپۆرتەکان",
+  "tcSec6Body": "دەتوانیت ڕاپۆرت لەسەر هەر ناوەڕۆک یان ڕەفتارێکی پێشێلکار بدەیت لە ڕێگەی ئامرازەکانی ڕاپۆرتکردنەوە لە ئەپەکەدا، و بەڕێوەبەرایەتی پێداچوونەوەی بۆ دەکات و ڕێوشوێنی گونجاو دەگرێتەبەر.",
+  "tcSec7Title": "7. بێبەریبوون",
+  "tcSec7Body": "خزمەتگوزارییەکە 'وەک خۆی' پێشکەش دەکرێت. ئێمە هەوڵدەدەین دروستی داتاکان دڵنیا بکەینەوە بەڵام گەرەنتی بێ کێشەبوونی ناکەین، وە هیچ بەرپرسیارێتییەک هەڵناگرین بۆ هەر کێشەیەک کە لە نێوان تیمەکان یان یاریزانان لە دەرەوەی پلاتفۆرمەکە دروست دەبێت.",
+  "tcSec8Title": "8. کۆتاییهێنان بە خزمەتگوزاری",
+  "tcSec8Body": "تۆ مافی ئەوەت هەیە هەرکاتێک بتەوێت هەژمارەکەت بسڕیتەوە. بەڕێوەبەرایەتی مافی ڕاگرتن یان کۆتاییهێنان بەو هەژمارانەی هەیە کە پێشێلی ئەم مەرجانە دەکەن.",
+  "tcSec9Title": "9. یاسای جێبەجێکراو و پەیوەندیکردن",
+  "tcSec9Body": "ئەم مەرجانە پابەندن بە یاساکانی کۆماری عێراق. بۆ هەر پرسیارێک: senanxsh@gmail.com",
+
+  "adminDashboardTitle": "تابلۆی بەڕێوەبەرایەتی",
+  "manageLocationsTitle": "بەڕێوەبردنی شوێنەکان",
+  "manageLocationsSubtitle": "پارێزگاکان و ئەو ناوچانەی ڕێگەپێدراون بۆ یاریکردن",
+  "manageRolesTitle": "بەڕێوەبردنی ڕۆڵەکان",
+  "manageRolesSubtitle": "بەخشینی نازناوی ڕێکخەر و ناوبژیوان",
+  "adminReportsTitle": "ڕاپۆرتەکان",
+  "adminReportsSubtitle": "پێداچوونەوە بۆ ڕاپۆرتە هاتووەکان دەربارەی یاریزانان و تیمەکان",
+  "adminTournamentsTitle": "بەڕێوەبردنی پاڵەوانێتییەکان",
+  "adminTournamentsSubtitle": "دەستکاریکردنی ناو، وێنە، جام، و خەڵاتەکان",
+  "adminBannersTitle": "بەڕێوەبردنی ڕیکلامەکان",
+  "adminBannersSubtitle": "ڕیکلامەکانی پەڕەی سەرەکی",
+  "adminNewsTitle": "بەڕێوەبردنی هەواڵەکان",
+  "adminNewsSubtitle": "بڵاوکردنەوە و دەستکاریکردنی هەواڵەکانی پەڕەی سەرەکی",
+  "adminRefereeApplicationsTitle": "داواکارییەکانی ناوبژیوانی",
+  "adminRefereeApplicationsSubtitle": "قبوڵکردن/ڕەتکردنەوەی داواکارییەکانی ناوبژیوانی",
+  "adminDisputesTitle": "کێشەکانی جیابوونەوە",
+  "adminDisputesSubtitle": "داواکاری دەرچوون کە لەلایەن کاپتنەکانەوە ڕەتکراونەتەوە و لەلایەن یاریزانانەوە بەرزکراونەتەوە",
+  "adminChallengesTitle": "بەڕێوەبردنی یارییەکان",
+  "adminChallengesSubtitle": "هەڵوەشاندنەوەی داواکاری یارییە جێهێڵراوەکان",
+  "adminSectionsTitle": "ڕێکخستنەکانی بەشەکان",
+  "adminSectionsSubtitle": "پیشاندان/شاردنەوەی بەشەکانی ئەپەکە (وەک پاڵەوانێتییەکان)",
+  "adminSubscriptionsTitle": "کۆدەکانی کاراکردن",
+  "adminSubscriptionsSubtitle": "دروستکردنی کۆدی بەشداریکردن + ماوەی تاقیکردنەوە + واتساپ",
+  "adminVerifyTeamsTitle": "پشتڕاستکردنەوەی تیمەکان",
+  "comingSoon": "بەم زووانە...",
+
+  "activateWithCode": "کاراکردن بە کۆد",
+  "enterActivationCodePrompt": "ئەو کۆدەی لە بەڕێوەبەرایەتییەوە وەرتگرتووە بینوسە:",
+  "activationCodeHint": "TBA-XXXX-XXXX",
+  "cancelBtn": "پاشگەزبوونەوە",
+  "activateBtn": "کاراکردن",
+  "subscriptionActivatedXMonths": "بەشداریکردنەکەت کاراکرا 🎉{months}",
+  "@subscriptionActivatedXMonths": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToActivate": "کاراکردن سەرکەوتوو نەبوو",
+  "whatsappActivationMessage": "سڵاو، دەمەوێت بەشداری طوبة کارا بکەم",
+  "failedToOpenWhatsapp": "نەتوانرا واتساپ بکرێتەوە",
+  "mySubscriptionTitle": "بەشداریکردنم",
+  "contactToGetCode": "پەیوەندی بکە بۆ وەرگرتنی کۆد",
+  "notSubscribed": "بەشدارینەکراوە",
+  "subscriptionExpired": "بەشداریکردن کۆتایی هاتووە",
+  "freeTrial": "تاقیکردنەوەی بێبەرامبەر",
+  "activeSubscriber": "بەشداربووی چالاک",
+  "expiresAtDate": "کۆتایی دێت: {date}",
+  "@expiresAtDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "daysRemaining": "{days} ڕۆژ ماوە",
+  "@daysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresToday": "ئەمڕۆ کۆتایی دێت",
+  "whatDoesSubscriptionUnlock": "بەشداریکردن چی دەکاتەوە؟",
+  "benefitChallengeRequests": "داواکردن و قبوڵکردنی یاری",
+  "benefitOpenChatWithOpponent": "کردنەوەی چات لەگەڵ کاپتنی تیمی بەرامبەر",
+  "benefitParticipateInTournaments": "بەشداریکردن لە پاڵەوانێتییەکان (بەپێی جۆر)",
+  "featureRequiresSubscription": "{feature} پێویستی بە بەشداریکردنە",
+  "@featureRequiresSubscription": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "activateSubscriptionToUnlockFeatures": "بەشداریکردنەکەت کارا بکە بۆ ئەوەی یارییەکان و چات بکرێتەوە. کاراکردن بە کۆد لە بەڕێوەبەرایەتییەوە دەبێت.",
+  "manageSubscriptionActivateCodeBtn": "بەڕێوەبردنی بەشداریکردن / کاراکردن بە کۆد",
+  "laterBtn": "دواتر",
+
+  "myChatsTitle": "نامەکانم",
+  "noChatsYet": "هێشتا هیچ نامەیەک نییە",
+  "chatOpensWhenChallengeAccepted": "گفتوگۆ دەکرێتەوە کاتێک یارییەک لە نێوان دوو تیم پەسەند دەکرێت",
+  "loginToViewYourChats": "بچۆ ژوورەوە بۆ بینینی نامەکانت",
+  "chatsOpenBetweenCaptainsWhenChallengeAccepted": "گفتوگۆ لە نێوان کاپتنی تیمەکان دەکرێتەوە کاتێک یاری پەسەند دەکرێت",
+  "loginOrCreateAccountBtn": "چوونە ژوورەوە / دروستکردنی هەژمار",
+  "startConversation": "دەستپێکردنی گفتوگۆ",
+  "typeMessageHint": "نامەیەک بنووسە…",
+
+  "requestChallengeWithTeam": "داوای یاری دەکەین لە تیمی {team}",
+  "@requestChallengeWithTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFirstToProceed": "تکایە سەرەتا بچۆ ژوورەوە",
+  "youDoNotHaveATeamToRequestChallenge": "هیچ تیمێکت نییە بۆ ئەوەی داوای یاری بکەیت",
+  "failedToLoadYourTeamData": "نەتوانرا زانیارییەکانی تیمەکەت بهێنرێت",
+  "youAlreadyHaveOpenRequestEditIt": "پێشتر داواکارییەکی کراوەت هەیە - لە «یارییە دۆستانەکان» دەستکاری بکە",
+  "failedToPublishRequest": "نەتوانرا داواکارییەکە بڵاوبکرێتەوە",
+  "requestChallengeTitle": "داوای یاری بکە",
+  "directedChallengeToTeam": "یاری ئاراستەکراوە بۆ «{team}»",
+  "@directedChallengeToTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "noteSuggestedPlaceTime": "تێبینی - کات/شوێنی پێشنیارکراو",
+  "publishChallengeRequestBtn": "بڵاوکردنەوەی داواکاری یاری",
+
+  "teamChallengesTitle": "یارییە دۆستانەکان",
+  "teamRequestsTab": "داواکارییەکان",
+  "myChallengesTab": "یارییەکانی من",
+  "requestChallengeBtn": "داوای یاری بکە",
+  "noOpenChallengeRequests": "هیچ داواکارییەکی کراوە نییە لە ئێستادا",
+  "tapToViewTeamPage": "کرتە بکە بۆ بینینی پەڕەی تیم",
+  "appliedStatus": "پێشکەشکرا",
+  "acceptChallengeBtn": "ڕازیبوون بە یاری",
+  "pleaseLoginToView": "تکایە بچۆ ژوورەوە بۆ بینین",
+  "myRequestsLabel": "داواکارییەکانم",
+  "noChallengeRequestsSentYet": "هێشتا هیچ داواکارییەکت نەناردووە",
+  "appliedToLabel": "پێشکەشیکراوە بۆ",
+  "noChallengeRequestsAppliedYet": "هێشتا داواکاریت بۆ هیچ یارییەک نەکردووە",
+  "challengeRequestLabel": "داواکاری یاری",
+  "opponentLabelX": "ڕکابەر: {name}",
+  "@opponentLabelX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "opponentLabel": "ڕکابەر",
+  "openChatBtn": "کردنەوەی گفتوگۆ",
+  "applicantsLabelX": "پێشکەشکارەکان ({count})",
+  "@applicantsLabelX": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitingForTeamsToApply": "چاوەڕێی تیمەکان بۆ پێشکەشکردن...",
+  "tapToViewTeamBeforeAccepting": "کرتە بکە بۆ بینینی تیم پێش پەسەندکردن",
+  "cancelRequestBtn": "هەڵوەشاندنەوەی داواکاری",
+  "requestCancelledStatus": "داواکاری هەڵوەشایەوە",
+  "waitingForRequesterSelection": "چاوەڕێی هەڵبژاردنی خاوەن داواکاری",
+  "yourTeamSelected": "تیمەکەت هەڵبژێردرا! 🎉",
+  "anotherTeamSelected": "تیمێکی تر هەڵبژێردرا",
+  "chatLabel": "گفتوگۆ",
+  "agreeToChallengeSub": "ڕازیبوون بە یاری",
+  "teamAppliedSuccessfully": "تیمەکەت بە سەرکەوتوویی پێشکەشی کرد",
+  "failedToApply": "نەتوانرا پێشکەش بکرێت",
+  "acceptChallengeSub": "پەسەندکردنی یاری",
+  "challengeAcceptedBetweenTeams": "یاری پەسەندکرا لە نێوان '{team1}' و '{team2}' 👋 ڕێکبکەون لەسەر کات و شوێن.",
+  "@challengeAcceptedBetweenTeams": {
+    "placeholders": {
+      "team1": {
+        "type": "String"
+      },
+      "team2": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToAcceptChallenge": "نەتوانرا یاری پەسەند بکرێت",
+  "failedToCancel": "نەتوانرا هەڵبوەشێنرێتەوە",
+  "requestChallengeSub": "داواکاری یاری",
+  "friendlyChallengeRequestTitle": "داواکاری یاری دۆستانە",
+  "editRequestTitle": "دەستکاریکردنی داواکاری",
+  "onBehalfOfTeam": "بەناوی تیمی '{team}' • {city}",
+  "@onBehalfOfTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "noteOptionalHint": "تێبینی (ئارەزوومەندانە) - کات و شوێنی پێشنیارکراو",
+  "suggestedDateOptional": "کاتی پێشنیارکراو (ئارەزوومەندانە)",
+  "publishRequestBtn": "بڵاوکردنەوەی داواکاری",
+  "saveEditBtn": "پاشەکەوتکردنی گۆڕانکاری",
+  "requestUpdatedSuccessfully": "داواکارییەکە بە سەرکەوتوویی نوێکرایەوە",
+  "challengeRequestPublished": "داواکاری یارییەکە بڵاوکرایەوە",
+  "failedToSaveRequest": "نەتوانرا داواکارییەکە پاشەکەوت بکرێت",
+  "youHaveAnOpenRequestTitle": "داواکارییەکی کراوەت هەیە",
+  "cannotPublishMultipleRequests": "ناتوانیت لە یەک کاتدا زیاتر لە داواکارییەکی کراوە بڵاوبکەیتەوە. یەکەمجار دەستکاری داواکارییەکەی ئێستات بکە یان هەڵیبوەشێنەوە.",
+  "acceptedStatus": "پەسەندکرا",
+  "cancelledStatus": "هەڵوەشایەوە",
+  "openStatus": "کراوە",
+
+  "detailsTab": "وردەکارییەکان",
+  "rulesAndTermsTab": "مەرج و یاساکان",
+  "participatingTeamsTab": "تیمە بەشداربووەکان",
+  "cityAndType": "{city} • {type}",
+  "@cityAndType": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "paidTournamentWithInfo": "پاڵەوانێتی بە پارە • {info}",
+  "@paidTournamentWithInfo": {
+    "placeholders": {
+      "info": {
+        "type": "String"
+      }
+    }
+  },
+  "paidTournament": "پاڵەوانێتی بە پارە",
+  "reviewTeamLineups": "پێداچوونەوەی پێکهاتەی تیمەکان",
+  "myTournamentLineup": "پێکهاتەی من لە پاڵەوانێتییەکە",
+  "applyAsRefereeForTournament": "پێشکەشکردنی داواکاری ناوبژیوانی بۆ ئەم پاڵەوانێتییە",
+  "matchesTitle": "یارییەکان",
+  "exportPdfBtn": "هەناردەکردنی PDF",
+  "termsAndRulesTitle": "مەرج و یاساکان",
+  "sponsorsTitle": "سپۆنسەرەکان",
+  "editRulesAndSponsors": "دەستکاریکردنی مەرج و سپۆنسەرەکان",
+  "noRulesOrSponsorsEditToAdd": "هێشتا هیچ مەرج یان سپۆنسەرێک نییە — پەنجە بنێ بە «دەستکاریکردن» بۆ زیادکردن",
+  "noRulesOrSponsors": "هیچ مەرج یان سپۆنسەرێک بۆ ئەم پاڵەوانێتییە نییە",
+  "teamLineupsStatus": "دۆخی پێکهاتەی تیمەکان ({count})",
+  "@teamLineupsStatus": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToReviewOrRemind": "پەنجە بنێ بە تیمێکی نێردراو بۆ پێداچوونەوە، یان تیمێکی نەنێردراو بۆ بیرخستنەوە.",
+  "tapToViewLineup": "پەنجە بنێ بە تیمێکی نێردراو بۆ بینینی پێکهاتەکەی.",
+  "noParticipatingTeams": "هیچ تیمێکی بەشداربوو نییە",
+  "notSent": "نەنێردراوە",
+  "verified": "پەسەندکراوە",
+  "rejected": "ڕەتکراوەتەوە",
+  "sent": "نێردراوە",
+  "captainNotSentLineup": "کاپتن هێشتا پێکهاتەکەی نەناردووە",
+  "remindTeamX": "بیرخستنەوەی تیمی {name}",
+  "@remindTeamX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remindCaptainMessageBody": "ئاگادارکردنەوەیەک بۆ کاپتنی تیمەکە دەچێت بۆ ناردنی پێکهاتەکە. ئەگەر نەینێرێت، دەتوانیت تیمەکە دووربخەیتەوە یان بە دەستی دۆڕانی 3-0 تۆمار بکەیت.",
+  "customMessageOptional": "نامەی تایبەت (ئارەزوومەندانە)",
+  "sendReminderBtn": "ناردنی بیرخستنەوە",
+  "reminderSentToCaptainX": "بیرخستنەوە نێردرا بۆ کاپتنی {name}",
+  "@reminderSentToCaptainX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSendReminder": "نەتوانرا بیرخستنەوە بنێردرێت",
+  "tournamentChampion": "پاڵەوانی پاڵەوانێتی",
+  "prizesX": "خەڵاتەکان: {prizes}",
+  "@prizesX": {
+    "placeholders": {
+      "prizes": {
+        "type": "String"
+      }
+    }
+  },
+  "sponsorX": "سپۆنسەر: {name}",
+  "@sponsorX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "knockoutType": "چوونەدەرەوەی دۆڕاو",
+  "groupsType": "کۆمەڵەکان",
+  "leagueType": "خول",
+  "knockoutStage": "قۆناغی کۆتایی",
+  "generateKnockoutStageBtn": "دروستکردنی قۆناغی کۆتایی",
+  "generatingStage": "لە دروستکردنی قۆناغدایە...",
+  "knockoutStageGenerated": "قۆناغی کۆتایی دروستکرا",
+  "failedToGenerateStage": "نەتوانرا دروستبکرێت — دڵنیابە لە تەواوبوونی یارییەکانی کۆمەڵەکان",
+  "roundX": "گەڕی {round}",
+  "@roundX": {
+    "placeholders": {
+      "round": {
+        "type": "String"
+      }
+    }
+  },
+  "unscheduledTime": "کاتی دیارینەکراو",
+  "withoutSchedule": "بێ کات",
+  "upcoming": "داهاتوو",
+  "vs": "دژی",
+  "refereeNameX": "ناوبژیوان: {name}",
+  "@refereeNameX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assignRefereeBtn": "دیاریکردنی ناوبژیوان",
+  "changeRefereeBtn": "گۆڕینی ناوبژیوان",
+  "myTeamFormationX": "پلانی تیمەکەم: {f}",
+  "@myTeamFormationX": {
+    "placeholders": {
+      "f": {
+        "type": "String"
+      }
+    }
+  },
+  "setMyTeamFormationBtn": "دیاریکردنی پلانی تیمەکەم",
+  "startMatchBtn": "دەستپێکردنی یاری",
+
+  "editScheduleBtn": "دەستکاریکردنی کات",
+  "setScheduleBtn": "دیاریکردنی کات",
+  "enterResultBtn": "تۆمارکردنی ئەنجام",
+  "refereeRequest": "داواکاری ناوبژیوانی",
+  "applyAsRefereeDialogBody": "ئایا دەتەوێت داواکاری پێشکەش بکەیت بۆ ناوبژیوانی لە پاڵەوانێتی «{name}»؟ ئەدمین پێداچوونەوەی بۆ دەکات.",
+  "@applyAsRefereeDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "submitBtn": "پێشکەشکردن",
+  "refereeRequestSent": "داواکاری ناوبژیوانی نێردرا بۆ ئەدمین",
+  "chooseTeamFormationForMatch": "پلانی تیمەکەت بۆ ئەم یارییە هەڵبژێرە",
+  "preparingReport": "لە ئامادەکردنی ڕاپۆرتدایە...",
+  "failedToExportReport": "نەتوانرا ڕاپۆرت هەناردە بکرێت",
+  "failedToFetchReferees": "نەتوانرا ناوبژیوانان بهێندرێن",
+  "chooseRefereeForMatch": "ناوبژیوانێک بۆ یارییەکە هەڵبژێرە",
+  "noRefereesAvailable": "هیچ ناوبژیوانێک بەردەست نییە — پێویستە ئەدمین دەسەڵات بدات",
+  "unassignRefereeBtn": "لابردنی ناوبژیوان",
+  "chooseMatchDateHelp": "بەرواری یاری هەڵبژێرە",
+  "nextBtn": "دواتر",
+  "chooseMatchTimeHelp": "کاتی یاری هەڵبژێرە",
+
+  "toubaAppTitle": "تۆپ",
+  "createTournamentBtn": "دروستکردنی پاڵەوانێتی",
+  "failedToLoadTournaments": "نەتوانرا پاڵەوانێتییەکان باربکرێن",
+  "retryBtn": "هەوڵدانەوە",
+  "noTournamentsYet": "هێشتا هیچ پاڵەوانێتییەک نییە",
+  "createFirstTournamentHint": "یەکەم پاڵەوانێتی دروست بکە بە بەکارهێنانی دوگمەی خوارەوە",
+  "noTournamentsInYourAreaYet": "هێشتا کەس پاڵەوانێتی لە ناوچەکەت دروست نەکردووە",
+  "ongoingTournaments": "پاڵەوانێتییە بەردەوامەکان",
+  "finishedTournaments": "پاڵەوانێتییە کۆتاییهاتووەکان",
+  "otherTournaments": "پاڵەوانێتییەکانی تر",
+  "finishedBadge": "کۆتاییهاتوو",
+  "ongoingBadge": "بەردەوام",
+  "vXFormat": "{format} دژی {format}",
+  "@vXFormat": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "paidSubscriptionBadge": "بە پارە",
+  "championX": "پاڵەوان: {name}",
+  "@championX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cityAndTeamsCount": "{city} • {count} تیم",
+  "@cityAndTeamsCount": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+
+  "teamManagement": "بەڕێوەبردنی تیم",
+  "linkPlayerByCodeTitle": "بەستنەوەی یاریزان بە کۆد",
+  "joinRequestsCountX": "داواکارییەکانی پەیوەندیکردن ({count})",
+  "@joinRequestsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "joinRequestLabel": "داواکاری پەیوەندیکردن",
+  "releaseRequestsCountX": "داواکارییەکانی چوونەدەرەوە ({count})",
+  "@releaseRequestsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "requestsToLeaveTeam": "داوا دەکات لە تیمەکە بچێتە دەرەوە",
+  "acceptLeave": "پەسەندکردنی چوونەدەرەوە",
+  "rejectBtn": "رەتکردنەوە",
+  "rosterCountX": "پێکهاتە ({count})",
+  "@rosterCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShare": "بینین/هاوبەشیکردن",
+  "rosterManagementHint": "پەنجە بنێ بە باجی «سەرەکی/یەدەگ» بۆ گۆڕین • پەنجە بنێ بە «ژمارە» بۆ دەستکاریکردن",
+  "noPlayersYetAddWithBtn": "هێشتا هیچ یاریزانێک نییە — یاریزانەکانت زیاد بکە بە دوگمەی «زیادکردنی یاریزان»",
+  "starters": "سەرەکییەکان",
+  "noStartersSelectFromSubs": "هیچ سەرەکییەک نییە — لە یەدەگەکان هەڵیانبژێرە",
+  "subs": "یەدەگەکان",
+  "noSubs": "هیچ یەدەگێک نییە",
+  "mainTeamFormation": "پلانی سەرەکی تیم",
+  "currentFormationX": "ئێستا: {fmt} ({count} یاریزان)",
+  "@currentFormationX": {
+    "placeholders": {
+      "fmt": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "notSetChooseCountAndFormation": "دیارینەکراوە — ژمارەی یاریزانان و پلان هەڵبژێرە",
+  "selectBtn": "دیاریکردن",
+  "noPhotosYetAddUpTo5": "هێشتا وێنە زیاد نەکراوە — تا 5 وێنە زیاد بکە",
+  "xOutOf5Photos": "{count}/5 وێنە",
+  "@xOutOf5Photos": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "addBtn": "زیادکردن",
+  "editBtn": "دەستکاریکردن",
+  "formationFormatHint": "شێواز: گۆڵپارێز-بەرگری-ناوەڕاست-هێرشبەر",
+  "numberForX": "ژمارەی {name}",
+  "@numberForX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shirtNumber": "ژمارەی درێس",
+  "cancelBtn": "پاشگەزبوونەوە",
+  "numberX": "ژمارە {num}",
+  "@numberX": {
+    "placeholders": {
+      "num": {
+        "type": "String"
+      }
+    }
+  },
+  "noNumber": "بێ ژمارە",
+  "starter": "سەرەکی",
+  "sub": "یەدەگ",
+  "linked": "بەستراوەتەوە",
+  "notLinked": "نەبەستراوەتەوە",
+  "positionForX": "شوێنی {name}",
+  "@positionForX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "enterPlayerCodeHint": "«کۆدی یاریزان» بنووسە کە لە پرۆفایلەکەیدا دەردەکەوێت:",
+  "exampleCode": "نموونە: A1B2C3D4",
+  "linking": "لە بەستنەوەدایە...",
+  "playerAddedToRoster": "یاریزانەکە زیادکرا بۆ پێکهاتە",
+  "failedToLinkPlayer": "نەتوانرا یاریزانەکە ببەسترێتەوە",
+  "linkBtn": "بەستنەوە",
+
+  "teamPhotosSaved": "وێنەکانی تیم خەزن کران",
+  "failedToSavePhotos": "نەتوانرا وێنەکان خەزن بکرێن",
+  "teamPhotosTitle": "وێنەکانی تیم",
+  "addUpToMaxPhotos": "دەتوانیت تا {max} وێنە بۆ تیمەکەت زیاد بکەیت ({count}/{max})",
+  "@addUpToMaxPhotos": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "savePhotosBtn": "خەزنکردنی وێنەکان",
+
+  "choosePlayerForSlotX": "یاریزان هەڵبژێرە بۆ شوێنی {slotNumber}",
+  "@choosePlayerForSlotX": {
+    "placeholders": {
+      "slotNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "removePlayerFromSlot": "یاریزان لەم شوێنە لابدە",
+  "assignedToAnotherSlot": " • لە شوێنێکی تر دانراوە",
+  "chooseTeamFormation": "پلانی تیم هەڵبژێرە (گۆڵپارێز-بەرگری-ناوەڕاست-هێرشبەر)",
+  "playersCountX": "{count} یاریزان",
+  "@playersCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "customFormation": "پلانی دڵخواز",
+  "assignPlayerToEachSlot": "یاریزانێک بۆ هەر شوێنێکی پێکهاتەکە دابنێ",
+  "teamFormationSaved": "پێکهاتەی تیم خەزن کرا",
+  "failedToSaveFormation": "نەتوانرا پێکهاتە خەزن بکرێت",
+  "formationShareText": "پێکهاتەی {teamName} — پلانی {formation}",
+  "@formationShareText": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      },
+      "formation": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToShareFormation": "نەتوانرا پێکهاتە هاوبەشی پێبکرێت",
+  "teamFormation": "پێکهاتەی تیم",
+  "share": "هاوبەشیکردن",
+  "formationPlan": "پلان",
+  "formationWithPlayersCount": "{formation} ({count} یاریزان)",
+  "@formationWithPlayersCount": {
+    "placeholders": {
+      "formation": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "changeBtn": "گۆڕین",
+  "tapCircleToAssignPlayer": "پەنجە بنێ بە هەر بازنەیەک لە یاریگاکە بۆ دانانی یاریزان",
+  "saveBtn": "خەزنکردن",
+  "numberOfPlayersLabel": "ژمارەی یاریزانان: ",
+  "defendersCount": "بەرگریکاران",
+  "attackersCount": "هێرشبەران",
+  "midfieldAndTotalCount": "ناوەڕاست: {mid}  •  کۆی گشتی: {total}",
+  "@midfieldAndTotalCount": {
+    "placeholders": {
+      "mid": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmFormation": "پەسەندکردنی پلان",
+
+  "createTeamTitle": "دروستکردنی تیمێکی نوێ",
+  "pleaseSelectCity": "تکایە شارێک هەڵبژێرە",
+  "teamCreatedSuccess": "تیمەکە بە سەرکەوتوویی دروستکرا!",
+  "teamLogoOptional": "لۆگۆی تیم (ئارەزوومەندانە)",
+  "teamNameLabel": "ناوی تیم",
+  "pleaseEnterTeamName": "تکایە ناوی تیم بنووسە",
+  "cityOrGovernorate": "شار / پارێزگا",
+  "areaOptional": "ناوچە (ئارەزوومەندانە)",
+  "areaExample": "نموونە: بەختیاری، شۆڕش...",
+  "createTeamBtn": "دروستکردنی تیم",
+
+  "posGoalkeeper": "گۆڵپارێز",
+  "posDefender": "بەرگریکار",
+  "posMidfielder": "ناوەڕاستکار",
+  "posForward": "هێرشبەر",
+  "playerNameLabel": "ناوی یاریزان",
+  "shirtNumberOptional": "ژمارەی درێس (ئارەزوومەندانە)",
+  "preferredFootOptional": "قاچی دڵخواز (ئارەزوومەندانە)",
+  "addToRosterBtn": "زیادکردن بۆ پێکهاتە",
+
+  "yourRequestEscalatedSoonReviewed": "داواکارییەکەت بەرزکرایەوە بۆ بەڕێوەبەر — بە زوویی پێداچوونەوەی بۆ دەکرێت",
+  "confirmPasswordTitle": "تایبەتکردنی وشەی نهێنی",
+  "confirmPasswordToExitDesc": "بۆ دڵنیابوون لە خاوەندارێتی هەژمارەکە، وشەی نهێنی بنووسە پێش داواکردنی دەرچوون.",
+  "passwordLabel": "وشەی نهێنی",
+  "incorrectPassword": "وشەی نهێنی هەڵەیە",
+  "failedToVerifyPassword": "نەتوانرا وشەی نهێنی پشتڕاست بکرێتەوە",
+  "updatingLogo": "لۆگۆ نوێ دەکرێتەوە...",
+  "logoUpdatedSuccess": "لۆگۆ بە سەرکەوتوویی نوێکرایەوە",
+  "failedToUpdateLogo": "نەتوانرا لۆگۆ نوێ بکرێتەوە",
+  "exitRequestSentToCaptain": "داواکاری دەرچوون نێردرا بۆ کاپتنی تیمەکەی ئێستات",
+  "youMustLoginFirst": "پێویستە سەرەتا بچیتە ژوورەوە",
+  "exitTeamRequest": "داواکاری دەرچوون لە تیم",
+  "reportThisTeam": "ڕاپۆرتکردنی ئەم تیمە",
+  "teamMatchesLost": "دۆڕان",
+  "teamMatchesDrawn": "یەکسان",
+  "youArePlayerInThisTeam": "تۆ یاریزانیت لەم تیمەدا",
+  "exitRequestPendingCaptainReview": "داواکاری دەرچوونەکەت چاوەڕێی پێداچوونەوەی کاپتنی ئێستایە",
+  "requestEscalatedPendingDecision": "داواکارییەکەت بەرزکرایەوە بۆ بەڕێوەبەر — چاوەڕێی بڕیار",
+  "requestExitFromX": "داواکاری دەرچوون لە {teamName}",
+  "@requestExitFromX": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "myCurrentTeam": "تیمی ئێستام",
+  "mustExitCurrentTeamBeforeJoining": "پێویستە پێش پەیوەندیکردن لە تیمەکەی ئێستات دەربچیت",
+  "requestToJoinTeam": "داواکاری پەیوەندیکردن بە تیم",
+  "requestChallengeBtn": "داواکردنی تەحەدی",
+  "rosterWithCount": "پێکهاتە ({count})",
+  "@rosterWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsByTournament": "خاڵەکان بەپێی پاڵەوانێتی",
+  "noPlayersRegisteredYet": "هێشتا هیچ یاریزانێک تۆمار نەکراوە",
+  "teamHasNotParticipatedInTournamentsYet": "تیمەکە هێشتا بەشداری هیچ پاڵەوانێتییەکی نەکردووە",
+  "tournamentFinishedStatus": "کۆتاییهاتوو",
+  "tournamentLiveStatus": "ڕاستەوخۆ",
+  "pointSingle": "خاڵ",
+  "loadingTeamDetails": "وردەکارییەکانی تیم باردەکرێن...",
+
+  "profileUpdateSuccess": "پڕۆفایل بە سەرکەوتوویی نوێکرایەوە",
+  "profileUpdateError": "نەتوانرا پڕۆفایل نوێ بکرێتەوە",
+  "loginToViewProfile": "چوونە ژوورەوە بکە بۆ بینینی پڕۆفایلەکەت",
+  "saveChanges": "پاشەکەوتکردنی گۆڕانکارییەکان",
+  "playerSportsDetails": "وردەکاری وەرزشی یاریزان",
+  "playerSportsDetailsSubtitle": "پێی دڵخواز • باڵا • کێش • تەمەن • ژیاننامە • گەلەری",
+  "permanentPlayerCode": "کۆدی هەمیشەیی یاریزانەکەت",
+  "giveCodeToCaptain": "ئەم کۆدە بدە بە کاپتنی تیمەکە بۆ ئەوەی لە پێکهاتەکەیدا زیادتبکات.",
+  "codeCopied": "کۆدەکە کۆپی کرا",
+  "myPlayerCodeShare": "کۆدی یاریزانیم لە توبە: {code}",
+  "@myPlayerCodeShare": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "codeLinkingHint": "هەرکە کاپتنەکە بەم کۆدە زیادیکردیت، هەژمارەکەت ڕاستەوخۆ بەستراوە دەبێت بە کارتی یاریزانەکەتەوە.",
+  "invalidPhoneNumber": "ژمارەی مۆبایل نادروستە",
+  "copy": "کۆپی",
+  "share": "هاوبەشکردن",
+
+  "adminDashboard": "تابلۆی بەڕێوەبردن",
+  "manageLocations": "بەڕێوەبردنی شوێنەکان",
+  "manageRoles": "بەڕێوەبردنی دەسەڵاتەکان",
+  "reports": "ڕاپۆرتەکان",
+  "verifyTeams": "پشتڕاستکردنەوەی تیمەکان",
+  "comingSoon": "بەم زووانە...",
+  "okBtn": "باشە",
+  "verifiedPlayer": "یاریزانی باوەڕپێکراو",
+  "manageChallenges": "بەڕێوەبردنی بەرەنگارییەکان",
+  "stale": "جێهێڵراو",
+  "challengeDetailsRow": "{city} • پێشکەشکاران: {applicants} • پێش {days} ڕۆژ",
+  "@challengeDetailsRow": {
+    "placeholders": {
+      "city": { "type": "String" },
+      "applicants": { "type": "int" },
+      "days": { "type": "int" }
+    }
+  },
+  "cancelChallengeRequestConfirm": "هەڵوەشاندنەوەی داواکاری بەرەنگاری تیمی «{team}»؟",
+  "@cancelChallengeRequestConfirm": {
+    "placeholders": {
+      "team": { "type": "String" }
+    }
+  },
+  "takeActionOnX": "وەرگرتنی ڕێکار — {name}",
+  "@takeActionOnX": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "reviewOnlyAction": "تەنیا پێداچوونەوە (بێ سزادان)",
+  "warnAction": "ئاگادارکردنەوە",
+  "negativeRatingAction": "هەڵسەنگاندنی نەرێنی (کەمکردنەوەی خاڵ)",
+  "banAction": "قەدەغەکردن",
+  "dismissReportAction": "ڕەتکردنەوەی ڕاپۆرت",
+  "replyNoteOptional": "وەڵام/تێبینی (ئارەزوومەندانە)",
+  "executeActionBtn": "جێبەجێکردنی ڕێکار",
+  "executingAction": "لە جێبەجێکردندایە...",
+  "actionExecuted": "ڕێکارەکە جێبەجێکرا",
+  "failedToExecuteAction": "نەتوانرا ڕێکارەکە جێبەجێ بکرێت",
+  "allLabel": "هەمووی",
+  "pendingLabel": "هەڵپەسێردراو",
+  "reviewedLabel": "پێداچوونەوە کراوە",
+  "reviewedStatus": "پێداچوونەوە کراو",
+  "dismissedLabel": "ڕەتکرایەوە",
+  "noReports": "هیچ ڕاپۆرتێک نییە",
+  "takeActionLong": "وەرگرتنی ڕێکار (قەدەغەکردن/ئاگادارکردنەوە)",
+  "dismissBtn": "ڕەتکردنەوە",
+  "searchError": "هەڵە لە گەڕاندا: {error}",
+  "@searchError": { "placeholders": { "error": { "type": "String" } } },
+  "updateFailed": "نوێکردنەوەکە سەرکەوتوو نەبوو: {error}",
+  "@updateFailed": { "placeholders": { "error": { "type": "String" } } },
+  "searchByPhoneHint": "گەڕان بە ژمارەی مۆبایل (بۆ نموونە: +964...)",
+  "noSearchResults": "هیچ ئەنجامێک بۆ گەڕان نییە",
+  "roleX": "ڕۆڵ: {role}",
+  "@roleX": { "placeholders": { "role": { "type": "String" } } },
+  "additionalPermissions": "دەسەڵاتە زیادەکان:",
+  "tournamentOrganizer": "ڕێکخەری پاڵەوانێتی",
+  "allowsCreatingTournaments": "ڕێگە دەدات بە دروستکردن و بەڕێوەبردنی پاڵەوانێتییەکان",
+  "allowsEnteringResults": "ڕێگە دەدات بە تۆمارکردنی ئەنجامی یارییە دیاریکراوەکان",
+  "noBanners": "هیچ ڕیکلامێک نییە — یەکەمیان زیاد بکە",
+  "newBannerBtn": "ڕیکلامی نوێ",
+  "deleteBannerTitle": "سڕینەوەی ڕیکلام",
+  "deleteBannerBody": "دڵنیای کە ئەم ڕیکلامە بسڕیتەوە؟",
+  "newBanner": "ڕیکلامی نوێ",
+  "editBanner": "دەستکاریکردنی ڕیکلام",
+  "bannerTitleOptional": "سەردێڕ (ئارەزوومەندانە)",
+  "bannerDescOptional": "وەسف / وردەکاری (ئارەزوومەندانە)",
+  "governorate": "پارێزگا",
+  "phoneOptional": "ژمارەی تەلەفۆن (ئارەزوومەندانە)",
+  "whatsappOptional": "واتساپ (بە کۆدی وڵات، ئارەزوومەندانە)",
+  "facebookLinkOptional": "بەستەری فەیسبووک (ئارەزوومەندانە)",
+  "instagramLinkOptional": "بەستەری ئینستاگرام (ئارەزوومەندانە)",
+  "targetUrlOptional": "بەستەری مەلەواندن کاتی کلیک (ئارەزوومەندانە)",
+  "displayOrder": "ڕیزبەندی نیشاندان",
+  "extraImages": "وێنەی زیادە",
+  "chooseBannerImage": "وێنەی ڕیکلام هەڵبژێرە",
+  "failedToSaveBanner": "نەتوانرا ڕیکلامەکە پاشەکەوت بکرێت",
+  "bannerWithoutTitle": "بێ سەردێڕ",
+  "orderX": "ڕیزبەندی: {order}",
+  "@orderX": { "placeholders": { "order": { "type": "int" } } },
+  "forceReleaseTitle": "بەزۆری ئازادکردن",
+  "forceReleaseBody": "یاریزانەکە لە تیمەکەی ئێستا دەبڕدرێتەوە و ئازاد دەبێت بۆ پەیوەندی لەگەڵ تیمێکی تر. بەردەوام بی؟",
+  "forceReleaseBtn": "ئازادکردن",
+  "forceReleaseForcedBtn": "بەزۆری ئازادکردن",
+  "playerReleasedSuccess": "یاریزانەکە ئازادکرا",
+  "noEscalatedDisputes": "هیچ نێودوانێکی بەرزبووەوە نییە",
+  "playerWantsToLeaveTeam": "داوای چوونەدەرەوە لە تیمی: {team}",
+  "@playerWantsToLeaveTeam": { "placeholders": { "team": { "type": "String" } } },
+  "captainRejectedEscalated": "کاپتن داواکەی ڕەتکردەوە و یاریزانەکە بۆ بەڕێوەبەری بەرزی کرد",
+  "approvedGrantedReferee": "مووافەقەتی تەواوبوو و دەسەڵاتی حەکەمایەتی دراوەتێ",
+  "rejectedApplication": "ڕەتکرایەوە",
+  "noPendingRefereeApps": "هیچ داواکاری حەکەمایەتی هەڵپەسێردراو نییە",
+  "requestToRefereeIn": "داوای حەکەمایەتی لە: {tournament}",
+  "@requestToRefereeIn": { "placeholders": { "tournament": { "type": "String" } } },
+  "approveBtn": "مووافەقەت",
+  "failedToSaveSettings": "نەتوانرا ڕێکخستنەکە پاشەکەوت بکرێت",
+  "tournamentsSection": "بەشی پاڵەوانێتی",
+  "showHideTournaments": "پیشاندان/شاردنەوەی تابی پاڵەوانێتی بۆ هەمووی بەکارهێنەران",
+  "noNews": "هیچ هەواڵێک نییە — یەکەمیان زیاد بکە",
+  "newNewsBtn": "هەواڵی نوێ",
+  "deleteNewsTitle": "سڕینەوەی هەواڵ",
+  "deleteNewsBody": "دڵنیای کە ئەم هەواڵە بسڕیتەوە؟",
+  "newNews": "هەواڵی نوێ",
+  "editNews": "دەستکاریکردنی هەواڵ",
+  "publishedLabel": "بڵاوکراوەتەوە",
+  "hiddenLabel": "شاراوە",
+  "newsStatsX": "❤ {likes}  •  ↗ {shares}  •  {status}",
+  "@newsStatsX": {
+    "placeholders": {
+      "likes": { "type": "int" },
+      "shares": { "type": "int" },
+      "status": { "type": "String" }
+    }
+  },
+  "enterNewsTitle": "سەردێڕی هەواڵ بنووسە",
+  "newsTitleLabel": "سەردێڕ",
+  "newsBodyLabel": "دەقی هەواڵ",
+  "failedToSaveNews": "نەتوانرا هەواڵەکە پاشەکەوت بکرێت",
+  "activationCodesTitle": "کۆدەکانی چالاککردن",
+  "settingsCardTitle": "ڕێکخستنەکان",
+  "freeTrialDaysLabel": "ماوەی تاقیکردنەوەی بەخۆراییەکە (ڕۆژ)",
+  "activationWhatsappLabel": "واتساپی چالاککردن (بۆ نموونە: 9647xx)",
+  "saveSettingsBtn": "پاشەکەوتکردنی ڕێکخستنەکان",
+  "settingsSaved": "ڕێکخستنەکان پاشەکەوتکرا",
+  "failedToSaveHighPermission": "نەتوانرا پاشەکەوت بکرێت (پێویستی بە دەسەڵاتی بەرزتر هەیە)",
+  "generateCodesTitle": "دروستکردنی کۆد",
+  "durationLabel": "ماوە",
+  "countLabel": "ژمارە",
+  "notesOptional": "تێبینی (ئارەزوومەندانە)",
+  "generateBtn": "دروستکردن",
+  "generatedXCodes": "{count} کۆد دروستکرا",
+  "@generatedXCodes": { "placeholders": { "count": { "type": "int" } } },
+  "failedToGenerate": "نەتوانرا دروست بکرێت",
+  "codesLabel": "کۆدەکان",
+  "noCodesYet": "هێشتا هیچ کۆدێک نییە",
+  "copyTooltip": "کۆپی",
+  "codeCopied": "کۆدەکە کۆپیکرا",
+  "unlockTooltip": "کردنەوەی قفل",
+  "month1Label": "مانگ",
+  "months3Label": "3 مانگ",
+  "months6Label": "6 مانگ",
+  "yearLabel": "ساڵ",
+  "noTournaments": "هیچ پاڵەوانێتییەک نییە",
+  "editTournamentTitle": "دەستکاریکردنی پاڵەوانێتی",
+  "tournamentCoverImage": "وێنەی پاڵەوانێتی",
+  "tournamentCupImage": "وێنەی کووپا",
+  "tournamentNameLabel": "ناوی پاڵەوانێتی",
+  "tournamentPrizesOptional": "خەڵاتەکان (ئارەزوومەندانە)",
+  "tournamentSponsorOptional": "ناوی سپانسەر (ئارەزوومەندانە)",
+  "freeTournament": "پاڵەوانێتی بەخۆراوی",
+  "openToAllTeams": "کراوە بۆ هەمووی تیمەکان",
+  "paidTournament": "بە پارەدان — تیمەکە پاش پارەدان زیاددەکرێت",
+  "entryFeeInfo": "کرێی داخلبوون / پەیوەندی (بۆ پیشاندان)",
+  "failedToSaveTournament": "نەتوانرا گۆڕانکارییەکان پاشەکەوت بکرێت",
+  "tournamentFinishedWinner": "تەواوبووە • بەرپیرۆز: {winner}",
+  "@tournamentFinishedWinner": { "placeholders": { "winner": { "type": "String" } } },
+  "tournamentOngoingCity": "بەردەوامە • {city}",
+  "@tournamentOngoingCity": { "placeholders": { "city": { "type": "String" } } },
+  "updatedSuccessfully": "سەرکەوتووانە نوێکرایەوە",
+  "addDistrict": "زیادکردنی ناوچە",
+  "editDistrict": "دەستکاریکردنی ناوچە",
+  "nameArabic": "ناو (عەرەبی)",
+  "nameEnglish": "ناو (ئینگلیزی)",
+  "confirmDeleteTitle": "دڵنیابوونەوە لە سڕینەوە",
+  "confirmDeleteDistrictX": "دڵنیای کە {name} بسڕیتەوە؟",
+  "@confirmDeleteDistrictX": { "placeholders": { "name": { "type": "String" } } },
+  "noDistricts": "هیچ ناوچەیەک نییە. + بکە بۆ زیادکردنی ناوچە.",
+  "districtsOfCity": "ناوچەکانی: {city}",
+  "@districtsOfCity": { "placeholders": { "city": { "type": "String" } } },
+  "addGovernorate": "زیادکردنی پارێزگا",
+  "editGovernorate": "دەستکاریکردنی پارێزگا",
+  "manageGovernoratesTitle": "بەڕێوەبردنی پارێزگاکان",
+  "importIraqTooltip": "هێنانی هەمووی عێراق",
+  "importConfirmTitle": "دڵنیابوونەوە لە هێنان",
+  "importConfirmBody": "هەمووی پارێزگا و ناوچەکانی عێراق دادەنرێت. دڵنیایت؟",
+  "importBtn": "هێنان",
+  "importSuccessTitle": "هێنانەکە سەرکەوتوو بوو",
+  "importSuccessBody": "هەمووی پارێزگا و ناوچەکانی عێراق هاتنە.",
+  "okBtn": "باشە",
+  "errorX": "هەڵە: {error}",
+  "@errorX": { "placeholders": { "error": { "type": "String" } } },
+  "noGovernorates": "هیچ پارێزگایەک نییە. دوگمەی داگرتن بکە بۆ هێنانی عێراق.",
+  "confirmDeleteCityX": "دڵنیای کە {name} و هەمووی ناوچەکانی بسڕیتەوە؟",
+  "@confirmDeleteCityX": { "placeholders": { "name": { "type": "String" } } }
+}

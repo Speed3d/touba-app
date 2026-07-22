@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/services/preferences_service.dart';
 import '../auth/auth_wrapper.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشات التعريف — تُعرض مرة واحدة عند أول تشغيل. عند الإنهاء
 /// نحفظ العلم في PreferencesService وننتقل لـ AuthWrapper.
@@ -16,14 +17,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _controller = PageController();
   int _index = 0;
 
-  static const _pages = [
-    _OnboardData(Icons.groups, 'كوّن فريقك',
-        'سجّل فريقك، أضف لاعبيك، وأدِر تشكيلتك من مكان واحد.'),
-    _OnboardData(Icons.emoji_events, 'نظّم بطولاتك',
-        'دوريات وبطولات بجدول تلقائي وترتيب حيّ يتحدّث مع كل نتيجة.'),
-    _OnboardData(Icons.insights, 'تابع إحصائياتك',
-        'أهداف، صناعة، بطاقات، وبطاقة لاعب لكل عضو — محسوبة آلياً.'),
-  ];
+  List<_OnboardData> _getPages(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return [
+      _OnboardData(Icons.groups, loc.formYourTeam, loc.formYourTeamDesc),
+      _OnboardData(Icons.emoji_events, loc.organizeTournaments, loc.organizeTournamentsDesc),
+      _OnboardData(Icons.insights, loc.trackStats, loc.trackStatsDesc),
+    ];
+  }
 
   void _finish() {
     PreferencesService.setOnboardingSeen();
@@ -40,8 +41,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pages = _getPages(context);
     final theme = Theme.of(context);
-    final isLast = _index == _pages.length - 1;
+    final isLast = _index == pages.length - 1;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -51,16 +53,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: _finish,
-                child: const Text('تخطّي'),
+                child: Text(AppLocalizations.of(context)!.skip),
               ),
             ),
             Expanded(
               child: PageView.builder(
                 controller: _controller,
-                itemCount: _pages.length,
+                itemCount: pages.length,
                 onPageChanged: (i) => setState(() => _index = i),
                 itemBuilder: (_, i) {
-                  final p = _pages[i];
+                  final p = pages[i];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Column(
@@ -94,7 +96,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                _pages.length,
+                pages.length,
                 (i) => AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
                   margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -131,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14)),
                   ),
-                  child: Text(isLast ? 'ابدأ الآن' : 'التالي',
+                  child: Text(isLast ? AppLocalizations.of(context)!.startNow : AppLocalizations.of(context)!.next,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold)),
                 ),

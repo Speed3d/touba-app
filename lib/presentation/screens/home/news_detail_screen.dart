@@ -8,6 +8,7 @@ import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/news_model.dart';
 import '../../../data/repositories/home_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 class NewsDetailScreen extends StatefulWidget {
   final NewsModel news;
@@ -31,7 +32,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   Future<void> _toggleLike() async {
     final authState = context.read<AuthCubit>().state;
     if (authState is! AuthAuthenticated) {
-      ToobaSnackBar.info(context, 'سجّل الدخول لتتمكن من الإعجاب');
+      ToobaSnackBar.info(context, AppLocalizations.of(context)!.loginToLike);
       return;
     }
     if (_busy) return;
@@ -54,7 +55,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
       await context.read<HomeRepository>().toggleLike(_news.id, uid, !liked);
     } catch (_) {
       if (!mounted) return;
-      ToobaSnackBar.error(context, 'حدث خطأ أثناء الإعجاب');
+      ToobaSnackBar.error(context, AppLocalizations.of(context)!.errorLiking);
       setState(() {
         final revert = List<String>.from(_news.likes);
         liked ? revert.add(uid) : revert.remove(uid);
@@ -67,7 +68,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
 
   Future<void> _share() async {
     final repo = context.read<HomeRepository>();
-    final text = '📰 ${_news.title}\n\n${_news.body}\n\n📲 عبر تطبيق طوبة للمحترفين';
+    final text = '📰 ${_news.title}\n\n${_news.body}\n\n📲 ${AppLocalizations.of(context)!.viaToobaApp}';
     try {
       await Share.share(text);
       await repo.incrementShare(_news.id);
@@ -181,14 +182,14 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                         _buildActionBtn(
                           icon: liked ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
                           color: liked ? Colors.redAccent : (isDark ? Colors.grey[300]! : Colors.grey[700]!),
-                          label: 'إعجاب (${_news.likeCount})',
+                          label: AppLocalizations.of(context)!.likeCount(_news.likeCount),
                           onTap: _toggleLike,
                         ),
                         Container(height: 30, width: 1, color: Colors.grey.withValues(alpha: 0.3)),
                         _buildActionBtn(
                           icon: Icons.share_rounded,
                           color: isDark ? Colors.grey[300]! : Colors.grey[700]!,
-                          label: 'مشاركة (${_news.shareCount})',
+                          label: AppLocalizations.of(context)!.shareCount(_news.shareCount),
                           onTap: _share,
                         ),
                       ],

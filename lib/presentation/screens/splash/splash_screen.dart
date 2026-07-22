@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../data/services/preferences_service.dart';
 import '../auth/auth_wrapper.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../../widgets/core/decorated_background.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة البداية — تصميم عصري مطابق لملف التصميم الجديد.
 /// تحتوي على شعار في المنتصف وحلقات متراقصة (Pulse Animation).
@@ -191,7 +191,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Column(
                         children: [
                           Text(
-                            'طوبة',
+                            AppLocalizations.of(context)!.appTitle,
                             style: TextStyle(
                               fontSize: 50,
                               fontWeight: FontWeight.w900,
@@ -202,7 +202,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'TOUBA FOOTBALL',
+                            AppLocalizations.of(context)!.toubaFootball,
                             style: TextStyle(
                               fontSize: 13,
                               color: isDark ? const Color(0xFF1E4030) : const Color(0xFF86EFAC),
@@ -211,7 +211,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'منصة كرة القدم الشعبية العراقية',
+                            AppLocalizations.of(context)!.iraqiAmateurFootballPlatform,
                             style: TextStyle(
                               fontSize: 14,
                               color: theme.colorScheme.onSurfaceVariant,

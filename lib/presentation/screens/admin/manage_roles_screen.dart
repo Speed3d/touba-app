@@ -3,6 +3,7 @@ import '../../../data/models/user_model.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../data/services/functions_service.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ManageRolesScreen extends StatefulWidget {
   const ManageRolesScreen({super.key});
@@ -29,7 +30,7 @@ class _ManageRolesScreenState extends State<ManageRolesScreen> {
       setState(() => _searchResults = results);
     } catch (e) {
       if (mounted) {
-        ToobaSnackBar.error(context, 'خطأ في البحث: $e');
+        ToobaSnackBar.error(context, AppLocalizations.of(context)!.searchError(e.toString()));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -53,17 +54,17 @@ class _ManageRolesScreenState extends State<ManageRolesScreen> {
           _searchResults[index] = user.copyWith(adminPermissions: newPermissions);
         }
       });
-      ToobaSnackBar.success(context, 'تم التحديث بنجاح');
+      ToobaSnackBar.success(context, AppLocalizations.of(context)!.updatedSuccessfully);
     } catch (e) {
       if (!mounted) return;
-      ToobaSnackBar.error(context, 'فشل التحديث: $e');
+      ToobaSnackBar.error(context, AppLocalizations.of(context)!.updateFailed(e.toString()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('إدارة الصلاحيات')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.manageRoles)),
       body: Column(
         children: [
           Padding(
@@ -73,10 +74,10 @@ class _ManageRolesScreenState extends State<ManageRolesScreen> {
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'ابحث برقم الهاتف (مثال: +964...)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.phone),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.searchByPhoneHint,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.phone),
                     ),
                     onSubmitted: (_) => _search(),
                     keyboardType: TextInputType.phone,
@@ -96,7 +97,7 @@ class _ManageRolesScreenState extends State<ManageRolesScreen> {
           if (_isLoading)
             const Expanded(child: Center(child: CircularProgressIndicator()))
           else if (_searchResults.isEmpty)
-            const Expanded(child: Center(child: Text('لا توجد نتائج بحث')))
+            Expanded(child: Center(child: Text(AppLocalizations.of(context)!.noSearchResults)))
           else
             Expanded(
               child: ListView.builder(
@@ -139,21 +140,21 @@ class _ManageRolesScreenState extends State<ManageRolesScreen> {
                                   color: Colors.blue.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Text('الدور: ${user.role}'),
+                                child: Text(AppLocalizations.of(context)!.roleX(user.role)),
                               ),
                             ],
                           ),
                           const Divider(height: 24),
-                          const Text('الصلاحيات الإضافية:', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(AppLocalizations.of(context)!.additionalPermissions, style: const TextStyle(fontWeight: FontWeight.bold)),
                           SwitchListTile(
-                            title: const Text('منظم بطولات'),
-                            subtitle: const Text('يسمح بإنشاء وإدارة البطولات'),
+                            title: Text(AppLocalizations.of(context)!.tournamentOrganizer),
+                            subtitle: Text(AppLocalizations.of(context)!.allowsCreatingTournaments),
                             value: isOrganizer,
                             onChanged: (val) => _toggleCapability(user, 'organizer', val),
                           ),
                           SwitchListTile(
-                            title: const Text('حكم'),
-                            subtitle: const Text('يسمح بإدخال نتائج المباريات المعين لها'),
+                            title: Text(AppLocalizations.of(context)!.referee),
+                            subtitle: Text(AppLocalizations.of(context)!.allowsEnteringResults),
                             value: isReferee,
                             onChanged: (val) => _toggleCapability(user, 'referee', val),
                           ),

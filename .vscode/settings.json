@@ -1,3 +1,46 @@
 {
-    "cmake.sourceDirectory": "C:/Users/Laptop-Rog/Documents/empty/test_app/linux"
+  "//": "📝 إعدادات مشتركة بين ويندوز والماك — لا مسارات خاصة بجهاز.",
+
+  "dart.lineLength": 80,
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "dart.openDevTools": "flutter",
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  "//_exclude": "📝 craftsman_backup مرجع للقراءة فقط — نستثنيه من الفهرسة/البحث/المراقبة لتسريع VS Code ومنع تعديله بالخطأ.",
+  "search.exclude": {
+    "**/craftsman_backup": true,
+    "**/.dart_tool": true,
+    "**/build": true,
+    "**/functions/node_modules": true
+  },
+  "files.watcherExclude": {
+    "**/craftsman_backup/**": true,
+    "**/.dart_tool/**": true,
+    "**/build/**": true,
+    "**/functions/node_modules/**": true
+  },
+
+  "//_l10n": "📝 ملفات الترجمة المولّدة تُنتَج بـ flutter gen-l10n — عدّل ملفات .arb لا الملفات المولّدة.",
+
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active"
 }

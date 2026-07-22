@@ -9,6 +9,7 @@ import '../../../data/models/user_model.dart';
 import '../../../data/services/functions_service.dart';
 import '../../../data/repositories/subscription_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة «اشتراكي» (للكابتن — المرحلة 8). تعرض حالة الاشتراك/التجربة
 /// والانتهاء، وتتيح التفعيل بكود (عبر CF) والتواصل مع الأدمن (واتساب). عند الفتح
@@ -57,29 +58,29 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final code = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('تفعيل بكود'),
+        title: Text(AppLocalizations.of(context)!.activateWithCode),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('أدخل كود التفعيل الذي حصلت عليه من الإدارة:'),
+            Text(AppLocalizations.of(context)!.enterActivationCodePrompt),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
               textCapitalization: TextCapitalization.characters,
-              decoration: const InputDecoration(
-                hintText: 'TBA-XXXX-XXXX',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.activationCodeHint,
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+              onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, controller.text),
-              child: const Text('تفعيل')),
+              child: Text(AppLocalizations.of(context)!.activateBtn)),
         ],
       ),
     );
@@ -89,14 +90,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       final r = await FunctionsService()
           .redeemActivationCode(code.trim().toUpperCase());
       await auth.refreshUser();
+      if (!mounted) return;
       final months = r['durationMonths'];
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(
-          'تم تفعيل اشتراكك 🎉${months != null ? ' (+$months شهر)' : ''}'));
+          AppLocalizations.of(context)!.subscriptionActivatedXMonths(months != null ? ' (+$months شهر)' : '')));
     } on FirebaseFunctionsException catch (e) {
+      if (!mounted) return;
       messenger.showSnackBar(
-          ToobaSnackBar.buildError(e.message ?? 'تعذّر التفعيل'));
+          ToobaSnackBar.buildError(e.message ?? AppLocalizations.of(context)!.failedToActivate));
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر التفعيل'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToActivate));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -106,11 +110,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (_whatsapp.isEmpty) return;
     final num = _whatsapp.replaceAll('+', '').replaceAll(' ', '');
     final uri = Uri.parse('https://wa.me/$num'
-        '?text=${Uri.encodeComponent('مرحباً، أريد تفعيل اشتراك طوبة')}');
+        '?text=${Uri.encodeComponent(AppLocalizations.of(context)!.whatsappActivationMessage)}');
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر فتح واتساب');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToOpenWhatsapp);
     }
   }
 
@@ -119,9 +123,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final st = context.watch<AuthCubit>().state;
     final user = st is AuthAuthenticated ? st.user : null;
     return Scaffold(
-      appBar: AppBar(title: const Text('اشتراكي'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.mySubscriptionTitle), centerTitle: true),
       body: user == null
-          ? const Center(child: Text('سجّل الدخول'))
+          ? Center(child: Text(AppLocalizations.of(context)!.loginFirstToProceed))
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
@@ -138,7 +142,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white))
                       : const Icon(Icons.vpn_key),
-                  label: const Text('تفعيل بكود'),
+                  label: Text(AppLocalizations.of(context)!.activateWithCode),
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14)),
                 ),
@@ -147,7 +151,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   OutlinedButton.icon(
                     onPressed: _contactWhatsapp,
                     icon: const Icon(Icons.chat),
-                    label: const Text('تواصل للحصول على كود'),
+                    label: Text(AppLocalizations.of(context)!.contactToGetCode),
                     style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14)),
                   ),
@@ -165,11 +169,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         expiry == null ? 0 : expiry.difference(DateTime.now()).inDays;
 
     final (label, color, icon) = !active
-        ? (expiry == null ? 'غير مشترك' : 'انتهى الاشتراك', Colors.red,
+        ? (expiry == null ? AppLocalizations.of(context)!.notSubscribed : AppLocalizations.of(context)!.subscriptionExpired, Colors.red,
             Icons.lock_outline)
         : isTrial
-            ? ('تجربة مجانية', Colors.blue, Icons.timelapse)
-            : ('مشترك فعّال', Colors.green, Icons.verified);
+            ? (AppLocalizations.of(context)!.freeTrial, Colors.blue, Icons.timelapse)
+            : (AppLocalizations.of(context)!.activeSubscriber, Colors.green, Icons.verified);
 
     return Container(
       width: double.infinity,
@@ -193,12 +197,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   fontWeight: FontWeight.bold)),
           if (active && expiry != null) ...[
             const SizedBox(height: 6),
-            Text('ينتهي: ${DateFormat('d MMM yyyy', 'ar').format(expiry)}',
+            Text(AppLocalizations.of(context)!.expiresAtDate(DateFormat('d MMM yyyy', 'ar').format(expiry)),
                 style: const TextStyle(color: Colors.white)),
             Text(
                 days > 0
-                    ? 'متبقّي $days يوم'
-                    : 'ينتهي اليوم',
+                    ? AppLocalizations.of(context)!.daysRemaining(days.toString())
+                    : AppLocalizations.of(context)!.expiresToday,
                 style: const TextStyle(color: Colors.white70, fontSize: 13)),
           ],
         ],
@@ -214,12 +218,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('ماذا يفتح الاشتراك؟',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.whatDoesSubscriptionUnlock,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
-            _benefit('طلب تحدّيات الفرق والموافقة عليها'),
-            _benefit('فتح محادثة مع كابتن الفريق المنافس'),
-            _benefit('المشاركة في البطولات (حسب نوع البطولة)'),
+            _benefit(AppLocalizations.of(context)!.benefitChallengeRequests),
+            _benefit(AppLocalizations.of(context)!.benefitOpenChatWithOpponent),
+            _benefit(AppLocalizations.of(context)!.benefitParticipateInTournaments),
           ],
         ),
       ),

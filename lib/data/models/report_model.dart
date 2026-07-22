@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 enum ReportReason {
   offensiveContent,
@@ -6,12 +8,12 @@ enum ReportReason {
   misleadingInfo,
   other;
 
-  String get label {
+  String getLabel(BuildContext context) {
     switch (this) {
-      case ReportReason.offensiveContent: return 'محتوى مسيء';
-      case ReportReason.inappropriateBehavior: return 'سلوك غير لائق';
-      case ReportReason.misleadingInfo: return 'معلومات مضلّلة';
-      case ReportReason.other: return 'أخرى';
+      case ReportReason.offensiveContent: return AppLocalizations.of(context)!.offensiveContentLabel;
+      case ReportReason.inappropriateBehavior: return AppLocalizations.of(context)!.inappropriateBehaviorLabel;
+      case ReportReason.misleadingInfo: return AppLocalizations.of(context)!.misleadingInfoLabel;
+      case ReportReason.other: return AppLocalizations.of(context)!.otherReasonLabel;
     }
   }
 
@@ -32,11 +34,11 @@ enum ReportTargetType {
   team,
   user;
 
-  String get label {
+  String getLabel(BuildContext context) {
     switch (this) {
-      case ReportTargetType.player: return 'لاعب';
-      case ReportTargetType.team: return 'فريق';
-      case ReportTargetType.user: return 'مستخدم';
+      case ReportTargetType.player: return AppLocalizations.of(context)!.playerLabel;
+      case ReportTargetType.team: return AppLocalizations.of(context)!.teamLabel;
+      case ReportTargetType.user: return AppLocalizations.of(context)!.userLabel;
     }
   }
 

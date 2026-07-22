@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../app/router/tooba_route.dart';
 import 'subscription_screen.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: ورقة سفلية تظهر عند محاولة ميزة مقفولة بالاشتراك (المرحلة 8).
 /// تشرح أن الميزة تتطلّب اشتراكاً وتفتح شاشة «اشتراكي» للتفعيل/التواصل.
@@ -35,13 +36,13 @@ class SubscriptionLockedSheet extends StatelessWidget {
                   color: theme.colorScheme.primary, size: 32),
             ),
             const SizedBox(height: 12),
-            Text('$feature يتطلّب اشتراكاً',
+            Text(AppLocalizations.of(context)!.featureRequiresSubscription(feature),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 17, fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
             Text(
-              'فعّل اشتراكك لفتح التحدّيات والمحادثة. التفعيل بكود من الإدارة.',
+              AppLocalizations.of(context)!.activateSubscriptionToUnlockFeatures,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey[600], fontSize: 13),
             ),
@@ -55,7 +56,7 @@ class SubscriptionLockedSheet extends StatelessWidget {
                       context, ToobaRoute.to(const SubscriptionScreen()));
                 },
                 icon: const Icon(Icons.workspace_premium, size: 18),
-                label: const Text('إدارة الاشتراك / تفعيل بكود'),
+                label: Text(AppLocalizations.of(context)!.manageSubscriptionActivateCodeBtn),
                 style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14)),
               ),
@@ -63,7 +64,7 @@ class SubscriptionLockedSheet extends StatelessWidget {
             const SizedBox(height: 8),
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('لاحقاً')),
+                child: Text(AppLocalizations.of(context)!.laterBtn)),
           ],
         ),
       ),

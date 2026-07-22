@@ -7,6 +7,7 @@ import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
 import '../../cubits/team/team_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 class CreateTeamScreen extends StatefulWidget {
   const CreateTeamScreen({super.key});
@@ -55,7 +56,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('اختيار من المعرض'),
+              title: Text(AppLocalizations.of(context)!.chooseFromGallery),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(ImageSource.gallery);
@@ -63,7 +64,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('التقاط صورة'),
+              title: Text(AppLocalizations.of(context)!.takePhoto),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(ImageSource.camera);
@@ -78,7 +79,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       if (_selectedCity == null) {
-        ToobaSnackBar.warning(context, 'يرجى اختيار المحافظة');
+        ToobaSnackBar.warning(context, AppLocalizations.of(context)!.pleaseSelectCity);
         return;
       }
       
@@ -105,7 +106,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
       listener: (context, state) {
         if (state is TeamsLoaded) {
           // Because creating a team triggers fetchTeams() and then TeamsLoaded
-          ToobaSnackBar.success(context, 'تم إنشاء الفريق بنجاح!');
+          ToobaSnackBar.success(context, AppLocalizations.of(context)!.teamCreatedSuccess);
           Navigator.pop(context);
         } else if (state is TeamError) {
           ToobaSnackBar.error(context, state.message);
@@ -113,7 +114,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('تأسيس فريق جديد'),
+          title: Text(AppLocalizations.of(context)!.createTeamTitle),
           elevation: 0,
           backgroundColor: Colors.transparent,
         ),
@@ -178,10 +179,10 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Center(
+                      Center(
                         child: Text(
-                          'شعار الفريق (اختياري)',
-                          style: TextStyle(color: Colors.grey),
+                          AppLocalizations.of(context)!.teamLogoOptional,
+                          style: const TextStyle(color: Colors.grey),
                         ),
                       ),
                       const SizedBox(height: 32),
@@ -191,13 +192,13 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                         controller: _nameController,
                         enabled: !isLoading,
                         decoration: InputDecoration(
-                          labelText: 'اسم الفريق',
+                          labelText: AppLocalizations.of(context)!.teamNameLabel,
                           prefixIcon: const Icon(Icons.sports_soccer),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           filled: true,
                           fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
                         ),
-                        validator: (val) => val == null || val.isEmpty ? 'يرجى إدخال اسم الفريق' : null,
+                        validator: (val) => val == null || val.isEmpty ? AppLocalizations.of(context)!.pleaseEnterTeamName : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -205,7 +206,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                       DropdownButtonFormField<String>(
                         initialValue: _selectedCity,
                         decoration: InputDecoration(
-                          labelText: 'المحافظة / المدينة',
+                          labelText: AppLocalizations.of(context)!.cityOrGovernorate,
                           prefixIcon: const Icon(Icons.location_on),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           filled: true,
@@ -223,8 +224,8 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                         controller: _areaController,
                         enabled: !isLoading,
                         decoration: InputDecoration(
-                          labelText: 'المنطقة (اختياري)',
-                          hintText: 'مثال: حي الجامعة، الكرادة...',
+                          labelText: AppLocalizations.of(context)!.areaOptional,
+                          hintText: AppLocalizations.of(context)!.areaExample,
                           prefixIcon: const Icon(Icons.map_outlined),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           filled: true,
@@ -247,9 +248,9 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                                 width: 24, height: 24,
                                 child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                               )
-                            : const Text(
-                                'تأسيس الفريق',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            : Text(
+                                AppLocalizations.of(context)!.createTeamBtn,
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                       ),
                     ],

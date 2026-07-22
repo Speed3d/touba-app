@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ReadyImagesSelectorScreen extends StatefulWidget {
   const ReadyImagesSelectorScreen({super.key});
@@ -65,7 +66,7 @@ class _ReadyImagesSelectorScreenState extends State<ReadyImagesSelectorScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('اختيار صورة جاهزة'),
+        title: Text(AppLocalizations.of(context)!.chooseReadyImage),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -74,7 +75,7 @@ class _ReadyImagesSelectorScreenState extends State<ReadyImagesSelectorScreen> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'اختر الأفاتار الذي يناسبك',
+              AppLocalizations.of(context)!.chooseYourAvatar,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -155,9 +156,9 @@ class _ReadyImagesSelectorScreenState extends State<ReadyImagesSelectorScreen> {
                     height: 24,
                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                   )
-                : const Text(
-                    'اعتماد الصورة',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                : Text(
+                    AppLocalizations.of(context)!.confirmImage,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
           ),
         ),

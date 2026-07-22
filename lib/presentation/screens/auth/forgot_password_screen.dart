@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
+
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -25,7 +27,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthCubit>().resetPassword(_emailController.text.trim());
-      ToobaSnackBar.success(context, 'تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني إذا كان مسجلاً لدينا.');
+      ToobaSnackBar.success(context, AppLocalizations.of(context)!.resetPasswordSent);
       Navigator.pop(context);
     }
   }
@@ -38,7 +40,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('استعادة كلمة المرور'),
+        title: Text(AppLocalizations.of(context)!.resetPasswordTitle),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -57,7 +59,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'أدخل بريدك الإلكتروني المسجل أدناه وسنرسل لك رابطاً لإنشاء كلمة مرور جديدة.',
+                  AppLocalizations.of(context)!.enterEmailToReset,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: isDark ? Colors.white70 : Colors.black87,
                   ),
@@ -70,7 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    labelText: 'البريد الإلكتروني',
+                    labelText: AppLocalizations.of(context)!.email,
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -81,10 +83,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'يرجى إدخال البريد الإلكتروني';
+                      return AppLocalizations.of(context)!.pleaseEnterEmail;
                     }
                     if (!value.contains('@')) {
-                      return 'البريد الإلكتروني غير صالح';
+                      return AppLocalizations.of(context)!.invalidEmail;
                     }
                     return null;
                   },
@@ -107,9 +109,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         backgroundColor: theme.colorScheme.primary,
                         foregroundColor: Colors.white,
                       ),
-                      child: const Text(
-                        'إرسال الرابط',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      child: Text(
+                        AppLocalizations.of(context)!.sendLink,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     );
                   },
@@ -127,7 +129,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'هل تواجه مشكلة؟ لا تعرف كيف تستعيد الحساب؟',
+                        AppLocalizations.of(context)!.havingTroubleResetting,
                         style: TextStyle(
                           color: isDark ? Colors.white70 : Colors.black87,
                         ),
@@ -137,10 +139,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       OutlinedButton.icon(
                         onPressed: () {
                           // TODO: Implement contact admin logic (e.g. open WhatsApp or support email)
-                          ToobaSnackBar.info(context, 'سيتم تفعيل هذه الميزة قريباً لفتح المحادثة مع الإدارة.');
+                          ToobaSnackBar.info(context, AppLocalizations.of(context)!.contactAdminComingSoon);
                         },
                         icon: const Icon(Icons.support_agent),
-                        label: const Text('تواصل مع الإدارة'),
+                        label: Text(AppLocalizations.of(context)!.contactAdmin),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                           shape: RoundedRectangleBorder(

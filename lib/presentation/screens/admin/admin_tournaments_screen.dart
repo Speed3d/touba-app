@@ -2,11 +2,12 @@ import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:image_picker/image_picker.dart';
 import '../../../data/models/tournament_model.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: إدارة البطولات (للأدمن) — قائمة كل البطولات وتعديل (الاسم/صورة
 /// البطولة/صورة الكأس/الجوائز/الراعي).
@@ -33,7 +34,7 @@ class _AdminTournamentsScreenState extends State<AdminTournamentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('إدارة البطولات'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.adminTournamentsTitle), centerTitle: true),
       body: FutureBuilder<List<TournamentModel>>(
         future: _future,
         builder: (context, snap) {
@@ -43,7 +44,7 @@ class _AdminTournamentsScreenState extends State<AdminTournamentsScreen> {
           final list = snap.data ?? [];
           if (list.isEmpty) {
             return Center(
-              child: Text('لا توجد بطولات',
+              child: Text(AppLocalizations.of(context)!.noTournaments,
                   style: TextStyle(color: Colors.grey[600])),
             );
           }
@@ -79,8 +80,8 @@ class _AdminTournamentsScreenState extends State<AdminTournamentsScreen> {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(t.status == 'finished'
-            ? 'منتهية • البطل: ${t.winnerTeamName ?? "—"}'
-            : 'جارية • ${t.city}'),
+            ? AppLocalizations.of(context)!.tournamentFinishedWinner(t.winnerTeamName ?? '—')
+            : AppLocalizations.of(context)!.tournamentOngoingCity(t.city)),
         trailing: const Icon(Icons.edit),
         onTap: () => _openEditor(t),
       ),
@@ -188,7 +189,7 @@ class _TournamentEditorState extends State<_TournamentEditor> {
       widget.onSaved();
       if (mounted) Navigator.pop(context);
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر حفظ التعديلات');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToSaveTournament);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -209,19 +210,19 @@ class _TournamentEditorState extends State<_TournamentEditor> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('تعديل البطولة',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(AppLocalizations.of(context)!.editTournamentTitle,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: _imagePicker('صورة البطولة', _cover, t.logoUrl,
+                  child: _imagePicker(AppLocalizations.of(context)!.tournamentCoverImage, _cover, t.logoUrl,
                       () => _pick(false)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _imagePicker('صورة الكأس', _cup, t.cupImageUrl,
+                  child: _imagePicker(AppLocalizations.of(context)!.tournamentCupImage, _cup, t.cupImageUrl,
                       () => _pick(true)),
                 ),
               ],
@@ -229,41 +230,41 @@ class _TournamentEditorState extends State<_TournamentEditor> {
             const SizedBox(height: 12),
             TextField(
               controller: _name,
-              decoration: const InputDecoration(
-                  labelText: 'اسم البطولة', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.tournamentNameLabel, border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _prizes,
               maxLines: 2,
-              decoration: const InputDecoration(
-                  labelText: 'الجوائز (اختياري)',
-                  border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.tournamentPrizesOptional,
+                  border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _sponsor,
-              decoration: const InputDecoration(
-                  labelText: 'اسم الراعي (اختياري)',
-                  border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.tournamentSponsorOptional,
+                  border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 8),
             // 📝 HINT AR: مجانية/باشتراك (المرحلة 8) — الدخول المدفوع يُدار يدوياً.
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('بطولة مجانية'),
+              title: Text(AppLocalizations.of(context)!.freeTournament),
               subtitle: Text(_isFree
-                  ? 'مفتوحة لكل الفرق'
-                  : 'باشتراك — يُضاف الفريق بعد الدفع'),
+                  ? AppLocalizations.of(context)!.openToAllTeams
+                  : AppLocalizations.of(context)!.paidTournament),
               value: _isFree,
               onChanged: (v) => setState(() => _isFree = v),
             ),
             if (!_isFree)
               TextField(
                 controller: _entryInfo,
-                decoration: const InputDecoration(
-                    labelText: 'رسوم/تواصل الدخول (للعرض)',
-                    border: OutlineInputBorder()),
+                decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.entryFeeInfo,
+                    border: const OutlineInputBorder()),
               ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -275,7 +276,7 @@ class _TournamentEditorState extends State<_TournamentEditor> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('حفظ'),
+                  : Text(AppLocalizations.of(context)!.saveBtn),
             ),
           ],
         ),

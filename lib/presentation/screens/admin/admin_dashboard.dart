@@ -11,6 +11,7 @@ import 'admin_tournaments_screen.dart';
 import 'admin_referee_applications_screen.dart';
 import 'admin_sections_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -19,7 +20,7 @@ class AdminDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('لوحة تحكم الإدارة', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.adminDashboardTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: ListView(
@@ -28,8 +29,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.location_on,
-            title: 'إدارة المواقع',
-            subtitle: 'المحافظات والمناطق المسموح باللعب فيها',
+            title: AppLocalizations.of(context)!.manageLocationsTitle,
+            subtitle: AppLocalizations.of(context)!.manageLocationsSubtitle,
             color: Colors.teal,
             onTap: () {
               Navigator.push(context, ToobaRoute.to(const ManageLocationsScreen()));
@@ -39,8 +40,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.verified_user,
-            title: 'إدارة الصلاحيات',
-            subtitle: 'منح ألقاب المنظمين والحكام',
+            title: AppLocalizations.of(context)!.manageRolesTitle,
+            subtitle: AppLocalizations.of(context)!.manageRolesSubtitle,
             color: Colors.blue,
             onTap: () {
               Navigator.push(context, ToobaRoute.to(const ManageRolesScreen()));
@@ -50,8 +51,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.flag,
-            title: 'البلاغات',
-            subtitle: 'مراجعة البلاغات الواردة عن لاعبين وفرق',
+            title: AppLocalizations.of(context)!.adminReportsTitle,
+            subtitle: AppLocalizations.of(context)!.adminReportsSubtitle,
             color: Colors.red,
             onTap: () => Navigator.push(context,
                 ToobaRoute.to(const AdminReportsScreen())),
@@ -60,8 +61,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.emoji_events,
-            title: 'إدارة البطولات',
-            subtitle: 'تعديل الأسماء والصور والكؤوس والجوائز',
+            title: AppLocalizations.of(context)!.adminTournamentsTitle,
+            subtitle: AppLocalizations.of(context)!.adminTournamentsSubtitle,
             color: Colors.amber.shade800,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminTournamentsScreen())),
@@ -70,8 +71,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.image,
-            title: 'إدارة الإعلانات',
-            subtitle: 'بانرات سلايدر الصفحة الرئيسية',
+            title: AppLocalizations.of(context)!.adminBannersTitle,
+            subtitle: AppLocalizations.of(context)!.adminBannersSubtitle,
             color: Colors.indigo,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminBannersScreen())),
@@ -80,8 +81,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.article,
-            title: 'إدارة الأخبار',
-            subtitle: 'نشر وتعديل أخبار الصفحة الرئيسية',
+            title: AppLocalizations.of(context)!.adminNewsTitle,
+            subtitle: AppLocalizations.of(context)!.adminNewsSubtitle,
             color: Colors.green.shade700,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminNewsScreen())),
@@ -90,8 +91,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.how_to_reg,
-            title: 'طلبات التحكيم',
-            subtitle: 'موافقة/رفض طلبات الراغبين بالتحكيم',
+            title: AppLocalizations.of(context)!.adminRefereeApplicationsTitle,
+            subtitle: AppLocalizations.of(context)!.adminRefereeApplicationsSubtitle,
             color: Colors.teal.shade700,
             onTap: () => Navigator.push(context,
                 ToobaRoute.to(const AdminRefereeApplicationsScreen())),
@@ -100,8 +101,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.balance,
-            title: 'نزاعات فكّ الارتباط',
-            subtitle: 'طلبات خروج رفضها الكباتن وصعّدها اللاعبون',
+            title: AppLocalizations.of(context)!.adminDisputesTitle,
+            subtitle: AppLocalizations.of(context)!.adminDisputesSubtitle,
             color: Colors.purple,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminDisputesScreen())),
@@ -110,8 +111,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.sports_mma,
-            title: 'إدارة التحديات',
-            subtitle: 'إلغاء طلبات التحدّي المتروكة (بلا متقدّمين منذ أيام)',
+            title: AppLocalizations.of(context)!.adminChallengesTitle,
+            subtitle: AppLocalizations.of(context)!.adminChallengesSubtitle,
             color: Colors.deepOrange,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminChallengesScreen())),
@@ -120,8 +121,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.grid_view,
-            title: 'إعدادات الأقسام',
-            subtitle: 'إظهار/إخفاء أقسام التطبيق (مثل البطولات)',
+            title: AppLocalizations.of(context)!.adminSectionsTitle,
+            subtitle: AppLocalizations.of(context)!.adminSectionsSubtitle,
             color: Colors.blueGrey,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminSectionsScreen())),
@@ -130,8 +131,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.confirmation_number,
-            title: 'أكواد التفعيل',
-            subtitle: 'توليد أكواد الاشتراك + مدة التجربة + واتساب التفعيل',
+            title: AppLocalizations.of(context)!.adminSubscriptionsTitle,
+            subtitle: AppLocalizations.of(context)!.adminSubscriptionsSubtitle,
             color: Colors.teal,
             onTap: () => Navigator.push(
                 context, ToobaRoute.to(const AdminSubscriptionsScreen())),
@@ -140,8 +141,8 @@ class AdminDashboard extends StatelessWidget {
           _buildAdminCard(
             context,
             icon: Icons.check_circle,
-            title: 'توثيق الفرق',
-            subtitle: 'قريباً...',
+            title: AppLocalizations.of(context)!.adminVerifyTeamsTitle,
+            subtitle: AppLocalizations.of(context)!.comingSoon,
             color: Colors.amber.shade700,
             onTap: () {},
           ),

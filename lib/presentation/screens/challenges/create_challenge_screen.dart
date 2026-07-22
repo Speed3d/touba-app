@@ -9,6 +9,7 @@ import '../../../data/models/team_model.dart';
 import '../../../data/repositories/challenge_repository.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة «طلب تحدٍّ ودّي» (بند 17). تُفتح من زر «اطلب تحدي» على صفحة
 /// الفريق الشعبي (لكابتن مشترك). تنشر طلباً مفتوحاً باسم فريق الكابتن، ويمكن
@@ -33,7 +34,7 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
   void initState() {
     super.initState();
     if (widget.targetTeamName != null) {
-      _note.text = 'نطلب تحدّي فريق ${widget.targetTeamName}';
+      _note.text = 'نطلب تحدّي فريق ${widget.targetTeamName}'; // Will override after build context is available
     }
     _resolveTeam();
   }
@@ -50,7 +51,7 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
     if (uid == null) {
       setState(() {
         _loading = false;
-        _error = 'سجّل الدخول أولاً';
+        _error = AppLocalizations.of(context)!.loginFirstToProceed;
       });
       return;
     }
@@ -60,13 +61,13 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
       setState(() {
         _myTeam = team;
         _loading = false;
-        if (team == null) _error = 'لا تملك فريقاً لإرسال تحدٍّ باسمه';
+        if (team == null) _error = AppLocalizations.of(context)!.youDoNotHaveATeamToRequestChallenge;
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = 'تعذّر تحميل بيانات فريقك';
+        _error = AppLocalizations.of(context)!.failedToLoadYourTeamData;
       });
     }
   }
@@ -98,9 +99,10 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
     try {
       // 📝 HINT AR: طلب مفتوح واحد لكل كابتن (منع الإغراق).
       final existing = await repo.getMyOpenChallenge(uid);
+      if (!mounted) return;
       if (existing != null) {
         messenger.showSnackBar(ToobaSnackBar.buildInfo(
-            'لديك طلب مفتوح بالفعل — عدّله من «تحدّيات الفرق»'));
+            AppLocalizations.of(context)!.youAlreadyHaveOpenRequestEditIt));
         if (mounted) Navigator.pop(context);
         return;
       }
@@ -116,10 +118,12 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
         status: 'open',
       );
       await repo.createChallenge(c);
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم نشر طلب التحدّي'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.challengeRequestPublished));
       if (mounted) Navigator.pop(context);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر نشر الطلب'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToPublishRequest));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -128,9 +132,12 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    if (widget.targetTeamName != null && _note.text.startsWith('نطلب تحدّي فريق')) {
+       _note.text = AppLocalizations.of(context)!.requestChallengeWithTeam(widget.targetTeamName!);
+    }
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('طلب تحدٍّ'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.requestChallengeTitle), centerTitle: true),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -148,20 +155,20 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
                     if (widget.targetTeamName != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: Text('تحدٍّ موجّه إلى «${widget.targetTeamName}»',
+                        child: Text(AppLocalizations.of(context)!.directedChallengeToTeam(widget.targetTeamName!),
                             style: TextStyle(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                       ),
-                    Text('باسم فريق «${_myTeam!.name}» • ${_myTeam!.city}',
+                    Text(AppLocalizations.of(context)!.onBehalfOfTeam(_myTeam!.name, _myTeam!.city),
                         style: TextStyle(color: Colors.grey[600])),
                     const SizedBox(height: 16),
                     TextField(
                       controller: _note,
                       maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: 'ملاحظة — المكان/التوقيت المقترح',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.noteSuggestedPlaceTime,
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -169,7 +176,7 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
                       onPressed: _pickDate,
                       icon: const Icon(Icons.event, size: 18),
                       label: Text(_date == null
-                          ? 'موعد مقترح (اختياري)'
+                          ? AppLocalizations.of(context)!.suggestedDateOptional
                           : DateFormat('EEE d MMM • HH:mm', 'ar').format(_date!)),
                       style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14)),
@@ -190,8 +197,8 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
                               height: 22,
                               child: CircularProgressIndicator(
                                   color: Colors.white, strokeWidth: 2))
-                          : const Text('نشر طلب التحدّي',
-                              style: TextStyle(
+                          : Text(AppLocalizations.of(context)!.publishChallengeRequestBtn,
+                              style: const TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.bold)),
                     ),
                   ],

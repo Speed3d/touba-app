@@ -13,6 +13,7 @@ import 'team_gallery_edit_screen.dart';
 import 'team_formation_edit_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة إدارة الفريق للكابتن — طلبات الانضمام + التشكيلة + دعوات الربط.
 /// تتوقّع TeamManageCubit مُوفَّراً أعلاها (يُمرَّر عند التنقّل من صفحة الفريق).
@@ -26,14 +27,14 @@ class TeamManagementScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('إدارة الفريق'),
+        title: Text(AppLocalizations.of(context)!.teamManagement),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code),
-            tooltip: 'ربط لاعب بالكود',
+            tooltip: AppLocalizations.of(context)!.linkPlayerByCodeTitle,
             onPressed: () => _linkByCode(context),
           ),
         ],
@@ -41,7 +42,7 @@ class TeamManagementScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _onAddPlayer(context),
         icon: const Icon(Icons.person_add),
-        label: const Text('إضافة لاعب'),
+        label: Text(AppLocalizations.of(context)!.addPlayer),
       ),
       body: BlocConsumer<TeamManageCubit, TeamManageState>(
         listener: (context, state) {
@@ -58,7 +59,7 @@ class TeamManagementScreen extends StatelessWidget {
           if (state is TeamManageLoaded) {
             return _buildContent(context, state);
           }
-          return const Center(child: Text('جارٍ التحميل...'));
+          return Center(child: Text(AppLocalizations.of(context)!.loading));
         },
       ),
     );
@@ -72,7 +73,7 @@ class TeamManagementScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         if (state.requests.isNotEmpty) ...[
-          Text('طلبات الانضمام (${state.requests.length})',
+          Text(AppLocalizations.of(context)!.joinRequestsCountX(state.requests.length.toString()),
               style:
                   theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -82,7 +83,7 @@ class TeamManagementScreen extends StatelessWidget {
                   leading: const CircleAvatar(child: Icon(Icons.person)),
                   title: Text(r.userName,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text('طلب انضمام'),
+                  subtitle: Text(AppLocalizations.of(context)!.joinRequestLabel),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -103,7 +104,7 @@ class TeamManagementScreen extends StatelessWidget {
           const SizedBox(height: 24),
         ],
         if (state.releaseRequests.isNotEmpty) ...[
-          Text('طلبات الخروج (${state.releaseRequests.length})',
+          Text(AppLocalizations.of(context)!.releaseRequestsCountX(state.releaseRequests.length.toString()),
               style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold, color: Colors.orange.shade800)),
           const SizedBox(height: 8),
@@ -116,20 +117,20 @@ class TeamManagementScreen extends StatelessWidget {
                   ),
                   title: Text(r.userName,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text('يطلب الخروج من الفريق'),
+                  subtitle: Text(AppLocalizations.of(context)!.requestsToLeaveTeam),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.check_circle,
                             color: Colors.green),
-                        tooltip: 'قبول الخروج',
+                        tooltip: AppLocalizations.of(context)!.acceptLeave,
                         onPressed: () =>
                             context.read<TeamManageCubit>().acceptRelease(r),
                       ),
                       IconButton(
                         icon: const Icon(Icons.cancel, color: Colors.red),
-                        tooltip: 'رفض',
+                        tooltip: AppLocalizations.of(context)!.rejectBtn,
                         onPressed: () =>
                             context.read<TeamManageCubit>().rejectRelease(r),
                       ),
@@ -147,7 +148,7 @@ class TeamManagementScreen extends StatelessWidget {
         const SizedBox(height: 16),
         Row(
           children: [
-            Text('التشكيلة (${state.players.length})',
+            Text(AppLocalizations.of(context)!.rosterCountX(state.players.length.toString()),
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const Spacer(),
@@ -155,27 +156,27 @@ class TeamManagementScreen extends StatelessWidget {
               TextButton.icon(
                 onPressed: () => _openFormationSheet(context, state),
                 icon: const Icon(Icons.stadium, size: 18),
-                label: const Text('عرض/مشاركة'),
+                label: Text(AppLocalizations.of(context)!.viewShare),
               ),
           ],
         ),
         Text(
-            'اضغط شارة «أساسي/احتياط» لنقل اللاعب بين القسمين • اضغط «رقم» لتعديله',
+            AppLocalizations.of(context)!.rosterManagementHint,
             style: TextStyle(fontSize: 11, color: Colors.grey[600])),
         const SizedBox(height: 12),
         if (state.players.isEmpty)
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('لا يوجد لاعبون بعد — أضِف لاعبيك بزر «إضافة لاعب»',
+            child: Text(AppLocalizations.of(context)!.noPlayersYetAddWithBtn,
                 style: TextStyle(color: Colors.grey[600])),
           )
         else ...[
-          _sectionLabel(context, 'الأساسيون', starters.length, Colors.green),
-          if (starters.isEmpty) _miniHint('لا يوجد أساسيون — حدّدهم من الاحتياط'),
+          _sectionLabel(context, AppLocalizations.of(context)!.starters, starters.length, Colors.green),
+          if (starters.isEmpty) _miniHint(AppLocalizations.of(context)!.noStartersSelectFromSubs),
           ...starters.map((p) => _playerTile(context, p)),
           const SizedBox(height: 16),
-          _sectionLabel(context, 'الاحتياط', subs.length, Colors.blueGrey),
-          if (subs.isEmpty) _miniHint('لا يوجد احتياط'),
+          _sectionLabel(context, AppLocalizations.of(context)!.subs, subs.length, Colors.blueGrey),
+          if (subs.isEmpty) _miniHint(AppLocalizations.of(context)!.noSubs),
           ...subs.map((p) => _playerTile(context, p)),
         ],
         const SizedBox(height: 80),
@@ -193,14 +194,14 @@ class TeamManagementScreen extends StatelessWidget {
       child: ListTile(
         leading:
             Icon(Icons.dashboard_customize, color: theme.colorScheme.primary),
-        title: const Text('خطة الفريق الأساسية',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.mainTeamFormation,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(hasFmt
-            ? 'الحالية: $fmt  (${formationTotal(fmt)} لاعبين)'
-            : 'لم تُحدَّد — اختر عدد اللاعبين والخطة'),
+            ? AppLocalizations.of(context)!.currentFormationX(fmt, formationTotal(fmt).toString())
+            : AppLocalizations.of(context)!.notSetChooseCountAndFormation),
         trailing: OutlinedButton(
           onPressed: () => _pickFormation(context, state),
-          child: Text(hasFmt ? 'تغيير' : 'تحديد'),
+          child: Text(hasFmt ? AppLocalizations.of(context)!.changeBtn : AppLocalizations.of(context)!.selectBtn),
         ),
       ),
     );
@@ -215,11 +216,11 @@ class TeamManagementScreen extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.photo_library_outlined,
             color: theme.colorScheme.primary),
-        title: const Text('صور الفريق',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.teamPhotosTitle,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(count == 0
-            ? 'لم تُضَف صور بعد — أضِف حتى 5 صور'
-            : '$count/5 صور'),
+            ? AppLocalizations.of(context)!.noPhotosYetAddUpTo5
+            : AppLocalizations.of(context)!.xOutOf5Photos(count.toString())),
         trailing: OutlinedButton(
           onPressed: () async {
             final cubit = context.read<TeamManageCubit>();
@@ -232,7 +233,7 @@ class TeamManagementScreen extends StatelessWidget {
             );
             if (changed == true) await cubit.load();
           },
-          child: Text(count == 0 ? 'إضافة' : 'تعديل'),
+          child: Text(count == 0 ? AppLocalizations.of(context)!.addBtn : AppLocalizations.of(context)!.editBtn),
         ),
       ),
     );
@@ -255,19 +256,19 @@ class TeamManagementScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(
-                child: Text('اختر خطة الفريق',
+              Center(
+                child: Text(AppLocalizations.of(context)!.chooseTeamFormation,
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 4),
               Center(
-                child: Text('الصيغة: حارس-دفاع-وسط-هجوم',
+                child: Text(AppLocalizations.of(context)!.formationFormatHint,
                     style: TextStyle(fontSize: 12, color: Colors.grey[600])),
               ),
               const SizedBox(height: 16),
               for (final format in kPlayerFormats) ...[
-                Text('$format لاعبين',
+                Text(AppLocalizations.of(context)!.playersCountX(format.toString()),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(ctx).colorScheme.primary)),
@@ -362,18 +363,18 @@ class TeamManagementScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('رقم ${p.name}'),
+        title: Text(AppLocalizations.of(context)!.numberForX(p.name)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           autofocus: true,
-          decoration: const InputDecoration(
-              labelText: 'رقم القميص', border: OutlineInputBorder()),
+          decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.shirtNumber, border: const OutlineInputBorder()),
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+              onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
             onPressed: () {
               final txt = controller.text.trim();
@@ -381,7 +382,7 @@ class TeamManagementScreen extends StatelessWidget {
               Navigator.pop(ctx);
               cubit.setShirtNumber(p, number);
             },
-            child: const Text('حفظ'),
+            child: Text(AppLocalizations.of(context)!.saveBtn),
           ),
         ],
       ),
@@ -436,7 +437,7 @@ class TeamManagementScreen extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(p.shirtNumber != null ? 'رقم ${p.shirtNumber}' : 'بلا رقم',
+                  Text(p.shirtNumber != null ? AppLocalizations.of(context)!.numberX(p.shirtNumber.toString()) : AppLocalizations.of(context)!.noNumber,
                       style: const TextStyle(fontSize: 12)),
                   const SizedBox(width: 2),
                   Icon(Icons.edit, size: 11, color: Colors.grey[600]),
@@ -456,7 +457,7 @@ class TeamManagementScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  p.isStarter ? 'أساسي' : 'احتياط',
+                  p.isStarter ? AppLocalizations.of(context)!.starter : AppLocalizations.of(context)!.sub,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -471,9 +472,10 @@ class TeamManagementScreen extends StatelessWidget {
         ),
         // 📝 HINT AR: الربط صار عبر كود اللاعب الدائم (زر «ربط لاعب بالكود» أعلى
         // الشاشة) — لا حاجة لزر دعوة لكل لاعب.
+        // الربط صار عبر كود اللاعب الدائم
         trailing: p.isClaimed
-            ? const Text('مرتبط', style: TextStyle(color: Colors.blue))
-            : Text('غير مرتبط', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+            ? Text(AppLocalizations.of(context)!.linked, style: const TextStyle(color: Colors.blue))
+            : Text(AppLocalizations.of(context)!.notLinked, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
       ),
     );
   }
@@ -493,7 +495,7 @@ class TeamManagementScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Text('مركز ${p.name}',
+              child: Text(AppLocalizations.of(context)!.positionForX(p.name),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 16)),
             ),
@@ -525,19 +527,19 @@ class TeamManagementScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('ربط لاعب بالكود'),
+        title: Text(AppLocalizations.of(context)!.linkPlayerByCodeTitle),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('أدخل «كود اللاعب» الذي يظهر في ملفه الشخصي:'),
+            Text(AppLocalizations.of(context)!.enterPlayerCodeHint),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
               textCapitalization: TextCapitalization.characters,
-              decoration: const InputDecoration(
-                hintText: 'مثال: A1B2C3D4',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.exampleCode,
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
@@ -545,29 +547,32 @@ class TeamManagementScreen extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
             onPressed: () async {
               final code = controller.text.trim().toUpperCase();
               if (code.isEmpty) return;
               Navigator.pop(ctx);
-              messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ الربط...'));
+              messenger.showSnackBar(ToobaSnackBar.buildInfo(AppLocalizations.of(context)!.linking));
               try {
                 await FunctionsService()
                     .linkPlayerByCode(cubit.teamId, code);
+                if (!context.mounted) return;
                 messenger.showSnackBar(
-                    ToobaSnackBar.buildSuccess('تمت إضافة اللاعب للتشكيلة'));
+                    ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.playerAddedToRoster));
                 await Future.delayed(const Duration(milliseconds: 800));
                 await cubit.load();
               } on FirebaseFunctionsException catch (e) {
+                if (!context.mounted) return;
                 messenger.showSnackBar(ToobaSnackBar.buildError(
-                    e.message ?? 'تعذّر ربط اللاعب'));
+                    e.message ?? AppLocalizations.of(context)!.failedToLinkPlayer));
               } catch (_) {
+                if (!context.mounted) return;
                 messenger.showSnackBar(
-                    ToobaSnackBar.buildError('تعذّر ربط اللاعب'));
+                    ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToLinkPlayer));
               }
             },
-            child: const Text('ربط'),
+            child: Text(AppLocalizations.of(context)!.linkBtn),
           ),
         ],
       ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../data/models/report_model.dart';
 import '../../../data/services/functions_service.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة إدارة البلاغات — تعرض كل البلاغات مرتّبة من الأحدث،
 /// مع إمكانية تصفيتها بالحالة ومراجعتها أو رفضها مباشرةً.
@@ -38,6 +39,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     final replyCtrl = TextEditingController();
     String action = 'review';
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final confirmed = await showModalBottomSheet<bool>(
       context: context,
@@ -90,28 +92,28 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('اتخاذ إجراء — ${report.targetName}',
+                Text(l10n.takeActionOnX(report.targetName),
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center),
                 const SizedBox(height: 16),
-                actionTile('review', 'مراجعة فقط (بدون عقوبة)',
+                actionTile('review', l10n.reviewOnlyAction,
                     Icons.check, Colors.green),
-                actionTile('warn', 'تنبيه (تحذير)', Icons.warning_amber,
+                actionTile('warn', l10n.warnAction, Icons.warning_amber,
                     Colors.orange),
                 if (canRate)
-                  actionTile('negativeRating', 'تقييم سلبي (خصم نقاط)',
+                  actionTile('negativeRating', l10n.negativeRatingAction,
                       Icons.trending_down, Colors.deepOrange),
-                actionTile('ban', 'حظر', Icons.block, Colors.red),
-                actionTile('dismiss', 'رفض البلاغ', Icons.cancel_outlined,
+                actionTile('ban', l10n.banAction, Icons.block, Colors.red),
+                actionTile('dismiss', l10n.dismissReportAction, Icons.cancel_outlined,
                     Colors.grey),
                 const SizedBox(height: 12),
                 TextField(
                   controller: replyCtrl,
                   maxLines: 2,
-                  decoration: const InputDecoration(
-                    labelText: 'رد/ملاحظة (اختياري)',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.replyNoteOptional,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -119,7 +121,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                   onPressed: () => Navigator.pop(ctx, true),
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14)),
-                  child: const Text('تنفيذ الإجراء'),
+                  child: Text(l10n.executeActionBtn),
                 ),
               ],
             ),
@@ -129,7 +131,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     );
 
     if (confirmed != true) return;
-    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ تنفيذ الإجراء...'));
+    messenger.showSnackBar(ToobaSnackBar.buildInfo(l10n.executingAction));
     try {
       await FunctionsService().moderateReport(
         reportId: report.id,
@@ -137,12 +139,12 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
         adminReply:
             replyCtrl.text.trim().isEmpty ? null : replyCtrl.text.trim(),
       );
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم تنفيذ الإجراء'));
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(l10n.actionExecuted));
     } on FirebaseFunctionsException catch (e) {
       messenger.showSnackBar(
-          ToobaSnackBar.buildError(e.message ?? 'تعذّر تنفيذ الإجراء'));
+          ToobaSnackBar.buildError(e.message ?? l10n.failedToExecuteAction));
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تنفيذ الإجراء'));
+      messenger.showSnackBar(ToobaSnackBar.buildError(l10n.failedToExecuteAction));
     }
   }
 
@@ -152,7 +154,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('البلاغات'),
+        title: Text(AppLocalizations.of(context)!.reports),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -165,13 +167,13 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                _filterChip(context, 'الكل', null),
+                _filterChip(context, AppLocalizations.of(context)!.allLabel, null),
                 const SizedBox(width: 8),
-                _filterChip(context, 'معلّق', ReportStatus.pending),
+                _filterChip(context, AppLocalizations.of(context)!.pendingLabel, ReportStatus.pending),
                 const SizedBox(width: 8),
-                _filterChip(context, 'تمت المراجعة', ReportStatus.reviewed),
+                _filterChip(context, AppLocalizations.of(context)!.reviewedLabel, ReportStatus.reviewed),
                 const SizedBox(width: 8),
-                _filterChip(context, 'مرفوض', ReportStatus.dismissed),
+                _filterChip(context, AppLocalizations.of(context)!.dismissedLabel, ReportStatus.dismissed),
               ],
             ),
           ),
@@ -190,7 +192,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                         Icon(Icons.flag_outlined,
                             size: 72, color: Colors.grey[300]),
                         const SizedBox(height: 12),
-                        Text('لا توجد بلاغات',
+                        Text(AppLocalizations.of(context)!.noReports,
                             style: theme.textTheme.bodyLarge
                                 ?.copyWith(color: Colors.grey)),
                       ],
@@ -289,11 +291,11 @@ class _ReportCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${report.targetType.label}: ${report.targetName}',
+                      '${report.targetType.getLabel(context)}: ${report.targetName}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      report.reason.label,
+                      report.reason.getLabel(context),
                       style: TextStyle(
                           fontSize: 12, color: Colors.grey[600]),
                     ),
@@ -329,7 +331,7 @@ class _ReportCard extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('رفض'),
+                    child: Text(AppLocalizations.of(context)!.dismissBtn),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -344,7 +346,7 @@ class _ReportCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8)),
                       elevation: 0,
                     ),
-                    child: const Text('تمت المراجعة'),
+                    child: Text(AppLocalizations.of(context)!.reviewedLabel),
                   ),
                 ),
               ],
@@ -355,8 +357,8 @@ class _ReportCard extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onModerate,
                 icon: const Icon(Icons.gavel, size: 18, color: Colors.red),
-                label: const Text('اتخاذ إجراء (حظر/تنبيه/تقييم)',
-                    style: TextStyle(color: Colors.red)),
+                label: Text(AppLocalizations.of(context)!.takeActionLong,
+                    style: const TextStyle(color: Colors.red)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.red),
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -405,15 +407,15 @@ class _StatusBadge extends StatelessWidget {
     switch (status) {
       case ReportStatus.pending:
         color = Colors.orange;
-        label = 'معلّق';
+        label = AppLocalizations.of(context)!.pendingLabel;
         break;
       case ReportStatus.reviewed:
         color = Colors.green;
-        label = 'مُراجَع';
+        label = AppLocalizations.of(context)!.reviewedStatus;
         break;
       case ReportStatus.dismissed:
         color = Colors.grey;
-        label = 'مرفوض';
+        label = AppLocalizations.of(context)!.dismissedLabel;
         break;
     }
     return Container(

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/referee_application_model.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: مراجعة طلبات التحكيم (للأدمن). الموافقة تمنح صفة الحكم تلقائياً
 /// (عبر Cloud Function) وتُشعر المنظّم ليضيف المتقدّم في بطولته.
@@ -13,15 +14,16 @@ class AdminRefereeApplicationsScreen extends StatelessWidget {
   Future<void> _resolve(
       BuildContext context, String id, String status) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
     try {
       await FirebaseFirestore.instance
           .collection('referee_applications')
           .doc(id)
           .update({'status': status});
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(
-          status == 'approved' ? 'تمت الموافقة ومنح صفة الحكم' : 'تم الرفض'));
+          status == 'approved' ? l10n.approvedGrantedReferee : l10n.rejectedApplication));
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تنفيذ الإجراء'));
+      messenger.showSnackBar(ToobaSnackBar.buildError(l10n.failedToExecuteAction));
     }
   }
 
@@ -29,7 +31,7 @@ class AdminRefereeApplicationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final repo = context.read<TournamentRepository>();
     return Scaffold(
-      appBar: AppBar(title: const Text('طلبات التحكيم'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.adminRefereeApplicationsTitle), centerTitle: true),
       body: StreamBuilder<List<RefereeApplicationModel>>(
         stream: repo.pendingApplicationsStream(),
         builder: (context, snap) {
@@ -44,7 +46,7 @@ class AdminRefereeApplicationsScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.sports_outlined, size: 72, color: Colors.grey[300]),
                   const SizedBox(height: 12),
-                  Text('لا توجد طلبات تحكيم معلّقة',
+                  Text(AppLocalizations.of(context)!.noPendingRefereeApps,
                       style: TextStyle(color: Colors.grey[600])),
                 ],
               ),
@@ -84,7 +86,7 @@ class AdminRefereeApplicationsScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text('يطلب التحكيم في: ${a.tournamentName}',
+                      Text(AppLocalizations.of(context)!.requestToRefereeIn(a.tournamentName),
                           style: TextStyle(
                               fontSize: 13, color: Colors.grey[700])),
                       const SizedBox(height: 10),
@@ -97,7 +99,7 @@ class AdminRefereeApplicationsScreen extends StatelessWidget {
                               style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.red,
                                   side: const BorderSide(color: Colors.red)),
-                              child: const Text('رفض'),
+                              child: Text(AppLocalizations.of(context)!.rejectBtn),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -105,7 +107,7 @@ class AdminRefereeApplicationsScreen extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: () =>
                                   _resolve(context, a.id, 'approved'),
-                              child: const Text('موافقة'),
+                              child: Text(AppLocalizations.of(context)!.approveBtn),
                             ),
                           ),
                         ],

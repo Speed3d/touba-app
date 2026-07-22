@@ -14,6 +14,7 @@ import 'player_profile_edit_screen.dart';
 import '../admin/admin_dashboard.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: الملف الشخصي — شاشة تعديل مباشرة (صورة/اسم/هاتف) بلا أزرار علوية.
 /// السياسات وحذف الحساب وتسجيل الخروج موحّدة في الإعدادات (لا تكرار هنا).
@@ -92,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.face),
-              title: const Text('اختيار أفاتار جاهز'),
+              title: Text(AppLocalizations.of(context)!.chooseReadyAvatar),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickReadyImage();
@@ -100,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('اختيار من المعرض'),
+              title: Text(AppLocalizations.of(context)!.chooseFromGallery),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(ImageSource.gallery);
@@ -108,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('التقاط صورة'),
+              title: Text(AppLocalizations.of(context)!.takePhoto),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(ImageSource.camera);
@@ -128,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final playerRepo = context.read<PlayerRepository>();
     try {
       final state = authCubit.state;
-      if (state is! AuthAuthenticated) throw Exception('المستخدم غير مسجّل');
+      if (state is! AuthAuthenticated) throw Exception(AppLocalizations.of(context)!.userNotRegistered);
       final user = state.user;
       String? finalImage = _currentImage;
       if (_selectedAssetPath != null) {
@@ -161,10 +162,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _imageFile = null;
           _selectedAssetPath = null;
         });
-        ToobaSnackBar.success(context, 'تم تحديث بياناتك بنجاح');
+        ToobaSnackBar.success(context, AppLocalizations.of(context)!.profileUpdateSuccess);
       }
     } catch (e) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر تحديث البيانات');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.profileUpdateError);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -178,8 +179,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (state is! AuthAuthenticated) {
       return Scaffold(
-        appBar: AppBar(title: const Text('الملف الشخصي')),
-        body: const Center(child: Text('سجّل الدخول لعرض ملفك')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.profile)),
+        body: Center(child: Text(AppLocalizations.of(context)!.loginToViewProfile)),
       );
     }
     final user = state.user;
@@ -187,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('الملف الشخصي'),
+        title: Text(AppLocalizations.of(context)!.profile),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -203,14 +204,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _buildAvatar(theme),
                 const SizedBox(height: 8),
                 Center(
-                  child: Text(_roleLabel(user.role),
+                  child: Text(_roleLabel(context, user.role),
                       style: TextStyle(color: theme.colorScheme.primary)),
                 ),
                 const SizedBox(height: 28),
                 TextFormField(
                   controller: _name,
                   decoration: InputDecoration(
-                    labelText: 'الاسم',
+                    labelText: AppLocalizations.of(context)!.name,
                     prefixIcon: const Icon(Icons.person),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12)),
@@ -218,14 +219,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
                   ),
                   validator: (v) =>
-                      v == null || v.isEmpty ? 'يرجى إدخال الاسم' : null,
+                      v == null || v.isEmpty ? AppLocalizations.of(context)!.pleaseEnterName : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
-                    labelText: 'رقم الهاتف',
+                    labelText: AppLocalizations.of(context)!.phone,
                     prefixIcon: const Icon(Icons.phone),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12)),
@@ -233,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
                   ),
                   validator: (v) => v == null || v.length < 10
-                      ? 'رقم الهاتف غير صالح'
+                      ? AppLocalizations.of(context)!.invalidPhoneNumber
                       : null,
                 ),
                 if (user.email.isNotEmpty) ...[
@@ -242,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     initialValue: user.email,
                     enabled: false,
                     decoration: InputDecoration(
-                      labelText: 'البريد الإلكتروني',
+                      labelText: AppLocalizations.of(context)!.email,
                       prefixIcon: const Icon(Icons.email),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
@@ -267,7 +268,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 24,
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
-                      : const Text('حفظ التعديلات',
+                      : Text(AppLocalizations.of(context)!.saveChanges,
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
@@ -294,11 +295,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       leading: Icon(Icons.sports_soccer,
                           color: theme.colorScheme.primary),
-                      title: const Text('تفاصيل اللاعب الرياضية',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: const Text(
-                          'القدم المفضّلة • الطول • الوزن • العمر • نبذة • معرض الصور',
-                          style: TextStyle(fontSize: 11)),
+                      title: Text(AppLocalizations.of(context)!.playerSportsDetails,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text(
+                          AppLocalizations.of(context)!.playerSportsDetailsSubtitle,
+                          style: const TextStyle(fontSize: 11)),
                       trailing: const Icon(Icons.chevron_left),
                     ),
                   ),
@@ -321,21 +322,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         borderRadius: BorderRadius.circular(16),
                         onTap: () => Navigator.push(context,
                             ToobaRoute.to(const AdminDashboard())),
-                        child: const Padding(
-                          padding: EdgeInsets.all(16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
                           child: Row(
                             children: [
-                              Icon(Icons.admin_panel_settings,
+                              const Icon(Icons.admin_panel_settings,
                                   color: Colors.white, size: 28),
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
                               Expanded(
-                                child: Text('لوحة تحكم الإدارة',
-                                    style: TextStyle(
+                                child: Text(AppLocalizations.of(context)!.adminDashboard,
+                                    style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16)),
                               ),
-                              Icon(Icons.arrow_forward_ios,
+                              const Icon(Icons.arrow_forward_ios,
                                   color: Colors.white70, size: 16),
                             ],
                           ),
@@ -407,13 +408,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Icon(Icons.badge, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
-          const Text('كود لاعبك الدائم',
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context)!.permanentPlayerCode,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
       const SizedBox(height: 4),
-      const Text('أعطِ هذا الكود لكابتن الفريق ليضيفك إلى تشكيلته.',
-          style: TextStyle(fontSize: 12, color: Colors.grey)),
+      Text(AppLocalizations.of(context)!.giveCodeToCaptain,
+          style: const TextStyle(fontSize: 12, color: Colors.grey)),
       const SizedBox(height: 12),
       Container(
         width: double.infinity,
@@ -442,18 +443,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: OutlinedButton.icon(
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: code));
-                ToobaSnackBar.info(context, 'تم نسخ الكود');
+                ToobaSnackBar.info(context, AppLocalizations.of(context)!.codeCopied);
               },
               icon: const Icon(Icons.copy, size: 18),
-              label: const Text('نسخ'),
+              label: Text(AppLocalizations.of(context)!.copy),
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: OutlinedButton.icon(
-              onPressed: () => Share.share('كود لاعبي في طوبة: $code'),
+              onPressed: () => Share.share(AppLocalizations.of(context)!.myPlayerCodeShare(code)),
               icon: const Icon(Icons.share, size: 18),
-              label: const Text('مشاركة'),
+              label: Text(AppLocalizations.of(context)!.share),
             ),
           ),
         ],
@@ -461,7 +462,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!linked) ...[
         const SizedBox(height: 8),
         Text(
-          'بمجرّد أن يضيفك الكابتن بهذا الكود، يرتبط حسابك ببطاقة لاعبك تلقائياً.',
+          AppLocalizations.of(context)!.codeLinkingHint,
           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
       ],
@@ -485,14 +486,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start, children: children),
       );
 
-  String _roleLabel(String role) {
+  String _roleLabel(BuildContext context, String role) {
     switch (role) {
       case 'captain':
-        return 'كابتن فريق';
+        return AppLocalizations.of(context)!.teamCaptain;
       case 'admin':
-        return 'مدير المنصة';
+        return AppLocalizations.of(context)!.platformAdmin;
       default:
-        return 'لاعب';
+        return AppLocalizations.of(context)!.player;
     }
   }
 }

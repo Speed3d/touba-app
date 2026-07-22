@@ -4,7 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../../data/models/match_model.dart';
 import '../../../data/models/player_model.dart';
 import '../../../data/models/team_model.dart';
@@ -24,6 +24,7 @@ import '../../widgets/core/live_match_timer.dart';
 import '../referee/referee_profile_screen.dart';
 import '../tournaments/enter_result_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: تفاصيل المباراة — النتيجة + تشكيلة الفريقين مع أيقونات الأحداث
 /// (هدف/صناعة/بطاقة/تبديل/...) بجانب اسم كل لاعب، بأسلوب جدول الدوريات.
@@ -131,7 +132,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       await action();
       await _refreshMatch();
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر تنفيذ الإجراء');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.actionFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -156,18 +157,17 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('تأكيد نتيجة الشوط $h'),
+        title: Text(AppLocalizations.of(context)!.confirmHalfResultX(h)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: Text(
-            'نتيجة الشوط $h: ${_match.homeTeamName} ${_match.homeScore} - '
-            '${_match.awayScore} ${_match.awayTeamName}'),
+        content: Text(AppLocalizations.of(context)!.halfResultText(
+            h, _match.homeTeamName, _match.homeScore, _match.awayScore, _match.awayTeamName)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('تأكيد')),
+              child: Text(AppLocalizations.of(context)!.confirm)),
         ],
       ),
     );
@@ -223,14 +223,14 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('تفاصيل المباراة'),
+          title: Text(AppLocalizations.of(context)!.matchDetails),
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
-              Tab(text: 'التفاصيل'),
-              Tab(text: 'تشكيلة الفريقين'),
+              Tab(text: AppLocalizations.of(context)!.detailsTab),
+              Tab(text: AppLocalizations.of(context)!.formationsTab),
             ],
           ),
         ),
@@ -254,7 +254,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                 _scoreHeader(m),
                 const SizedBox(height: 6),
                 Center(
-                  child: Text('الجولة ${m.round}',
+                  child: Text(AppLocalizations.of(context)!.roundX(m.round.toString()),
                       style: TextStyle(fontSize: 12, color: Colors.grey[600])),
                 ),
                 if (m.refereeName != null && m.refereeName!.isNotEmpty) ...[
@@ -265,7 +265,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                       children: [
                         Icon(Icons.sports, size: 13, color: Colors.grey[600]),
                         const SizedBox(width: 4),
-                        Text('الحكم: ${m.refereeName}',
+                        Text(AppLocalizations.of(context)!.refereeNameX(m.refereeName ?? ''),
                             style: TextStyle(
                                 fontSize: 12, color: Colors.grey[600])),
                       ],
@@ -292,7 +292,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Text('المباراة جارية الآن',
+                      child: Text(AppLocalizations.of(context)!.matchInProgress,
                           style: TextStyle(color: Colors.grey[700])),
                     ),
                   )
@@ -300,7 +300,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(24),
-                      child: Text('لم تبدأ المباراة بعد',
+                      child: Text(AppLocalizations.of(context)!.matchNotStarted,
                           style: TextStyle(color: Colors.grey[600])),
                     ),
                   ),
@@ -342,8 +342,8 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
         Center(
           child: Text(
             snapshot.isNotEmpty
-                ? 'تشكيلة هذه المباراة${fmt != null && fmt.isNotEmpty ? ' • خطة $fmt' : ''}'
-                : 'التشكيلة الحالية للفريق (لم تُحفظ بعد لهذه المباراة)',
+                ? ((fmt != null && fmt.isNotEmpty) ? AppLocalizations.of(context)!.formationWithPlan(fmt) : AppLocalizations.of(context)!.formationForThisMatch)
+                : AppLocalizations.of(context)!.currentTeamFormationNotSaved,
             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
@@ -354,13 +354,13 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
             child: OutlinedButton.icon(
               onPressed: () => FormationShareSheet.show(
                 context,
-                title: 'تشكيلة $teamName',
-                subtitle: fmt != null && fmt.isNotEmpty ? 'خطة $fmt' : null,
+                title: AppLocalizations.of(context)!.formationOfTeam(teamName),
+                subtitle: fmt != null && fmt.isNotEmpty ? AppLocalizations.of(context)!.planX(fmt) : null,
                 players: lineup,
                 formation: fmt,
               ),
               icon: const Icon(Icons.share, size: 18),
-              label: const Text('مشاركة التشكيلة'),
+              label: Text(AppLocalizations.of(context)!.shareFormation),
             ),
           ),
       ],
@@ -449,7 +449,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                       const Icon(Icons.sports, size: 18),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text('الحكم: ${m.refereeName ?? "—"}',
+                        child: Text(AppLocalizations.of(context)!.refereeNameX(m.refereeName ?? "—"),
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.underline)),
@@ -477,12 +477,12 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                         ? OutlinedButton.icon(
                             onPressed: null,
                             icon: const Icon(Icons.check, size: 18),
-                            label: const Text('قيّمت هذا الحكم'),
+                            label: Text(AppLocalizations.of(context)!.ratedThisReferee),
                           )
                         : OutlinedButton.icon(
                             onPressed: () => _rateReferee(m),
                             icon: const Icon(Icons.star_outline, size: 18),
-                            label: const Text('قيّم أداء الحكم'),
+                            label: Text(AppLocalizations.of(context)!.rateRefereePerformance),
                           ),
                   ),
                 ],
@@ -497,7 +497,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
   Future<void> _rateReferee(MatchModel m) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
-      ToobaSnackBar.info(context, 'سجّل الدخول للتقييم');
+      ToobaSnackBar.info(context, AppLocalizations.of(context)!.loginToRate);
       return;
     }
     final repo = context.read<MatchRepository>();
@@ -513,7 +513,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
         int stars = current;
         return StatefulBuilder(
           builder: (ctx, setS) => AlertDialog(
-            title: const Text('تقييم الحكم'),
+            title: Text(AppLocalizations.of(context)!.rateReferee),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16)),
             content: Row(
@@ -531,11 +531,11 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
             actions: [
               TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('إلغاء')),
+                  child: Text(AppLocalizations.of(context)!.cancel)),
               ElevatedButton(
                 onPressed:
                     stars > 0 ? () => Navigator.pop(ctx, stars) : null,
-                child: const Text('إرسال'),
+                child: Text(AppLocalizations.of(context)!.send),
               ),
             ],
           ),
@@ -551,9 +551,11 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
         matchId: m.id,
         rating: selected,
       );
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('شكراً لتقييمك!'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.thanksForRating));
       if (mounted) setState(() => _alreadyRated = true);
     } catch (e) {
+      if (!mounted) return;
       messenger.showSnackBar(ToobaSnackBar.buildError(_rateError(e)));
     }
   }
@@ -563,7 +565,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     if (e is FirebaseFunctionsException && (e.message ?? '').isNotEmpty) {
       return e.message!;
     }
-    return 'تعذّر إرسال التقييم';
+    return AppLocalizations.of(context)!.failedToSendRating;
   }
 
   // ── ودجات المباراة الحيّة (WS2) ─────────────────────────────────────
@@ -585,8 +587,8 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                 decoration: const BoxDecoration(
                     color: Colors.red, shape: BoxShape.circle)),
             const SizedBox(width: 6),
-            const Text('مباشر',
-                style: TextStyle(
+            Text(AppLocalizations.of(context)!.matchLive,
+                style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
                     fontSize: 13)),
@@ -606,7 +608,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
   Widget _periodScoresRow(MatchModel m) {
     final parts = m.periodScores.map((e) {
       final p = Map<String, dynamic>.from(e);
-      return 'ش${p['period']}: ${p['home']}-${p['away']}';
+      return '${AppLocalizations.of(context)!.halfX(p['period'].toString())}: ${p['home']}-${p['away']}';
     }).join('    ');
     return Center(
       child: Text(parts,
@@ -624,7 +626,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
         child: ElevatedButton.icon(
           onPressed: _busy ? null : _startMatch,
           icon: const Icon(Icons.play_circle_fill),
-          label: const Text('بدأ المباراة'),
+          label: Text(AppLocalizations.of(context)!.startMatch),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
@@ -646,8 +648,8 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       ),
       child: Column(
         children: [
-          const Text('تحكّم المباراة الحيّة',
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context)!.liveMatchControl,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -668,21 +670,21 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
               OutlinedButton.icon(
                 onPressed: _busy ? null : _confirmHalf,
                 icon: const Icon(Icons.flag, size: 16),
-                label: Text('انتهاء الشوط ${m.currentHalf}',
+                label: Text(AppLocalizations.of(context)!.endHalfX(m.currentHalf),
                     style: const TextStyle(fontSize: 12)),
               ),
               if (m.currentHalf < _halves)
                 OutlinedButton.icon(
                   onPressed: _busy ? null : _startNextHalf,
                   icon: const Icon(Icons.fast_forward, size: 16),
-                  label: Text('بدأ الشوط ${m.currentHalf + 1}',
+                  label: Text(AppLocalizations.of(context)!.startHalfX(m.currentHalf + 1),
                       style: const TextStyle(fontSize: 12)),
                 ),
               ElevatedButton.icon(
                 onPressed: _busy ? null : _openFinalEntry,
                 icon: const Icon(Icons.sports_score, size: 16),
-                label: const Text('إنهاء وتأكيد النتيجة',
-                    style: TextStyle(fontSize: 12)),
+                label: Text(AppLocalizations.of(context)!.endAndConfirmResult,
+                    style: const TextStyle(fontSize: 12)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
@@ -752,7 +754,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
             // 📝 HINT AR: نعرض السكور أثناء «جارية» أيضاً (WS2) — «ضد» للقادمة فقط.
             (m.resultConfirmed || m.status == 'live')
                 ? '${m.homeScore} - ${m.awayScore}'
-                : 'ضد',
+                : AppLocalizations.of(context)!.versus,
             style: const TextStyle(
                 color: Colors.white,
                 fontSize: 26,
@@ -784,7 +786,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text('لم تُسجَّل أحداث لهذه المباراة',
+          child: Text(AppLocalizations.of(context)!.noEventsRecorded,
               style: TextStyle(color: Colors.grey[600])),
         ),
       );

@@ -7,6 +7,7 @@ import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/chat_message_model.dart';
 import '../../../data/repositories/chat_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة المحادثة (كابتن↔كابتن في التحدي). بثّ حيّ للرسائل (snapshots
 /// — مسموح لأنها الشاشة الجارية)، تصفير غير المقروء عند الفتح، وفقاعات بسيطة.
@@ -91,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 });
                 if (msgs.isEmpty) {
                   return Center(
-                      child: Text('ابدأ المحادثة',
+                      child: Text(AppLocalizations.of(context)!.startConversation,
                           style: TextStyle(color: Colors.grey[600])));
                 }
                 return ListView.builder(
@@ -187,7 +188,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _send(),
                 decoration: InputDecoration(
-                  hintText: 'اكتب رسالة…',
+                  hintText: AppLocalizations.of(context)!.typeMessageHint,
                   filled: true,
                   fillColor: isDark ? AppColors.surfaceDark : Colors.grey[100],
                   border: OutlineInputBorder(

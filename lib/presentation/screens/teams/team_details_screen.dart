@@ -29,6 +29,7 @@ import '../challenges/create_challenge_screen.dart';
 import '../subscription/subscription_locked_sheet.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: صفحة الفريق — معلومات + إحصائيات + التشكيلة (سجلات اللاعبين).
 class TeamDetailsScreen extends StatefulWidget {
@@ -105,14 +106,14 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
     final teamRepo = context.read<TeamRepository>();
     try {
       await teamRepo.escalateReleaseRequest(_myRelease!.id);
+      if (!mounted) return;
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(
-          'تم تصعيد طلبك للإدارة — سيُراجَع قريباً'));
-      if (mounted) {
-        setState(() => _myRelease = null);
-      }
+          AppLocalizations.of(context)!.yourRequestEscalatedSoonReviewed));
+      setState(() => _myRelease = null);
       _resolveMyMembership();
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر التصعيد'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToEscalate));
     }
   }
 
@@ -127,29 +128,29 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('تأكيد كلمة المرور'),
+        title: Text(AppLocalizations.of(context)!.confirmPasswordTitle),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('للتأكد أنك صاحب الحساب، أدخل كلمة مرورك قبل طلب الخروج.'),
+            Text(AppLocalizations.of(context)!.confirmPasswordToExitDesc),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
               obscureText: true,
               autofocus: true,
-              decoration: const InputDecoration(
-                  labelText: 'كلمة المرور', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.passwordLabel, border: const OutlineInputBorder()),
             ),
           ],
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('تأكيد')),
+              child: Text(AppLocalizations.of(context)!.confirm)),
         ],
       ),
     );
@@ -160,10 +161,10 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
       await fbUser.reauthenticateWithCredential(cred);
       return true;
     } on FirebaseAuthException {
-      if (mounted) ToobaSnackBar.error(context, 'كلمة المرور غير صحيحة');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.incorrectPassword);
       return false;
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر التحقّق من كلمة المرور');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToVerifyPassword);
       return false;
     }
   }
@@ -181,12 +182,12 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('اختيار من المعرض'),
+              title: Text(AppLocalizations.of(context)!.chooseFromGallery),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('التقاط صورة'),
+              title: Text(AppLocalizations.of(context)!.takePhoto),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
           ],
@@ -200,14 +201,16 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
     final messenger = ScaffoldMessenger.of(context);
     final teamRepo = context.read<TeamRepository>();
     final teamCubit = context.read<TeamCubit>();
-    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ تحديث الشعار...'));
+    messenger.showSnackBar(ToobaSnackBar.buildInfo(AppLocalizations.of(context)!.updatingLogo));
     try {
       final url = await teamRepo.uploadTeamLogo(teamId, File(picked.path));
       await teamRepo.updateTeamLogo(teamId, url);
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم تحديث الشعار'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.logoUpdatedSuccess));
       teamCubit.fetchTeamDetails(teamId);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تحديث الشعار'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToUpdateLogo));
     }
   }
 
@@ -230,8 +233,9 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
         userId: user.id,
         userName: user.name,
       );
+      if (!mounted) return;
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(
-          'تم إرسال طلب الخروج لكابتن فريقك الحالي'));
+          AppLocalizations.of(context)!.exitRequestSentToCaptain));
     } catch (e) {
       messenger.showSnackBar(ToobaSnackBar.buildError(
           e.toString().replaceFirst('Exception: ', '')));
@@ -299,7 +303,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                       if (val != 'report') return;
                       final uid = FirebaseAuth.instance.currentUser?.uid;
                       if (uid == null) {
-                        ToobaSnackBar.info(context, 'يجب تسجيل الدخول أولاً');
+                        ToobaSnackBar.info(context, AppLocalizations.of(context)!.youMustLoginFirst);
                         return;
                       }
                       Navigator.push(
@@ -315,27 +319,27 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                     itemBuilder: (_) => [
                       // 📝 HINT AR: «طلب الخروج» يظهر فقط للاعب العضو في هذا الفريق.
                       if (isPlayerUser && amMemberHere)
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'release',
                           child: Row(
                             children: [
-                              Icon(Icons.logout, color: Colors.orange,
+                              const Icon(Icons.logout, color: Colors.orange,
                                   size: 18),
-                              SizedBox(width: 8),
-                              Text('طلب الخروج من الفريق',
-                                  style: TextStyle(color: Colors.orange)),
+                              const SizedBox(width: 8),
+                              Text(AppLocalizations.of(context)!.exitTeamRequest,
+                                  style: const TextStyle(color: Colors.orange)),
                             ],
                           ),
                         ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'report',
                         child: Row(
                           children: [
-                            Icon(Icons.flag_outlined, color: Colors.red,
+                            const Icon(Icons.flag_outlined, color: Colors.red,
                                 size: 18),
-                            SizedBox(width: 8),
-                            Text('بلّغ عن هذا الفريق',
-                                style: TextStyle(color: Colors.red)),
+                            const SizedBox(width: 8),
+                            Text(AppLocalizations.of(context)!.reportThisTeam,
+                                style: const TextStyle(color: Colors.red)),
                           ],
                         ),
                       ),
@@ -436,10 +440,10 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                   // 📝 HINT AR: 4 كروت (لعب/فاز/خسر/تعادل) ليصحّ المجموع.
                   Row(
                     children: [
-                      _statCard(context, 'لعب', team.stats.played.toString()),
-                      _statCard(context, 'فاز', team.stats.wins.toString()),
-                      _statCard(context, 'خسر', team.stats.losses.toString()),
-                      _statCard(context, 'تعادل', team.stats.draws.toString()),
+                      _statCard(context, AppLocalizations.of(context)!.playedCount, team.stats.played.toString()),
+                      _statCard(context, AppLocalizations.of(context)!.winsCount, team.stats.wins.toString()),
+                      _statCard(context, AppLocalizations.of(context)!.teamMatchesLost, team.stats.losses.toString()),
+                      _statCard(context, AppLocalizations.of(context)!.teamMatchesDrawn, team.stats.draws.toString()),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -457,13 +461,13 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                         color: Colors.green.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.verified, color: Colors.green),
-                          SizedBox(width: 8),
-                          Text('أنت لاعب في هذا الفريق',
-                              style: TextStyle(
+                          const Icon(Icons.verified, color: Colors.green),
+                          const SizedBox(width: 8),
+                          Text(AppLocalizations.of(context)!.youArePlayerInThisTeam,
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.green)),
                         ],
@@ -473,18 +477,18 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                   if (isPlayerUser && amInAnotherTeam) ...[
                     if (_myRelease?.status == 'pending')
                       _releaseStatusBox(
-                          'طلب خروجك قيد مراجعة كابتن فريقك الحالي',
+                          AppLocalizations.of(context)!.exitRequestPendingCaptainReview,
                           Icons.hourglass_top,
                           Colors.blue)
                     else if (_myRelease?.status == 'rejected' &&
                         _myRelease?.escalated == true)
-                      _releaseStatusBox('طلبك مُصعّد للإدارة — بانتظار القرار',
+                      _releaseStatusBox(AppLocalizations.of(context)!.requestEscalatedPendingDecision,
                           Icons.gavel, Colors.purple)
                     else if (_myRelease?.status == 'rejected')
                       Column(
                         children: [
                           _releaseStatusBox(
-                              'رفض كابتنك طلب الخروج',
+                              AppLocalizations.of(context)!.captainRejectedYourRequest,
                               Icons.cancel,
                               Colors.red),
                           const SizedBox(height: 8),
@@ -494,8 +498,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                               onPressed: _escalateRelease,
                               icon: const Icon(Icons.gavel,
                                   color: Colors.purple),
-                              label: const Text('تصعيد الطلب للإدارة',
-                                  style: TextStyle(color: Colors.purple)),
+                              label: Text(AppLocalizations.of(context)!.escalateRequestToAdmin,
+                                  style: const TextStyle(color: Colors.purple)),
                               style: OutlinedButton.styleFrom(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 14),
@@ -514,7 +518,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                           onPressed: () => _requestRelease(currentUser),
                           icon: const Icon(Icons.logout, color: Colors.orange),
                           label: Text(
-                              'طلب الخروج من ${_myCurrentTeamName ?? "فريقي الحالي"}',
+                              AppLocalizations.of(context)!.requestExitFromX(_myCurrentTeamName ?? AppLocalizations.of(context)!.myCurrentTeam),
                               style: const TextStyle(
                                   fontSize: 15, color: Colors.orange)),
                           style: OutlinedButton.styleFrom(
@@ -531,10 +535,10 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                       child: ElevatedButton.icon(
                         // مُعطّل فعلياً: يجب الخروج أولاً.
                         onPressed: () => ToobaSnackBar.info(context,
-                            'يجب الخروج من فريقك الحالي أولاً قبل الانضمام'),
+                            AppLocalizations.of(context)!.mustExitCurrentTeamBeforeJoining),
                         icon: const Icon(Icons.person_add),
-                        label: const Text('طلب انضمام للفريق',
-                            style: TextStyle(
+                        label: Text(AppLocalizations.of(context)!.requestToJoinTeam,
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -559,8 +563,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                               );
                         },
                         icon: const Icon(Icons.person_add),
-                        label: const Text('طلب انضمام للفريق',
-                            style: TextStyle(
+                        label: Text(AppLocalizations.of(context)!.requestToJoinTeam,
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -593,8 +597,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                           ).then((_) => teamCubit.fetchTeamDetails(team.id));
                         },
                         icon: const Icon(Icons.settings),
-                        label: const Text('إدارة الفريق',
-                            style: TextStyle(
+                        label: Text(AppLocalizations.of(context)!.manageTeam,
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -626,8 +630,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                           );
                         },
                         icon: const Icon(Icons.sports_kabaddi),
-                        label: const Text('اطلب تحدي',
-                            style: TextStyle(
+                        label: Text(AppLocalizations.of(context)!.requestChallengeBtn,
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -652,7 +656,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
 
         return Scaffold(
           appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
-          body: const Center(child: Text('جاري تحميل تفاصيل الفريق...')),
+          body: Center(child: Text(AppLocalizations.of(context)!.loadingTeamDetails)),
         );
       },
     );
@@ -685,8 +689,8 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
             indicatorSize: TabBarIndicatorSize.label,
             labelStyle: const TextStyle(fontWeight: FontWeight.bold),
             tabs: [
-              Tab(text: 'التشكيلة (${players.length})'),
-              const Tab(text: 'النقاط حسب البطولة'),
+              Tab(text: AppLocalizations.of(context)!.rosterWithCount(players.length.toString())),
+              Tab(text: AppLocalizations.of(context)!.pointsByTournament),
             ],
           ),
           // 📝 HINT AR: محتوى التبويب (داخل ScrollView، لذا نبني المحتوى مباشرة
@@ -709,7 +713,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
     if (players.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text('لا يوجد لاعبون مسجّلون بعد',
+        child: Text(AppLocalizations.of(context)!.noPlayersRegisteredYet,
             style: TextStyle(color: Colors.grey[600])),
       );
     }
@@ -733,7 +737,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
         if (tournaments.isEmpty) {
           return Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('لم يشارك الفريق في أي بطولة بعد',
+            child: Text(AppLocalizations.of(context)!.teamHasNotParticipatedInTournamentsYet,
                 style: TextStyle(color: Colors.grey[600])),
           );
         }
@@ -806,7 +810,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                     overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
                 Text(
-                  t.status == 'finished' ? 'منتهية' : 'جارية',
+                  t.status == 'finished' ? AppLocalizations.of(context)!.tournamentFinishedStatus : AppLocalizations.of(context)!.tournamentLiveStatus,
                   style: TextStyle(
                       fontSize: 12,
                       color: t.status == 'finished'
@@ -824,7 +828,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary)),
-              const Text('نقطة', style: TextStyle(fontSize: 11, color: Colors.grey)),
+              Text(AppLocalizations.of(context)!.pointSingle, style: const TextStyle(fontSize: 11, color: Colors.grey)),
             ],
           ),
         ],

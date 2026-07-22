@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/tournament/tournament_cubit.dart';
@@ -110,11 +111,11 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_city == null) {
-      _snack('يرجى اختيار المدينة');
+      _snack(AppLocalizations.of(context)!.pleaseSelectCity);
       return;
     }
     if (_selected.length < 2) {
-      _snack('اختر فريقين على الأقل');
+      _snack(AppLocalizations.of(context)!.selectTwoTeamsAtLeast);
       return;
     }
     final authState = context.read<AuthCubit>().state;
@@ -132,14 +133,14 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
         final starters = players.where((p) => p.isStarter).length;
         if (starters < _playerFormat) {
           if (mounted) {
-            _snack(
-                'فريق «${team.name}» يملك $starters أساسيين فقط — المطلوب $_playerFormat');
+            _snack(AppLocalizations.of(context)!.teamHasNotEnoughStarters(
+                team.name, starters.toString(), _playerFormat.toString()));
           }
           return;
         }
       }
     } catch (_) {
-      if (mounted) _snack('تعذّر التحقّق من تشكيلات الفرق');
+      if (mounted) _snack(AppLocalizations.of(context)!.failedToValidateTeamLineups);
       return;
     } finally {
       if (mounted) setState(() => _validating = false);
@@ -189,12 +190,12 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
         child: Wrap(children: [
           ListTile(
             leading: const Icon(Icons.photo_library),
-            title: const Text('اختيار من المعرض'),
+            title: Text(AppLocalizations.of(context)!.chooseFromGallery),
             onTap: () => Navigator.pop(ctx, ImageSource.gallery),
           ),
           ListTile(
             leading: const Icon(Icons.camera_alt),
-            title: const Text('التقاط صورة'),
+            title: Text(AppLocalizations.of(context)!.takePhoto),
             onTap: () => Navigator.pop(ctx, ImageSource.camera),
           ),
         ]),
@@ -214,7 +215,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
       initialDate: _startDate ?? now,
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 3),
-      helpText: 'موعد بداية البطولة',
+      helpText: AppLocalizations.of(context)!.tournamentStartDateHelp,
     );
     if (date == null || !mounted) return;
     final time = await showTimePicker(
@@ -240,7 +241,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
     return BlocListener<TournamentCubit, TournamentState>(
       listener: (context, state) {
         if (state is TournamentsLoaded) {
-          ToobaSnackBar.success(context, 'تم إنشاء البطولة وتوليد الجدول!');
+          ToobaSnackBar.success(context, AppLocalizations.of(context)!.tournamentCreatedAndScheduleGenerated);
           Navigator.pop(context);
         } else if (state is TournamentError) {
           ToobaSnackBar.error(context, state.message);
@@ -249,7 +250,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          title: const Text('إنشاء بطولة'),
+          title: Text(AppLocalizations.of(context)!.createTournamentTitle),
           elevation: 0,
           backgroundColor: Colors.transparent,
         ),
@@ -290,23 +291,23 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        const Center(
-                          child: Text('صورة البطولة (اختياري)',
+                        Center(
+                          child: Text(AppLocalizations.of(context)!.tournamentImageOptional,
                               style:
-                                  TextStyle(color: Colors.grey, fontSize: 12)),
+                                  const TextStyle(color: Colors.grey, fontSize: 12)),
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _nameController,
                           decoration: InputDecoration(
-                            labelText: 'اسم البطولة',
+                            labelText: AppLocalizations.of(context)!.tournamentNameInputLabel,
                             prefixIcon: const Icon(Icons.emoji_events),
                             border: border,
                             filled: true,
                             fillColor: fill,
                           ),
                           validator: (v) => v == null || v.isEmpty
-                              ? 'يرجى إدخال اسم البطولة'
+                              ? AppLocalizations.of(context)!.pleaseEnterTournamentName
                               : null,
                         ),
                         const SizedBox(height: 16),
@@ -316,7 +317,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           borderRadius: BorderRadius.circular(12),
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              labelText: 'موعد بداية البطولة (اختياري)',
+                              labelText: AppLocalizations.of(context)!.tournamentStartDateOptional,
                               prefixIcon: const Icon(Icons.event),
                               border: border,
                               filled: true,
@@ -324,7 +325,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                             ),
                             child: Text(
                               _startDate == null
-                                  ? 'يُجدول النظام المباريات تلقائياً'
+                                  ? AppLocalizations.of(context)!.systemWillScheduleMatches
                                   : DateFormat('EEE d MMM yyyy • HH:mm', 'ar')
                                       .format(_startDate!),
                               style: TextStyle(
@@ -339,19 +340,19 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                         DropdownButtonFormField<String>(
                           initialValue: _scheduleMode,
                           decoration: InputDecoration(
-                            labelText: 'نمط الجدولة',
+                            labelText: AppLocalizations.of(context)!.schedulingMode,
                             prefixIcon: const Icon(Icons.event_repeat),
                             border: border,
                             filled: true,
                             fillColor: fill,
                           ),
-                          items: const [
+                          items: [
                             DropdownMenuItem(
                                 value: 'rounds',
-                                child: Text('فاصل بين الجولات')),
+                                child: Text(AppLocalizations.of(context)!.intervalBetweenRounds)),
                             DropdownMenuItem(
                                 value: 'daily',
-                                child: Text('توقيت يومي ثابت')),
+                                child: Text(AppLocalizations.of(context)!.fixedDailyTime)),
                           ],
                           onChanged: (v) =>
                               setState(() => _scheduleMode = v ?? 'rounds'),
@@ -361,20 +362,20 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           DropdownButtonFormField<int>(
                             initialValue: _roundIntervalDays,
                             decoration: InputDecoration(
-                              labelText: 'الفاصل بين الجولات',
+                              labelText: AppLocalizations.of(context)!.roundsIntervalLabel,
                               prefixIcon: const Icon(Icons.repeat),
                               border: border,
                               filled: true,
                               fillColor: fill,
                             ),
-                            items: const [
-                              DropdownMenuItem(value: 1, child: Text('يومياً')),
+                            items: [
+                              DropdownMenuItem(value: 1, child: Text(AppLocalizations.of(context)!.daily)),
                               DropdownMenuItem(
-                                  value: 3, child: Text('كل 3 أيام')),
+                                  value: 3, child: Text(AppLocalizations.of(context)!.everyThreeDays)),
                               DropdownMenuItem(
-                                  value: 7, child: Text('أسبوعياً')),
+                                  value: 7, child: Text(AppLocalizations.of(context)!.weekly)),
                               DropdownMenuItem(
-                                  value: 14, child: Text('كل أسبوعين')),
+                                  value: 14, child: Text(AppLocalizations.of(context)!.everyTwoWeeks)),
                             ],
                             onChanged: (v) =>
                                 setState(() => _roundIntervalDays = v ?? 7),
@@ -385,19 +386,19 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           DropdownButtonFormField<int>(
                             initialValue: _matchesPerDay,
                             decoration: InputDecoration(
-                              labelText: 'عدد المباريات في اليوم',
+                              labelText: AppLocalizations.of(context)!.matchesPerDay,
                               prefixIcon: const Icon(Icons.today),
                               border: border,
                               filled: true,
                               fillColor: fill,
                             ),
-                            items: const [
+                            items: [
                               DropdownMenuItem(
-                                  value: 1, child: Text('مباراة واحدة')),
+                                  value: 1, child: Text(AppLocalizations.of(context)!.oneMatch)),
                               DropdownMenuItem(
-                                  value: 2, child: Text('مباراتان')),
+                                  value: 2, child: Text(AppLocalizations.of(context)!.twoMatches)),
                               DropdownMenuItem(
-                                  value: 3, child: Text('ثلاث مباريات')),
+                                  value: 3, child: Text(AppLocalizations.of(context)!.threeMatches)),
                             ],
                             onChanged: (v) =>
                                 setState(() => _matchesPerDay = v ?? 1),
@@ -407,19 +408,19 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                             DropdownButtonFormField<int>(
                               initialValue: _matchGapMinutes,
                               decoration: InputDecoration(
-                                labelText: 'الفاصل بين مباريات اليوم',
+                                labelText: AppLocalizations.of(context)!.intervalBetweenDailyMatches,
                                 prefixIcon: const Icon(Icons.timelapse),
                                 border: border,
                                 filled: true,
                                 fillColor: fill,
                               ),
-                              items: const [
+                              items: [
                                 DropdownMenuItem(
-                                    value: 60, child: Text('ساعة')),
+                                    value: 60, child: Text(AppLocalizations.of(context)!.oneHour)),
                                 DropdownMenuItem(
-                                    value: 90, child: Text('ساعة ونصف')),
+                                    value: 90, child: Text(AppLocalizations.of(context)!.oneAndHalfHours)),
                                 DropdownMenuItem(
-                                    value: 120, child: Text('ساعتان')),
+                                    value: 120, child: Text(AppLocalizations.of(context)!.twoHours)),
                               ],
                               onChanged: (v) =>
                                   setState(() => _matchGapMinutes = v ?? 90),
@@ -434,16 +435,16 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                               child: DropdownButtonFormField<int>(
                                 initialValue: _matchDuration,
                                 decoration: InputDecoration(
-                                  labelText: 'مدّة الشوط',
+                                  labelText: AppLocalizations.of(context)!.halfDuration,
                                   border: border,
                                   filled: true,
                                   fillColor: fill,
                                 ),
-                                items: const [
+                                items: [
                                   DropdownMenuItem(
-                                      value: 30, child: Text('30 دقيقة')),
+                                      value: 30, child: Text(AppLocalizations.of(context)!.thirtyMinutes)),
                                   DropdownMenuItem(
-                                      value: 45, child: Text('45 دقيقة')),
+                                      value: 45, child: Text(AppLocalizations.of(context)!.fortyFiveMinutes)),
                                 ],
                                 onChanged: (v) =>
                                     setState(() => _matchDuration = v ?? 45),
@@ -454,16 +455,16 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                               child: DropdownButtonFormField<int>(
                                 initialValue: _halvesCount,
                                 decoration: InputDecoration(
-                                  labelText: 'عدد الأشواط',
+                                  labelText: AppLocalizations.of(context)!.halvesCount,
                                   border: border,
                                   filled: true,
                                   fillColor: fill,
                                 ),
-                                items: const [
+                                items: [
                                   DropdownMenuItem(
-                                      value: 1, child: Text('شوط واحد')),
+                                      value: 1, child: Text(AppLocalizations.of(context)!.oneHalf)),
                                   DropdownMenuItem(
-                                      value: 2, child: Text('شوطان')),
+                                      value: 2, child: Text(AppLocalizations.of(context)!.twoHalves)),
                                 ],
                                 onChanged: (v) =>
                                     setState(() => _halvesCount = v ?? 2),
@@ -482,7 +483,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                             return DropdownButtonFormField<String>(
                               initialValue: _city,
                               decoration: InputDecoration(
-                                labelText: 'المدينة',
+                                labelText: AppLocalizations.of(context)!.cityLabel,
                                 prefixIcon: const Icon(Icons.location_on),
                                 border: border,
                                 filled: true,
@@ -492,7 +493,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                   .map((c) => DropdownMenuItem(value: c.nameAr, child: Text(c.nameAr)))
                                   .toList(),
                               onChanged: (v) => setState(() => _city = v),
-                              validator: (v) => v == null ? 'يرجى اختيار المدينة' : null,
+                              validator: (v) => v == null ? AppLocalizations.of(context)!.pleaseSelectCity : null,
                             );
                           },
                         ),
@@ -500,16 +501,16 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                         DropdownButtonFormField<String>(
                           initialValue: _tournamentType,
                           decoration: InputDecoration(
-                            labelText: 'نظام البطولة',
+                            labelText: AppLocalizations.of(context)!.tournamentSystem,
                             prefixIcon: const Icon(Icons.account_tree),
                             border: border,
                             filled: true,
                             fillColor: fill,
                           ),
-                          items: const [
-                            DropdownMenuItem(value: 'league', child: Text('دوري (League)')),
-                            DropdownMenuItem(value: 'knockout', child: Text('خروج المغلوب (Knockout)')),
-                            DropdownMenuItem(value: 'groups', child: Text('مجموعات (Groups)')),
+                          items: [
+                            DropdownMenuItem(value: 'league', child: Text(AppLocalizations.of(context)!.leagueSystem)),
+                            DropdownMenuItem(value: 'knockout', child: Text(AppLocalizations.of(context)!.knockoutSystem)),
+                            DropdownMenuItem(value: 'groups', child: Text(AppLocalizations.of(context)!.groupsSystem)),
                           ],
                           onChanged: (v) => setState(() => _tournamentType = v!),
                         ),
@@ -519,16 +520,16 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                         DropdownButtonFormField<int>(
                           initialValue: _playerFormat,
                           decoration: InputDecoration(
-                            labelText: 'عدد اللاعبين الأساسيين',
+                            labelText: AppLocalizations.of(context)!.startersCount,
                             prefixIcon: const Icon(Icons.groups),
                             border: border,
                             filled: true,
                             fillColor: fill,
                           ),
-                          items: const [
-                            DropdownMenuItem(value: 6, child: Text('سداسي (6 لاعبين)')),
-                            DropdownMenuItem(value: 8, child: Text('ثماني (8 لاعبين)')),
-                            DropdownMenuItem(value: 11, child: Text('11 لاعب')),
+                          items: [
+                            DropdownMenuItem(value: 6, child: Text(AppLocalizations.of(context)!.sixASide)),
+                            DropdownMenuItem(value: 8, child: Text(AppLocalizations.of(context)!.eightASide)),
+                            DropdownMenuItem(value: 11, child: Text(AppLocalizations.of(context)!.elevenASide)),
                           ],
                           onChanged: (v) =>
                               setState(() => _playerFormat = v ?? 6),
@@ -548,18 +549,18 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                             child: Column(
                               children: [
                                 SwitchListTile(
-                                  title: const Text('نظام الذهاب والإياب'),
-                                  subtitle: const Text('تُلعب كل مواجهة مرتين'),
+                                  title: Text(AppLocalizations.of(context)!.homeAndAwaySystem),
+                                  subtitle: Text(AppLocalizations.of(context)!.homeAndAwaySubtitle),
                                   value: _isHomeAndAway,
                                   onChanged: (v) => setState(() => _isHomeAndAway = v),
                                 ),
                                 // 📝 HINT AR: مجانية/باشتراك (المرحلة 8) — الدخول المدفوع
                                 // يُدار يدوياً من الأدمن (إضافة الفريق بعد الدفع).
                                 SwitchListTile(
-                                  title: const Text('بطولة مجانية'),
+                                  title: Text(AppLocalizations.of(context)!.freeTournamentOption),
                                   subtitle: Text(_isFree
-                                      ? 'يستطيع الأدمن إضافة أي فريق'
-                                      : 'باشتراك — يُضاف الفريق بعد دفع الرسوم'),
+                                      ? AppLocalizations.of(context)!.freeTournamentSubtitle
+                                      : AppLocalizations.of(context)!.paidTournamentSubtitle),
                                   value: _isFree,
                                   onChanged: (v) => setState(() => _isFree = v),
                                 ),
@@ -569,9 +570,9 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                         horizontal: 16, vertical: 8),
                                     child: TextField(
                                       controller: _entryInfoController,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText:
-                                              'رسوم/تواصل الدخول (يُعرض على البطولة)'),
+                                              AppLocalizations.of(context)!.entryFeesOrContact),
                                     ),
                                   ),
                                 if (_tournamentType == 'knockout' || _tournamentType == 'groups')
@@ -579,10 +580,10 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     child: DropdownButtonFormField<String>(
                                       initialValue: _generationMode,
-                                      decoration: const InputDecoration(labelText: 'طريقة توليد المباريات الإقصائية'),
-                                      items: const [
-                                        DropdownMenuItem(value: 'full_tree', child: Text('توليد كامل الشجرة مقدماً (TBD)')),
-                                        DropdownMenuItem(value: 'round_by_round', child: Text('توليد جولة بجولة')),
+                                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.knockoutGenerationMethod),
+                                      items: [
+                                        DropdownMenuItem(value: 'full_tree', child: Text(AppLocalizations.of(context)!.generateFullTree)),
+                                        DropdownMenuItem(value: 'round_by_round', child: Text(AppLocalizations.of(context)!.generateRoundByRound)),
                                       ],
                                       onChanged: (v) => setState(() => _generationMode = v!),
                                     ),
@@ -592,7 +593,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     child: TextFormField(
                                       initialValue: _numberOfGroups.toString(),
-                                      decoration: const InputDecoration(labelText: 'عدد المجموعات'),
+                                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.groupsCountLabel),
                                       keyboardType: TextInputType.number,
                                       onChanged: (v) => setState(() => _numberOfGroups = int.tryParse(v) ?? 2),
                                     ),
@@ -605,17 +606,17 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                         horizontal: 16, vertical: 8),
                                     child: DropdownButtonFormField<int>(
                                       initialValue: _qualifiersPerGroup,
-                                      decoration: const InputDecoration(
-                                          labelText: 'المتأهّلون من كل مجموعة'),
-                                      items: const [
+                                      decoration: InputDecoration(
+                                          labelText: AppLocalizations.of(context)!.qualifiersPerGroup),
+                                      items: [
                                         DropdownMenuItem(
-                                            value: 1, child: Text('الأول فقط')),
+                                            value: 1, child: Text(AppLocalizations.of(context)!.firstOnly)),
                                         DropdownMenuItem(
                                             value: 2,
-                                            child: Text('الأول والثاني')),
+                                            child: Text(AppLocalizations.of(context)!.firstAndSecond)),
                                         DropdownMenuItem(
                                             value: 3,
-                                            child: Text('الأول والثاني والثالث')),
+                                            child: Text(AppLocalizations.of(context)!.firstSecondThird)),
                                       ],
                                       onChanged: (v) => setState(
                                           () => _qualifiersPerGroup = v ?? 2),
@@ -629,17 +630,17 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                         horizontal: 16, vertical: 8),
                                     child: DropdownButtonFormField<String>(
                                       initialValue: _tieBreakMode,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText:
-                                              'حسم التعادل (الأدوار الإقصائية)'),
-                                      items: const [
+                                              AppLocalizations.of(context)!.tieBreakRules),
+                                      items: [
                                         DropdownMenuItem(
                                             value: 'extratime_penalties',
                                             child: Text(
-                                                'أشواط إضافية ثم جزاءات')),
+                                                AppLocalizations.of(context)!.extraTimeThenPenalties)),
                                         DropdownMenuItem(
                                             value: 'penalties',
-                                            child: Text('جزاءات مباشرة')),
+                                            child: Text(AppLocalizations.of(context)!.straightToPenalties)),
                                       ],
                                       onChanged: (v) => setState(() =>
                                           _tieBreakMode =
@@ -651,7 +652,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        Text('الفرق المشاركة (${_selected.length})',
+                        Text(AppLocalizations.of(context)!.participatingTeamsCountX(_selected.length.toString()),
                             style: theme.textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
@@ -659,7 +660,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           Padding(
                             padding: const EdgeInsets.all(16),
                             child: Text(
-                                'لا توجد فرق بعد — أنشئ فرقاً أولاً من تبويب الفرق',
+                                AppLocalizations.of(context)!.noTeamsYetCreateFirst,
                                 style: TextStyle(color: Colors.grey[600])),
                           )
                         else
@@ -668,7 +669,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                 title: Text(t.name),
                                 // 📝 HINT AR: المدينة + اسم الكابتن (بند 8).
                                 subtitle: Text(_captainNames[t.id] != null
-                                    ? '${t.city} • كابتن: ${_captainNames[t.id]}'
+                                    ? AppLocalizations.of(context)!.cityAndCaptainX(t.city, _captainNames[t.id]!)
                                     : t.city),
                                 onChanged: (sel) => setState(() {
                                   if (sel == true) {
@@ -680,12 +681,12 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                               )),
                         const SizedBox(height: 24),
                         // اختيار الحكّام (توزيع عشوائي بلا تعارض زمني).
-                        Text('الحكّام (${_selectedReferees.length})',
+                        Text(AppLocalizations.of(context)!.refereesCountX(_selectedReferees.length.toString()),
                             style: theme.textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
-                            'يوزّعهم النظام عشوائياً على المباريات دون تكرار حكم بنفس الموعد.',
+                            AppLocalizations.of(context)!.systemDistributesRefereesRandomly,
                             style: TextStyle(
                                 fontSize: 12, color: Colors.grey[600])),
                         const SizedBox(height: 8),
@@ -693,7 +694,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                           Padding(
                             padding: const EdgeInsets.all(16),
                             child: Text(
-                                'لا يوجد حكّام — يمنح الأدمن صفة الحكم للمستخدمين',
+                                AppLocalizations.of(context)!.noRefereesAdminMustGrant,
                                 style: TextStyle(color: Colors.grey[600])),
                           )
                         else
@@ -731,8 +732,8 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                       height: 24,
                                       child: CircularProgressIndicator(
                                           color: Colors.white, strokeWidth: 2))
-                                  : const Text('إنشاء البطولة وتوليد الجدول',
-                                      style: TextStyle(
+                                  : Text(AppLocalizations.of(context)!.createTournamentAndGenerateScheduleBtn,
+                                      style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),
                             );

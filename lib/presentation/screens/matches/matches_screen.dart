@@ -1,7 +1,7 @@
 import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../../data/models/tournament_model.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/repositories/tournament_repository.dart';
@@ -11,6 +11,7 @@ import '../../widgets/core/tooba_shimmer.dart';
 import 'tournament_matches_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import 'package:intl/intl.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة المباريات بتصميم FotMob. تتيح التبديل بين عرض البطولات أو جميع المباريات.
 class MatchesScreen extends StatefulWidget {
@@ -62,7 +63,7 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('المباريات ⚽',
+            Text('${AppLocalizations.of(context)!.matches} ⚽',
                 style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 22,
@@ -76,8 +77,8 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
               ),
               child: Row(
                 children: [
-                  _toggleBtn('بطولات', !_showAllMatches, isDark),
-                  _toggleBtn('مباريات', _showAllMatches, isDark),
+                  _toggleBtn(AppLocalizations.of(context)!.tournamentsTab, !_showAllMatches, isDark),
+                  _toggleBtn(AppLocalizations.of(context)!.matchesTab, _showAllMatches, isDark),
                 ],
               ),
             ),
@@ -90,10 +91,10 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
                 labelColor: isDark ? Colors.white : Colors.black87,
                 unselectedLabelColor: isDark ? const Color(0xFF6A8898) : Colors.grey,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                tabs: const [
-                  Tab(text: 'مباشر'),
-                  Tab(text: 'قادمة'),
-                  Tab(text: 'منتهية'),
+                tabs: [
+                  Tab(text: AppLocalizations.of(context)!.liveTab),
+                  Tab(text: AppLocalizations.of(context)!.upcomingTab),
+                  Tab(text: AppLocalizations.of(context)!.finishedTab),
                 ],
               )
             : null,
@@ -106,7 +107,7 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
     return GestureDetector(
       onTap: () {
         setState(() {
-          _showAllMatches = text == 'مباريات';
+          _showAllMatches = text == AppLocalizations.of(context)!.matchesTab;
         });
       },
       child: Container(
@@ -137,18 +138,18 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
         if (snapshot.hasError) {
           return ToobaEmptyState(
             icon: Icons.wifi_off_rounded,
-            title: 'تعذّر تحميل البطولات',
+            title: AppLocalizations.of(context)!.failedToLoadTournaments,
             subtitle: snapshot.error.toString(),
-            actionLabel: 'إعادة المحاولة',
+            actionLabel: AppLocalizations.of(context)!.retry,
             onAction: _reload,
           );
         }
         final tournaments = snapshot.data ?? [];
         if (tournaments.isEmpty) {
-          return const ToobaEmptyState(
+          return ToobaEmptyState(
             icon: Icons.emoji_events,
-            title: 'لا توجد بطولات',
-            subtitle: 'لم يتم العثور على أي بطولات حالياً',
+            title: AppLocalizations.of(context)!.noTournaments,
+            subtitle: AppLocalizations.of(context)!.noTournamentsFound,
           );
         }
 
@@ -162,17 +163,17 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
             padding: const EdgeInsets.all(16),
             children: [
               if (ongoing.isNotEmpty) ...[
-                _header('بطولات جارية', isDark),
+                _header(AppLocalizations.of(context)!.ongoingTournaments, isDark),
                 ...ongoing.map((t) => _tournamentCard(t, isDark)),
                 const SizedBox(height: 8),
               ],
               if (others.isNotEmpty) ...[
-                _header('بطولات قادمة', isDark),
+                _header(AppLocalizations.of(context)!.upcomingTournaments, isDark),
                 ...others.map((t) => _tournamentCard(t, isDark)),
                 const SizedBox(height: 8),
               ],
               if (finished.isNotEmpty) ...[
-                _header('بطولات منتهية', isDark),
+                _header(AppLocalizations.of(context)!.finishedTournaments, isDark),
                 ...finished.map((t) => _tournamentCard(t, isDark)),
               ],
             ],
@@ -234,7 +235,7 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
                       decoration: BoxDecoration(
                           color: finished ? Colors.grey.withValues(alpha: 0.2) : const Color(0xFF00D166).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6)),
-                      child: Text(finished ? 'منتهية' : 'جارية',
+                      child: Text(finished ? AppLocalizations.of(context)!.statusFinished : AppLocalizations.of(context)!.statusOngoing,
                           style: TextStyle(
                               color: finished ? (isDark ? Colors.white54 : Colors.black54) : const Color(0xFF00D166),
                               fontSize: 10,
@@ -249,7 +250,7 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 4),
-                    Text('${t.city} • ${t.teamIds.length} فريق',
+                    Text('${t.city} • ${AppLocalizations.of(context)!.teamsCountText(t.teamIds.length)}',
                         style: TextStyle(
                             color: isDark ? const Color(0xFF6A8898) : Colors.black54, fontSize: 12)),
                   ],
@@ -274,7 +275,7 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
         if (snapshot.hasError) {
           return ToobaEmptyState(
             icon: Icons.error_outline,
-            title: 'خطأ',
+            title: AppLocalizations.of(context)!.errorTitle,
             subtitle: snapshot.error.toString(),
             onAction: _reload,
           );
@@ -299,7 +300,7 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
   Widget _matchList(List<MatchModel> matches, bool isDark, bool isLive) {
     if (matches.isEmpty) {
       return Center(
-        child: Text('لا توجد مباريات',
+        child: Text(AppLocalizations.of(context)!.noMatchesFound,
             style: TextStyle(color: isDark ? const Color(0xFF6A8898) : Colors.grey)),
       );
     }
@@ -357,12 +358,12 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
                       decoration: BoxDecoration(
                           color: const Color(0xFFFF4B4B).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4)),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.circle, color: Color(0xFFFF4B4B), size: 6),
-                          SizedBox(width: 4),
-                          Text('مباشر',
-                              style: TextStyle(
+                          const Icon(Icons.circle, color: Color(0xFFFF4B4B), size: 6),
+                          const SizedBox(width: 4),
+                          Text(AppLocalizations.of(context)!.liveTab,
+                              style: const TextStyle(
                                   color: Color(0xFFFF4B4B),
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),

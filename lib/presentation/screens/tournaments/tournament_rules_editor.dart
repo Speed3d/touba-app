@@ -1,11 +1,12 @@
 import '../../../core/utils/image_helper.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:image_picker/image_picker.dart';
 import '../../../data/models/tournament_model.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: محرّر «الشروط والداعمون» (للمنظّم/الأدمن) — يضبط نصّ الشروط
 /// والقوانين + لوكوات الداعمين + صور البانر المتحرك. تُحفظ كلها على مستند البطولة
@@ -66,7 +67,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
       );
       setState(() => _banners.add(url));
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر رفع صورة البانر');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToUploadBannerImage);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -87,7 +88,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
       );
       setState(() => _sponsors.add(Sponsor(name: name.trim(), logoUrl: url)));
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر رفع لوغو الداعم');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToUploadSponsorLogo);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -98,19 +99,19 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('اسم الداعم'),
+        title: Text(AppLocalizations.of(context)!.sponsorNameTitle),
         content: TextField(
           controller: c,
           autofocus: true,
-          decoration: const InputDecoration(
-              hintText: 'مثال: شركة الراعي', border: OutlineInputBorder()),
+          decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.sponsorNameExample, border: const OutlineInputBorder()),
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+              onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, c.text),
-              child: const Text('إضافة')),
+              child: Text(AppLocalizations.of(context)!.addBtn)),
         ],
       ),
     );
@@ -127,7 +128,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
       widget.onSaved();
       if (mounted) Navigator.pop(context);
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر حفظ التعديلات');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToSaveChanges);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -147,8 +148,8 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('تعديل الشروط والداعمين',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(AppLocalizations.of(context)!.editRulesAndSponsorsTitle,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center),
             const SizedBox(height: 16),
             // ── الشروط والقوانين ──
@@ -156,21 +157,21 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
               controller: _rules,
               maxLines: 5,
               minLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'الشروط والقوانين',
-                hintText: 'اكتب شروط وقوانين البطولة هنا…',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.rulesAndTermsLabel,
+                hintText: AppLocalizations.of(context)!.writeRulesAndTermsHere,
+                border: const OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
             ),
             const SizedBox(height: 20),
             // ── البانرات المتحركة ──
-            _sectionHeader('بانر الإعلانات', Icons.view_carousel),
+            _sectionHeader(AppLocalizations.of(context)!.adBannersSection, Icons.view_carousel),
             const SizedBox(height: 8),
             _bannersGrid(),
             const SizedBox(height: 20),
             // ── الداعمون ──
-            _sectionHeader('الداعمون', Icons.handshake),
+            _sectionHeader(AppLocalizations.of(context)!.sponsorsSection, Icons.handshake),
             const SizedBox(height: 8),
             _sponsorsGrid(),
             const SizedBox(height: 20),
@@ -183,7 +184,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('حفظ'),
+                  : Text(AppLocalizations.of(context)!.saveBtn),
             ),
           ],
         ),
@@ -219,7 +220,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
               width: 120,
               height: 70,
             )),
-        _addTile(width: 120, height: 70, label: 'صورة', onTap: _addBanner),
+        _addTile(width: 120, height: 70, label: AppLocalizations.of(context)!.imageLabel, onTap: _addBanner),
       ],
     );
   }
@@ -248,7 +249,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
                 ),
               ],
             )),
-        _addTile(width: 80, height: 80, label: 'داعم', onTap: _addSponsor),
+        _addTile(width: 80, height: 80, label: AppLocalizations.of(context)!.sponsorLabel, onTap: _addSponsor),
       ],
     );
   }

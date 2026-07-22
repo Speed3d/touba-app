@@ -10,6 +10,7 @@ import '../../widgets/core/standings_view.dart';
 import '../../widgets/core/bracket_view.dart';
 import '../matches/match_detail_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة «جدول الترتيب» (الوجبة 7 — بند 11) لبطولة. تعرض:
 /// • دوري → جدول الترتيب. • مجموعات → جدول كل مجموعة + الشجرة (إن وُلِّدت).
@@ -67,7 +68,7 @@ class _TournamentStandingsScreenState extends State<TournamentStandingsScreen> {
     final knockoutMatches =
         _matches.where((m) => m.stage == 'knockout').toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('جدول الترتيب'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.standingsTableTitle), centerTitle: true),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -86,7 +87,7 @@ class _TournamentStandingsScreenState extends State<TournamentStandingsScreen> {
                             size: 18,
                             color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 6),
-                        Text('المرحلة الإقصائية',
+                        Text(AppLocalizations.of(context)!.knockoutStageLabel,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -104,7 +105,7 @@ class _TournamentStandingsScreenState extends State<TournamentStandingsScreen> {
                     Padding(
                       padding: const EdgeInsets.all(24),
                       child: Center(
-                        child: Text('لم تُولَّد الشجرة بعد',
+                        child: Text(AppLocalizations.of(context)!.bracketNotGeneratedYet,
                             style: TextStyle(color: Colors.grey[600])),
                       ),
                     ),

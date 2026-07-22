@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../data/models/report_model.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// شاشة تقديم بلاغ عن لاعب أو فريق.
 /// المعاملات: [targetType] نوع الهدف، [targetId] معرّفه، [targetName] اسمه للعرض.
@@ -55,12 +56,12 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
           .collection('reports')
           .add(report.toFirestore());
       if (mounted) {
-        ToobaSnackBar.success(context, 'تم إرسال البلاغ — سيراجعه الفريق قريباً');
+        ToobaSnackBar.success(context, AppLocalizations.of(context)!.reportSentSuccess);
         Navigator.pop(context);
       }
     } catch (_) {
       if (mounted) {
-        ToobaSnackBar.error(context, 'تعذّر إرسال البلاغ — حاول مرة أخرى');
+        ToobaSnackBar.error(context, AppLocalizations.of(context)!.reportSentFailed);
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -77,7 +78,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('تقديم بلاغ'),
+        title: Text(AppLocalizations.of(context)!.submitReportTitle),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -118,7 +119,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'بلاغ عن ${widget.targetType.label}',
+                              AppLocalizations.of(context)!.reportAboutTarget(widget.targetType.getLabel(context)),
                               style: const TextStyle(
                                   fontSize: 12, color: Colors.grey),
                             ),
@@ -139,7 +140,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                 DropdownButtonFormField<ReportReason>(
                   initialValue: _reason,
                   decoration: InputDecoration(
-                    labelText: 'سبب البلاغ',
+                    labelText: AppLocalizations.of(context)!.reportReasonLabel,
                     prefixIcon: const Icon(Icons.flag_outlined),
                     border: border,
                     filled: true,
@@ -147,7 +148,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                   ),
                   items: ReportReason.values
                       .map((r) =>
-                          DropdownMenuItem(value: r, child: Text(r.label)))
+                          DropdownMenuItem(value: r, child: Text(r.getLabel(context))))
                       .toList(),
                   onChanged: (v) => setState(() => _reason = v!),
                 ),
@@ -159,8 +160,8 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                   maxLines: 4,
                   maxLength: 500,
                   decoration: InputDecoration(
-                    labelText: 'وصف المشكلة (اختياري)',
-                    hintText: 'اشرح المشكلة بتفاصيل أكثر...',
+                    labelText: AppLocalizations.of(context)!.problemDescriptionOptional,
+                    hintText: AppLocalizations.of(context)!.explainProblemInDetailHint,
                     border: border,
                     filled: true,
                     fillColor: fill,
@@ -169,7 +170,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'ملاحظة: البلاغات الكاذبة أو التافهة قد تؤدي إلى تقييد حسابك.',
+                  AppLocalizations.of(context)!.falseReportsWarning,
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 24),
@@ -190,8 +191,8 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2),
                         )
-                      : const Text('إرسال البلاغ',
-                          style: TextStyle(
+                      : Text(AppLocalizations.of(context)!.submitReportBtn,
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ],

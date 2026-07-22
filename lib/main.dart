@@ -154,6 +154,7 @@ class PopularFootballApp extends StatelessWidget {
                   supportedLocales: const [
                     Locale('ar'),
                     Locale('en'),
+                    Locale('ku'),
                   ],
                   home: const SplashScreen(),
                 );

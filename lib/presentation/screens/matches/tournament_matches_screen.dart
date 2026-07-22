@@ -10,6 +10,7 @@ import '../../widgets/core/tooba_shimmer.dart';
 import 'match_detail_screen.dart';
 import '../tournaments/tournament_standings_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: مباريات بطولة واحدة فقط — ثلاثة تبويبات (جارية/قادمة/انتهت)
 /// مجمَّعة باليوم. لا تداخل مع بطولات أخرى.
@@ -60,10 +61,10 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
         bottom: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.label,
-          tabs: const [
-            Tab(text: 'جارية'),
-            Tab(text: 'قادمة'),
-            Tab(text: 'انتهت'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.liveMatchesTab),
+            Tab(text: AppLocalizations.of(context)!.upcomingMatchesTab),
+            Tab(text: AppLocalizations.of(context)!.finishedMatchesTab),
           ],
         ),
       ),
@@ -103,13 +104,13 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(isKnockout ? 'مخطط البطولة' : 'جدول الترتيب',
+                      Text(isKnockout ? AppLocalizations.of(context)!.tournamentScheme : AppLocalizations.of(context)!.standingsTable,
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15)),
                       Text(
                           isKnockout
-                              ? 'شجرة المواجهات حتى الكأس'
-                              : 'ترتيب الفرق ونقاطها',
+                              ? AppLocalizations.of(context)!.knockoutTreeUpToCup
+                              : AppLocalizations.of(context)!.teamsRankingAndPoints,
                           style:
                               TextStyle(fontSize: 12, color: Colors.grey[600])),
                     ],
@@ -140,9 +141,9 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
           if (snapshot.hasError) {
             return ToobaEmptyState(
               icon: Icons.wifi_off_rounded,
-              title: 'تعذّر تحميل المباريات',
+              title: AppLocalizations.of(context)!.failedToLoadMatches,
               subtitle: snapshot.error.toString(),
-              actionLabel: 'إعادة المحاولة',
+              actionLabel: AppLocalizations.of(context)!.retry,
               onAction: _reload,
             );
           }
@@ -172,9 +173,9 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildList(context, live, 'لا توجد مباريات جارية الآن', now),
-                _buildList(context, upcoming, 'لا توجد مباريات قادمة', now),
-                _buildList(context, finished, 'لا توجد مباريات منتهية', now),
+                _buildList(context, live, AppLocalizations.of(context)!.noLiveMatchesNow, now),
+                _buildList(context, upcoming, AppLocalizations.of(context)!.noUpcomingMatches, now),
+                _buildList(context, finished, AppLocalizations.of(context)!.noFinishedMatches, now),
               ],
             ),
           );
@@ -198,8 +199,8 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
     final items = <Widget>[];
     for (final dateKey in byDate.keys) {
       final label = dateKey == '__no_date__'
-          ? 'موعد غير محدد'
-          : _formatDateHeader(DateTime.parse(dateKey), now);
+          ? AppLocalizations.of(context)!.unspecifiedDate
+          : _formatDateHeader(context, DateTime.parse(dateKey), now);
       items.add(Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 8),
         child: Text(label,
@@ -221,7 +222,7 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
               awayTeamLogo: m.awayTeamLogo,
               homeScore: m.resultConfirmed ? m.homeScore : null,
               awayScore: m.resultConfirmed ? m.awayScore : null,
-              timeText: _formatMatchTime(m, now),
+              timeText: _formatMatchTime(context, m, now),
               isLive: m.status == 'live',
               dateTime: m.dateTime,
             ),
@@ -235,29 +236,30 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
     );
   }
 
-  String _formatDateHeader(DateTime dt, DateTime now) {
+  String _formatDateHeader(BuildContext context, DateTime dt, DateTime now) {
     final isToday =
         dt.year == now.year && dt.month == now.month && dt.day == now.day;
     final isTomorrow = dt.year == now.year &&
         dt.month == now.month &&
         dt.day == now.day + 1;
-    if (isToday) return 'اليوم';
-    if (isTomorrow) return 'غداً';
+    if (isToday) return AppLocalizations.of(context)!.today;
+    if (isTomorrow) return AppLocalizations.of(context)!.tomorrow;
     return DateFormat('EEEE، d MMMM', 'ar').format(dt);
   }
 
-  String _formatMatchTime(MatchModel m, DateTime now) {
-    if (m.resultConfirmed) return 'انتهت';
-    if (m.status == 'live') return 'مباشر';
-    if (m.dateTime == null) return 'الجولة ${m.round}';
+  String _formatMatchTime(BuildContext context, MatchModel m, DateTime now) {
+    if (m.resultConfirmed) return AppLocalizations.of(context)!.finishedMatchesTab;
+    if (m.status == 'live') return AppLocalizations.of(context)!.matchLive;
+    if (m.dateTime == null) return AppLocalizations.of(context)!.roundX(m.round.toString());
     final dt = m.dateTime!;
     final isToday =
         dt.year == now.year && dt.month == now.month && dt.day == now.day;
     final isTomorrow = dt.year == now.year &&
         dt.month == now.month &&
         dt.day == now.day + 1;
-    if (isToday) return 'اليوم ${DateFormat('HH:mm').format(dt)}';
-    if (isTomorrow) return 'غداً ${DateFormat('HH:mm').format(dt)}';
+    final timeStr = DateFormat('HH:mm').format(dt);
+    if (isToday) return AppLocalizations.of(context)!.todayAtTime(timeStr);
+    if (isTomorrow) return AppLocalizations.of(context)!.tomorrowAtTime(timeStr);
     return DateFormat('d MMM • HH:mm', 'ar').format(dt);
   }
 }

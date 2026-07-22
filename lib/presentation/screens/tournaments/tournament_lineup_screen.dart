@@ -1,7 +1,7 @@
 import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../../data/models/player_model.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/models/tournament_lineup_model.dart';
@@ -10,6 +10,7 @@ import '../../../data/repositories/tournament_lineup_repository.dart';
 import '../../../core/utils/formations.dart';
 import '../../widgets/core/pitch_formation_view.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة تشكيلة الكابتن في بطولة (بند 8 + 12). يختار الخطة (قالب ثابت
 /// أو مخصّصة)، يعيّن لاعبيه تفاعلياً على الملعب (نقر دائرة → اختيار لاعب)، يحدّد
@@ -139,7 +140,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               Center(
-                child: Text('اختر لاعب الخانة ${slotIndex + 1}',
+                child: Text(AppLocalizations.of(context)!.selectPlayerForSlotX((slotIndex + 1).toString()),
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold)),
               ),
@@ -147,7 +148,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
               if (current != null)
                 ListTile(
                   leading: const Icon(Icons.remove_circle, color: Colors.red),
-                  title: const Text('إزالة اللاعب من هذه الخانة'),
+                  title: Text(AppLocalizations.of(context)!.removePlayerFromSlot),
                   onTap: () {
                     Navigator.pop(ctx);
                     setState(() => _slots[slotIndex] = null);
@@ -169,7 +170,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
                   ),
                   title: Text(p.name),
                   subtitle: Text(p.position +
-                      (isElsewhere ? ' • معيّن في خانة أخرى' : '')),
+                      (isElsewhere ? AppLocalizations.of(context)!.assignedToAnotherSlot : '')),
                   trailing: isHere
                       ? const Icon(Icons.check_circle, color: Colors.green)
                       : null,
@@ -202,10 +203,10 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('اختر الخطة (حارس-دفاع-وسط-هجوم)',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(AppLocalizations.of(context)!.chooseFormation,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
             Wrap(
               spacing: 8,
@@ -229,7 +230,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
                 _customFormation();
               },
               icon: const Icon(Icons.dashboard_customize, size: 18),
-              label: const Text('خطة مخصّصة'),
+              label: Text(AppLocalizations.of(context)!.customFormation),
             ),
             const SizedBox(height: 12),
           ],
@@ -282,22 +283,22 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('خطة مخصّصة (الحارس ثابت)',
+                  Text(AppLocalizations.of(context)!.customFormationGoalieFixed,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 16),
-                  stepper('المدافعون', def, () {
+                  stepper(AppLocalizations.of(context)!.defenders, def, () {
                     if (def > 1) setS(() => def--);
                   }, () {
                     if (def + fwd < outfield) setS(() => def++);
                   }),
-                  stepper('الهجوم', fwd, () {
+                  stepper(AppLocalizations.of(context)!.attackers, fwd, () {
                     if (fwd > 1) setS(() => fwd--);
                   }, () {
                     if (def + fwd < outfield) setS(() => fwd++);
                   }),
                   const Divider(),
-                  Text('خط الوسط: $mid  •  المجموع: ${1 + def + mid + fwd}',
+                  Text(AppLocalizations.of(context)!.midfieldAndTotalX(mid.toString(), (1 + def + mid + fwd).toString()),
                       style: TextStyle(color: Colors.grey[600])),
                   const SizedBox(height: 16),
                   SizedBox(
@@ -309,7 +310,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
                               Navigator.pop(ctx);
                               _applyFormation('1-$def-$mid-$fwd');
                             },
-                      child: const Text('اعتماد الخطة'),
+                      child: Text(AppLocalizations.of(context)!.applyFormationBtn),
                     ),
                   ),
                 ],
@@ -335,11 +336,11 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
 
   Future<void> _submit() async {
     if (_slots.any((s) => s == null)) {
-      ToobaSnackBar.warning(context, 'عيّن لاعباً لكل خانة في التشكيلة');
+      ToobaSnackBar.warning(context, AppLocalizations.of(context)!.assignPlayerToEverySlot);
       return;
     }
     if (_captainId == null) {
-      ToobaSnackBar.error(context, 'تعذّر تحديد الكابتن');
+      ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToDetermineCaptain);
       return;
     }
     setState(() => _submitting = true);
@@ -366,11 +367,13 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
         status: 'pending',
       );
       await repo.submitLineup(lineup);
+      if (!mounted) return;
       messenger.showSnackBar(
-          ToobaSnackBar.buildSuccess('أُرسلت التشكيلة لمراجعة المنظّم'));
+          ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.lineupSentForReview));
       if (mounted) Navigator.pop(context, true);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر إرسال التشكيلة'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToSendLineup));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -385,7 +388,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('تشكيلة البطولة'),
+        title: Text(AppLocalizations.of(context)!.tournamentLineupTitle),
         centerTitle: true,
       ),
       body: _loading
@@ -407,16 +410,16 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
                   child: ListTile(
                     leading: Icon(Icons.dashboard_customize,
                         color: theme.colorScheme.primary),
-                    title: const Text('الخطة',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    title: Text(AppLocalizations.of(context)!.formationLabel,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text(_formation),
                     trailing: OutlinedButton(
                         onPressed: _pickFormation,
-                        child: const Text('تغيير')),
+                        child: Text(AppLocalizations.of(context)!.changeFormationBtn)),
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text('اضغط أي دائرة على الملعب لتعيين لاعبها',
+                Text(AppLocalizations.of(context)!.tapCircleToAssignPlayer,
                     style: TextStyle(fontSize: 12, color: Colors.grey[600])),
                 const SizedBox(height: 8),
                 // الملعب التفاعلي
@@ -428,7 +431,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
                 ),
                 const SizedBox(height: 20),
                 // الاحتياط
-                Text('الاحتياط (${_subs.length})',
+                Text(AppLocalizations.of(context)!.subsCountX(_subs.length.toString()),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15)),
                 const SizedBox(height: 8),
@@ -440,8 +443,8 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
                     onPressed: _submitting ? null : _submit,
                     icon: const Icon(Icons.send),
                     label: Text(_submitting
-                        ? 'جارٍ الإرسال...'
-                        : 'إرسال للمراجعة'),
+                        ? AppLocalizations.of(context)!.sendingBtn
+                        : AppLocalizations.of(context)!.sendForReviewBtn),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: theme.colorScheme.primary,
@@ -458,11 +461,11 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
 
   Widget _statusBanner(TournamentLineupModel l) {
     final (color, icon, text) = l.isApproved
-        ? (Colors.green, Icons.verified, 'تشكيلتك مقبولة')
+        ? (Colors.green, Icons.verified, AppLocalizations.of(context)!.lineupApproved)
         : l.isRejected
             ? (Colors.red, Icons.cancel,
-                'رُفضت تشكيلتك${l.reviewNote != null ? " — ${l.reviewNote}" : ""}')
-            : (Colors.blue, Icons.hourglass_top, 'تشكيلتك قيد المراجعة');
+                l.reviewNote != null ? AppLocalizations.of(context)!.lineupRejectedWithNote(l.reviewNote!) : AppLocalizations.of(context)!.lineupRejected)
+            : (Colors.blue, Icons.hourglass_top, AppLocalizations.of(context)!.lineupPendingReview);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -488,7 +491,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
     final candidates =
         _players.where((p) => !placed.contains(p.id)).toList();
     if (candidates.isEmpty) {
-      return Text('كل اللاعبين معيّنون كأساسيين',
+      return Text(AppLocalizations.of(context)!.allPlayersAssignedAsStarters,
           style: TextStyle(color: Colors.grey[600], fontSize: 13));
     }
     return Wrap(

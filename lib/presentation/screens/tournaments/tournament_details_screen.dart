@@ -1,7 +1,7 @@
 import '../../../core/utils/image_helper.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../app/theme/app_colors.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +13,7 @@ import '../../../data/models/match_model.dart';
 import '../../../data/models/tournament_model.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/models/user_model.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../data/models/tournament_lineup_model.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/tournament_repository.dart';
@@ -47,16 +48,16 @@ class TournamentDetailsScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
       appBar: AppBar(
-        title: const Text('تفاصيل البطولة'),
+        title: Text(AppLocalizations.of(context)!.tournamentDetailsTitle),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        bottom: const TabBar(
+        bottom: TabBar(
           isScrollable: true,
           tabs: [
-            Tab(text: 'تفاصيل'),
-            Tab(text: 'شروط وقوانين'),
-            Tab(text: 'الفرق المشاركة'),
+            Tab(text: AppLocalizations.of(context)!.detailsTab),
+            Tab(text: AppLocalizations.of(context)!.rulesAndTermsTab),
+            Tab(text: AppLocalizations.of(context)!.participatingTeamsTab),
           ],
         ),
       ),
@@ -89,7 +90,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                           ?.copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center),
                   const SizedBox(height: 4),
-                  Center(child: Text('${t.city} • ${_typeLabel(t.type)}')),
+                  Center(child: Text(AppLocalizations.of(context)!.cityAndType(t.city, _typeLabel(context, t.type)))),
                   // 📝 HINT AR: بطولة باشتراك (المرحلة 8) — الدخول يُدار من الأدمن.
                   if (!t.isFree) ...[
                     const SizedBox(height: 8),
@@ -110,8 +111,8 @@ class TournamentDetailsScreen extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               t.entryInfo?.isNotEmpty == true
-                                  ? 'بطولة باشتراك • ${t.entryInfo}'
-                                  : 'بطولة باشتراك',
+                                  ? AppLocalizations.of(context)!.paidTournamentWithInfo(t.entryInfo!)
+                                  : AppLocalizations.of(context)!.paidTournament,
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -133,7 +134,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                               tournamentId: t.id, canManage: true)),
                         ),
                         icon: const Icon(Icons.fact_check, size: 16),
-                        label: const Text('مراجعة تشكيلات الفرق'),
+                        label: Text(AppLocalizations.of(context)!.reviewTeamLineups),
                       ),
                     ),
                   ],
@@ -159,7 +160,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.groups, size: 18),
-                        label: const Text('تشكيلتي في البطولة'),
+                        label: Text(AppLocalizations.of(context)!.myTournamentLineup),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
@@ -178,7 +179,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                       child: OutlinedButton.icon(
                         onPressed: () => _applyAsReferee(context, t, currentUser),
                         icon: const Icon(Icons.sports, size: 16),
-                        label: const Text('تقديم طلب تحكيم لهذه البطولة'),
+                        label: Text(AppLocalizations.of(context)!.applyAsRefereeForTournament),
                       ),
                     ),
                   ],
@@ -191,7 +192,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      Text('المباريات',
+                      Text(AppLocalizations.of(context)!.matchesTitle,
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge
@@ -202,8 +203,8 @@ class TournamentDetailsScreen extends StatelessWidget {
                         OutlinedButton.icon(
                           onPressed: () => _exportSchedulePdf(context, state),
                           icon: const Icon(Icons.picture_as_pdf, size: 16),
-                          label: const Text('تصدير PDF',
-                              style: TextStyle(fontSize: 12)),
+                          label: Text(AppLocalizations.of(context)!.exportPdfBtn,
+                              style: const TextStyle(fontSize: 12)),
                           style: OutlinedButton.styleFrom(
                             visualDensity: VisualDensity.compact,
                             padding: const EdgeInsets.symmetric(
@@ -257,7 +258,7 @@ class TournamentDetailsScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _editRules(context, t),
                 icon: const Icon(Icons.edit, size: 16),
-                label: const Text('تعديل الشروط والداعمين'),
+                label: Text(AppLocalizations.of(context)!.editRulesAndSponsors),
               ),
             ),
             const SizedBox(height: 8),
@@ -267,7 +268,7 @@ class TournamentDetailsScreen extends StatelessWidget {
             const SizedBox(height: 20),
           ],
           if (hasRules) ...[
-            _sectionTitle(context, 'الشروط والقوانين', Icons.gavel),
+            _sectionTitle(context, AppLocalizations.of(context)!.termsAndRulesTitle, Icons.gavel),
             const SizedBox(height: 8),
             Card(
               shape: RoundedRectangleBorder(
@@ -280,7 +281,7 @@ class TournamentDetailsScreen extends StatelessWidget {
             const SizedBox(height: 20),
           ],
           if (hasSponsors) ...[
-            _sectionTitle(context, 'الداعمون', Icons.handshake),
+            _sectionTitle(context, AppLocalizations.of(context)!.sponsorsTitle, Icons.handshake),
             const SizedBox(height: 12),
             _sponsorsView(t.sponsors),
             const SizedBox(height: 20),
@@ -295,8 +296,8 @@ class TournamentDetailsScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       canManage
-                          ? 'لا توجد شروط أو داعمون بعد — اضغط «تعديل» للإضافة'
-                          : 'لا توجد شروط أو داعمون لهذه البطولة',
+                          ? AppLocalizations.of(context)!.noRulesOrSponsorsEditToAdd
+                          : AppLocalizations.of(context)!.noRulesOrSponsors,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey[600]),
                     ),
@@ -399,7 +400,7 @@ class TournamentDetailsScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text('حالة تشكيلات الفرق (${t.teamIds.length})',
+              Text(AppLocalizations.of(context)!.teamLineupsStatus(t.teamIds.length.toString()),
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium
@@ -407,14 +408,14 @@ class TournamentDetailsScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                   canManage
-                      ? 'اضغط فريقاً أرسل لمراجعة تشكيلته، أو فريقاً لم يُرسل لتذكيره.'
-                      : 'اضغط فريقاً أرسل لعرض تشكيلته.',
+                      ? AppLocalizations.of(context)!.tapToReviewOrRemind
+                      : AppLocalizations.of(context)!.tapToViewLineup,
                   style: TextStyle(fontSize: 12, color: Colors.grey[600])),
               const SizedBox(height: 12),
               if (t.teamIds.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text('لا فرق مشاركة',
+                  child: Text(AppLocalizations.of(context)!.noParticipatingTeams,
                       style: TextStyle(color: Colors.grey[600])),
                 )
               else
@@ -436,19 +437,19 @@ class TournamentDetailsScreen extends StatelessWidget {
     IconData icon;
     if (lineup == null) {
       color = Colors.orange;
-      label = 'لم يُرسل';
+      label = AppLocalizations.of(context)!.notSent;
       icon = Icons.hourglass_empty;
     } else if (lineup.isApproved) {
       color = Colors.green;
-      label = 'تم التحقق';
+      label = AppLocalizations.of(context)!.verified;
       icon = Icons.verified;
     } else if (lineup.isRejected) {
       color = Colors.red;
-      label = 'مرفوضة';
+      label = AppLocalizations.of(context)!.rejected;
       icon = Icons.cancel;
     } else {
       color = Colors.blue;
-      label = 'تم الإرسال';
+      label = AppLocalizations.of(context)!.sent;
       icon = Icons.send;
     }
     return Card(
@@ -483,7 +484,7 @@ class TournamentDetailsScreen extends StatelessWidget {
           } else if (canManage) {
             _remindCaptain(context, state.tournament.id, teamId, name);
           } else {
-            ToobaSnackBar.info(context, 'لم يُرسِل الكابتن تشكيلته بعد');
+            ToobaSnackBar.info(context, AppLocalizations.of(context)!.captainNotSentLineup);
           }
         },
       ),
@@ -498,33 +499,32 @@ class TournamentDetailsScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('تذكير فريق $teamName'),
+        title: Text(AppLocalizations.of(context)!.remindTeamX(teamName)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'سيصل تنبيه لكابتن الفريق بضرورة إرسال التشكيلة. إن لم تُرسَل '
-              'يمكنك إقصاء الفريق أو إدخال خسارة 3-0 يدوياً.',
-              style: TextStyle(fontSize: 13),
+            Text(
+              AppLocalizations.of(context)!.remindCaptainMessageBody,
+              style: const TextStyle(fontSize: 13),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: ctrl,
               maxLines: 2,
-              decoration: const InputDecoration(
-                  hintText: 'رسالة مخصّصة (اختياري)',
-                  border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.customMessageOptional,
+                  border: const OutlineInputBorder()),
             ),
           ],
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('إرسال التذكير')),
+              child: Text(AppLocalizations.of(context)!.sendReminderBtn)),
         ],
       ),
     );
@@ -532,10 +532,14 @@ class TournamentDetailsScreen extends StatelessWidget {
     try {
       await FunctionsService()
           .remindLineup(tournamentId, teamId, ctrl.text.trim());
-      messenger.showSnackBar(
-          ToobaSnackBar.buildSuccess('أُرسل التذكير لكابتن $teamName'));
+      if (context.mounted) {
+        messenger.showSnackBar(
+            ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.reminderSentToCaptainX(teamName)));
+      }
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر إرسال التذكير'));
+      if (context.mounted) {
+        messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToSendReminder));
+      }
     }
   }
 
@@ -566,8 +570,8 @@ class TournamentDetailsScreen extends StatelessWidget {
         children: [
           cupOrLogo,
           const SizedBox(height: 8),
-          const Text('بطل البطولة',
-              style: TextStyle(color: Colors.white70, fontSize: 13)),
+          Text(AppLocalizations.of(context)!.tournamentChampion,
+              style: const TextStyle(color: Colors.white70, fontSize: 13)),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -588,11 +592,11 @@ class TournamentDetailsScreen extends StatelessWidget {
           ),
           if (t.prizes != null && t.prizes!.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _championInfo(Icons.card_giftcard, 'الجوائز: ${t.prizes}'),
+            _championInfo(Icons.card_giftcard, AppLocalizations.of(context)!.prizesX(t.prizes!)),
           ],
           if (t.sponsorName != null && t.sponsorName!.isNotEmpty) ...[
             const SizedBox(height: 6),
-            _championInfo(Icons.handshake, 'الراعي: ${t.sponsorName}'),
+            _championInfo(Icons.handshake, AppLocalizations.of(context)!.sponsorX(t.sponsorName!)),
           ],
         ],
       ),
@@ -614,14 +618,14 @@ class TournamentDetailsScreen extends StatelessWidget {
     );
   }
 
-  String _typeLabel(String type) {
+  String _typeLabel(BuildContext context, String type) {
     switch (type) {
       case 'knockout':
-        return 'خروج المغلوب';
+        return AppLocalizations.of(context)!.knockoutType;
       case 'groups':
-        return 'مجموعات';
+        return AppLocalizations.of(context)!.groupsType;
       default:
-        return 'دوري';
+        return AppLocalizations.of(context)!.leagueType;
     }
   }
 
@@ -640,7 +644,7 @@ class TournamentDetailsScreen extends StatelessWidget {
               standings: t.standings, teamsById: state.teamsById),
         if (knockoutMatches.isNotEmpty) ...[
           const SizedBox(height: 12),
-          _sectionTitle(context, 'المرحلة الإقصائية', Icons.account_tree),
+          _sectionTitle(context, AppLocalizations.of(context)!.knockoutStage, Icons.account_tree),
           const SizedBox(height: 8),
           BracketView(
             matches: knockoutMatches,
@@ -658,7 +662,7 @@ class TournamentDetailsScreen extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: () => _generateKnockout(context, t.id),
               icon: const Icon(Icons.account_tree, size: 16),
-              label: const Text('توليد المرحلة الإقصائية'),
+              label: Text(AppLocalizations.of(context)!.generateKnockoutStageBtn),
             ),
           ),
       ],
@@ -675,15 +679,19 @@ class TournamentDetailsScreen extends StatelessWidget {
       BuildContext context, String tournamentId) async {
     final messenger = ScaffoldMessenger.of(context);
     final cubit = context.read<TournamentCubit>();
-    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ توليد المرحلة...'));
+    messenger.showSnackBar(ToobaSnackBar.buildInfo(AppLocalizations.of(context)!.generatingStage));
     try {
       await FunctionsService().generateKnockout(tournamentId);
-      messenger.showSnackBar(
-          ToobaSnackBar.buildSuccess('تم توليد المرحلة الإقصائية'));
+      if (context.mounted) {
+        messenger.showSnackBar(
+            ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.knockoutStageGenerated));
+      }
       await cubit.fetchDetails(tournamentId);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError(
-          'تعذّر التوليد — تأكّد من اكتمال مباريات المجموعات'));
+      if (context.mounted) {
+        messenger.showSnackBar(ToobaSnackBar.buildError(
+            AppLocalizations.of(context)!.failedToGenerateStage));
+      }
     }
   }
 
@@ -693,7 +701,7 @@ class TournamentDetailsScreen extends StatelessWidget {
       return [
         Padding(
           padding: const EdgeInsets.all(16),
-          child: Text('لا توجد مباريات', style: TextStyle(color: Colors.grey[600])),
+          child: Text(AppLocalizations.of(context)!.noMatches, style: TextStyle(color: Colors.grey[600])),
         )
       ];
     }
@@ -711,7 +719,7 @@ class TournamentDetailsScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 8, bottom: 4),
           child: Text(
-            'الجولة $round',
+            AppLocalizations.of(context)!.roundX(round.toString()),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.primary,
@@ -744,7 +752,7 @@ class TournamentDetailsScreen extends StatelessWidget {
     final isMatchCaptain = isHomeCaptain || isAwayCaptain;
     final dateLabel = hasDate
         ? DateFormat('EEE d MMM • HH:mm', 'ar').format(m.dateTime!)
-        : 'موعد غير محدد';
+        : AppLocalizations.of(context)!.unscheduledTime;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -780,7 +788,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    finished ? 'انتهت' : dateLabel,
+                    finished ? AppLocalizations.of(context)!.finished : dateLabel,
                     style: TextStyle(
                       fontSize: 12,
                       color: finished
@@ -803,12 +811,12 @@ class TournamentDetailsScreen extends StatelessWidget {
                       compact: true,
                     )
                   else if (!finished && !hasDate && canManage)
-                    _badge('بدون موعد', Colors.orange.shade100,
+                    _badge(AppLocalizations.of(context)!.withoutSchedule, Colors.orange.shade100,
                         Colors.orange.shade700)
                   else if (!finished &&
                       hasDate &&
                       m.dateTime!.isAfter(DateTime.now()))
-                    _badge('قادمة', Colors.blue.shade50, Colors.blue.shade700),
+                    _badge(AppLocalizations.of(context)!.upcoming, Colors.blue.shade50, Colors.blue.shade700),
                   if (finished)
                     _badge('${m.homeScore} - ${m.awayScore}',
                         Colors.green.shade50, Colors.green.shade700),
@@ -826,8 +834,8 @@ class TournamentDetailsScreen extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const Text('ضد',
-                      style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text(AppLocalizations.of(context)!.vs,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12)),
                   Expanded(
                     child: Text(
                       m.awayTeamName,
@@ -846,7 +854,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                   children: [
                     Icon(Icons.sports, size: 13, color: Colors.grey[600]),
                     const SizedBox(width: 4),
-                    Text('الحكم: ${m.refereeName}',
+                    Text(AppLocalizations.of(context)!.refereeNameX(m.refereeName!),
                         style:
                             TextStyle(fontSize: 12, color: Colors.grey[600])),
                   ],
@@ -861,7 +869,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                     onPressed: () => _pickReferee(context, m),
                     icon: const Icon(Icons.sports, size: 16),
                     label: Text(
-                        m.refereeId == null ? 'تعيين حكم' : 'تغيير الحكم',
+                        m.refereeId == null ? AppLocalizations.of(context)!.assignRefereeBtn : AppLocalizations.of(context)!.changeRefereeBtn,
                         style: const TextStyle(fontSize: 12)),
                     style: TextButton.styleFrom(
                       visualDensity: VisualDensity.compact,
@@ -910,7 +918,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                           .read<TournamentCubit>()
                           .startMatch(m.tournamentId, m.id),
                       icon: const Icon(Icons.play_circle_fill, size: 18),
-                      label: const Text('بدأ المباراة'),
+                      label: Text(AppLocalizations.of(context)!.startMatchBtn),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
@@ -929,7 +937,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                           .startNextHalf(
                               m.tournamentId, m.id, m.currentHalf + 1),
                       icon: const Icon(Icons.fast_forward, size: 18),
-                      label: Text('بدأ الشوط ${m.currentHalf + 1}'),
+                      label: Text(AppLocalizations.of(context)!.startHalfX(m.currentHalf + 1)),
                       style: OutlinedButton.styleFrom(
                         visualDensity: VisualDensity.compact,
                         shape: RoundedRectangleBorder(
@@ -947,7 +955,7 @@ class TournamentDetailsScreen extends StatelessWidget {
                           _pickDateTime(context, m),
                       icon: const Icon(Icons.edit_calendar, size: 16),
                       label: Text(
-                        hasDate ? 'تعديل الموعد' : 'تحديد الموعد',
+                        hasDate ? AppLocalizations.of(context)!.editScheduleBtn : AppLocalizations.of(context)!.setScheduleBtn,
                         style: const TextStyle(fontSize: 12),
                       ),
                       style: OutlinedButton.styleFrom(
@@ -974,8 +982,8 @@ class TournamentDetailsScreen extends StatelessWidget {
                         );
                       },
                       icon: const Icon(Icons.sports_score, size: 16),
-                      label: const Text('إدخال النتيجة',
-                          style: TextStyle(fontSize: 12)),
+                      label: Text(AppLocalizations.of(context)!.enterResultBtn,
+                          style: const TextStyle(fontSize: 12)),
                       style: ElevatedButton.styleFrom(
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.symmetric(
@@ -1002,16 +1010,16 @@ class TournamentDetailsScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('طلب تحكيم'),
+        title: Text(AppLocalizations.of(context)!.refereeRequest),
         content: Text(
-            'هل تريد تقديم طلب للتحكيم في بطولة «${t.name}»؟ سيراجعه الأدمن.'),
+            AppLocalizations.of(context)!.applyAsRefereeDialogBody(t.name)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('تقديم')),
+              child: Text(AppLocalizations.of(context)!.submitBtn)),
         ],
       ),
     );
@@ -1023,11 +1031,15 @@ class TournamentDetailsScreen extends StatelessWidget {
         userPhone: user.phone,
         tournament: t,
       );
-      messenger.showSnackBar(
-          ToobaSnackBar.buildSuccess('تم إرسال طلب التحكيم للأدمن'));
+      if (context.mounted) {
+        messenger.showSnackBar(
+            ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.refereeRequestSent));
+      }
     } catch (e) {
-      messenger.showSnackBar(ToobaSnackBar.buildError(
-          e.toString().replaceFirst('Exception: ', '')));
+      if (context.mounted) {
+        messenger.showSnackBar(ToobaSnackBar.buildError(
+            e.toString().replaceFirst('Exception: ', '')));
+      }
     }
   }
 
@@ -1048,8 +1060,8 @@ class TournamentDetailsScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('اختر خطة فريقك لهذه المباراة',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(AppLocalizations.of(context)!.chooseTeamFormationForMatch,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 4),
               Text('الصيغة: حارس-دفاع-وسط-هجوم',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600])),
@@ -1091,14 +1103,16 @@ class TournamentDetailsScreen extends StatelessWidget {
   Future<void> _exportSchedulePdf(
       BuildContext context, TournamentDetailsLoaded state) async {
     final messenger = ScaffoldMessenger.of(context);
-    messenger.showSnackBar(ToobaSnackBar.buildInfo('جارٍ تجهيز التقرير...'));
+    messenger.showSnackBar(ToobaSnackBar.buildInfo(AppLocalizations.of(context)!.preparingReport));
     try {
       await FixturesPdfService.shareTournamentSchedule(
         tournament: state.tournament,
         matches: state.matches,
       );
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تصدير التقرير'));
+      if (context.mounted) {
+        messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToExportReport));
+      }
     }
   }
 
@@ -1111,7 +1125,8 @@ class TournamentDetailsScreen extends StatelessWidget {
     try {
       referees = await context.read<UserRepository>().getReferees();
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر جلب الحكّام'));
+      if (!context.mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToFetchReferees));
       return;
     }
     if (!context.mounted) return;
@@ -1136,18 +1151,18 @@ class TournamentDetailsScreen extends StatelessWidget {
           shrinkWrap: true,
           padding: const EdgeInsets.all(8),
           children: [
-            const Padding(
-              padding: EdgeInsets.all(12),
-              child: Text('اختر حكماً للمباراة',
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(AppLocalizations.of(context)!.chooseRefereeForMatch,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
             if (available.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text('لا يوجد حكّام متاحون — يمنحهم الأدمن الصلاحية',
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(AppLocalizations.of(context)!.noRefereesAvailable,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey)),
+                    style: const TextStyle(color: Colors.grey)),
               ),
             ...available.map((r) => ListTile(
                   leading: const CircleAvatar(child: Icon(Icons.sports)),
@@ -1165,8 +1180,8 @@ class TournamentDetailsScreen extends StatelessWidget {
             if (m.refereeId != null)
               ListTile(
                 leading: const Icon(Icons.cancel, color: Colors.red),
-                title: const Text('إلغاء تعيين الحكم',
-                    style: TextStyle(color: Colors.red)),
+                title: Text(AppLocalizations.of(context)!.unassignRefereeBtn,
+                    style: const TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.pop(ctx);
                   cubit.assignReferee(m.tournamentId, m.id, null, null);
@@ -1213,9 +1228,9 @@ class TournamentDetailsScreen extends StatelessWidget {
       initialDate: match.dateTime ?? now,
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 3),
-      helpText: 'اختر تاريخ المباراة',
-      cancelText: 'إلغاء',
-      confirmText: 'التالي',
+      helpText: AppLocalizations.of(context)!.chooseMatchDateHelp,
+      cancelText: AppLocalizations.of(context)!.cancelBtn,
+      confirmText: AppLocalizations.of(context)!.nextBtn,
     );
     if (date == null || !context.mounted) return;
 
@@ -1225,9 +1240,9 @@ class TournamentDetailsScreen extends StatelessWidget {
       initialTime: match.dateTime != null
           ? TimeOfDay.fromDateTime(match.dateTime!)
           : const TimeOfDay(hour: 18, minute: 0),
-      helpText: 'اختر وقت المباراة',
-      cancelText: 'إلغاء',
-      confirmText: 'حفظ',
+      helpText: AppLocalizations.of(context)!.chooseMatchTimeHelp,
+      cancelText: AppLocalizations.of(context)!.cancelBtn,
+      confirmText: AppLocalizations.of(context)!.saveBtn,
     );
     if (time == null || !context.mounted) return;
 

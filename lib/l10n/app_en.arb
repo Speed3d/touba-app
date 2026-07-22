@@ -29,7 +29,35 @@
   "email": "Email",
   "phone": "Phone Number",
   "password": "Password",
+  "welcomeToTooba": "Welcome to Tooba",
+  "signInToContinue": "Sign in to continue",
+  "pleaseEnterEmail": "Please enter your email",
+  "invalidEmail": "Invalid email address",
+  "pleaseEnterPassword": "Please enter your password",
+  "forgotPasswordQ": "Forgot password?",
+  "dontHaveAccount": "Don't have an account?",
+  "createNewAccount": "Create a new account",
+  "continueAsVisitor": "Skip and continue as visitor",
+  "joinToobaCommunity": "Join Tooba Community",
+  "registerNowStartJourney": "Register now and start your football journey with us",
+  "pleaseEnterName": "Please enter your name",
+  "pleaseEnterPhone": "Please enter your phone number",
+  "phoneTooShort": "Phone number is too short",
+  "passwordTooShort": "Password must be at least 6 characters",
+  "accountType": "Account Type:",
+  "rolePlayer": "Player (Find teams & matches)",
+  "roleCaptain": "Captain (Create & manage team)",
+  "roleReferee": "Referee (Manage matches)",
+  "registerAccount": "Register Account",
+  "resetPasswordTitle": "Reset Password",
+  "resetPasswordSent": "A password reset link has been sent to your email if it's registered.",
+  "enterEmailToReset": "Enter your registered email below and we will send you a link to create a new password.",
+  "sendLink": "Send Link",
+  "havingTroubleResetting": "Having trouble resetting your account?",
+  "contactAdminComingSoon": "This feature will be activated soon to open a chat with admin.",
+  "contactAdmin": "Contact Admin",
   "fullName": "Full Name",
+  "name": "Name",
   "editProfile": "Edit Profile",
   "deleteAccount": "Delete Account",
   "deleteAccountConfirm": "Your account and personal data will be permanently deleted and cannot be undone.",
@@ -104,14 +132,1640 @@
   "language": "Language",
   "arabic": "Arabic",
   "english": "English",
+  "kurdish": "Kurdish",
   "appVersion": "App Version",
   "privacyPolicy": "Privacy Policy",
   "termsConditions": "Terms & Conditions",
+  "toubaFootball": "TOUBA FOOTBALL",
+  "iraqiAmateurFootballPlatform": "Iraqi Amateur Football Platform",
+  "mySubscription": "My Subscription",
+  "activeFreeTrial": "Active Free Trial",
+  "activeSubscriber": "Active Subscriber",
+  "notSubscribedActivate": "Not subscribed — Activate for challenges",
+  "myRefereeMatches": "My Referee Matches",
+  "assignedMatches": "Assigned Matches",
+  "myRefereeProfile": "My Referee Profile",
+  "publicProfileAndEdit": "Public Profile & Edit Data",
+  "appearance": "Appearance",
+  "aboutAppAndPolicies": "About App & Policies",
+  "account": "Account",
+  "deleteAccountSub": "Permanently delete your account and data",
+  "youAreVisitor": "You are registered as a visitor",
+  "generalError": "An unexpected error occurred",
+  "toobaPlatform": "Tooba Platform ⚽",
+  "teamCaptain": "Team Captain",
+  "platformAdmin": "Platform Admin",
+  "player": "Player",
+  "captainOfTeam": "Captain of Team ",
+  "captainNoTeam": "Captain (No Team)",
+  "playerWithTeam": "Player with Team ",
+  "playerNoTeam": "Player (No Team)",
+  "profileAndPlayerDetails": "Profile & Player Details",
+  "viewAndEditData": "View and edit your data",
+  "registeredAsVisitor": "You are registered as a visitor",
+  "loginOrRegister": "Login / Register",
+  "confirmLogoutMsg": "Are you sure you want to log out?",
+  "deleteAccountPermanently": "Delete Account Permanently",
+  "deleteAccountPermanentlyMsg": "Your account and personal data will be permanently deleted and cannot be undone.\n\nNote: If you are a team captain, delete your team or transfer captaincy first.",
+  "deletingAccount": "Deleting account...",
+  "accountDeleted": "Your account has been deleted",
+  "permanentDelete": "Permanent Delete",
+  "captainDeleteError": "You are a team captain — delete your team or transfer captaincy first.",
+  "deleteAccountError": "Failed to delete account — try again later.",
+  
+  "skip": "Skip",
+  "formYourTeam": "Form Your Team",
+  "formYourTeamDesc": "Register your team, add your players, and manage your squad from one place.",
+  "organizeTournaments": "Organize Tournaments",
+  "organizeTournamentsDesc": "Leagues and tournaments with automatic scheduling and live standings updated with every result.",
+  "trackStats": "Track Your Stats",
+  "trackStatsDesc": "Goals, assists, cards, and player card for each member — calculated automatically.",
+  "startNow": "Start Now",
+  "next": "Next",
+
+  "navHome": "Home",
+  "navTeam": "Team",
+  "navChats": "Chats",
+
+  "visitor": "Visitor",
+  "welcomeUser": "Welcome, {userName}",
+  "@welcomeUser": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "matches": "Matches",
+  "tournaments": "Tournaments",
+  "news": "News",
+  "myCard": "My Card",
+  "mustLoginFirst": "You must login first",
+  "noPlayerCardCurrently": "You don't have a player card currently",
+  "playerNotFound": "Player not found",
+  "errorFetchingCard": "Error fetching card",
+  "urgent": "Urgent",
+  "ongoingTournaments": "🏆 Ongoing Tournaments",
+  "viewAll": "View All ›",
+
+  "baghdadMajorTournament": "Baghdad Major Tournament",
+  "localYouthLeague": "Local Youth League",
+  "round3of4_8teams": "Round 3 of 4 · 8 Teams",
+  "round1of6_6teams": "Round 1 of 6 · 6 Teams",
+  "ongoing": "Ongoing",
+  "comingSoon": "Coming Soon",
+
+  "latestNews": "Latest News",
+  "noNewsCurrently": "No news currently",
+  "loginToLike": "Login to be able to like",
+  "errorLiking": "Error while liking",
+  "viaToobaApp": "Via Tooba Pro App",
+  "featured": "Featured",
+  "justNow": "Just now",
+  "minutesAgo": "{count} minutes ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "oneHourAgo": "1 hour ago",
+  "hoursAgo": "{count} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "oneDayAgo": "1 day ago",
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "likeCount": "Like ({count})",
+  "@likeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareCount": "Share ({count})",
+  "@shareCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorOpeningLink": "Error opening link",
+  "bannerDetails": "Ad Details",
+  "contactCall": "Call",
+  "contactWhatsapp": "WhatsApp",
+  "contactFacebook": "Facebook",
+  "contactInstagram": "Instagram",
+  "contactWebsite": "Website",
+  "notifications": "Notifications",
+  "readAll": "Read All",
+  "errorPrefix": "Error: {message}",
+  "@errorPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noNotificationsYet": "No notifications yet",
+  "challengeChat": "Challenge Chat",
+  "yesterday": "Yesterday",
+
+  "chooseReadyAvatar": "Choose Ready Avatar",
+  "chooseFromGallery": "Choose from Gallery",
+  "takePhoto": "Take Photo",
+  "chooseReadyImage": "Choose Ready Image",
+  "chooseYourAvatar": "Choose your avatar",
+  "confirmImage": "Confirm Image",
+
+  "footRight": "Right",
+  "footLeft": "Left",
+  "footBoth": "Both",
+  "failedToLoadPlayer": "Failed to load player details",
+  "chooseBirthDate": "Choose birth date",
+  "detailsSaved": "Details saved successfully",
+  "failedToSaveDetails": "Failed to save details",
+  "playerDetails": "Player Details",
+  "preferredFoot": "Preferred Foot",
+  "heightCm": "Height (cm)",
+  "weightKg": "Weight (kg)",
+  "birthDate": "Birth Date",
+  "notSpecified": "Not specified",
+  "ageYears": "Age: {age} years",
+  "@ageYears": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "bioTitle": "About You",
+  "bioHint": "Write a short bio about your playing style...",
+  "yourGallery": "Your Gallery ({count}/{max})",
+  "@yourGallery": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "saveDetails": "Save Details",
+
+  "referee": "Referee",
+  "refereeProfile": "Referee Profile",
+  "editMyData": "Edit my data",
+  "matchesManaged": "Matches Managed",
+  "averageRating": "Average Rating",
+  "bioLabel": "Bio",
+  "matchesList": "Matches",
+  "noMatchesManaged": "No matches managed yet",
+  "matchLive": "Live",
+  "city": "City",
+  "bioExperience": "Bio/Experience",
+  "cancel": "Cancel",
+  "save": "Save",
+  "dataSavedSuccessfully": "Data saved successfully",
+  "failedToSave": "Failed to save",
+
+  "matchesTab": "Matches",
+  "tournamentsTab": "Tournaments",
+  "liveTab": "Live",
+  "upcomingTab": "Upcoming",
+  "finishedTab": "Finished",
+  "failedToLoadTournaments": "Failed to load tournaments",
+  "noTournaments": "No Tournaments",
+  "noTournamentsFound": "No tournaments found at the moment",
+  "ongoingTournaments": "Ongoing Tournaments",
+  "upcomingTournaments": "Upcoming Tournaments",
+  "finishedTournaments": "Finished Tournaments",
+  "statusFinished": "Finished",
+  "statusOngoing": "Ongoing",
+  "teamsCountText": "{count} Team(s)",
+  "@teamsCountText": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchesFound": "No Matches",
+  "errorTitle": "Error",
+
+  "matchDetails": "Match Details",
+  "detailsTab": "Details",
+  "formationsTab": "Lineups",
+  "roundX": "Round {round}",
+  "@roundX": {
+    "placeholders": {
+      "round": {
+        "type": "String"
+      }
+    }
+  },
+  "refereeNameX": "Referee: {name}",
+  "@refereeNameX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "halfX": "H{half}",
+  "@halfX": {
+    "placeholders": {
+      "half": {
+        "type": "String"
+      }
+    }
+  },
+  "startMatch": "Start Match",
+  "liveMatchControl": "Live Match Control",
+  "endHalfX": "End Half {half}",
+  "@endHalfX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "startHalfX": "Start Half {half}",
+  "@startHalfX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "endAndConfirmResult": "End and Confirm Result",
+  "confirmHalfResultX": "Confirm Half {half} Result",
+  "@confirmHalfResultX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "halfResultText": "Half {half} result: {homeName} {homeScore} - {awayScore} {awayName}",
+  "@halfResultText": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      },
+      "homeName": {
+        "type": "String"
+      },
+      "homeScore": {
+        "type": "int"
+      },
+      "awayScore": {
+        "type": "int"
+      },
+      "awayName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirm": "Confirm",
+  "matchInProgress": "Match is in progress",
+  "matchNotStarted": "Match has not started yet",
+  "ratedThisReferee": "Rated this referee",
+  "rateRefereePerformance": "Rate Referee Performance",
+  "loginToRate": "Login to rate",
+  "rateReferee": "Rate Referee",
+  "send": "Send",
+  "thanksForRating": "Thanks for rating!",
+  "failedToSendRating": "Failed to send rating",
+  "formationForThisMatch": "Formation for this match",
+  "formationWithPlan": "Formation for this match • Plan {plan}",
+  "@formationWithPlan": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "currentTeamFormationNotSaved": "Current team formation (not saved yet for this match)",
+  "shareFormation": "Share Formation",
+  "formationOfTeam": "{teamName} Formation",
+  "@formationOfTeam": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "planX": "Plan {plan}",
+  "@planX": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "noEventsRecorded": "No events recorded for this match",
+  "versus": "VS",
+  "actionFailed": "Action failed",
+
+  "playerCard": "Player Card",
+  "loginFirst": "You must login first",
+  "reportThisPlayer": "Report this player",
+  "verifiedAccount": "Verified Account",
+  "technicalDetails": "Technical Details",
+  "preferredFoot": "Preferred Foot",
+  "age": "Age",
+  "height": "Height",
+  "weight": "Weight",
+  "status": "Status",
+  "yearsOldX": "{years} years",
+  "@yearsOldX": {
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "cmX": "{cm} cm",
+  "@cmX": {
+    "placeholders": {
+      "cm": {
+        "type": "String"
+      }
+    }
+  },
+  "kgX": "{kg} kg",
+  "@kgX": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "footLeft": "Left",
+  "footRight": "Right",
+  "footBoth": "Both",
+  "statusInjured": "Injured",
+  "statusSuspended": "Suspended",
+  "statusActive": "Active",
+  "gallery": "Gallery",
+
+  "myRefereeMatches": "My Referee Matches",
+  "noMatchesAssignedToYou": "No matches assigned to you",
+  "tournamentOrganizerAssignsMatches": "The tournament organizer assigns matches to you",
+  "unspecifiedDate": "Unspecified Date",
+  "tournamentScheme": "Tournament Scheme",
+  "standingsTable": "Standings Table",
+  "knockoutTreeUpToCup": "Knockout tree up to the cup",
+  "teamsRankingAndPoints": "Teams ranking and points",
+  "liveMatchesTab": "Live",
+  "upcomingMatchesTab": "Upcoming",
+  "finishedMatchesTab": "Finished",
+  "failedToLoadMatches": "Failed to load matches",
+  "noLiveMatchesNow": "No live matches now",
+  "noUpcomingMatches": "No upcoming matches",
+  "noFinishedMatches": "No finished matches",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "todayAtTime": "Today {time}",
+  "@todayAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tomorrowAtTime": "Tomorrow {time}",
+  "@tomorrowAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+
+  "userNotRegistered": "User not registered",
+
+  "teamsTitle": "Teams",
+  "myTeamTab": "My Team",
+  "popularTeamsTab": "Popular Teams",
+  "createTeam": "Create Team",
+  "yourPitchAwaits": "Your pitch awaits",
+  "dontHaveTeamYet": "Don't have a team yet?",
+  "createTeamSubtitleCaptain": "Create your team and join local tournaments\nin your area now",
+  "joinExistingTeamSubtitle": "Join an existing team and launch into\nlocal tournaments",
+  "createYourTeamNow": "⚽ Create your team now",
+  "joinExistingTeamBtn": "Join an existing team",
+  "playerCountX": "{count} player(s)",
+  "@playerCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "manageTeam": "Manage Team",
+  "viewTeam": "View Team",
+  "challengesTab": "Challenges",
+  "roster": "Roster",
+  "playerNotFound": "Player not found",
+  "yourExitRequestPending": "Your exit request is pending captain review",
+  "yourRequestEscalated": "Your request escalated to admin — pending decision",
+  "captainRejectedYourRequest": "Your captain rejected the exit request",
+  "escalateRequestToAdmin": "Escalate request to admin",
+  "requestEscalatedSuccess": "Your request has been escalated to admin",
+  "failedToEscalate": "Failed to escalate",
+  "searchForTeam": "Search for a team...",
+  "failedToLoadTeams": "Failed to load teams",
+  "noTeamsRegisteredYet": "No teams registered yet",
+  "noTeamsRegisteredInPlatform": "No team has been registered in the platform yet",
+  "noResultsFound": "No results found",
+  "noTeamMatchesX": "No team matches \"{query}\"",
+  "@noTeamMatchesX": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "otherTeamsLabel": "Other Teams",
+  "noOtherTeamsYet": "No other teams yet",
+  "playedCount": "Played",
+  "winsCount": "Won",
+  "tournamentsCount": "Tournaments",
+  "cityAndAreaX": "{city} • {area}",
+  "@cityAndAreaX": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseSelectCity": "Please select a city",
+  "selectTwoTeamsAtLeast": "Select at least two teams",
+  "teamHasNotEnoughStarters": "Team '{team}' has only {starters} starters — {format} required",
+  "@teamHasNotEnoughStarters": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "starters": {
+        "type": "String"
+      },
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToValidateTeamLineups": "Failed to validate team lineups",
+  "chooseFromGallery": "Choose from Gallery",
+  "takePhoto": "Take Photo",
+  "tournamentStartDateHelp": "Tournament Start Date",
+  "tournamentCreatedAndScheduleGenerated": "Tournament created and schedule generated!",
+  "createTournamentTitle": "Create Tournament",
+  "tournamentImageOptional": "Tournament Image (Optional)",
+  "tournamentNameInputLabel": "Tournament Name",
+  "pleaseEnterTournamentName": "Please enter tournament name",
+  "tournamentStartDateOptional": "Tournament Start Date (Optional)",
+  "systemWillScheduleMatches": "The system will schedule matches automatically",
+  "schedulingMode": "Scheduling Mode",
+  "intervalBetweenRounds": "Interval between rounds",
+  "fixedDailyTime": "Fixed daily time",
+  "roundsIntervalLabel": "Interval between rounds",
+  "daily": "Daily",
+  "everyThreeDays": "Every 3 days",
+  "weekly": "Weekly",
+  "everyTwoWeeks": "Every two weeks",
+  "matchesPerDay": "Matches per day",
+  "oneMatch": "One match",
+  "twoMatches": "Two matches",
+  "threeMatches": "Three matches",
+  "intervalBetweenDailyMatches": "Interval between daily matches",
+  "oneHour": "1 hour",
+  "oneAndHalfHours": "1.5 hours",
+  "twoHours": "2 hours",
+  "halfDuration": "Half duration",
+  "thirtyMinutes": "30 minutes",
+  "fortyFiveMinutes": "45 minutes",
+  "halvesCount": "Number of halves",
+  "oneHalf": "One half",
+  "twoHalves": "Two halves",
+  "cityLabel": "City",
+  "tournamentSystem": "Tournament System",
+  "leagueSystem": "League",
+  "knockoutSystem": "Knockout",
+  "groupsSystem": "Groups",
+  "startersCount": "Number of starters",
+  "sixASide": "6-a-side",
+  "eightASide": "8-a-side",
+  "elevenASide": "11-a-side",
+  "homeAndAwaySystem": "Home and Away System",
+  "homeAndAwaySubtitle": "Each fixture is played twice",
+  "freeTournamentOption": "Free Tournament",
+  "freeTournamentSubtitle": "Admin can add any team",
+  "paidTournamentSubtitle": "Paid — team added after paying fees",
+  "entryFeesOrContact": "Entry Fees/Contact (displayed on tournament)",
+  "knockoutGenerationMethod": "Knockout Generation Method",
+  "generateFullTree": "Generate full tree upfront (TBD)",
+  "generateRoundByRound": "Generate round by round",
+  "groupsCountLabel": "Number of groups",
+  "qualifiersPerGroup": "Qualifiers per group",
+  "firstOnly": "1st only",
+  "firstAndSecond": "1st and 2nd",
+  "firstSecondThird": "1st, 2nd, and 3rd",
+  "tieBreakRules": "Tie-break Rules (Knockout Stages)",
+  "extraTimeThenPenalties": "Extra time then penalties",
+  "straightToPenalties": "Straight to penalties",
+  "participatingTeamsCountX": "Participating Teams ({count})",
+  "@participatingTeamsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "noTeamsYetCreateFirst": "No teams yet — create teams first from the Teams tab",
+  "cityAndCaptainX": "{city} • Captain: {name}",
+  "@cityAndCaptainX": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "refereesCountX": "Referees ({count})",
+  "@refereesCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "systemDistributesRefereesRandomly": "The system distributes them randomly across matches without double-booking.",
+  "noRefereesAdminMustGrant": "No referees — admin must grant referee role to users",
+  "createTournamentAndGenerateScheduleBtn": "Create Tournament and Generate Schedule",
+
+  "selectAdvancedTeamNoDrawInKnockout": "Select advancing team (no draws allowed in knockout stage)",
+  "enterResultTitle": "Enter Result",
+  "saveAndConfirmResultBtn": "Save and Confirm Result",
+  "resultCalculatedAutomatically": "Result is calculated automatically from goals. Rule: 2 yellow cards = 1 red.",
+  "tieBreakKnockoutStage": "Tie-break (Knockout Stage)",
+  "tieBreakMethod": "Tie-break Method:",
+  "penaltyShootoutOptional": "Penalty Shootout (Optional):",
+  "advancedTeamToNextRound": "Advancing team to the next round:",
+  "noPlayersRegisteredInTeam": "No players registered in this team",
+  "goalEvent": "Goal",
+  "assistEvent": "Assist",
+  "yellowCardEvent": "Yellow",
+  "redCardEvent": "Red",
+  "penaltyEvent": "Penalty Goal",
+  "ownGoalEvent": "Own Goal",
+  "injuryEvent": "Injury",
+
+  "tournamentDetailsTitle": "Tournament Details",
+  "noMatches": "No Matches",
+
+  "selectPlayerForSlotX": "Select player for slot {slot}",
+  "@selectPlayerForSlotX": {
+    "placeholders": {
+      "slot": { "type": "String" }
+    }
+  },
+  "removePlayerFromSlot": "Remove player from this slot",
+  "assignedToAnotherSlot": " • Assigned to another slot",
+  "chooseFormation": "Choose Formation (GK-DEF-MID-FWD)",
+  "customFormation": "Custom Formation",
+  "customFormationGoalieFixed": "Custom Formation (GK Fixed)",
+  "defenders": "Defenders",
+  "attackers": "Attackers",
+  "midfieldAndTotalX": "Midfield: {mid}  •  Total: {total}",
+  "@midfieldAndTotalX": {
+    "placeholders": {
+      "mid": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "applyFormationBtn": "Apply Formation",
+  "assignPlayerToEverySlot": "Assign a player to every slot in the lineup",
+  "failedToDetermineCaptain": "Failed to determine captain",
+  "lineupSentForReview": "Lineup sent for review by organizer",
+  "failedToSendLineup": "Failed to send lineup",
+  "tournamentLineupTitle": "Tournament Lineup",
+  "formationLabel": "Formation",
+  "changeFormationBtn": "Change",
+  "tapCircleToAssignPlayer": "Tap any circle on the pitch to assign a player",
+  "subsCountX": "Subs ({count})",
+  "@subsCountX": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "sendingBtn": "Sending...",
+  "sendForReviewBtn": "Send for Review",
+  "lineupApproved": "Your lineup is approved",
+  "lineupRejectedWithNote": "Your lineup is rejected — {note}",
+  "@lineupRejectedWithNote": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "lineupRejected": "Your lineup is rejected",
+  "lineupPendingReview": "Your lineup is pending review",
+  "allPlayersAssignedAsStarters": "All players are assigned as starters",
+
+  "failedToOpenPlayerProfile": "Failed to open player profile",
+  "lineupApprovedMsg": "Lineup approved",
+  "lineupRejectedMsg": "Lineup rejected",
+  "failedToUpdateStatus": "Failed to update status",
+  "rejectionReasonOptional": "Reason for rejection (Optional)",
+  "rejectionReasonExample": "Example: Not enough starters",
+  "rejectLineupBtn": "Reject Lineup",
+  "reviewLineupsTitle": "Review Lineups",
+  "noLineupsSentYet": "No lineups sent yet",
+  "lineupsWillAppearHereWhenSent": "Captains' lineups will appear here when sent",
+  "approvedStatus": "Approved",
+  "rejectedStatus": "Rejected",
+  "pendingReviewStatus": "Pending Review",
+  "formationX": "Formation: {formation}",
+  "@formationX": {
+    "placeholders": {
+      "formation": { "type": "String" }
+    }
+  },
+  "subsLabel": "Subs:",
+  "yourNoteX": "Your note: {note}",
+  "@yourNoteX": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "acceptBtn": "Accept",
+  "rejectBtn": "Reject",
+  "changeDecisionBtn": "Change Decision",
+
+  "failedToUploadBannerImage": "Failed to upload banner image",
+  "failedToUploadSponsorLogo": "Failed to upload sponsor logo",
+  "sponsorNameTitle": "Sponsor Name",
+  "sponsorNameExample": "Example: Sponsor Company",
+  "addBtn": "Add",
+  "failedToSaveChanges": "Failed to save changes",
+  "editRulesAndSponsorsTitle": "Edit Rules and Sponsors",
+  "rulesAndTermsLabel": "Rules & Terms",
+  "writeRulesAndTermsHere": "Write tournament rules and terms here…",
+  "adBannersSection": "Ad Banners",
+  "sponsorsSection": "Sponsors",
+  "imageLabel": "Image",
+  "sponsorLabel": "Sponsor",
+
+  "standingsTableTitle": "Standings Table",
+  "knockoutStageLabel": "Knockout Stage",
+  "bracketNotGeneratedYet": "Bracket not generated yet",
+
+  "reportSentSuccess": "Report sent successfully — our team will review it soon",
+  "reportSentFailed": "Failed to send report — please try again",
+  "submitReportTitle": "Submit Report",
+  "reportAboutTarget": "Report about {label}",
+  "@reportAboutTarget": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "reportReasonLabel": "Report Reason",
+  "problemDescriptionOptional": "Problem Description (Optional)",
+  "explainProblemInDetailHint": "Explain the problem in more detail...",
+  "falseReportsWarning": "Note: False or trivial reports may lead to account restriction.",
+  "submitReportBtn": "Submit Report",
+
+  "offensiveContentLabel": "Offensive Content",
+  "inappropriateBehaviorLabel": "Inappropriate Behavior",
+  "misleadingInfoLabel": "Misleading Information",
+  "otherReasonLabel": "Other",
+  "playerLabel": "Player",
+  "teamLabel": "Team",
+  "userLabel": "User",
+
+  "lastUpdatedDate": "Last updated: {date}",
+  "@lastUpdatedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "toubaPlatform": "Touba Platform ⚽",
+
+  "privacyPolicyTitle": "Privacy Policy",
+  "privacyPolicyIntro": "Touba respects your privacy. This policy explains the types of data we collect, and how we use and protect it when you use the app. By using Touba, you agree to this policy.",
+  "ppSec1Title": "1. Data We Collect",
+  "ppSec1Body": "When you create an account, we collect: name, email, phone number, and profile picture (optional). When linked to a player or team, your football data (position, number, team) and stats (goals, assists, cards) generated by the system from match results may be saved. We also automatically collect usage data, analytics, and crash reports via Google Firebase to improve app performance.",
+  "ppSec2Title": "2. How We Use Your Data",
+  "ppSec2Body": "We use your data to operate your account, manage teams, tournaments, and matches, display your card and stats, communicate with you when needed, send activity-related notifications (like accepting a join request or match result), and improve and protect the service from abuse.",
+  "ppSec3Title": "3. Data Sharing",
+  "ppSec3Body": "We do not sell your personal data to any party. Some data is processed by service providers (Google Firebase for hosting, authentication, and analytics). Some information is naturally public within the app (team name, player name, stats, standings). The team manager's phone number is not publicly displayed.",
+  "ppSec4Title": "4. Your Rights and Data Control",
+  "ppSec4Body": "You can edit your profile data at any time from the 'Edit Profile' screen. You can also permanently delete your account from account settings; upon deletion, your personal data associated with the account is removed as permitted by law.",
+  "ppSec5Title": "5. Data Security and Retention",
+  "ppSec5Body": "We take technical measures to protect your data (server security rules, verifying request integrity via App Check). We retain your data as long as your account is active or as necessary to provide the service and comply with regulations.",
+  "ppSec6Title": "6. Children",
+  "ppSec6Body": "The app is not directed at children under 13, and we do not knowingly collect their data. If found otherwise, we delete the data immediately upon learning of it.",
+  "ppSec7Title": "7. Changes to This Policy",
+  "ppSec7Body": "We may update this policy from time to time, and we will post the updated version within the app, updating the 'Last updated' date above.",
+  "ppSec8Title": "8. Contact",
+  "ppSec8Body": "For any privacy inquiries, contact us at: senanxsh@gmail.com",
+
+  "termsConditionsTitle": "Terms and Conditions",
+  "termsIntro": "Welcome to Touba. By using the app, you agree to these terms and conditions. Please read them carefully.",
+  "tcSec1Title": "1. Nature of the Service",
+  "tcSec1Body": "Touba is a platform for organizing amateur and grassroots football: creating teams, managing players, organizing tournaments and matches, and displaying standings and stats.",
+  "tcSec2Title": "2. Account and Your Responsibility",
+  "tcSec2Body": "You are responsible for the accuracy of your data and for maintaining the confidentiality of your account and everything that happens under it. The data you enter must be true and not impersonate others.",
+  "tcSec3Title": "3. Roles and Permissions",
+  "tcSec3Body": "The captain manages their team and players. Permissions to organize tournaments and confirm results are granted by platform management. Confirming a match result is exclusively the organizer's responsibility, and stats are calculated automatically by the system and may not be tampered with.",
+  "tcSec4Title": "4. Acceptable Use",
+  "tcSec4Body": "Using the app for any illegal activity, posting offensive content or inappropriate images, impersonating others, or attempting to tamper with team, tournament, or stat data is prohibited. We reserve the right to remove violating content and suspend violating accounts.",
+  "tcSec5Title": "5. Content You Upload",
+  "tcSec5Body": "You retain ownership of the content you upload (like photos), and you grant the platform a license to display it within the app for the purpose of operating the service. You are responsible for owning the rights to what you upload.",
+  "tcSec6Title": "6. Reports",
+  "tcSec6Body": "You can report any violating content or behavior via the reporting tools in the app, and management will review it and take appropriate action.",
+  "tcSec7Title": "7. Disclaimer",
+  "tcSec7Body": "The service is provided 'as is'. We strive to ensure data accuracy but do not guarantee it is error-free, nor do we bear responsibility for any disputes arising between teams or players outside the platform.",
+  "tcSec8Title": "8. Termination of Service",
+  "tcSec8Body": "You have the right to delete your account at any time. Management has the right to suspend or terminate accounts that violate these terms.",
+  "tcSec9Title": "9. Applicable Law and Contact",
+  "tcSec9Body": "These terms are subject to the laws of the Republic of Iraq. For any inquiries: senanxsh@gmail.com",
+
+  "adminDashboardTitle": "Admin Dashboard",
+  "manageLocationsTitle": "Manage Locations",
+  "manageLocationsSubtitle": "Governorates and areas allowed to play in",
+  "manageRolesTitle": "Manage Roles",
+  "manageRolesSubtitle": "Granting organizer and referee titles",
+  "adminReportsTitle": "Reports",
+  "adminReportsSubtitle": "Review incoming reports about players and teams",
+  "adminTournamentsTitle": "Manage Tournaments",
+  "adminTournamentsSubtitle": "Edit names, images, cups, and prizes",
+  "adminBannersTitle": "Manage Banners",
+  "adminBannersSubtitle": "Home page slider banners",
+  "adminNewsTitle": "Manage News",
+  "adminNewsSubtitle": "Publish and edit home page news",
+  "adminRefereeApplicationsTitle": "Referee Applications",
+  "adminRefereeApplicationsSubtitle": "Approve/reject requests to referee",
+  "adminDisputesTitle": "Disassociation Disputes",
+  "adminDisputesSubtitle": "Exit requests rejected by captains and escalated by players",
+  "adminChallengesTitle": "Manage Challenges",
+  "adminChallengesSubtitle": "Cancel abandoned challenge requests",
+  "adminSectionsTitle": "Sections Settings",
+  "adminSectionsSubtitle": "Show/hide app sections (like tournaments)",
+  "adminSubscriptionsTitle": "Activation Codes",
+  "adminSubscriptionsSubtitle": "Generate subscription codes + trial period + WhatsApp",
+  "adminVerifyTeamsTitle": "Verify Teams",
+  "comingSoon": "Coming soon...",
+
+  "activateWithCode": "Activate with Code",
+  "enterActivationCodePrompt": "Enter the activation code you received from the management:",
+  "activationCodeHint": "TBA-XXXX-XXXX",
+  "cancelBtn": "Cancel",
+  "activateBtn": "Activate",
+  "subscriptionActivatedXMonths": "Subscription activated 🎉{months}",
+  "@subscriptionActivatedXMonths": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToActivate": "Failed to activate",
+  "whatsappActivationMessage": "Hello, I want to activate Touba subscription",
+  "failedToOpenWhatsapp": "Failed to open WhatsApp",
+  "mySubscriptionTitle": "My Subscription",
+  "contactToGetCode": "Contact to get code",
+  "notSubscribed": "Not Subscribed",
+  "subscriptionExpired": "Subscription Expired",
+  "freeTrial": "Free Trial",
+  "activeSubscriber": "Active Subscriber",
+  "expiresAtDate": "Expires: {date}",
+  "@expiresAtDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "daysRemaining": "{days} days remaining",
+  "@daysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresToday": "Expires Today",
+  "whatDoesSubscriptionUnlock": "What does the subscription unlock?",
+  "benefitChallengeRequests": "Request and accept team challenges",
+  "benefitOpenChatWithOpponent": "Open chat with the opponent team captain",
+  "benefitParticipateInTournaments": "Participate in tournaments (depending on type)",
+  "featureRequiresSubscription": "{feature} requires a subscription",
+  "@featureRequiresSubscription": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "activateSubscriptionToUnlockFeatures": "Activate your subscription to unlock challenges and chat. Activation by code from management.",
+  "manageSubscriptionActivateCodeBtn": "Manage Subscription / Activate Code",
+  "laterBtn": "Later",
+
+  "myChatsTitle": "My Chats",
+  "noChatsYet": "No chats yet",
+  "chatOpensWhenChallengeAccepted": "Chat opens when a challenge is accepted between two teams",
+  "loginToViewYourChats": "Log in to view your chats",
+  "chatsOpenBetweenCaptainsWhenChallengeAccepted": "Chats open between team captains when a challenge is accepted",
+  "loginOrCreateAccountBtn": "Login / Create Account",
+  "startConversation": "Start Conversation",
+  "typeMessageHint": "Type a message…",
+
+  "requestChallengeWithTeam": "We request a challenge with team {team}",
+  "@requestChallengeWithTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFirstToProceed": "Please log in first",
+  "youDoNotHaveATeamToRequestChallenge": "You do not have a team to request a challenge",
+  "failedToLoadYourTeamData": "Failed to load your team data",
+  "youAlreadyHaveOpenRequestEditIt": "You already have an open request — edit it from «Team Challenges»",
+  "failedToPublishRequest": "Failed to publish request",
+  "requestChallengeTitle": "Request Challenge",
+  "directedChallengeToTeam": "Directed challenge to «{team}»",
+  "@directedChallengeToTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "noteSuggestedPlaceTime": "Note — Suggested place/time",
+  "publishChallengeRequestBtn": "Publish Challenge Request",
+
+  "teamChallengesTitle": "Team Challenges",
+  "teamRequestsTab": "Team Requests",
+  "myChallengesTab": "My Challenges",
+  "requestChallengeBtn": "Request Challenge",
+  "noOpenChallengeRequests": "No open challenge requests at the moment",
+  "tapToViewTeamPage": "Tap to view team page",
+  "appliedStatus": "Applied",
+  "acceptChallengeBtn": "Accept Challenge",
+  "pleaseLoginToView": "Please login to view",
+  "myRequestsLabel": "My Requests",
+  "noChallengeRequestsSentYet": "You haven't sent any challenge requests yet",
+  "appliedToLabel": "Applied To",
+  "noChallengeRequestsAppliedYet": "You haven't applied to any challenges yet",
+  "challengeRequestLabel": "Challenge Request",
+  "opponentLabelX": "Opponent: {name}",
+  "@opponentLabelX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "opponentLabel": "Opponent",
+  "openChatBtn": "Open Chat",
+  "applicantsLabelX": "Applicants ({count})",
+  "@applicantsLabelX": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitingForTeamsToApply": "Waiting for teams to apply…",
+  "tapToViewTeamBeforeAccepting": "Tap to view team before accepting",
+  "cancelRequestBtn": "Cancel Request",
+  "requestCancelledStatus": "Request Cancelled",
+  "waitingForRequesterSelection": "Waiting for requester selection",
+  "yourTeamSelected": "Your team was selected! 🎉",
+  "anotherTeamSelected": "Selected another team",
+  "chatLabel": "Chat",
+  "agreeToChallengeSub": "Agree to challenge",
+  "teamAppliedSuccessfully": "Your team has applied successfully",
+  "failedToApply": "Failed to apply",
+  "acceptChallengeSub": "Accept Challenge",
+  "challengeAcceptedBetweenTeams": "Challenge accepted between '{team1}' and '{team2}' 👋 Agree on time and location.",
+  "@challengeAcceptedBetweenTeams": {
+    "placeholders": {
+      "team1": {
+        "type": "String"
+      },
+      "team2": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToAcceptChallenge": "Failed to accept challenge",
+  "failedToCancel": "Failed to cancel",
+  "requestChallengeSub": "Challenge Request",
+  "friendlyChallengeRequestTitle": "Friendly Challenge Request",
+  "editRequestTitle": "Edit Request",
+  "onBehalfOfTeam": "On behalf of team '{team}' • {city}",
+  "@onBehalfOfTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "noteOptionalHint": "Note (optional) — Suggested place/time",
+  "suggestedDateOptional": "Suggested date (optional)",
+  "publishRequestBtn": "Publish Request",
+  "saveEditBtn": "Save Edit",
+  "requestUpdatedSuccessfully": "Request updated successfully",
+  "challengeRequestPublished": "Challenge request published",
+  "failedToSaveRequest": "Failed to save request",
+  "youHaveAnOpenRequestTitle": "You have an open request",
+  "cannotPublishMultipleRequests": "You cannot publish more than one open challenge request at a time. Edit or cancel your current request first.",
+  "acceptedStatus": "Accepted",
+  "cancelledStatus": "Cancelled",
+  "openStatus": "Open",
+
+  "detailsTab": "Details",
+  "rulesAndTermsTab": "Rules & Terms",
+  "participatingTeamsTab": "Participating Teams",
+  "cityAndType": "{city} • {type}",
+  "@cityAndType": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "paidTournamentWithInfo": "Paid Tournament • {info}",
+  "@paidTournamentWithInfo": {
+    "placeholders": {
+      "info": {
+        "type": "String"
+      }
+    }
+  },
+  "paidTournament": "Paid Tournament",
+  "reviewTeamLineups": "Review Team Lineups",
+  "myTournamentLineup": "My Tournament Lineup",
+  "applyAsRefereeForTournament": "Apply as Referee for this Tournament",
+  "matchesTitle": "Matches",
+  "exportPdfBtn": "Export PDF",
+  "termsAndRulesTitle": "Terms and Rules",
+  "sponsorsTitle": "Sponsors",
+  "editRulesAndSponsors": "Edit Rules and Sponsors",
+  "noRulesOrSponsorsEditToAdd": "No rules or sponsors yet — press 'Edit' to add",
+  "noRulesOrSponsors": "No rules or sponsors for this tournament",
+  "teamLineupsStatus": "Team Lineups Status ({count})",
+  "@teamLineupsStatus": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToReviewOrRemind": "Tap a submitted team to review, or a pending team to remind.",
+  "tapToViewLineup": "Tap a submitted team to view its lineup.",
+  "noParticipatingTeams": "No participating teams",
+  "notSent": "Not sent",
+  "verified": "Verified",
+  "rejected": "Rejected",
+  "sent": "Sent",
+  "captainNotSentLineup": "Captain hasn't sent the lineup yet",
+  "remindTeamX": "Remind Team {name}",
+  "@remindTeamX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remindCaptainMessageBody": "A notification will be sent to the team captain to submit the lineup. If not submitted, you can disqualify the team or manually enter a 3-0 loss.",
+  "customMessageOptional": "Custom message (optional)",
+  "sendReminderBtn": "Send Reminder",
+  "reminderSentToCaptainX": "Reminder sent to captain of {name}",
+  "@reminderSentToCaptainX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSendReminder": "Failed to send reminder",
+  "tournamentChampion": "Tournament Champion",
+  "prizesX": "Prizes: {prizes}",
+  "@prizesX": {
+    "placeholders": {
+      "prizes": {
+        "type": "String"
+      }
+    }
+  },
+  "sponsorX": "Sponsor: {name}",
+  "@sponsorX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "knockoutType": "Knockout",
+  "groupsType": "Groups",
+  "leagueType": "League",
+  "knockoutStage": "Knockout Stage",
+  "generateKnockoutStageBtn": "Generate Knockout Stage",
+  "generatingStage": "Generating stage...",
+  "knockoutStageGenerated": "Knockout stage generated",
+  "failedToGenerateStage": "Failed to generate — make sure group matches are complete",
+  "roundX": "Round {round}",
+  "@roundX": {
+    "placeholders": {
+      "round": {
+        "type": "String"
+      }
+    }
+  },
+  "unscheduledTime": "Unscheduled",
+  "withoutSchedule": "No schedule",
+  "upcoming": "Upcoming",
+  "vs": "vs",
+  "refereeNameX": "Referee: {name}",
+  "@refereeNameX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assignRefereeBtn": "Assign Referee",
+  "changeRefereeBtn": "Change Referee",
+  "myTeamFormationX": "My Team Formation: {f}",
+  "@myTeamFormationX": {
+    "placeholders": {
+      "f": {
+        "type": "String"
+      }
+    }
+  },
+  "setMyTeamFormationBtn": "Set My Team Formation",
+  "startMatchBtn": "Start Match",
+
+  "editScheduleBtn": "Edit Schedule",
+  "setScheduleBtn": "Set Schedule",
+  "enterResultBtn": "Enter Result",
+  "refereeRequest": "Referee Request",
+  "applyAsRefereeDialogBody": "Do you want to apply to referee in the '{name}' tournament? The admin will review it.",
+  "@applyAsRefereeDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "submitBtn": "Submit",
+  "refereeRequestSent": "Referee request sent to admin",
+  "chooseTeamFormationForMatch": "Choose your team formation for this match",
+  "preparingReport": "Preparing report...",
+  "failedToExportReport": "Failed to export report",
+  "failedToFetchReferees": "Failed to fetch referees",
+  "chooseRefereeForMatch": "Choose a referee for the match",
+  "noRefereesAvailable": "No referees available — admin needs to grant permissions",
+  "unassignRefereeBtn": "Unassign Referee",
+  "chooseMatchDateHelp": "Choose Match Date",
+  "nextBtn": "Next",
+  "chooseMatchTimeHelp": "Choose Match Time",
+
+  "toubaAppTitle": "Touba",
+  "createTournamentBtn": "Create Tournament",
+  "failedToLoadTournaments": "Failed to load tournaments",
+  "retryBtn": "Retry",
+  "noTournamentsYet": "No tournaments yet",
+  "createFirstTournamentHint": "Create the first tournament using the 'Create Tournament' button below",
+  "noTournamentsInYourAreaYet": "No one has created a tournament in your area yet",
+  "ongoingTournaments": "Ongoing Tournaments",
+  "finishedTournaments": "Finished Tournaments",
+  "otherTournaments": "Other Tournaments",
+  "finishedBadge": "Finished",
+  "ongoingBadge": "Ongoing",
+  "vXFormat": "{format} v {format}",
+  "@vXFormat": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "paidSubscriptionBadge": "Paid",
+  "championX": "Champion: {name}",
+  "@championX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cityAndTeamsCount": "{city} • {count} teams",
+  "@cityAndTeamsCount": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+
+  "teamManagement": "Team Management",
+  "linkPlayerByCodeTitle": "Link Player by Code",
+  "joinRequestsCountX": "Join Requests ({count})",
+  "@joinRequestsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "joinRequestLabel": "Join request",
+  "releaseRequestsCountX": "Release Requests ({count})",
+  "@releaseRequestsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "requestsToLeaveTeam": "Requests to leave the team",
+  "acceptLeave": "Accept Release",
+  "rejectBtn": "Reject",
+  "rosterCountX": "Roster ({count})",
+  "@rosterCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShare": "View/Share",
+  "rosterManagementHint": "Tap 'Starter/Sub' badge to toggle • Tap 'Number' to edit",
+  "noPlayersYetAddWithBtn": "No players yet — add players with 'Add Player' button",
+  "starters": "Starters",
+  "noStartersSelectFromSubs": "No starters — select them from subs",
+  "subs": "Subs",
+  "noSubs": "No subs",
+  "mainTeamFormation": "Main Team Formation",
+  "currentFormationX": "Current: {fmt} ({count} players)",
+  "@currentFormationX": {
+    "placeholders": {
+      "fmt": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "notSetChooseCountAndFormation": "Not set — choose player count and formation",
+  "selectBtn": "Select",
+  "noPhotosYetAddUpTo5": "No photos yet — add up to 5 photos",
+  "xOutOf5Photos": "{count}/5 photos",
+  "@xOutOf5Photos": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "addBtn": "Add",
+  "editBtn": "Edit",
+  "formationFormatHint": "Format: GK-DEF-MID-FWD",
+  "numberForX": "Number of {name}",
+  "@numberForX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shirtNumber": "Shirt Number",
+  "cancelBtn": "Cancel",
+  "numberX": "Number {num}",
+  "@numberX": {
+    "placeholders": {
+      "num": {
+        "type": "String"
+      }
+    }
+  },
+  "noNumber": "No number",
+  "starter": "Starter",
+  "sub": "Sub",
+  "linked": "Linked",
+  "notLinked": "Not linked",
+  "positionForX": "Position of {name}",
+  "@positionForX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "enterPlayerCodeHint": "Enter the 'Player Code' shown in their profile:",
+  "exampleCode": "Example: A1B2C3D4",
+  "linking": "Linking...",
+  "playerAddedToRoster": "Player added to roster",
+  "failedToLinkPlayer": "Failed to link player",
+  "linkBtn": "Link",
+
+  "teamPhotosSaved": "Team photos saved",
+  "failedToSavePhotos": "Failed to save photos",
+  "teamPhotosTitle": "Team Photos",
+  "addUpToMaxPhotos": "Add up to {max} photos for your team ({count}/{max})",
+  "@addUpToMaxPhotos": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "savePhotosBtn": "Save Photos",
+
+  "choosePlayerForSlotX": "Choose player for slot {slotNumber}",
+  "@choosePlayerForSlotX": {
+    "placeholders": {
+      "slotNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "removePlayerFromSlot": "Remove player from this slot",
+  "assignedToAnotherSlot": " • assigned to another slot",
+  "chooseTeamFormation": "Choose team formation (GK-DEF-MID-FWD)",
+  "playersCountX": "{count} players",
+  "@playersCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "customFormation": "Custom Formation",
+  "assignPlayerToEachSlot": "Assign a player to each slot in the formation",
+  "teamFormationSaved": "Team formation saved",
+  "failedToSaveFormation": "Failed to save formation",
+  "formationShareText": "{teamName} formation — plan {formation}",
+  "@formationShareText": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      },
+      "formation": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToShareFormation": "Failed to share formation",
+  "teamFormation": "Team Formation",
+  "share": "Share",
+  "formationPlan": "Formation",
+  "formationWithPlayersCount": "{formation} ({count} players)",
+  "@formationWithPlayersCount": {
+    "placeholders": {
+      "formation": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "changeBtn": "Change",
+  "tapCircleToAssignPlayer": "Tap any circle on the pitch to assign its player",
+  "saveBtn": "Save",
+  "numberOfPlayersLabel": "Number of players: ",
+  "defendersCount": "Defenders",
+  "attackersCount": "Attackers",
+  "midfieldAndTotalCount": "Midfield: {mid}  •  Total: {total}",
+  "@midfieldAndTotalCount": {
+    "placeholders": {
+      "mid": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmFormation": "Confirm Formation",
+
+  "createTeamTitle": "Create New Team",
+  "pleaseSelectCity": "Please select a city",
+  "teamCreatedSuccess": "Team created successfully!",
+  "teamLogoOptional": "Team Logo (Optional)",
+  "teamNameLabel": "Team Name",
+  "pleaseEnterTeamName": "Please enter team name",
+  "cityOrGovernorate": "City / Governorate",
+  "areaOptional": "Area (Optional)",
+  "areaExample": "Example: Al-Jadriya, Karrada...",
+  "createTeamBtn": "Create Team",
+
+  "posGoalkeeper": "Goalkeeper",
+  "posDefender": "Defender",
+  "posMidfielder": "Midfielder",
+  "posForward": "Forward",
+  "playerNameLabel": "Player Name",
+  "shirtNumberOptional": "Shirt Number (Optional)",
+  "preferredFootOptional": "Preferred Foot (Optional)",
+  "addToRosterBtn": "Add to Roster",
+
+  "yourRequestEscalatedSoonReviewed": "Your request escalated to admin — will be reviewed soon",
+  "confirmPasswordTitle": "Confirm Password",
+  "confirmPasswordToExitDesc": "To verify account ownership, enter your password before requesting exit.",
+  "passwordLabel": "Password",
+  "incorrectPassword": "Incorrect password",
+  "failedToVerifyPassword": "Failed to verify password",
+  "updatingLogo": "Updating logo...",
+  "logoUpdatedSuccess": "Logo updated successfully",
+  "failedToUpdateLogo": "Failed to update logo",
+  "exitRequestSentToCaptain": "Exit request sent to your current team captain",
+  "youMustLoginFirst": "You must log in first",
+  "exitTeamRequest": "Request to exit team",
+  "reportThisTeam": "Report this team",
+  "teamMatchesLost": "Lost",
+  "teamMatchesDrawn": "Drawn",
+  "youArePlayerInThisTeam": "You are a player in this team",
+  "exitRequestPendingCaptainReview": "Your exit request is pending current captain's review",
+  "requestEscalatedPendingDecision": "Your request escalated to admin — pending decision",
+  "requestExitFromX": "Request exit from {teamName}",
+  "@requestExitFromX": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "myCurrentTeam": "my current team",
+  "mustExitCurrentTeamBeforeJoining": "You must exit your current team before joining",
+  "requestToJoinTeam": "Request to join team",
+  "requestChallengeBtn": "Request a challenge",
+  "rosterWithCount": "Roster ({count})",
+  "@rosterWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsByTournament": "Points by Tournament",
+  "noPlayersRegisteredYet": "No players registered yet",
+  "teamHasNotParticipatedInTournamentsYet": "Team has not participated in any tournaments yet",
+  "tournamentFinishedStatus": "Finished",
+  "tournamentLiveStatus": "Live",
+  "pointSingle": "Point",
+  "loadingTeamDetails": "Loading team details...",
+
+  "profileUpdateSuccess": "Profile updated successfully",
+  "profileUpdateError": "Could not update profile",
+  "loginToViewProfile": "Log in to view your profile",
+  "saveChanges": "Save Changes",
+  "playerSportsDetails": "Player Sports Details",
+  "playerSportsDetailsSubtitle": "Preferred Foot • Height • Weight • Age • Bio • Gallery",
+  "permanentPlayerCode": "Your Permanent Player Code",
+  "giveCodeToCaptain": "Give this code to the team captain to add you to their lineup.",
+  "codeCopied": "Code copied",
+  "myPlayerCodeShare": "My player code in Tooba: {code}",
+  "@myPlayerCodeShare": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "codeLinkingHint": "Once the captain adds you with this code, your account will automatically link to your player card.",
+  "invalidPhoneNumber": "Invalid phone number",
+  "copy": "Copy",
+  "share": "Share",
 
   "adminDashboard": "Admin Dashboard",
   "manageLocations": "Manage Locations",
   "manageRoles": "Manage Roles",
   "reports": "Reports",
   "verifyTeams": "Verify Teams",
-  "comingSoon": "Coming Soon..."
+  "comingSoon": "Coming Soon...",
+  "okBtn": "OK",
+  "verifiedPlayer": "Verified Player",
+  "manageChallenges": "Manage Challenges",
+  "stale": "Stale",
+  "challengeDetailsRow": "{city} • Applicants: {applicants} • {days} days ago",
+  "@challengeDetailsRow": {
+    "placeholders": {
+      "city": { "type": "String" },
+      "applicants": { "type": "int" },
+      "days": { "type": "int" }
+    }
+  },
+  "cancelChallengeRequestConfirm": "Cancel challenge request for team '{team}'?",
+  "@cancelChallengeRequestConfirm": {
+    "placeholders": {
+      "team": { "type": "String" }
+    }
+  },
+  "takeActionOnX": "Take Action — {name}",
+  "@takeActionOnX": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "reviewOnlyAction": "Review Only (No Penalty)",
+  "warnAction": "Warn",
+  "negativeRatingAction": "Negative Rating (Deduct Points)",
+  "banAction": "Ban",
+  "dismissReportAction": "Dismiss Report",
+  "replyNoteOptional": "Reply/Note (Optional)",
+  "executeActionBtn": "Execute Action",
+  "executingAction": "Executing Action...",
+  "actionExecuted": "Action Executed",
+  "failedToExecuteAction": "Failed to Execute Action",
+  "allLabel": "All",
+  "pendingLabel": "Pending",
+  "reviewedLabel": "Reviewed",
+  "reviewedStatus": "Reviewed",
+  "dismissedLabel": "Dismissed",
+  "noReports": "No Reports",
+  "takeActionLong": "Take Action (Ban/Warn/Rate)",
+  "dismissBtn": "Dismiss",
+  "searchError": "Search error: {error}",
+  "@searchError": { "placeholders": { "error": { "type": "String" } } },
+  "updateFailed": "Update failed: {error}",
+  "@updateFailed": { "placeholders": { "error": { "type": "String" } } },
+  "searchByPhoneHint": "Search by phone number (e.g., +964...)",
+  "noSearchResults": "No search results",
+  "roleX": "Role: {role}",
+  "@roleX": { "placeholders": { "role": { "type": "String" } } },
+  "additionalPermissions": "Additional Permissions:",
+  "tournamentOrganizer": "Tournament Organizer",
+  "allowsCreatingTournaments": "Allows creating and managing tournaments",
+  "allowsEnteringResults": "Allows entering results for assigned matches",
+  "noBanners": "No banners — add the first one",
+  "newBannerBtn": "New Banner",
+  "deleteBannerTitle": "Delete Banner",
+  "deleteBannerBody": "Are you sure you want to permanently delete this banner?",
+  "newBanner": "New Banner",
+  "editBanner": "Edit Banner",
+  "bannerTitleOptional": "Title (optional)",
+  "bannerDescOptional": "Description / Details (optional)",
+  "governorate": "Governorate",
+  "phoneOptional": "Phone number (optional)",
+  "whatsappOptional": "WhatsApp (with country code, optional)",
+  "facebookLinkOptional": "Facebook link (optional)",
+  "instagramLinkOptional": "Instagram link (optional)",
+  "targetUrlOptional": "Website link when clicked (optional)",
+  "displayOrder": "Display Order",
+  "extraImages": "Extra Images",
+  "chooseBannerImage": "Choose banner image",
+  "failedToSaveBanner": "Failed to save banner",
+  "bannerWithoutTitle": "No Title",
+  "orderX": "Order: {order}",
+  "@orderX": { "placeholders": { "order": { "type": "int" } } },
+  "forceReleaseTitle": "Force Release",
+  "forceReleaseBody": "The player will be released from their current team and free to join another. Continue?",
+  "forceReleaseBtn": "Release",
+  "forceReleaseForcedBtn": "Force Release",
+  "playerReleasedSuccess": "Player released successfully",
+  "noEscalatedDisputes": "No escalated disputes",
+  "playerWantsToLeaveTeam": "Requesting to leave team: {team}",
+  "@playerWantsToLeaveTeam": { "placeholders": { "team": { "type": "String" } } },
+  "captainRejectedEscalated": "Captain rejected request; player escalated to admin",
+  "approvedGrantedReferee": "Approved and referee status granted",
+  "rejectedApplication": "Rejected",
+  "noPendingRefereeApps": "No pending referee applications",
+  "requestToRefereeIn": "Requesting to referee: {tournament}",
+  "@requestToRefereeIn": { "placeholders": { "tournament": { "type": "String" } } },
+  "approveBtn": "Approve",
+  "failedToSaveSettings": "Failed to save settings",
+  "tournamentsSection": "Tournaments Section",
+  "showHideTournaments": "Show/Hide tournaments tab for all users",
+  "noNews": "No news — add the first one",
+  "newNewsBtn": "New Article",
+  "deleteNewsTitle": "Delete Article",
+  "deleteNewsBody": "Are you sure you want to permanently delete this article?",
+  "newNews": "New Article",
+  "editNews": "Edit Article",
+  "publishedLabel": "Published",
+  "hiddenLabel": "Hidden",
+  "newsStatsX": "❤ {likes}  •  ↗ {shares}  •  {status}",
+  "@newsStatsX": {
+    "placeholders": {
+      "likes": { "type": "int" },
+      "shares": { "type": "int" },
+      "status": { "type": "String" }
+    }
+  },
+  "enterNewsTitle": "Enter article title",
+  "newsTitleLabel": "Title",
+  "newsBodyLabel": "Article Body",
+  "failedToSaveNews": "Failed to save article",
+  "activationCodesTitle": "Activation Codes",
+  "settingsCardTitle": "Settings",
+  "freeTrialDaysLabel": "Free trial duration (days)",
+  "activationWhatsappLabel": "Activation WhatsApp (e.g. 9647xx)",
+  "saveSettingsBtn": "Save Settings",
+  "settingsSaved": "Settings saved",
+  "failedToSaveHighPermission": "Failed to save (requires higher admin permission)",
+  "generateCodesTitle": "Generate Codes",
+  "durationLabel": "Duration",
+  "countLabel": "Count",
+  "notesOptional": "Note (optional)",
+  "generateBtn": "Generate",
+  "generatedXCodes": "{count} codes generated",
+  "@generatedXCodes": { "placeholders": { "count": { "type": "int" } } },
+  "failedToGenerate": "Failed to generate",
+  "codesLabel": "Codes",
+  "noCodesYet": "No codes yet",
+  "copyTooltip": "Copy",
+  "codeCopied": "Code copied",
+  "unlockTooltip": "Unlock",
+  "month1Label": "1 Month",
+  "months3Label": "3 Months",
+  "months6Label": "6 Months",
+  "yearLabel": "1 Year",
+  "noTournaments": "No tournaments",
+  "editTournamentTitle": "Edit Tournament",
+  "tournamentCoverImage": "Tournament Cover",
+  "tournamentCupImage": "Cup Image",
+  "tournamentNameLabel": "Tournament Name",
+  "tournamentPrizesOptional": "Prizes (optional)",
+  "tournamentSponsorOptional": "Sponsor Name (optional)",
+  "freeTournament": "Free Tournament",
+  "openToAllTeams": "Open to all teams",
+  "paidTournament": "Paid — team added after payment",
+  "entryFeeInfo": "Entry fee / contact info (for display)",
+  "failedToSaveTournament": "Failed to save changes",
+  "tournamentFinishedWinner": "Finished • Winner: {winner}",
+  "@tournamentFinishedWinner": { "placeholders": { "winner": { "type": "String" } } },
+  "tournamentOngoingCity": "Ongoing • {city}",
+  "@tournamentOngoingCity": { "placeholders": { "city": { "type": "String" } } },
+  "updatedSuccessfully": "Updated successfully",
+  "addDistrict": "Add District",
+  "editDistrict": "Edit District",
+  "nameArabic": "Name (Arabic)",
+  "nameEnglish": "Name (English)",
+  "confirmDeleteTitle": "Confirm Deletion",
+  "confirmDeleteDistrictX": "Are you sure you want to delete {name}?",
+  "@confirmDeleteDistrictX": { "placeholders": { "name": { "type": "String" } } },
+  "noDistricts": "No districts. Tap + to add a district.",
+  "districtsOfCity": "Districts: {city}",
+  "@districtsOfCity": { "placeholders": { "city": { "type": "String" } } },
+  "addGovernorate": "Add Governorate",
+  "editGovernorate": "Edit Governorate",
+  "manageGovernoratesTitle": "Manage Governorates",
+  "importIraqTooltip": "Import all of Iraq",
+  "importConfirmTitle": "Confirm Import",
+  "importConfirmBody": "All Iraqi governorates and districts will be seeded. Are you sure?",
+  "importBtn": "Import",
+  "importSuccessTitle": "Import Successful",
+  "importSuccessBody": "All Iraqi governorates and districts have been imported.",
+  "okBtn": "OK",
+  "errorX": "Error: {error}",
+  "@errorX": { "placeholders": { "error": { "type": "String" } } },
+  "noGovernorates": "No governorates. Tap the download button to import Iraq.",
+  "confirmDeleteCityX": "Are you sure you want to delete {name} and all its districts?",
+  "@confirmDeleteCityX": { "placeholders": { "name": { "type": "String" } } }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: قالب موحَّد لعرض المستندات القانونية (الخصوصية/الشروط) —
 /// شاشة تمرير بعنوان وتاريخ تحديث وأقسام (عنوان + نص). يتكيّف مع الثيم.
@@ -33,7 +34,7 @@ class LegalScaffold extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'آخر تحديث: $lastUpdated',
+              AppLocalizations.of(context)!.lastUpdatedDate(lastUpdated),
               style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -60,7 +61,7 @@ class LegalScaffold extends StatelessWidget {
             const SizedBox(height: 28),
             Center(
               child: Text(
-                'منصة طوبة ⚽',
+                AppLocalizations.of(context)!.toubaPlatform,
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ),

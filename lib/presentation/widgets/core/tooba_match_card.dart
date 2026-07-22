@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'tooba_card.dart';
+
 import '../../../app/theme/app_colors.dart';
-import 'tooba_team_avatar.dart';
+
 
 /// 📝 HINT AR: بطاقة مباراة. تُعرض في قائمة المباريات وتفاصيل البطولة.
 /// • إذا أُعطي dateTime تُعرض في سطر تحت اسمَي الفريقَين.
@@ -113,35 +113,5 @@ class ToobaMatchCard extends StatelessWidget {
     );
   }
 
-  Widget _liveBadge() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.shade200),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 7,
-            height: 7,
-            decoration: const BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 5),
-          const Text(
-            'مباشر',
-            style: TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-                fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
+
 }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../data/models/release_request_model.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: نزاعات فكّ الارتباط — طلبات خروج رفضها الكابتن وصعّدها اللاعب.
 /// الأدمن يفكّ الارتباط قسرياً بضبط الحالة=accepted (تُشغّل CF فتحرّر اللاعب).
@@ -19,19 +20,19 @@ class AdminDisputesScreen extends StatelessWidget {
 
   Future<void> _forceRelease(BuildContext context, String id) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('فكّ ارتباط قسري'),
-        content: const Text(
-            'سيُفكّ ارتباط اللاعب من فريقه الحالي ويصبح حرّاً للانضمام لفريق آخر. متابعة؟'),
+        title: Text(l10n.forceReleaseTitle),
+        content: Text(l10n.forceReleaseBody),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(l10n.cancelBtn)),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('فكّ الارتباط'),
+            child: Text(l10n.forceReleaseBtn),
           ),
         ],
       ),
@@ -43,9 +44,9 @@ class AdminDisputesScreen extends StatelessWidget {
           .doc(id)
           .update({'status': 'accepted'});
       messenger.showSnackBar(
-          ToobaSnackBar.buildSuccess('تم فكّ ارتباط اللاعب'));
+          ToobaSnackBar.buildSuccess(l10n.playerReleasedSuccess));
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تنفيذ العملية'));
+      messenger.showSnackBar(ToobaSnackBar.buildError(l10n.failedToExecuteAction));
     }
   }
 
@@ -53,7 +54,7 @@ class AdminDisputesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('نزاعات فكّ الارتباط'),
+        title: Text(AppLocalizations.of(context)!.adminDisputesTitle),
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -71,7 +72,8 @@ class AdminDisputesScreen extends StatelessWidget {
                   Icon(Icons.handshake_outlined,
                       size: 72, color: Colors.grey[300]),
                   const SizedBox(height: 12),
-                  Text('لا توجد نزاعات مصعّدة',
+                  const SizedBox(height: 12),
+                  Text(AppLocalizations.of(context)!.noEscalatedDisputes,
                       style: TextStyle(color: Colors.grey[600])),
                 ],
               ),
@@ -104,20 +106,20 @@ class AdminDisputesScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text('يطلب الخروج من فريق: ${r.teamName}',
+                      Text(AppLocalizations.of(context)!.playerWantsToLeaveTeam(r.teamName),
                           style: TextStyle(
                               fontSize: 13, color: Colors.grey[700])),
                       const SizedBox(height: 4),
-                      const Text('رفض الكابتن الطلب وصعّده اللاعب للإدارة',
+                      Text(AppLocalizations.of(context)!.captainRejectedEscalated,
                           style:
-                              TextStyle(fontSize: 12, color: Colors.red)),
+                              const TextStyle(fontSize: 12, color: Colors.red)),
                       const SizedBox(height: 10),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () => _forceRelease(context, r.id),
                           icon: const Icon(Icons.lock_open, size: 18),
-                          label: const Text('فكّ الارتباط قسرياً'),
+                          label: Text(AppLocalizations.of(context)!.forceReleaseForcedBtn),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.purple,
                             foregroundColor: Colors.white,

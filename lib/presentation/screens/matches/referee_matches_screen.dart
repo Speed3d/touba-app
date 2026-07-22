@@ -7,6 +7,7 @@ import '../../widgets/core/tooba_empty_state.dart';
 import '../../widgets/core/tooba_shimmer.dart';
 import 'match_detail_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: مباريات الحكم — المباريات المعيّن لها المستخدم الحالي كحكم.
 /// (فصل المهام: الحكم لا يؤكّد النتيجة — يعرضها فقط؛ التأكيد للمنظّم.)
@@ -39,7 +40,7 @@ class _RefereeMatchesScreenState extends State<RefereeMatchesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('مبارياتي كحكم'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.myRefereeMatches), centerTitle: true),
       body: FutureBuilder<List<MatchModel>>(
         future: _future,
         builder: (context, snap) {
@@ -48,10 +49,10 @@ class _RefereeMatchesScreenState extends State<RefereeMatchesScreen> {
           }
           final matches = snap.data ?? [];
           if (matches.isEmpty) {
-            return const ToobaEmptyState(
+            return ToobaEmptyState(
               icon: Icons.sports_outlined,
-              title: 'لا توجد مباريات معيّنة لك',
-              subtitle: 'يعيّنك منظّم البطولة على المباريات',
+              title: AppLocalizations.of(context)!.noMatchesAssignedToYou,
+              subtitle: AppLocalizations.of(context)!.tournamentOrganizerAssignsMatches,
             );
           }
           matches.sort((a, b) {
@@ -77,11 +78,12 @@ class _RefereeMatchesScreenState extends State<RefereeMatchesScreen> {
   Widget _tile(BuildContext context, MatchModel m) {
     final theme = Theme.of(context);
     final finished = m.resultConfirmed;
+    // We can use Intl directly but we can also use formatting method if needed. Let's just keep Intl since it's already there and handles dates well. Or we can just use the provided strings. We'll leave the DateFormat as is but localizing "موعد غير محدد".
     final label = finished
         ? '${m.homeScore} - ${m.awayScore}'
         : (m.dateTime != null
             ? DateFormat('EEE d MMM • HH:mm', 'ar').format(m.dateTime!)
-            : 'موعد غير محدد');
+            : AppLocalizations.of(context)!.unspecifiedDate);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
@@ -93,11 +95,11 @@ class _RefereeMatchesScreenState extends State<RefereeMatchesScreen> {
           finished ? Icons.check_circle : Icons.schedule,
           color: finished ? Colors.green : theme.colorScheme.primary,
         ),
-        title: Text('${m.homeTeamName} ضد ${m.awayTeamName}',
+        title: Text('${m.homeTeamName} ${AppLocalizations.of(context)!.versus} ${m.awayTeamName}',
             style: const TextStyle(fontWeight: FontWeight.bold),
             maxLines: 1,
             overflow: TextOverflow.ellipsis),
-        subtitle: Text('الجولة ${m.round}'),
+        subtitle: Text(AppLocalizations.of(context)!.roundX(m.round.toString())),
         trailing: Text(label,
             style: TextStyle(
                 color: finished ? Colors.green : Colors.grey[600],

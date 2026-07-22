@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
+
 /// 📝 HINT AR: نموذج إضافة لاعب للتشكيلة (يديره الكابتن). يُعيد بيانات اللاعب
 /// عبر Navigator.pop ليستدعي معها cubit الإدارة createPlayer.
 class AddPlayerScreen extends StatefulWidget {
@@ -13,11 +15,8 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _numberController = TextEditingController();
-  String _position = 'مهاجم';
+  String? _position;
   String? _preferredFoot;
-
-  static const _positions = ['حارس مرمى', 'مدافع', 'خط وسط', 'مهاجم'];
-  static const _feet = ['يمنى', 'يسرى', 'كلاهما'];
 
   @override
   void dispose() {
@@ -46,7 +45,7 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('إضافة لاعب'),
+        title: Text(AppLocalizations.of(context)!.addPlayer),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -61,28 +60,31 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    labelText: 'اسم اللاعب',
+                    labelText: AppLocalizations.of(context)!.playerNameLabel,
                     prefixIcon: const Icon(Icons.person),
                     border: border,
                     filled: true,
                     fillColor: fill,
                   ),
                   validator: (v) =>
-                      v == null || v.isEmpty ? 'يرجى إدخال الاسم' : null,
+                      v == null || v.isEmpty ? AppLocalizations.of(context)!.pleaseEnterName : null,
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   initialValue: _position,
                   decoration: InputDecoration(
-                    labelText: 'المركز',
+                    labelText: AppLocalizations.of(context)!.position,
                     prefixIcon: const Icon(Icons.sports_soccer),
                     border: border,
                     filled: true,
                     fillColor: fill,
                   ),
-                  items: _positions
-                      .map((p) => DropdownMenuItem(value: p, child: Text(p)))
-                      .toList(),
+                  items: [
+                    DropdownMenuItem(value: 'حارس مرمى', child: Text(AppLocalizations.of(context)!.posGoalkeeper)),
+                    DropdownMenuItem(value: 'مدافع', child: Text(AppLocalizations.of(context)!.posDefender)),
+                    DropdownMenuItem(value: 'خط وسط', child: Text(AppLocalizations.of(context)!.posMidfielder)),
+                    DropdownMenuItem(value: 'مهاجم', child: Text(AppLocalizations.of(context)!.posForward)),
+                  ],
                   onChanged: (v) => setState(() => _position = v ?? _position),
                 ),
                 const SizedBox(height: 16),
@@ -90,7 +92,7 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                   controller: _numberController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'رقم القميص (اختياري)',
+                    labelText: AppLocalizations.of(context)!.shirtNumberOptional,
                     prefixIcon: const Icon(Icons.tag),
                     border: border,
                     filled: true,
@@ -101,15 +103,17 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                 DropdownButtonFormField<String>(
                   initialValue: _preferredFoot,
                   decoration: InputDecoration(
-                    labelText: 'القدم المفضلة (اختياري)',
+                    labelText: AppLocalizations.of(context)!.preferredFootOptional,
                     prefixIcon: const Icon(Icons.do_not_step),
                     border: border,
                     filled: true,
                     fillColor: fill,
                   ),
-                  items: _feet
-                      .map((f) => DropdownMenuItem(value: f, child: Text(f)))
-                      .toList(),
+                  items: [
+                    DropdownMenuItem(value: 'يمنى', child: Text(AppLocalizations.of(context)!.footRight)),
+                    DropdownMenuItem(value: 'يسرى', child: Text(AppLocalizations.of(context)!.footLeft)),
+                    DropdownMenuItem(value: 'كلاهما', child: Text(AppLocalizations.of(context)!.footBoth)),
+                  ],
                   onChanged: (v) => setState(() => _preferredFoot = v),
                 ),
                 const SizedBox(height: 32),
@@ -122,9 +126,9 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('إضافة للتشكيلة',
+                  child: Text(AppLocalizations.of(context)!.addToRosterBtn,
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),

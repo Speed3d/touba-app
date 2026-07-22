@@ -1,0 +1,63 @@
+{
+  "version": "2.0.0",
+  "//": "📝 مهام سريعة تعمل على ويندوز والماك (Ctrl/Cmd+Shift+P → Run Task).",
+  "tasks": [
+    {
+      "label": "طوبة: جلب الحزم (pub get)",
+      "type": "shell",
+      "command": "flutter pub get",
+      "problemMatcher": []
+    },
+    {
+      "label": "طوبة: فحص الكود (analyze)",
+      "type": "shell",
+      "command": "flutter analyze lib",
+      "group": { "kind": "test", "isDefault": false },
+      "problemMatcher": ["$dart-analyze"]
+    },
+    {
+      "label": "طوبة: الاختبارات (test)",
+      "type": "shell",
+      "command": "flutter test",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "طوبة: توليد الترجمات (gen-l10n)",
+      "type": "shell",
+      "command": "flutter gen-l10n",
+      "problemMatcher": []
+    },
+    {
+      "label": "طوبة: فحص الدوال (eslint)",
+      "type": "shell",
+      "command": "npx eslint index.js",
+      "options": { "cwd": "${workspaceFolder}/functions" },
+      "problemMatcher": []
+    },
+    {
+      "label": "طوبة: تحديث المرجع (submodule)",
+      "type": "shell",
+      "command": "git submodule update --init --recursive",
+      "problemMatcher": []
+    },
+    {
+      "label": "طوبة: نشر القواعد والفهارس والتخزين",
+      "type": "shell",
+      "command": "firebase deploy --only firestore:rules,firestore:indexes,storage",
+      "problemMatcher": []
+    },
+    {
+      "label": "طوبة: نشر الدوال",
+      "type": "shell",
+      "command": "firebase deploy --only functions",
+      "problemMatcher": []
+    },
+    {
+      "label": "طوبة: تشخيص البيئة (doctor)",
+      "type": "shell",
+      "command": "flutter doctor -v",
+      "problemMatcher": []
+    }
+  ]
+}

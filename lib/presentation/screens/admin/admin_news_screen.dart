@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import '../../../data/models/news_model.dart';
 import '../../../data/repositories/home_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: إدارة الأخبار (للأدمن) — نشر/تعديل/حذف خبر (صورة + عنوان + مقال).
 class AdminNewsScreen extends StatefulWidget {
@@ -33,11 +34,11 @@ class _AdminNewsScreenState extends State<AdminNewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('إدارة الأخبار'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.adminNewsTitle), centerTitle: true),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEditor(),
         icon: const Icon(Icons.add),
-        label: const Text('خبر جديد'),
+        label: Text(AppLocalizations.of(context)!.newNewsBtn),
       ),
       body: FutureBuilder<List<NewsModel>>(
         future: _future,
@@ -48,7 +49,7 @@ class _AdminNewsScreenState extends State<AdminNewsScreen> {
           final news = snap.data ?? [];
           if (news.isEmpty) {
             return Center(
-              child: Text('لا توجد أخبار — أضف أول خبر',
+              child: Text(AppLocalizations.of(context)!.noNews,
                   style: TextStyle(color: Colors.grey[600])),
             );
           }
@@ -88,7 +89,10 @@ class _AdminNewsScreenState extends State<AdminNewsScreen> {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(
-            '❤ ${n.likeCount}  •  ↗ ${n.shareCount}  •  ${n.isPublished ? "منشور" : "مخفي"}',
+            AppLocalizations.of(context)!.newsStatsX(
+              n.likeCount, n.shareCount,
+              n.isPublished ? AppLocalizations.of(context)!.publishedLabel : AppLocalizations.of(context)!.hiddenLabel,
+            ),
             style: const TextStyle(fontSize: 12)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -112,16 +116,16 @@ class _AdminNewsScreenState extends State<AdminNewsScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('حذف الخبر'),
-        content: const Text('هل تريد حذف هذا الخبر نهائياً؟'),
+        title: Text(AppLocalizations.of(context)!.deleteNewsTitle),
+        content: Text(AppLocalizations.of(context)!.deleteNewsBody),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('حذف'),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),
@@ -197,12 +201,12 @@ class _NewsEditorState extends State<_NewsEditor> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('اختيار من المعرض'),
+              title: Text(AppLocalizations.of(context)!.chooseFromGallery),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('التقاط صورة'),
+              title: Text(AppLocalizations.of(context)!.takePhoto),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
           ],
@@ -217,7 +221,7 @@ class _NewsEditorState extends State<_NewsEditor> {
 
   Future<void> _save() async {
     if (_title.text.trim().isEmpty) {
-      ToobaSnackBar.warning(context, 'أدخل عنوان الخبر');
+      ToobaSnackBar.warning(context, AppLocalizations.of(context)!.enterNewsTitle);
       return;
     }
     setState(() => _saving = true);
@@ -241,7 +245,7 @@ class _NewsEditorState extends State<_NewsEditor> {
       widget.onSaved();
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر حفظ الخبر');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToSaveNews);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -262,10 +266,10 @@ class _NewsEditorState extends State<_NewsEditor> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(n == null ? 'خبر جديد' : 'تعديل الخبر',
-                style: const TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center),
+          Text(n == null ? AppLocalizations.of(context)!.newNews : AppLocalizations.of(context)!.editNews,
+              style: const TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center),
             const SizedBox(height: 16),
             GestureDetector(
               onTap: _pick,
@@ -295,22 +299,22 @@ class _NewsEditorState extends State<_NewsEditor> {
             const SizedBox(height: 12),
             TextField(
               controller: _title,
-              decoration: const InputDecoration(
-                  labelText: 'العنوان', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.newsTitleLabel, border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _body,
               maxLines: 5,
-              decoration: const InputDecoration(
-                  labelText: 'نص الخبر',
-                  border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.newsBodyLabel,
+                  border: const OutlineInputBorder(),
                   alignLabelWithHint: true),
             ),
             const SizedBox(height: 8),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('منشور'),
+              title: Text(AppLocalizations.of(context)!.publishedLabel),
               value: _published,
               onChanged: (v) => setState(() => _published = v),
             ),
@@ -324,7 +328,7 @@ class _NewsEditorState extends State<_NewsEditor> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('حفظ'),
+                  : Text(AppLocalizations.of(context)!.saveBtn),
             ),
           ],
         ),

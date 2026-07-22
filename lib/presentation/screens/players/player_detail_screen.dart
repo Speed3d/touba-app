@@ -7,6 +7,7 @@ import '../../../data/models/report_model.dart';
 import '../reports/submit_report_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: بطاقة/صفحة اللاعب — تعرض إحصائياته (مباريات/أهداف/صناعة/بطاقات).
 /// الإحصائيات تأتي من careerStats التي يحدّثها النظام (CF) من أحداث المباريات.
@@ -24,13 +25,13 @@ class PlayerDetailScreen extends StatelessWidget {
     if (player.photoUrl != null && player.photoUrl!.isNotEmpty) {
       img = player.photoUrl!.startsWith('assets/')
           ? AssetImage(player.photoUrl!)
-          : ImageHelper.getProvider(player.photoUrl!) as ImageProvider;
+          : ImageHelper.getProvider(player.photoUrl!);
     }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('بطاقة اللاعب'),
+        title: Text(AppLocalizations.of(context)!.playerCard),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -41,7 +42,7 @@ class PlayerDetailScreen extends StatelessWidget {
               if (val != 'report') return;
               final uid = FirebaseAuth.instance.currentUser?.uid;
               if (uid == null) {
-                ToobaSnackBar.info(context, 'يجب تسجيل الدخول أولاً');
+                ToobaSnackBar.info(context, AppLocalizations.of(context)!.loginFirst);
                 return;
               }
               Navigator.push(
@@ -53,15 +54,15 @@ class PlayerDetailScreen extends StatelessWidget {
                 )),
               );
             },
-            itemBuilder: (_) => const [
+            itemBuilder: (_) => [
               PopupMenuItem(
                 value: 'report',
                 child: Row(
                   children: [
-                    Icon(Icons.flag_outlined, color: Colors.red, size: 18),
-                    SizedBox(width: 8),
-                    Text('بلّغ عن هذا اللاعب',
-                        style: TextStyle(color: Colors.red)),
+                    const Icon(Icons.flag_outlined, color: Colors.red, size: 18),
+                    const SizedBox(width: 8),
+                    Text(AppLocalizations.of(context)!.reportThisPlayer,
+                        style: const TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -106,16 +107,18 @@ class PlayerDetailScreen extends StatelessWidget {
                     '${player.position}${player.shirtNumber != null ? ' • #${player.shirtNumber}' : ''}',
                     style: const TextStyle(color: Colors.white70),
                   ),
-                  if (player.isClaimed)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8),
+                  if (player.claimedByUid != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.verified, color: Colors.white, size: 16),
-                          SizedBox(width: 4),
-                          Text('حساب موثّق',
-                              style: TextStyle(color: Colors.white, fontSize: 12)),
+                          const Icon(Icons.verified, color: Colors.white, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            AppLocalizations.of(context)!.verifiedPlayer,
+                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                          ),
                         ],
                       ),
                     ),
@@ -127,22 +130,22 @@ class PlayerDetailScreen extends StatelessWidget {
             // الإحصائيات الأساسية
             Row(
               children: [
-                _statBox(context, 'مباريات', cs.matches.toString(),
+                _statBox(context, AppLocalizations.of(context)!.matchesPlayed, cs.matches.toString(),
                     Icons.sports_soccer),
-                _statBox(context, 'أهداف', cs.goals.toString(),
+                _statBox(context, AppLocalizations.of(context)!.goals, cs.goals.toString(),
                     Icons.sports_score),
-                _statBox(context, 'صناعة', cs.assists.toString(),
+                _statBox(context, AppLocalizations.of(context)!.assists, cs.assists.toString(),
                     Icons.handshake),
               ],
             ),
             const SizedBox(height: 12),
             Row(
               children: [
-                _statBox(context, 'تقييم', cs.rating.toStringAsFixed(1),
+                _statBox(context, AppLocalizations.of(context)!.rating, cs.rating.toStringAsFixed(1),
                     Icons.star, color: Colors.amber),
-                _statBox(context, 'بطاقات صفراء', cs.yellowCards.toString(),
+                _statBox(context, AppLocalizations.of(context)!.yellowCards, cs.yellowCards.toString(),
                     Icons.square, color: Colors.amber),
-                _statBox(context, 'بطاقات حمراء', cs.redCards.toString(),
+                _statBox(context, AppLocalizations.of(context)!.redCards, cs.redCards.toString(),
                     Icons.square, color: Colors.red),
               ],
             ),
@@ -185,7 +188,7 @@ class PlayerDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('نبذة',
+          Text(AppLocalizations.of(context)!.bioLabel,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const Divider(),
@@ -217,7 +220,7 @@ class PlayerDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('معرض الصور',
+          Text(AppLocalizations.of(context)!.gallery,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
@@ -293,16 +296,16 @@ class PlayerDetailScreen extends StatelessWidget {
     String foot;
     switch (player.preferredFoot) {
       case 'left':
-        foot = 'يسرى';
+        foot = AppLocalizations.of(context)!.footLeft;
         break;
       case 'both':
-        foot = 'كلتاهما';
+        foot = AppLocalizations.of(context)!.footBoth;
         break;
       case 'right':
-        foot = 'يمنى';
+        foot = AppLocalizations.of(context)!.footRight;
         break;
       default:
-        foot = 'غير محدد';
+        foot = AppLocalizations.of(context)!.notSpecified;
     }
     return Container(
       width: double.infinity,
@@ -320,28 +323,28 @@ class PlayerDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('التفاصيل الفنية',
+          Text(AppLocalizations.of(context)!.technicalDetails,
               style:
                   theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const Divider(),
-          _row('القدم المفضّلة', foot),
-          _row('العمر', player.age != null ? '${player.age} سنة' : 'غير محدد'),
-          _row('الطول', player.height != null ? '${player.height} سم' : 'غير محدد'),
-          _row('الوزن', player.weight != null ? '${player.weight} كجم' : 'غير محدد'),
-          _row('الحالة', _statusLabel(player.status)),
+          _row(AppLocalizations.of(context)!.preferredFoot, foot),
+          _row(AppLocalizations.of(context)!.age, player.age != null ? AppLocalizations.of(context)!.yearsOldX(player.age.toString()) : AppLocalizations.of(context)!.notSpecified),
+          _row(AppLocalizations.of(context)!.height, player.height != null ? AppLocalizations.of(context)!.cmX(player.height.toString()) : AppLocalizations.of(context)!.notSpecified),
+          _row(AppLocalizations.of(context)!.weight, player.weight != null ? AppLocalizations.of(context)!.kgX(player.weight.toString()) : AppLocalizations.of(context)!.notSpecified),
+          _row(AppLocalizations.of(context)!.status, _statusLabel(context, player.status)),
         ],
       ),
     );
   }
 
-  String _statusLabel(String s) {
+  String _statusLabel(BuildContext context, String s) {
     switch (s) {
       case 'injured':
-        return 'مصاب';
+        return AppLocalizations.of(context)!.statusInjured;
       case 'suspended':
-        return 'موقوف';
+        return AppLocalizations.of(context)!.statusSuspended;
       default:
-        return 'نشط';
+        return AppLocalizations.of(context)!.statusActive;
     }
   }
 

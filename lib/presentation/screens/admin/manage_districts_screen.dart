@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/models/city_model.dart';
 import '../../../data/models/district_model.dart';
 import '../../../data/repositories/location_repository.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ManageDistrictsScreen extends StatefulWidget {
   final CityModel city;
@@ -18,35 +19,36 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
   void _showAddDistrictDialog([DistrictModel? districtToEdit]) {
     final arController = TextEditingController(text: districtToEdit?.nameAr);
     final enController = TextEditingController(text: districtToEdit?.nameEn);
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(districtToEdit == null ? 'إضافة منطقة' : 'تعديل منطقة'),
+        title: Text(districtToEdit == null ? l10n.addDistrict : l10n.editDistrict),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: arController,
-              decoration: const InputDecoration(labelText: 'الاسم (عربي)'),
+              decoration: InputDecoration(labelText: l10n.nameArabic),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: enController,
-              decoration: const InputDecoration(labelText: 'الاسم (إنجليزي)'),
+              decoration: InputDecoration(labelText: l10n.nameEnglish),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancelBtn),
           ),
           ElevatedButton(
             onPressed: () async {
               if (arController.text.isEmpty) return;
               Navigator.pop(ctx);
-              
+
               final dist = DistrictModel(
                 id: districtToEdit?.id ?? '',
                 nameAr: arController.text,
@@ -62,7 +64,7 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
                 await _repo.updateDistrict(dist);
               }
             },
-            child: const Text('حفظ'),
+            child: Text(l10n.saveBtn),
           ),
         ],
       ),
@@ -71,9 +73,10 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text('مناطق: ${widget.city.nameAr}'),
+        title: Text(l10n.districtsOfCity(widget.city.nameAr)),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddDistrictDialog(),
@@ -83,14 +86,14 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
         stream: _repo.getDistrictsStream(widget.city.id),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(child: Text('خطأ: ${snapshot.error}'));
+            return Center(child: Text(l10n.errorX(snapshot.error.toString())));
           }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
           final districts = snapshot.data!;
           if (districts.isEmpty) {
-            return const Center(child: Text('لا توجد مناطق. اضغط على + لإضافة منطقة.'));
+            return Center(child: Text(l10n.noDistricts));
           }
 
           return ListView.builder(
@@ -122,14 +125,14 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (ctx) => AlertDialog(
-                              title: const Text('تأكيد الحذف'),
-                              content: Text('هل أنت متأكد من حذف ${dist.nameAr}؟'),
+                              title: Text(l10n.confirmDeleteTitle),
+                              content: Text(l10n.confirmDeleteDistrictX(dist.nameAr)),
                               actions: [
-                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancelBtn)),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
                                   onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('حذف'),
+                                  child: Text(l10n.delete),
                                 ),
                               ],
                             ),

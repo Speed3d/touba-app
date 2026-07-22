@@ -1,8 +1,8 @@
 import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
-import '../../../app/theme/app_colors.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:intl/intl.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
@@ -10,6 +10,7 @@ import '../../../data/models/chat_model.dart';
 import '../../../data/repositories/chat_repository.dart';
 import '../../../app/router/tooba_route.dart';
 import 'chat_screen.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: قائمة محادثات المستخدم (بثّ حيّ، مرتّبة بآخر رسالة) — كل عنصر يفتح
 /// المحادثة. شارة عدد غير المقروء لكل محادثة.
@@ -23,7 +24,7 @@ class ChatsListScreen extends StatelessWidget {
     final repo = context.read<ChatRepository>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('محادثاتي'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.myChatsTitle), centerTitle: true),
       body: uid == null
           ? _visitorView(context)
           : StreamBuilder<List<ChatModel>>(
@@ -41,10 +42,10 @@ class ChatsListScreen extends StatelessWidget {
                         Icon(Icons.forum_outlined,
                             size: 56, color: Colors.grey.shade400),
                         const SizedBox(height: 8),
-                        Text('لا توجد محادثات بعد',
+                        Text(AppLocalizations.of(context)!.noChatsYet,
                             style: TextStyle(color: Colors.grey[600])),
                         const SizedBox(height: 4),
-                        Text('تُفتح المحادثة عند قبول تحدٍّ بين فريقين',
+                        Text(AppLocalizations.of(context)!.chatOpensWhenChallengeAccepted,
                             style: TextStyle(
                                 fontSize: 12, color: Colors.grey[500])),
                       ],
@@ -73,17 +74,17 @@ class ChatsListScreen extends StatelessWidget {
           children: [
             Icon(Icons.forum_outlined, size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 12),
-            const Text('سجّل الدخول لعرض محادثاتك',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(AppLocalizations.of(context)!.loginToViewYourChats,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 6),
-            Text('المحادثات تُفتح بين كباتن الفرق عند قبول تحدٍّ',
+            Text(AppLocalizations.of(context)!.chatsOpenBetweenCaptainsWhenChallengeAccepted,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 12, color: Colors.grey[600])),
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () => context.read<AuthCubit>().logout(),
               icon: const Icon(Icons.login),
-              label: const Text('تسجيل الدخول / إنشاء حساب'),
+              label: Text(AppLocalizations.of(context)!.loginOrCreateAccountBtn),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
@@ -118,7 +119,7 @@ class ChatsListScreen extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(chat.lastMessage ?? 'بدء المحادثة',
+      subtitle: Text(chat.lastMessage ?? AppLocalizations.of(context)!.startConversation,
           maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,

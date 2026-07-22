@@ -29,7 +29,35 @@
   "email": "البريد الإلكتروني",
   "phone": "رقم الهاتف",
   "password": "كلمة المرور",
+  "welcomeToTooba": "مرحباً بك في طوبة",
+  "signInToContinue": "سجل دخولك للمتابعة",
+  "pleaseEnterEmail": "يرجى إدخال البريد الإلكتروني",
+  "invalidEmail": "البريد الإلكتروني غير صالح",
+  "pleaseEnterPassword": "يرجى إدخال كلمة المرور",
+  "forgotPasswordQ": "نسيت كلمة المرور؟",
+  "dontHaveAccount": "ليس لديك حساب؟",
+  "createNewAccount": "إنشاء حساب جديد",
+  "continueAsVisitor": "تخطي والمتابعة كزائر",
+  "joinToobaCommunity": "انضم إلى مجتمع طوبة",
+  "registerNowStartJourney": "سجل الآن وابدأ رحلتك الكروية معنا",
+  "pleaseEnterName": "يرجى إدخال اسمك",
+  "pleaseEnterPhone": "يرجى إدخال رقم الهاتف",
+  "phoneTooShort": "رقم الهاتف قصير جداً",
+  "passwordTooShort": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+  "accountType": "نوع الحساب:",
+  "rolePlayer": "لاعب (البحث عن فرق ومباريات)",
+  "roleCaptain": "كابتن (إنشاء وإدارة فريق)",
+  "roleReferee": "حكم (إدارة المباريات)",
+  "registerAccount": "تسجيل الحساب",
+  "resetPasswordTitle": "استعادة كلمة المرور",
+  "resetPasswordSent": "تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني إذا كان مسجلاً لدينا.",
+  "enterEmailToReset": "أدخل بريدك الإلكتروني المسجل أدناه وسنرسل لك رابطاً لإنشاء كلمة مرور جديدة.",
+  "sendLink": "إرسال الرابط",
+  "havingTroubleResetting": "هل تواجه مشكلة؟ لا تعرف كيف تستعيد الحساب؟",
+  "contactAdminComingSoon": "سيتم تفعيل هذه الميزة قريباً لفتح المحادثة مع الإدارة.",
+  "contactAdmin": "تواصل مع الإدارة",
   "fullName": "الاسم الكامل",
+  "name": "الاسم",
   "editProfile": "تعديل الملف الشخصي",
   "deleteAccount": "حذف الحساب",
   "deleteAccountConfirm": "سيتم حذف حسابك وبياناتك الشخصية نهائياً ولا يمكن التراجع.",
@@ -103,14 +131,1640 @@
   "language": "اللغة",
   "arabic": "العربية",
   "english": "English",
+  "kurdish": "كوردي",
   "appVersion": "إصدار التطبيق",
   "privacyPolicy": "سياسة الخصوصية",
   "termsConditions": "الشروط والأحكام",
+  "toubaFootball": "TOUBA FOOTBALL",
+  "iraqiAmateurFootballPlatform": "منصة كرة القدم الشعبية العراقية",
+  "mySubscription": "اشتراكي",
+  "activeFreeTrial": "تجربة مجانية فعّالة",
+  "activeSubscriber": "مشترك فعّال",
+  "notSubscribedActivate": "غير مشترك — فعّل للتحدّيات",
+  "myRefereeMatches": "مبارياتي كحكم",
+  "assignedMatches": "المباريات المعيّن لها",
+  "myRefereeProfile": "صفحتي كحكم",
+  "publicProfileAndEdit": "الصفحة العامة + تعديل بياناتي",
+  "appearance": "المظهر",
+  "aboutAppAndPolicies": "عن التطبيق والسياسات",
+  "account": "الحساب",
+  "deleteAccountSub": "حذف نهائي لحسابك وبياناتك الشخصية",
+  "youAreVisitor": "أنت مسجّل كزائر",
+  "generalError": "حدث خطأ غير متوقع",
+  "toobaPlatform": "منصة طوبة ⚽",
+  "teamCaptain": "كابتن فريق",
+  "platformAdmin": "مدير المنصة",
+  "player": "لاعب",
+  "captainOfTeam": "كابتن فريق ",
+  "captainNoTeam": "كابتن (بلا فريق)",
+  "playerWithTeam": "لاعب مع فريق ",
+  "playerNoTeam": "لاعب (بلا فريق)",
+  "profileAndPlayerDetails": "الملف الشخصي وتفاصيل اللاعب",
+  "viewAndEditData": "عرض وتعديل بياناتك",
+  "registeredAsVisitor": "أنت مسجّل كزائر",
+  "loginOrRegister": "تسجيل الدخول / إنشاء حساب",
+  "confirmLogoutMsg": "هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟",
+  "deleteAccountPermanently": "حذف الحساب نهائياً",
+  "deleteAccountPermanentlyMsg": "سيتم حذف حسابك وبياناتك الشخصية نهائياً ولا يمكن التراجع.\n\nملاحظة: إن كنت كابتن فريق، احذف فريقك أو انقل الكابتنية أولاً.",
+  "deletingAccount": "جارٍ حذف الحساب...",
+  "accountDeleted": "تم حذف حسابك",
+  "permanentDelete": "حذف نهائي",
+  "captainDeleteError": "أنت كابتن فريق — احذف فريقك أو انقل الكابتنية أولاً.",
+  "deleteAccountError": "تعذّر حذف الحساب — حاول مرة أخرى لاحقاً.",
+  
+  "skip": "تخطّي",
+  "formYourTeam": "كوّن فريقك",
+  "formYourTeamDesc": "سجّل فريقك، أضف لاعبيك، وأدِر تشكيلتك من مكان واحد.",
+  "organizeTournaments": "نظّم بطولاتك",
+  "organizeTournamentsDesc": "دوريات وبطولات بجدول تلقائي وترتيب حيّ يتحدّث مع كل نتيجة.",
+  "trackStats": "تابع إحصائياتك",
+  "trackStatsDesc": "أهداف، صناعة، بطاقات، وبطاقة لاعب لكل عضو — محسوبة آلياً.",
+  "startNow": "ابدأ الآن",
+  "next": "التالي",
+
+  "navHome": "الرئيسية",
+  "navTeam": "الفريق",
+  "navChats": "المحادثات",
+
+  "visitor": "زائر",
+  "welcomeUser": "أهلاً بك، {userName}",
+  "@welcomeUser": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "matches": "المباريات",
+  "tournaments": "البطولات",
+  "news": "الأخبار",
+  "myCard": "بطاقتي",
+  "mustLoginFirst": "يجب تسجيل الدخول أولاً",
+  "noPlayerCardCurrently": "لا تملك بطاقة لاعب حالياً",
+  "playerNotFound": "اللاعب غير موجود",
+  "errorFetchingCard": "حدث خطأ أثناء جلب البطاقة",
+  "urgent": "عاجل",
+  "ongoingTournaments": "🏆 البطولات الجارية",
+  "viewAll": "عرض الكل ›",
+
+  "baghdadMajorTournament": "بطولة بغداد الكبرى",
+  "localYouthLeague": "دوري الشباب المحلي",
+  "round3of4_8teams": "الجولة ٣ من ٤ · ٨ فرق",
+  "round1of6_6teams": "الجولة ١ من ٦ · ٦ فرق",
+  "ongoing": "جارية",
+  "comingSoon": "قريباً",
+
+  "latestNews": "آخر الأخبار",
+  "noNewsCurrently": "لا توجد أخبار حالياً",
+  "loginToLike": "سجّل الدخول لتتمكن من الإعجاب",
+  "errorLiking": "حدث خطأ أثناء الإعجاب",
+  "viaToobaApp": "عبر تطبيق طوبة للمحترفين",
+  "featured": "الأبرز",
+  "justNow": "الآن",
+  "minutesAgo": "منذ {count} دقيقة",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "oneHourAgo": "منذ 1 ساعة",
+  "hoursAgo": "منذ {count} ساعات",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "oneDayAgo": "منذ 1 يوم",
+  "daysAgo": "منذ {count} أيام",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "likeCount": "إعجاب ({count})",
+  "@likeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareCount": "مشاركة ({count})",
+  "@shareCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorOpeningLink": "تعذّر فتح الرابط",
+  "bannerDetails": "تفاصيل الإعلان",
+  "contactCall": "اتصال",
+  "contactWhatsapp": "واتساب",
+  "contactFacebook": "فيسبوك",
+  "contactInstagram": "إنستغرام",
+  "contactWebsite": "الموقع",
+  "notifications": "الإشعارات",
+  "readAll": "قراءة الكل",
+  "errorPrefix": "خطأ: {message}",
+  "@errorPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noNotificationsYet": "لا توجد إشعارات بعد",
+  "challengeChat": "محادثة التحدّي",
+  "yesterday": "أمس",
+
+  "chooseReadyAvatar": "اختيار أفاتار جاهز",
+  "chooseFromGallery": "اختيار من المعرض",
+  "takePhoto": "التقاط صورة",
+  "chooseReadyImage": "اختيار صورة جاهزة",
+  "chooseYourAvatar": "اختر الأفاتار الذي يناسبك",
+  "confirmImage": "اعتماد الصورة",
+
+  "footRight": "يمنى",
+  "footLeft": "يسرى",
+  "footBoth": "كلتاهما",
+  "failedToLoadPlayer": "تعذّر تحميل بيانات اللاعب",
+  "chooseBirthDate": "اختر تاريخ الميلاد",
+  "detailsSaved": "تم حفظ تفاصيلك",
+  "failedToSaveDetails": "تعذّر حفظ التفاصيل",
+  "playerDetails": "تفاصيل اللاعب",
+  "preferredFoot": "القدم المفضّلة",
+  "heightCm": "الطول (سم)",
+  "weightKg": "الوزن (كغم)",
+  "birthDate": "تاريخ الميلاد",
+  "notSpecified": "غير محدد",
+  "ageYears": "العمر {age} سنة",
+  "@ageYears": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "bioTitle": "نبذة عنك",
+  "bioHint": "اكتب نبذة مختصرة عن أسلوب لعبك...",
+  "yourGallery": "معرض صورك ({count}/{max})",
+  "@yourGallery": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "saveDetails": "حفظ التفاصيل",
+
+  "referee": "حكم",
+  "refereeProfile": "صفحة الحكم",
+  "editMyData": "تعديل بياناتي",
+  "matchesManaged": "مباريات أدارها",
+  "averageRating": "متوسط التقييم",
+  "bioLabel": "نبذة",
+  "matchesList": "المباريات",
+  "noMatchesManaged": "لم يُدِر أي مباراة بعد",
+  "matchLive": "مباشر",
+  "city": "المدينة",
+  "bioExperience": "نبذة/خبرة",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "dataSavedSuccessfully": "تم حفظ بياناتك",
+  "failedToSave": "تعذّر الحفظ",
+
+  "matchesTab": "مباريات",
+  "tournamentsTab": "بطولات",
+  "liveTab": "مباشر",
+  "upcomingTab": "قادمة",
+  "finishedTab": "منتهية",
+  "failedToLoadTournaments": "تعذّر تحميل البطولات",
+  "noTournaments": "لا توجد بطولات",
+  "noTournamentsFound": "لم يتم العثور على أي بطولات حالياً",
+  "ongoingTournaments": "بطولات جارية",
+  "upcomingTournaments": "بطولات قادمة",
+  "finishedTournaments": "بطولات منتهية",
+  "statusFinished": "منتهية",
+  "statusOngoing": "جارية",
+  "teamsCountText": "{count} فريق",
+  "@teamsCountText": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMatchesFound": "لا توجد مباريات",
+  "errorTitle": "خطأ",
+
+  "matchDetails": "تفاصيل المباراة",
+  "detailsTab": "التفاصيل",
+  "formationsTab": "تشكيلة الفريقين",
+  "roundX": "الجولة {round}",
+  "@roundX": {
+    "placeholders": {
+      "round": {
+        "type": "String"
+      }
+    }
+  },
+  "refereeNameX": "الحكم: {name}",
+  "@refereeNameX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "halfX": "ش{half}",
+  "@halfX": {
+    "placeholders": {
+      "half": {
+        "type": "String"
+      }
+    }
+  },
+  "startMatch": "بدأ المباراة",
+  "liveMatchControl": "تحكّم المباراة الحيّة",
+  "endHalfX": "انتهاء الشوط {half}",
+  "@endHalfX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "startHalfX": "بدأ الشوط {half}",
+  "@startHalfX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "endAndConfirmResult": "إنهاء وتأكيد النتيجة",
+  "confirmHalfResultX": "تأكيد نتيجة الشوط {half}",
+  "@confirmHalfResultX": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "halfResultText": "نتيجة الشوط {half}: {homeName} {homeScore} - {awayScore} {awayName}",
+  "@halfResultText": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      },
+      "homeName": {
+        "type": "String"
+      },
+      "homeScore": {
+        "type": "int"
+      },
+      "awayScore": {
+        "type": "int"
+      },
+      "awayName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirm": "تأكيد",
+  "matchInProgress": "المباراة جارية الآن",
+  "matchNotStarted": "لم تبدأ المباراة بعد",
+  "ratedThisReferee": "قيّمت هذا الحكم",
+  "rateRefereePerformance": "قيّم أداء الحكم",
+  "loginToRate": "سجّل الدخول للتقييم",
+  "rateReferee": "تقييم الحكم",
+  "send": "إرسال",
+  "thanksForRating": "شكراً لتقييمك!",
+  "failedToSendRating": "تعذّر إرسال التقييم",
+  "formationForThisMatch": "تشكيلة هذه المباراة",
+  "formationWithPlan": "تشكيلة هذه المباراة • خطة {plan}",
+  "@formationWithPlan": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "currentTeamFormationNotSaved": "التشكيلة الحالية للفريق (لم تُحفظ بعد لهذه المباراة)",
+  "shareFormation": "مشاركة التشكيلة",
+  "formationOfTeam": "تشكيلة {teamName}",
+  "@formationOfTeam": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "planX": "خطة {plan}",
+  "@planX": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "noEventsRecorded": "لم تُسجَّل أحداث لهذه المباراة",
+  "versus": "ضد",
+  "actionFailed": "تعذّر تنفيذ الإجراء",
+
+  "playerCard": "بطاقة اللاعب",
+  "loginFirst": "يجب تسجيل الدخول أولاً",
+  "reportThisPlayer": "بلّغ عن هذا اللاعب",
+  "verifiedAccount": "حساب موثّق",
+  "technicalDetails": "التفاصيل الفنية",
+  "preferredFoot": "القدم المفضّلة",
+  "age": "العمر",
+  "height": "الطول",
+  "weight": "الوزن",
+  "status": "الحالة",
+  "yearsOldX": "{years} سنة",
+  "@yearsOldX": {
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "cmX": "{cm} سم",
+  "@cmX": {
+    "placeholders": {
+      "cm": {
+        "type": "String"
+      }
+    }
+  },
+  "kgX": "{kg} كجم",
+  "@kgX": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "footLeft": "يسرى",
+  "footRight": "يمنى",
+  "footBoth": "كلتاهما",
+  "statusInjured": "مصاب",
+  "statusSuspended": "موقوف",
+  "statusActive": "نشط",
+  "gallery": "معرض الصور",
+
+  "myRefereeMatches": "مبارياتي كحكم",
+  "noMatchesAssignedToYou": "لا توجد مباريات معيّنة لك",
+  "tournamentOrganizerAssignsMatches": "يعيّنك منظّم البطولة على المباريات",
+  "unspecifiedDate": "موعد غير محدد",
+  "tournamentScheme": "مخطط البطولة",
+  "standingsTable": "جدول الترتيب",
+  "knockoutTreeUpToCup": "شجرة المواجهات حتى الكأس",
+  "teamsRankingAndPoints": "ترتيب الفرق ونقاطها",
+  "liveMatchesTab": "جارية",
+  "upcomingMatchesTab": "قادمة",
+  "finishedMatchesTab": "انتهت",
+  "failedToLoadMatches": "تعذّر تحميل المباريات",
+  "noLiveMatchesNow": "لا توجد مباريات جارية الآن",
+  "noUpcomingMatches": "لا توجد مباريات قادمة",
+  "noFinishedMatches": "لا توجد مباريات منتهية",
+  "today": "اليوم",
+  "tomorrow": "غداً",
+  "todayAtTime": "اليوم {time}",
+  "@todayAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tomorrowAtTime": "غداً {time}",
+  "@tomorrowAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+
+  "userNotRegistered": "المستخدم غير مسجّل",
+  
+  "teamsTitle": "الفرق",
+  "myTeamTab": "فريقي",
+  "popularTeamsTab": "الفرق الشعبية",
+  "createTeam": "تأسيس فريق",
+  "yourPitchAwaits": "ملعبك ينتظرك",
+  "dontHaveTeamYet": "ليس لديك فريق بعد؟",
+  "createTeamSubtitleCaptain": "أسّس فريقك وانضم للبطولات المحلية\nفي منطقتك الآن",
+  "joinExistingTeamSubtitle": "انضم إلى فريق موجود وانطلق نحو\nالبطولات المحلية",
+  "createYourTeamNow": "⚽ أسّس فريقك الآن",
+  "joinExistingTeamBtn": "انضم إلى فريق موجود",
+  "playerCountX": "{count} لاعب",
+  "@playerCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "manageTeam": "إدارة الفريق",
+  "viewTeam": "عرض الفريق",
+  "challengesTab": "التحديات",
+  "roster": "التشكيلة",
+  "playerNotFound": "اللاعب غير موجود",
+  "yourExitRequestPending": "طلب خروجك قيد مراجعة الكابتن",
+  "yourRequestEscalated": "طلبك مُصعّد للإدارة — بانتظار القرار",
+  "captainRejectedYourRequest": "رفض كابتنك طلب الخروج",
+  "escalateRequestToAdmin": "تصعيد الطلب للإدارة",
+  "requestEscalatedSuccess": "تم تصعيد طلبك للإدارة",
+  "failedToEscalate": "تعذّر التصعيد",
+  "searchForTeam": "ابحث عن فريق...",
+  "failedToLoadTeams": "تعذّر تحميل الفرق",
+  "noTeamsRegisteredYet": "لا توجد فرق مسجّلة بعد",
+  "noTeamsRegisteredInPlatform": "لم يُسجَّل أي فريق في المنصة بعد",
+  "noResultsFound": "لا توجد نتائج",
+  "noTeamMatchesX": "لا يوجد فريق يطابق \"{query}\"",
+  "@noTeamMatchesX": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "otherTeamsLabel": "فرق أخرى",
+  "noOtherTeamsYet": "لا توجد فرق أخرى بعد",
+  "playedCount": "لعب",
+  "winsCount": "فاز",
+  "tournamentsCount": "بطولات",
+  "cityAndAreaX": "{city} • {area}",
+  "@cityAndAreaX": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseSelectCity": "يرجى اختيار المدينة",
+  "selectTwoTeamsAtLeast": "اختر فريقين على الأقل",
+  "teamHasNotEnoughStarters": "فريق «{team}» يملك {starters} أساسيين فقط — المطلوب {format}",
+  "@teamHasNotEnoughStarters": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "starters": {
+        "type": "String"
+      },
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToValidateTeamLineups": "تعذّر التحقّق من تشكيلات الفرق",
+  "chooseFromGallery": "اختيار من المعرض",
+  "takePhoto": "التقاط صورة",
+  "tournamentStartDateHelp": "موعد بداية البطولة",
+  "tournamentCreatedAndScheduleGenerated": "تم إنشاء البطولة وتوليد الجدول!",
+  "createTournamentTitle": "إنشاء بطولة",
+  "tournamentImageOptional": "صورة البطولة (اختياري)",
+  "tournamentNameInputLabel": "اسم البطولة",
+  "pleaseEnterTournamentName": "يرجى إدخال اسم البطولة",
+  "tournamentStartDateOptional": "موعد بداية البطولة (اختياري)",
+  "systemWillScheduleMatches": "يُجدول النظام المباريات تلقائياً",
+  "schedulingMode": "نمط الجدولة",
+  "intervalBetweenRounds": "فاصل بين الجولات",
+  "fixedDailyTime": "توقيت يومي ثابت",
+  "roundsIntervalLabel": "الفاصل بين الجولات",
+  "daily": "يومياً",
+  "everyThreeDays": "كل 3 أيام",
+  "weekly": "أسبوعياً",
+  "everyTwoWeeks": "كل أسبوعين",
+  "matchesPerDay": "عدد المباريات في اليوم",
+  "oneMatch": "مباراة واحدة",
+  "twoMatches": "مباراتان",
+  "threeMatches": "ثلاث مباريات",
+  "intervalBetweenDailyMatches": "الفاصل بين مباريات اليوم",
+  "oneHour": "ساعة",
+  "oneAndHalfHours": "ساعة ونصف",
+  "twoHours": "ساعتان",
+  "halfDuration": "مدّة الشوط",
+  "thirtyMinutes": "30 دقيقة",
+  "fortyFiveMinutes": "45 دقيقة",
+  "halvesCount": "عدد الأشواط",
+  "oneHalf": "شوط واحد",
+  "twoHalves": "شوطان",
+  "cityLabel": "المدينة",
+  "tournamentSystem": "نظام البطولة",
+  "leagueSystem": "دوري (League)",
+  "knockoutSystem": "خروج المغلوب (Knockout)",
+  "groupsSystem": "مجموعات (Groups)",
+  "startersCount": "عدد اللاعبين الأساسيين",
+  "sixASide": "سداسي (6 لاعبين)",
+  "eightASide": "ثماني (8 لاعبين)",
+  "elevenASide": "11 لاعب",
+  "homeAndAwaySystem": "نظام الذهاب والإياب",
+  "homeAndAwaySubtitle": "تُلعب كل مواجهة مرتين",
+  "freeTournamentOption": "بطولة مجانية",
+  "freeTournamentSubtitle": "يستطيع الأدمن إضافة أي فريق",
+  "paidTournamentSubtitle": "باشتراك — يُضاف الفريق بعد دفع الرسوم",
+  "entryFeesOrContact": "رسوم/تواصل الدخول (يُعرض على البطولة)",
+  "knockoutGenerationMethod": "طريقة توليد المباريات الإقصائية",
+  "generateFullTree": "توليد كامل الشجرة مقدماً (TBD)",
+  "generateRoundByRound": "توليد جولة بجولة",
+  "groupsCountLabel": "عدد المجموعات",
+  "qualifiersPerGroup": "المتأهّلون من كل مجموعة",
+  "firstOnly": "الأول فقط",
+  "firstAndSecond": "الأول والثاني",
+  "firstSecondThird": "الأول والثاني والثالث",
+  "tieBreakRules": "حسم التعادل (الأدوار الإقصائية)",
+  "extraTimeThenPenalties": "أشواط إضافية ثم جزاءات",
+  "straightToPenalties": "جزاءات مباشرة",
+  "participatingTeamsCountX": "الفرق المشاركة ({count})",
+  "@participatingTeamsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "noTeamsYetCreateFirst": "لا توجد فرق بعد — أنشئ فرقاً أولاً من تبويب الفرق",
+  "cityAndCaptainX": "{city} • كابتن: {name}",
+  "@cityAndCaptainX": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "refereesCountX": "الحكّام ({count})",
+  "@refereesCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "systemDistributesRefereesRandomly": "يوزّعهم النظام عشوائياً على المباريات دون تكرار حكم بنفس الموعد.",
+  "noRefereesAdminMustGrant": "لا يوجد حكّام — يمنح الأدمن صفة الحكم للمستخدمين",
+  "createTournamentAndGenerateScheduleBtn": "إنشاء البطولة وتوليد الجدول",
+
+  "selectAdvancedTeamNoDrawInKnockout": "حدّد الفريق المتأهّل (لا يجوز تعادل في دور إقصائي)",
+  "enterResultTitle": "إدخال النتيجة",
+  "saveAndConfirmResultBtn": "حفظ وتأكيد النتيجة",
+  "resultCalculatedAutomatically": "النتيجة تُحسب تلقائياً من الأهداف. قاعدة: إنذاران = طرد.",
+  "tieBreakKnockoutStage": "حسم التعادل (دور إقصائي)",
+  "tieBreakMethod": "طريقة الحسم:",
+  "penaltyShootoutOptional": "ركلات الترجيح (اختياري):",
+  "advancedTeamToNextRound": "الفريق المتأهّل للدور التالي:",
+  "noPlayersRegisteredInTeam": "لا لاعبون مسجّلون في هذا الفريق",
+  "goalEvent": "هدف",
+  "assistEvent": "صناعة",
+  "yellowCardEvent": "إنذار",
+  "redCardEvent": "طرد",
+  "penaltyEvent": "ركلة جزاء",
+  "ownGoalEvent": "هدف بالخطأ",
+  "injuryEvent": "إصابة",
+
+  "tournamentDetailsTitle": "تفاصيل البطولة",
+  "noMatches": "لا توجد مباريات",
+
+  "selectPlayerForSlotX": "اختر لاعب الخانة {slot}",
+  "@selectPlayerForSlotX": {
+    "placeholders": {
+      "slot": { "type": "String" }
+    }
+  },
+  "removePlayerFromSlot": "إزالة اللاعب من هذه الخانة",
+  "assignedToAnotherSlot": " • معيّن في خانة أخرى",
+  "chooseFormation": "اختر الخطة (حارس-دفاع-وسط-هجوم)",
+  "customFormation": "خطة مخصّصة",
+  "customFormationGoalieFixed": "خطة مخصّصة (الحارس ثابت)",
+  "defenders": "المدافعون",
+  "attackers": "الهجوم",
+  "midfieldAndTotalX": "خط الوسط: {mid}  •  المجموع: {total}",
+  "@midfieldAndTotalX": {
+    "placeholders": {
+      "mid": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "applyFormationBtn": "اعتماد الخطة",
+  "assignPlayerToEverySlot": "عيّن لاعباً لكل خانة في التشكيلة",
+  "failedToDetermineCaptain": "تعذّر تحديد الكابتن",
+  "lineupSentForReview": "أُرسلت التشكيلة لمراجعة المنظّم",
+  "failedToSendLineup": "تعذّر إرسال التشكيلة",
+  "tournamentLineupTitle": "تشكيلة البطولة",
+  "formationLabel": "الخطة",
+  "changeFormationBtn": "تغيير",
+  "tapCircleToAssignPlayer": "اضغط أي دائرة على الملعب لتعيين لاعبها",
+  "subsCountX": "الاحتياط ({count})",
+  "@subsCountX": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "sendingBtn": "جارٍ الإرسال...",
+  "sendForReviewBtn": "إرسال للمراجعة",
+  "lineupApproved": "تشكيلتك مقبولة",
+  "lineupRejectedWithNote": "رُفضت تشكيلتك — {note}",
+  "@lineupRejectedWithNote": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "lineupRejected": "رُفضت تشكيلتك",
+  "lineupPendingReview": "تشكيلتك قيد المراجعة",
+  "allPlayersAssignedAsStarters": "كل اللاعبين معيّنون كأساسيين",
+
+  "failedToOpenPlayerProfile": "تعذّر فتح صفحة اللاعب",
+  "lineupApprovedMsg": "قُبلت التشكيلة",
+  "lineupRejectedMsg": "رُفضت التشكيلة",
+  "failedToUpdateStatus": "تعذّر تحديث الحالة",
+  "rejectionReasonOptional": "سبب الرفض (اختياري)",
+  "rejectionReasonExample": "مثال: نقص في عدد الأساسيين",
+  "rejectLineupBtn": "رفض التشكيلة",
+  "reviewLineupsTitle": "مراجعة التشكيلات",
+  "noLineupsSentYet": "لا توجد تشكيلات مُرسَلة بعد",
+  "lineupsWillAppearHereWhenSent": "ستظهر هنا تشكيلات الكباتن عند إرسالها",
+  "approvedStatus": "مقبولة",
+  "rejectedStatus": "مرفوضة",
+  "pendingReviewStatus": "قيد المراجعة",
+  "formationX": "الخطة: {formation}",
+  "@formationX": {
+    "placeholders": {
+      "formation": { "type": "String" }
+    }
+  },
+  "subsLabel": "الاحتياط:",
+  "yourNoteX": "ملاحظتك: {note}",
+  "@yourNoteX": {
+    "placeholders": {
+      "note": { "type": "String" }
+    }
+  },
+  "acceptBtn": "قبول",
+  "rejectBtn": "رفض",
+  "changeDecisionBtn": "تغيير القرار",
+
+  "failedToUploadBannerImage": "تعذّر رفع صورة البانر",
+  "failedToUploadSponsorLogo": "تعذّر رفع لوغو الداعم",
+  "sponsorNameTitle": "اسم الداعم",
+  "sponsorNameExample": "مثال: شركة الراعي",
+  "addBtn": "إضافة",
+  "failedToSaveChanges": "تعذّر حفظ التعديلات",
+  "editRulesAndSponsorsTitle": "تعديل الشروط والداعمين",
+  "rulesAndTermsLabel": "الشروط والقوانين",
+  "writeRulesAndTermsHere": "اكتب شروط وقوانين البطولة هنا…",
+  "adBannersSection": "بانر الإعلانات",
+  "sponsorsSection": "الداعمون",
+  "imageLabel": "صورة",
+  "sponsorLabel": "داعم",
+
+  "standingsTableTitle": "جدول الترتيب",
+  "knockoutStageLabel": "المرحلة الإقصائية",
+  "bracketNotGeneratedYet": "لم تُولَّد الشجرة بعد",
+
+  "reportSentSuccess": "تم إرسال البلاغ — سيراجعه الفريق قريباً",
+  "reportSentFailed": "تعذّر إرسال البلاغ — حاول مرة أخرى",
+  "submitReportTitle": "تقديم بلاغ",
+  "reportAboutTarget": "بلاغ عن {label}",
+  "@reportAboutTarget": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "reportReasonLabel": "سبب البلاغ",
+  "problemDescriptionOptional": "وصف المشكلة (اختياري)",
+  "explainProblemInDetailHint": "اشرح المشكلة بتفاصيل أكثر...",
+  "falseReportsWarning": "ملاحظة: البلاغات الكاذبة أو التافهة قد تؤدي إلى تقييد حسابك.",
+  "submitReportBtn": "إرسال البلاغ",
+
+  "offensiveContentLabel": "محتوى مسيء",
+  "inappropriateBehaviorLabel": "سلوك غير لائق",
+  "misleadingInfoLabel": "معلومات مضلّلة",
+  "otherReasonLabel": "أخرى",
+  "playerLabel": "لاعب",
+  "teamLabel": "فريق",
+  "userLabel": "مستخدم",
+
+  "lastUpdatedDate": "آخر تحديث: {date}",
+  "@lastUpdatedDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "toubaPlatform": "منصة طوبة ⚽",
+
+  "privacyPolicyTitle": "سياسة الخصوصية",
+  "privacyPolicyIntro": "تحترم منصة «طوبة» خصوصيتك. توضّح هذه السياسة أنواع البيانات التي نجمعها، وكيف نستخدمها ونحميها عند استخدامك للتطبيق. باستخدامك «طوبة» فإنك توافق على ما ورد في هذه السياسة.",
+  "ppSec1Title": "1. البيانات التي نجمعها",
+  "ppSec1Body": "عند إنشاء حساب نجمع: الاسم، البريد الإلكتروني، رقم الهاتف، وصورة الملف الشخصي (اختيارية). عند ارتباطك بسجل لاعب أو فريق قد تُحفظ بياناتك الكروية (المركز، الرقم، الفريق) وإحصائياتك (الأهداف، الصناعة، البطاقات) التي يُنشئها النظام من نتائج المباريات. كما نجمع تلقائياً بيانات استخدام وتحليلات وتقارير أعطال عبر خدمات Google Firebase لتحسين أداء التطبيق.",
+  "ppSec2Title": "2. كيف نستخدم بياناتك",
+  "ppSec2Body": "نستخدم بياناتك لتشغيل حسابك، وإدارة الفرق والبطولات والمباريات، وعرض بطاقتك وإحصائياتك، والتواصل معك عند الحاجة، وإرسال إشعارات متعلقة بنشاطك (مثل قبول طلب انضمام أو نتيجة مباراة)، وتحسين الخدمة وحمايتها من إساءة الاستخدام.",
+  "ppSec3Title": "3. مشاركة البيانات",
+  "ppSec3Body": "لا نبيع بياناتك الشخصية لأي طرف. تُعالَج بعض البيانات لدى مزوّدي الخدمة (Google Firebase للاستضافة والمصادقة والتحليلات). تظهر بعض المعلومات علناً داخل التطبيق بطبيعتها (اسم الفريق، اسم اللاعب، الإحصائيات، الترتيب). لا يُعرض رقم هاتف مسؤول الفريق علناً.",
+  "ppSec4Title": "4. حقوقك والتحكم ببياناتك",
+  "ppSec4Body": "يمكنك تعديل بيانات ملفك الشخصي في أي وقت من شاشة «تعديل الملف». كما يمكنك حذف حسابك نهائياً من إعدادات الحساب؛ عند الحذف تُزال بياناتك الشخصية المرتبطة بالحساب وفق ما يسمح به القانون.",
+  "ppSec5Title": "5. أمن البيانات والاحتفاظ بها",
+  "ppSec5Body": "نتّخذ إجراءات تقنية لحماية بياناتك (قواعد أمان على الخادم، التحقق من سلامة الطلبات عبر App Check). نحتفظ ببياناتك طالما حسابك فعّال أو بالقدر اللازم لتقديم الخدمة والالتزام بالأنظمة.",
+  "ppSec6Title": "6. الأطفال",
+  "ppSec6Body": "التطبيق غير موجّه للأطفال دون 13 عاماً، ولا نجمع بياناتهم عن قصد. إن تبيّن خلاف ذلك، نحذف البيانات فور علمنا.",
+  "ppSec7Title": "7. تغييرات على هذه السياسة",
+  "ppSec7Body": "قد نحدّث هذه السياسة من حين لآخر، وسننشر النسخة المحدّثة داخل التطبيق مع تحديث تاريخ «آخر تحديث» أعلاه.",
+  "ppSec8Title": "8. التواصل",
+  "ppSec8Body": "لأي استفسار حول الخصوصية، تواصل معنا عبر: senanxsh@gmail.com",
+
+  "termsConditionsTitle": "الشروط والأحكام",
+  "termsIntro": "مرحباً بك في «طوبة». باستخدامك للتطبيق فإنك توافق على هذه الشروط والأحكام. يُرجى قراءتها بعناية.",
+  "tcSec1Title": "1. طبيعة الخدمة",
+  "tcSec1Body": "«طوبة» منصة لتنظيم كرة القدم الشعبية والهواة: إنشاء الفرق، إدارة اللاعبين، تنظيم البطولات والمباريات، وعرض الترتيب والإحصائيات.",
+  "tcSec2Title": "2. الحساب ومسؤوليتك",
+  "tcSec2Body": "أنت مسؤول عن دقة بياناتك وعن الحفاظ على سرّية حسابك وكل ما يجري تحته. يجب أن تكون البيانات التي تدخلها صحيحة وغير منتحلة لهوية الغير.",
+  "tcSec3Title": "3. الأدوار والصلاحيات",
+  "tcSec3Body": "يدير الكابتن فريقه ولاعبيه. تُمنح صلاحيات تنظيم البطولات وتأكيد النتائج من إدارة المنصة. تأكيد نتيجة المباراة من اختصاص المنظّم حصراً، والإحصائيات يحسبها النظام تلقائياً ولا يجوز التلاعب بها.",
+  "tcSec4Title": "4. الاستخدام المقبول",
+  "tcSec4Body": "يُمنع استخدام التطبيق في أي نشاط مخالف للقانون، أو نشر محتوى مسيء أو صور غير لائقة، أو انتحال صفة الغير، أو محاولة العبث ببيانات الفرق والبطولات والإحصائيات. نحتفظ بحق إزالة المحتوى المخالف وإيقاف الحسابات المخالفة.",
+  "tcSec5Title": "5. المحتوى الذي ترفعه",
+  "tcSec5Body": "تبقى ملكية المحتوى الذي ترفعه (كالصور) لك، وتمنح المنصة ترخيصاً لعرضه داخل التطبيق لأغراض تشغيل الخدمة. أنت مسؤول عن امتلاكك حقوق ما ترفعه.",
+  "tcSec6Title": "6. البلاغات",
+  "tcSec6Body": "يمكنك الإبلاغ عن أي محتوى أو سلوك مخالف عبر أدوات الإبلاغ في التطبيق، وستراجعه الإدارة وتتخذ الإجراء المناسب.",
+  "tcSec7Title": "7. إخلاء المسؤولية",
+  "tcSec7Body": "تُقدَّم الخدمة «كما هي». نبذل جهداً لضمان دقة البيانات لكننا لا نضمن خلوها من الأخطاء، ولا نتحمّل مسؤولية أي نزاعات تنشأ بين الفرق أو اللاعبين خارج المنصة.",
+  "tcSec8Title": "8. إنهاء الخدمة",
+  "tcSec8Body": "يحق لك حذف حسابك في أي وقت. ويحق للإدارة إيقاف أو إنهاء الحسابات المخالفة لهذه الشروط.",
+  "tcSec9Title": "9. القانون المطبّق والتواصل",
+  "tcSec9Body": "تخضع هذه الشروط لأنظمة جمهورية العراق. لأي استفسار: senanxsh@gmail.com",
+
+  "adminDashboardTitle": "لوحة تحكم الإدارة",
+  "manageLocationsTitle": "إدارة المواقع",
+  "manageLocationsSubtitle": "المحافظات والمناطق المسموح باللعب فيها",
+  "manageRolesTitle": "إدارة الصلاحيات",
+  "manageRolesSubtitle": "منح ألقاب المنظمين والحكام",
+  "adminReportsTitle": "البلاغات",
+  "adminReportsSubtitle": "مراجعة البلاغات الواردة عن لاعبين وفرق",
+  "adminTournamentsTitle": "إدارة البطولات",
+  "adminTournamentsSubtitle": "تعديل الأسماء والصور والكؤوس والجوائز",
+  "adminBannersTitle": "إدارة الإعلانات",
+  "adminBannersSubtitle": "بانرات سلايدر الصفحة الرئيسية",
+  "adminNewsTitle": "إدارة الأخبار",
+  "adminNewsSubtitle": "نشر وتعديل أخبار الصفحة الرئيسية",
+  "adminRefereeApplicationsTitle": "طلبات التحكيم",
+  "adminRefereeApplicationsSubtitle": "موافقة/رفض طلبات الراغبين بالتحكيم",
+  "adminDisputesTitle": "نزاعات فكّ الارتباط",
+  "adminDisputesSubtitle": "طلبات خروج رفضها الكباتن وصعّدها اللاعبون",
+  "adminChallengesTitle": "إدارة التحديات",
+  "adminChallengesSubtitle": "إلغاء طلبات التحدّي المتروكة (بلا متقدّمين منذ أيام)",
+  "adminSectionsTitle": "إعدادات الأقسام",
+  "adminSectionsSubtitle": "إظهار/إخفاء أقسام التطبيق (مثل البطولات)",
+  "adminSubscriptionsTitle": "أكواد التفعيل",
+  "adminSubscriptionsSubtitle": "توليد أكواد الاشتراك + مدة التجربة + واتساب التفعيل",
+  "adminVerifyTeamsTitle": "توثيق الفرق",
+  "comingSoon": "قريباً...",
+
+  "activateWithCode": "تفعيل بكود",
+  "enterActivationCodePrompt": "أدخل كود التفعيل الذي حصلت عليه من الإدارة:",
+  "activationCodeHint": "TBA-XXXX-XXXX",
+  "cancelBtn": "إلغاء",
+  "activateBtn": "تفعيل",
+  "subscriptionActivatedXMonths": "تم تفعيل اشتراكك 🎉{months}",
+  "@subscriptionActivatedXMonths": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToActivate": "تعذّر التفعيل",
+  "whatsappActivationMessage": "مرحباً، أريد تفعيل اشتراك طوبة",
+  "failedToOpenWhatsapp": "تعذّر فتح واتساب",
+  "mySubscriptionTitle": "اشتراكي",
+  "contactToGetCode": "تواصل للحصول على كود",
+  "notSubscribed": "غير مشترك",
+  "subscriptionExpired": "انتهى الاشتراك",
+  "freeTrial": "تجربة مجانية",
+  "activeSubscriber": "مشترك فعّال",
+  "expiresAtDate": "ينتهي: {date}",
+  "@expiresAtDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "daysRemaining": "متبقّي {days} يوم",
+  "@daysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresToday": "ينتهي اليوم",
+  "whatDoesSubscriptionUnlock": "ماذا يفتح الاشتراك؟",
+  "benefitChallengeRequests": "طلب تحدّيات الفرق والموافقة عليها",
+  "benefitOpenChatWithOpponent": "فتح محادثة مع كابتن الفريق المنافس",
+  "benefitParticipateInTournaments": "المشاركة في البطولات (حسب نوع البطولة)",
+  "featureRequiresSubscription": "{feature} يتطلّب اشتراكاً",
+  "@featureRequiresSubscription": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "activateSubscriptionToUnlockFeatures": "فعّل اشتراكك لفتح التحدّيات والمحادثة. التفعيل بكود من الإدارة.",
+  "manageSubscriptionActivateCodeBtn": "إدارة الاشتراك / تفعيل بكود",
+  "laterBtn": "لاحقاً",
+
+  "myChatsTitle": "محادثاتي",
+  "noChatsYet": "لا توجد محادثات بعد",
+  "chatOpensWhenChallengeAccepted": "تُفتح المحادثة عند قبول تحدٍّ بين فريقين",
+  "loginToViewYourChats": "سجّل الدخول لعرض محادثاتك",
+  "chatsOpenBetweenCaptainsWhenChallengeAccepted": "المحادثات تُفتح بين كباتن الفرق عند قبول تحدٍّ",
+  "loginOrCreateAccountBtn": "تسجيل الدخول / إنشاء حساب",
+  "startConversation": "بدء المحادثة",
+  "typeMessageHint": "اكتب رسالة…",
+
+  "requestChallengeWithTeam": "نطلب تحدّي فريق {team}",
+  "@requestChallengeWithTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFirstToProceed": "سجّل الدخول أولاً",
+  "youDoNotHaveATeamToRequestChallenge": "لا تملك فريقاً لإرسال تحدٍّ باسمه",
+  "failedToLoadYourTeamData": "تعذّر تحميل بيانات فريقك",
+  "youAlreadyHaveOpenRequestEditIt": "لديك طلب مفتوح بالفعل — عدّله من «تحدّيات الفرق»",
+  "failedToPublishRequest": "تعذّر نشر الطلب",
+  "requestChallengeTitle": "طلب تحدٍّ",
+  "directedChallengeToTeam": "تحدٍّ موجّه إلى «{team}»",
+  "@directedChallengeToTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "noteSuggestedPlaceTime": "ملاحظة — المكان/التوقيت المقترح",
+  "publishChallengeRequestBtn": "نشر طلب التحدّي",
+
+  "teamChallengesTitle": "تحدّيات الفرق",
+  "teamRequestsTab": "طلبات الفرق",
+  "myChallengesTab": "تحدياتي",
+  "requestChallengeBtn": "أطلب تحدّياً",
+  "noOpenChallengeRequests": "لا توجد طلبات تحدٍّ مفتوحة حالياً",
+  "tapToViewTeamPage": "اضغط لعرض صفحة الفريق",
+  "appliedStatus": "تم التقديم",
+  "acceptChallengeBtn": "أوافق على التحدي",
+  "pleaseLoginToView": "سجّل الدخول",
+  "myRequestsLabel": "طلباتي",
+  "noChallengeRequestsSentYet": "لم تُرسل أي طلب تحدٍّ بعد",
+  "appliedToLabel": "تقدّمت إليها",
+  "noChallengeRequestsAppliedYet": "لم تتقدّم لأي تحدٍّ بعد",
+  "challengeRequestLabel": "طلب تحدٍّ",
+  "opponentLabelX": "الخصم: {name}",
+  "@opponentLabelX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "opponentLabel": "الخصم",
+  "openChatBtn": "فتح المحادثة",
+  "applicantsLabelX": "المتقدّمون ({count})",
+  "@applicantsLabelX": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitingForTeamsToApply": "بانتظار تقديم الفرق…",
+  "tapToViewTeamBeforeAccepting": "اضغط لعرض الفريق قبل القبول",
+  "cancelRequestBtn": "إلغاء الطلب",
+  "requestCancelledStatus": "أُلغي الطلب",
+  "waitingForRequesterSelection": "بانتظار اختيار صاحب الطلب",
+  "yourTeamSelected": "تم اختيار فريقك! 🎉",
+  "anotherTeamSelected": "اختار فريقاً آخر",
+  "chatLabel": "محادثة",
+  "agreeToChallengeSub": "الموافقة على التحدّي",
+  "teamAppliedSuccessfully": "تم تقديم فريقك للتحدّي",
+  "failedToApply": "تعذّر التقديم",
+  "acceptChallengeSub": "قبول التحدّي",
+  "challengeAcceptedBetweenTeams": "تم قبول التحدّي بين «{team1}» و«{team2}» 👋 اتفقوا على الموعد والمكان.",
+  "@challengeAcceptedBetweenTeams": {
+    "placeholders": {
+      "team1": {
+        "type": "String"
+      },
+      "team2": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToAcceptChallenge": "تعذّر قبول التحدّي",
+  "failedToCancel": "تعذّر الإلغاء",
+  "requestChallengeSub": "طلب تحدٍّ",
+  "friendlyChallengeRequestTitle": "طلب تحدٍّ ودّي",
+  "editRequestTitle": "تعديل الطلب",
+  "onBehalfOfTeam": "باسم فريق «{team}» • {city}",
+  "@onBehalfOfTeam": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      },
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "noteOptionalHint": "ملاحظة (اختياري) — المكان/التوقيت المقترح",
+  "suggestedDateOptional": "موعد مقترح (اختياري)",
+  "publishRequestBtn": "نشر الطلب",
+  "saveEditBtn": "حفظ التعديل",
+  "requestUpdatedSuccessfully": "تم تحديث الطلب",
+  "challengeRequestPublished": "تم نشر طلب التحدّي",
+  "failedToSaveRequest": "تعذّر حفظ الطلب",
+  "youHaveAnOpenRequestTitle": "لديك طلب مفتوح",
+  "cannotPublishMultipleRequests": "لا يمكن نشر أكثر من طلب تحدٍّ مفتوح في آنٍ واحد. عدّل طلبك الحالي أو ألغِه أولاً.",
+  "acceptedStatus": "تم القبول",
+  "cancelledStatus": "ملغى",
+  "openStatus": "مفتوح",
+
+  "detailsTab": "تفاصيل",
+  "rulesAndTermsTab": "شروط وقوانين",
+  "participatingTeamsTab": "الفرق المشاركة",
+  "cityAndType": "{city} • {type}",
+  "@cityAndType": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "paidTournamentWithInfo": "بطولة باشتراك • {info}",
+  "@paidTournamentWithInfo": {
+    "placeholders": {
+      "info": {
+        "type": "String"
+      }
+    }
+  },
+  "paidTournament": "بطولة باشتراك",
+  "reviewTeamLineups": "مراجعة تشكيلات الفرق",
+  "myTournamentLineup": "تشكيلتي في البطولة",
+  "applyAsRefereeForTournament": "تقديم طلب تحكيم لهذه البطولة",
+  "matchesTitle": "المباريات",
+  "exportPdfBtn": "تصدير PDF",
+  "termsAndRulesTitle": "الشروط والقوانين",
+  "sponsorsTitle": "الداعمون",
+  "editRulesAndSponsors": "تعديل الشروط والداعمين",
+  "noRulesOrSponsorsEditToAdd": "لا توجد شروط أو داعمون بعد — اضغط «تعديل» للإضافة",
+  "noRulesOrSponsors": "لا توجد شروط أو داعمون لهذه البطولة",
+  "teamLineupsStatus": "حالة تشكيلات الفرق ({count})",
+  "@teamLineupsStatus": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToReviewOrRemind": "اضغط فريقاً أرسل لمراجعة تشكيلته، أو فريقاً لم يُرسل لتذكيره.",
+  "tapToViewLineup": "اضغط فريقاً أرسل لعرض تشكيلته.",
+  "noParticipatingTeams": "لا فرق مشاركة",
+  "notSent": "لم يُرسل",
+  "verified": "تم التحقق",
+  "rejected": "مرفوضة",
+  "sent": "تم الإرسال",
+  "captainNotSentLineup": "لم يُرسِل الكابتن تشكيلته بعد",
+  "remindTeamX": "تذكير فريق {name}",
+  "@remindTeamX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remindCaptainMessageBody": "سيصل تنبيه لكابتن الفريق بضرورة إرسال التشكيلة. إن لم تُرسَل يمكنك إقصاء الفريق أو إدخال خسارة 3-0 يدوياً.",
+  "customMessageOptional": "رسالة مخصّصة (اختياري)",
+  "sendReminderBtn": "إرسال التذكير",
+  "reminderSentToCaptainX": "أُرسل التذكير لكابتن {name}",
+  "@reminderSentToCaptainX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSendReminder": "تعذّر إرسال التذكير",
+  "tournamentChampion": "بطل البطولة",
+  "prizesX": "الجوائز: {prizes}",
+  "@prizesX": {
+    "placeholders": {
+      "prizes": {
+        "type": "String"
+      }
+    }
+  },
+  "sponsorX": "الراعي: {name}",
+  "@sponsorX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "knockoutType": "خروج المغلوب",
+  "groupsType": "مجموعات",
+  "leagueType": "دوري",
+  "knockoutStage": "المرحلة الإقصائية",
+  "generateKnockoutStageBtn": "توليد المرحلة الإقصائية",
+  "generatingStage": "جارٍ توليد المرحلة...",
+  "knockoutStageGenerated": "تم توليد المرحلة الإقصائية",
+  "failedToGenerateStage": "تعذّر التوليد — تأكّد من اكتمال مباريات المجموعات",
+  "roundX": "الجولة {round}",
+  "@roundX": {
+    "placeholders": {
+      "round": {
+        "type": "String"
+      }
+    }
+  },
+  "unscheduledTime": "موعد غير محدد",
+  "withoutSchedule": "بدون موعد",
+  "upcoming": "قادمة",
+  "vs": "ضد",
+  "refereeNameX": "الحكم: {name}",
+  "@refereeNameX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assignRefereeBtn": "تعيين حكم",
+  "changeRefereeBtn": "تغيير الحكم",
+  "myTeamFormationX": "خطة فريقي: {f}",
+  "@myTeamFormationX": {
+    "placeholders": {
+      "f": {
+        "type": "String"
+      }
+    }
+  },
+  "setMyTeamFormationBtn": "تحديد خطة فريقي",
+  "startMatchBtn": "بدأ المباراة",
+
+  "editScheduleBtn": "تعديل الموعد",
+  "setScheduleBtn": "تحديد الموعد",
+  "enterResultBtn": "إدخال النتيجة",
+  "refereeRequest": "طلب تحكيم",
+  "applyAsRefereeDialogBody": "هل تريد تقديم طلب للتحكيم في بطولة «{name}»؟ سيراجعه الأدمن.",
+  "@applyAsRefereeDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "submitBtn": "تقديم",
+  "refereeRequestSent": "تم إرسال طلب التحكيم للأدمن",
+  "chooseTeamFormationForMatch": "اختر خطة فريقك لهذه المباراة",
+  "preparingReport": "جارٍ تجهيز التقرير...",
+  "failedToExportReport": "تعذّر تصدير التقرير",
+  "failedToFetchReferees": "تعذّر جلب الحكّام",
+  "chooseRefereeForMatch": "اختر حكماً للمباراة",
+  "noRefereesAvailable": "لا يوجد حكّام متاحون — يمنحهم الأدمن الصلاحية",
+  "unassignRefereeBtn": "إلغاء تعيين الحكم",
+  "chooseMatchDateHelp": "اختر تاريخ المباراة",
+  "nextBtn": "التالي",
+  "chooseMatchTimeHelp": "اختر وقت المباراة",
+
+  "toubaAppTitle": "طوبة",
+  "createTournamentBtn": "إنشاء بطولة",
+  "failedToLoadTournaments": "تعذّر تحميل البطولات",
+  "retryBtn": "إعادة المحاولة",
+  "noTournamentsYet": "لا توجد بطولات بعد",
+  "createFirstTournamentHint": "أنشئ أول بطولة بزر «إنشاء بطولة» أدناه",
+  "noTournamentsInYourAreaYet": "لم يُنشئ أحد بطولةً في منطقتك بعد",
+  "ongoingTournaments": "بطولات جارية",
+  "finishedTournaments": "بطولات منتهية",
+  "otherTournaments": "بطولات أخرى",
+  "finishedBadge": "منتهية",
+  "ongoingBadge": "جارية",
+  "vXFormat": "{format} ضد {format}",
+  "@vXFormat": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "paidSubscriptionBadge": "باشتراك",
+  "championX": "البطل: {name}",
+  "@championX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cityAndTeamsCount": "{city} • {count} فريق",
+  "@cityAndTeamsCount": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+
+  "teamManagement": "إدارة الفريق",
+  "linkPlayerByCodeTitle": "ربط لاعب بالكود",
+  "joinRequestsCountX": "طلبات الانضمام ({count})",
+  "@joinRequestsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "joinRequestLabel": "طلب انضمام",
+  "releaseRequestsCountX": "طلبات الخروج ({count})",
+  "@releaseRequestsCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "requestsToLeaveTeam": "يطلب الخروج من الفريق",
+  "acceptLeave": "قبول الخروج",
+  "rejectBtn": "رفض",
+  "rosterCountX": "التشكيلة ({count})",
+  "@rosterCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShare": "عرض/مشاركة",
+  "rosterManagementHint": "اضغط شارة «أساسي/احتياط» لنقل اللاعب بين القسمين • اضغط «رقم» لتعديله",
+  "noPlayersYetAddWithBtn": "لا يوجد لاعبون بعد — أضِف لاعبيك بزر «إضافة لاعب»",
+  "starters": "الأساسيون",
+  "noStartersSelectFromSubs": "لا يوجد أساسيون — حدّدهم من الاحتياط",
+  "subs": "الاحتياط",
+  "noSubs": "لا يوجد احتياط",
+  "mainTeamFormation": "خطة الفريق الأساسية",
+  "currentFormationX": "الحالية: {fmt} ({count} لاعبين)",
+  "@currentFormationX": {
+    "placeholders": {
+      "fmt": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "notSetChooseCountAndFormation": "لم تُحدَّد — اختر عدد اللاعبين والخطة",
+  "selectBtn": "تحديد",
+  "noPhotosYetAddUpTo5": "لم تُضَف صور بعد — أضِف حتى 5 صور",
+  "xOutOf5Photos": "{count}/5 صور",
+  "@xOutOf5Photos": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "addBtn": "إضافة",
+  "editBtn": "تعديل",
+  "formationFormatHint": "الصيغة: حارس-دفاع-وسط-هجوم",
+  "numberForX": "رقم {name}",
+  "@numberForX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shirtNumber": "رقم القميص",
+  "cancelBtn": "إلغاء",
+  "numberX": "رقم {num}",
+  "@numberX": {
+    "placeholders": {
+      "num": {
+        "type": "String"
+      }
+    }
+  },
+  "noNumber": "بلا رقم",
+  "starter": "أساسي",
+  "sub": "احتياط",
+  "linked": "مرتبط",
+  "notLinked": "غير مرتبط",
+  "positionForX": "مركز {name}",
+  "@positionForX": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "enterPlayerCodeHint": "أدخل «كود اللاعب» الذي يظهر في ملفه الشخصي:",
+  "exampleCode": "مثال: A1B2C3D4",
+  "linking": "جارٍ الربط...",
+  "playerAddedToRoster": "تمت إضافة اللاعب للتشكيلة",
+  "failedToLinkPlayer": "تعذّر ربط اللاعب",
+  "linkBtn": "ربط",
+
+  "teamPhotosSaved": "تم حفظ صور الفريق",
+  "failedToSavePhotos": "تعذّر حفظ الصور",
+  "teamPhotosTitle": "صور الفريق",
+  "addUpToMaxPhotos": "أضِف حتى {max} صور لفريقك ({count}/{max})",
+  "@addUpToMaxPhotos": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "savePhotosBtn": "حفظ الصور",
+
+  "choosePlayerForSlotX": "اختر لاعب الخانة {slotNumber}",
+  "@choosePlayerForSlotX": {
+    "placeholders": {
+      "slotNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "removePlayerFromSlot": "إزالة اللاعب من هذه الخانة",
+  "assignedToAnotherSlot": " • معيّن في خانة أخرى",
+  "chooseTeamFormation": "اختر خطة الفريق (حارس-دفاع-وسط-هجوم)",
+  "playersCountX": "{count} لاعبين",
+  "@playersCountX": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "customFormation": "خطة مخصّصة",
+  "assignPlayerToEachSlot": "عيّن لاعباً لكل خانة في التشكيلة",
+  "teamFormationSaved": "تم حفظ تشكيلة الفريق",
+  "failedToSaveFormation": "تعذّر حفظ التشكيلة",
+  "formationShareText": "تشكيلة {teamName} — خطة {formation}",
+  "@formationShareText": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      },
+      "formation": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToShareFormation": "تعذّرت مشاركة التشكيلة",
+  "teamFormation": "تشكيلة الفريق",
+  "share": "مشاركة",
+  "formationPlan": "الخطة",
+  "formationWithPlayersCount": "{formation} ({count} لاعبين)",
+  "@formationWithPlayersCount": {
+    "placeholders": {
+      "formation": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "changeBtn": "تغيير",
+  "tapCircleToAssignPlayer": "اضغط أي دائرة على الملعب لتعيين لاعبها",
+  "saveBtn": "حفظ",
+  "numberOfPlayersLabel": "عدد اللاعبين: ",
+  "defendersCount": "المدافعون",
+  "attackersCount": "الهجوم",
+  "midfieldAndTotalCount": "خط الوسط: {mid}  •  المجموع: {total}",
+  "@midfieldAndTotalCount": {
+    "placeholders": {
+      "mid": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmFormation": "اعتماد الخطة",
+
+  "createTeamTitle": "تأسيس فريق جديد",
+  "pleaseSelectCity": "يرجى اختيار المحافظة",
+  "teamCreatedSuccess": "تم إنشاء الفريق بنجاح!",
+  "teamLogoOptional": "شعار الفريق (اختياري)",
+  "teamNameLabel": "اسم الفريق",
+  "pleaseEnterTeamName": "يرجى إدخال اسم الفريق",
+  "cityOrGovernorate": "المحافظة / المدينة",
+  "areaOptional": "المنطقة (اختياري)",
+  "areaExample": "مثال: حي الجامعة، الكرادة...",
+  "createTeamBtn": "تأسيس الفريق",
+
+  "posGoalkeeper": "حارس مرمى",
+  "posDefender": "مدافع",
+  "posMidfielder": "خط وسط",
+  "posForward": "مهاجم",
+  "playerNameLabel": "اسم اللاعب",
+  "shirtNumberOptional": "رقم القميص (اختياري)",
+  "preferredFootOptional": "القدم المفضلة (اختياري)",
+  "addToRosterBtn": "إضافة للتشكيلة",
+
+  "yourRequestEscalatedSoonReviewed": "تم تصعيد طلبك للإدارة — سيُراجَع قريباً",
+  "confirmPasswordTitle": "تأكيد كلمة المرور",
+  "confirmPasswordToExitDesc": "للتأكد أنك صاحب الحساب، أدخل كلمة مرورك قبل طلب الخروج.",
+  "passwordLabel": "كلمة المرور",
+  "incorrectPassword": "كلمة المرور غير صحيحة",
+  "failedToVerifyPassword": "تعذّر التحقّق من كلمة المرور",
+  "updatingLogo": "جارٍ تحديث الشعار...",
+  "logoUpdatedSuccess": "تم تحديث الشعار",
+  "failedToUpdateLogo": "تعذّر تحديث الشعار",
+  "exitRequestSentToCaptain": "تم إرسال طلب الخروج لكابتن فريقك الحالي",
+  "youMustLoginFirst": "يجب تسجيل الدخول أولاً",
+  "exitTeamRequest": "طلب الخروج من الفريق",
+  "reportThisTeam": "بلّغ عن هذا الفريق",
+  "teamMatchesLost": "خسر",
+  "teamMatchesDrawn": "تعادل",
+  "youArePlayerInThisTeam": "أنت لاعب في هذا الفريق",
+  "exitRequestPendingCaptainReview": "طلب خروجك قيد مراجعة كابتن فريقك الحالي",
+  "requestEscalatedPendingDecision": "طلبك مُصعّد للإدارة — بانتظار القرار",
+  "requestExitFromX": "طلب الخروج من {teamName}",
+  "@requestExitFromX": {
+    "placeholders": {
+      "teamName": {
+        "type": "String"
+      }
+    }
+  },
+  "myCurrentTeam": "فريقي الحالي",
+  "mustExitCurrentTeamBeforeJoining": "يجب الخروج من فريقك الحالي أولاً قبل الانضمام",
+  "requestToJoinTeam": "طلب انضمام للفريق",
+  "requestChallengeBtn": "اطلب تحدي",
+  "rosterWithCount": "التشكيلة ({count})",
+  "@rosterWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsByTournament": "النقاط حسب البطولة",
+  "noPlayersRegisteredYet": "لا يوجد لاعبون مسجّلون بعد",
+  "teamHasNotParticipatedInTournamentsYet": "لم يشارك الفريق في أي بطولة بعد",
+  "tournamentFinishedStatus": "منتهية",
+  "tournamentLiveStatus": "جارية",
+  "pointSingle": "نقطة",
+  "loadingTeamDetails": "جاري تحميل تفاصيل الفريق...",
+
+  "profileUpdateSuccess": "تم تحديث بياناتك بنجاح",
+  "profileUpdateError": "تعذّر تحديث البيانات",
+  "loginToViewProfile": "سجّل الدخول لعرض ملفك",
+  "saveChanges": "حفظ التعديلات",
+  "playerSportsDetails": "تفاصيل اللاعب الرياضية",
+  "playerSportsDetailsSubtitle": "القدم المفضّلة • الطول • الوزن • العمر • نبذة • معرض الصور",
+  "permanentPlayerCode": "كود لاعبك الدائم",
+  "giveCodeToCaptain": "أعطِ هذا الكود لكابتن الفريق ليضيفك إلى تشكيلته.",
+  "codeCopied": "تم نسخ الكود",
+  "myPlayerCodeShare": "كود لاعبي في طوبة: {code}",
+  "@myPlayerCodeShare": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "codeLinkingHint": "بمجرّد أن يضيفك الكابتن بهذا الكود، يرتبط حسابك ببطاقة لاعبك تلقائياً.",
+  "invalidPhoneNumber": "رقم الهاتف غير صالح",
+  "copy": "نسخ",
+  "share": "مشاركة",
 
   "adminDashboard": "لوحة تحكم الإدارة",
   "manageLocations": "إدارة المواقع",
   "manageRoles": "إدارة الصلاحيات",
   "reports": "البلاغات",
   "verifyTeams": "توثيق الفرق",
-  "comingSoon": "قريباً..."
+  "comingSoon": "قريباً...",
+  "okBtn": "موافق",
+  "verifiedPlayer": "لاعب موثق",
+  "manageChallenges": "إدارة التحديات",
+  "stale": "متروك",
+  "challengeDetailsRow": "{city} • متقدّمون: {applicants} • منذ {days} يوم",
+  "@challengeDetailsRow": {
+    "placeholders": {
+      "city": { "type": "String" },
+      "applicants": { "type": "int" },
+      "days": { "type": "int" }
+    }
+  },
+  "cancelChallengeRequestConfirm": "إلغاء طلب تحدّي فريق «{team}»؟",
+  "@cancelChallengeRequestConfirm": {
+    "placeholders": {
+      "team": { "type": "String" }
+    }
+  },
+  "takeActionOnX": "اتخاذ إجراء — {name}",
+  "@takeActionOnX": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "reviewOnlyAction": "مراجعة فقط (بدون عقوبة)",
+  "warnAction": "تنبيه (تحذير)",
+  "negativeRatingAction": "تقييم سلبي (خصم نقاط)",
+  "banAction": "حظر",
+  "dismissReportAction": "رفض البلاغ",
+  "replyNoteOptional": "رد/ملاحظة (اختياري)",
+  "executeActionBtn": "تنفيذ الإجراء",
+  "executingAction": "جارٍ تنفيذ الإجراء...",
+  "actionExecuted": "تم تنفيذ الإجراء",
+  "failedToExecuteAction": "تعذّر تنفيذ الإجراء",
+  "allLabel": "الكل",
+  "pendingLabel": "معلّق",
+  "reviewedLabel": "تمت المراجعة",
+  "reviewedStatus": "مُراجَع",
+  "dismissedLabel": "مرفوض",
+  "noReports": "لا توجد بلاغات",
+  "takeActionLong": "اتخاذ إجراء (حظر/تنبيه/تقييم)",
+  "dismissBtn": "رفض",
+  "searchError": "خطأ في البحث: {error}",
+  "@searchError": { "placeholders": { "error": { "type": "String" } } },
+  "updateFailed": "فشل التحديث: {error}",
+  "@updateFailed": { "placeholders": { "error": { "type": "String" } } },
+  "searchByPhoneHint": "ابحث برقم الهاتف (مثال: +964...)",
+  "noSearchResults": "لا توجد نتائج بحث",
+  "roleX": "الدور: {role}",
+  "@roleX": { "placeholders": { "role": { "type": "String" } } },
+  "additionalPermissions": "الصلاحيات الإضافية:",
+  "tournamentOrganizer": "منظم بطولات",
+  "allowsCreatingTournaments": "يسمح بإنشاء وإدارة البطولات",
+  "allowsEnteringResults": "يسمح بإدخال نتائج المباريات المعين لها",
+  "noBanners": "لا توجد إعلانات — أضف أول إعلان",
+  "newBannerBtn": "إعلان جديد",
+  "deleteBannerTitle": "حذف الإعلان",
+  "deleteBannerBody": "هل تريد حذف هذا الإعلان نهائياً؟",
+  "newBanner": "إعلان جديد",
+  "editBanner": "تعديل الإعلان",
+  "bannerTitleOptional": "العنوان (اختياري)",
+  "bannerDescOptional": "الوصف / التفاصيل (اختياري)",
+  "governorate": "المحافظة",
+  "phoneOptional": "رقم الهاتف (اختياري)",
+  "whatsappOptional": "واتساب (مع رمز الدولة، اختياري)",
+  "facebookLinkOptional": "رابط فيسبوك (اختياري)",
+  "instagramLinkOptional": "رابط إنستغرام (اختياري)",
+  "targetUrlOptional": "رابط الموقع عند النقر (اختياري)",
+  "displayOrder": "ترتيب الظهور",
+  "extraImages": "صور إضافية",
+  "chooseBannerImage": "اختر صورة الإعلان",
+  "failedToSaveBanner": "تعذّر حفظ الإعلان",
+  "bannerWithoutTitle": "بدون عنوان",
+  "orderX": "الترتيب: {order}",
+  "@orderX": { "placeholders": { "order": { "type": "int" } } },
+  "forceReleaseTitle": "فكّ ارتباط قسري",
+  "forceReleaseBody": "سيُفكّ ارتباط اللاعب من فريقه الحالي ويصبح حرّاً للانضمام لفريق آخر. متابعة؟",
+  "forceReleaseBtn": "فكّ الارتباط",
+  "forceReleaseForcedBtn": "فكّ الارتباط قسرياً",
+  "playerReleasedSuccess": "تم فكّ ارتباط اللاعب",
+  "noEscalatedDisputes": "لا توجد نزاعات مصعّدة",
+  "playerWantsToLeaveTeam": "يطلب الخروج من فريق: {team}",
+  "@playerWantsToLeaveTeam": { "placeholders": { "team": { "type": "String" } } },
+  "captainRejectedEscalated": "رفض الكابتن الطلب وصعّده اللاعب للإدارة",
+  "approvedGrantedReferee": "تمت الموافقة ومنح صفة الحكم",
+  "rejectedApplication": "تم الرفض",
+  "noPendingRefereeApps": "لا توجد طلبات تحكيم معلّقة",
+  "requestToRefereeIn": "يطلب التحكيم في: {tournament}",
+  "@requestToRefereeIn": { "placeholders": { "tournament": { "type": "String" } } },
+  "approveBtn": "موافقة",
+  "failedToSaveSettings": "تعذّر حفظ الإعداد",
+  "tournamentsSection": "قسم البطولات",
+  "showHideTournaments": "إظهار/إخفاء تبويب البطولات لكل المستخدمين",
+  "noNews": "لا توجد أخبار — أضف أول خبر",
+  "newNewsBtn": "خبر جديد",
+  "deleteNewsTitle": "حذف الخبر",
+  "deleteNewsBody": "هل تريد حذف هذا الخبر نهائياً؟",
+  "newNews": "خبر جديد",
+  "editNews": "تعديل الخبر",
+  "publishedLabel": "منشور",
+  "hiddenLabel": "مخفي",
+  "newsStatsX": "❤ {likes}  •  ↗ {shares}  •  {status}",
+  "@newsStatsX": {
+    "placeholders": {
+      "likes": { "type": "int" },
+      "shares": { "type": "int" },
+      "status": { "type": "String" }
+    }
+  },
+  "enterNewsTitle": "أدخل عنوان الخبر",
+  "newsTitleLabel": "العنوان",
+  "newsBodyLabel": "نص الخبر",
+  "failedToSaveNews": "تعذّر حفظ الخبر",
+  "activationCodesTitle": "أكواد التفعيل",
+  "settingsCardTitle": "الإعدادات",
+  "freeTrialDaysLabel": "مدة التجربة المجانية (أيام)",
+  "activationWhatsappLabel": "واتساب التفعيل (مثال: 9647xx)",
+  "saveSettingsBtn": "حفظ الإعدادات",
+  "settingsSaved": "تم حفظ الإعدادات",
+  "failedToSaveHighPermission": "تعذّر الحفظ (يتطلّب صلاحية مدير أعلى)",
+  "generateCodesTitle": "توليد أكواد",
+  "durationLabel": "المدة",
+  "countLabel": "العدد",
+  "notesOptional": "ملاحظة (اختياري)",
+  "generateBtn": "توليد",
+  "generatedXCodes": "تم توليد {count} كود",
+  "@generatedXCodes": { "placeholders": { "count": { "type": "int" } } },
+  "failedToGenerate": "تعذّر التوليد",
+  "codesLabel": "الأكواد",
+  "noCodesYet": "لا توجد أكواد بعد",
+  "copyTooltip": "نسخ",
+  "codeCopied": "تم نسخ الكود",
+  "unlockTooltip": "فكّ القفل",
+  "month1Label": "شهر",
+  "months3Label": "3 أشهر",
+  "months6Label": "6 أشهر",
+  "yearLabel": "سنة",
+  "noTournaments": "لا توجد بطولات",
+  "editTournamentTitle": "تعديل البطولة",
+  "tournamentCoverImage": "صورة البطولة",
+  "tournamentCupImage": "صورة الكأس",
+  "tournamentNameLabel": "اسم البطولة",
+  "tournamentPrizesOptional": "الجوائز (اختياري)",
+  "tournamentSponsorOptional": "اسم الراعي (اختياري)",
+  "freeTournament": "بطولة مجانية",
+  "openToAllTeams": "مفتوحة لكل الفرق",
+  "paidTournament": "باشتراك — يُضاف الفريق بعد الدفع",
+  "entryFeeInfo": "رسوم/تواصل الدخول (للعرض)",
+  "failedToSaveTournament": "تعذّر حفظ التعديلات",
+  "tournamentFinishedWinner": "منتهية • البطل: {winner}",
+  "@tournamentFinishedWinner": { "placeholders": { "winner": { "type": "String" } } },
+  "tournamentOngoingCity": "جارية • {city}",
+  "@tournamentOngoingCity": { "placeholders": { "city": { "type": "String" } } },
+  "updatedSuccessfully": "تم التحديث بنجاح",
+  "addDistrict": "إضافة منطقة",
+  "editDistrict": "تعديل منطقة",
+  "nameArabic": "الاسم (عربي)",
+  "nameEnglish": "الاسم (إنجليزي)",
+  "confirmDeleteTitle": "تأكيد الحذف",
+  "confirmDeleteDistrictX": "هل أنت متأكد من حذف {name}؟",
+  "@confirmDeleteDistrictX": { "placeholders": { "name": { "type": "String" } } },
+  "noDistricts": "لا توجد مناطق. اضغط على + لإضافة منطقة.",
+  "districtsOfCity": "مناطق: {city}",
+  "@districtsOfCity": { "placeholders": { "city": { "type": "String" } } },
+  "addGovernorate": "إضافة محافظة",
+  "editGovernorate": "تعديل محافظة",
+  "manageGovernoratesTitle": "إدارة المحافظات",
+  "importIraqTooltip": "استيراد كل العراق",
+  "importConfirmTitle": "تأكيد الاستيراد",
+  "importConfirmBody": "سيتم حقن كافة محافظات ومناطق العراق. هل أنت متأكد؟",
+  "importBtn": "استيراد",
+  "importSuccessTitle": "تم الاستيراد بنجاح",
+  "importSuccessBody": "تم جلب جميع محافظات ومناطق العراق.",
+  "okBtn": "حسناً",
+  "errorX": "خطأ: {error}",
+  "@errorX": { "placeholders": { "error": { "type": "String" } } },
+  "noGovernorates": "لا توجد محافظات. اضغط على زر التحميل لاستيراد العراق.",
+  "confirmDeleteCityX": "هل أنت متأكد من حذف {name} وجميع مناطقها؟",
+  "@confirmDeleteCityX": { "placeholders": { "name": { "type": "String" } } }
 }

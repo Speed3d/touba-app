@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../data/models/banner_model.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: تفاصيل الإعلان — صورة رئيسية + صور إضافية + عنوان/منطقة/محافظة
 /// + وصف + روابط تواصل (هاتف/واتساب/فيسبوك/إنستغرام).
@@ -16,10 +17,10 @@ class BannerDetailsScreen extends StatelessWidget {
     try {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && context.mounted) {
-        ToobaSnackBar.error(context, 'تعذّر فتح الرابط');
+        ToobaSnackBar.error(context, AppLocalizations.of(context)!.errorOpeningLink);
       }
     } catch (_) {
-      if (context.mounted) ToobaSnackBar.error(context, 'تعذّر فتح الرابط');
+      if (context.mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.errorOpeningLink);
     }
   }
 
@@ -33,7 +34,7 @@ class BannerDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(banner.title ?? 'تفاصيل الإعلان'),
+        title: Text(banner.title ?? AppLocalizations.of(context)!.bannerDetails),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -97,27 +98,27 @@ class BannerDetailsScreen extends StatelessWidget {
                   runSpacing: 10,
                   children: [
                     if (banner.phone != null && banner.phone!.isNotEmpty)
-                      _contactBtn(context, Icons.phone, 'اتصال',
+                      _contactBtn(context, Icons.phone, AppLocalizations.of(context)!.contactCall,
                           Colors.green, 'tel:${banner.phone}'),
                     if (banner.whatsapp != null &&
                         banner.whatsapp!.isNotEmpty)
                       _contactBtn(
                           context,
                           Icons.chat,
-                          'واتساب',
+                          AppLocalizations.of(context)!.contactWhatsapp,
                           Colors.teal,
                           'https://wa.me/${banner.whatsapp!.replaceAll('+', '')}'),
                     if (banner.facebook != null &&
                         banner.facebook!.isNotEmpty)
-                      _contactBtn(context, Icons.facebook, 'فيسبوك',
+                      _contactBtn(context, Icons.facebook, AppLocalizations.of(context)!.contactFacebook,
                           Colors.blue, banner.facebook!),
                     if (banner.instagram != null &&
                         banner.instagram!.isNotEmpty)
-                      _contactBtn(context, Icons.camera_alt, 'إنستغرام',
+                      _contactBtn(context, Icons.camera_alt, AppLocalizations.of(context)!.contactInstagram,
                           Colors.purple, banner.instagram!),
                     if (banner.targetUrl != null &&
                         banner.targetUrl!.isNotEmpty)
-                      _contactBtn(context, Icons.link, 'الموقع',
+                      _contactBtn(context, Icons.link, AppLocalizations.of(context)!.contactWebsite,
                           Colors.indigo, banner.targetUrl!),
                   ],
                 ),

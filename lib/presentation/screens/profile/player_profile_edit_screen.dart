@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: تعديل تفاصيل اللاعب الرياضية (لِلاعب صاحب السجل): القدم المفضّلة،
 /// الطول، الوزن، تاريخ الميلاد (يُحسب منه العمر)، نبذة، ومعرض حتى 5 صور.
@@ -40,16 +41,22 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
   final List<_GalleryItem> _gallery = [];
 
   static const _maxGallery = 5;
-  static const _footLabels = {
-    'right': 'يمنى',
-    'left': 'يسرى',
-    'both': 'كلتاهما',
-  };
+  late Map<String, String> _footLabels;
 
   @override
   void initState() {
     super.initState();
     _loadPlayer();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _footLabels = {
+      'right': AppLocalizations.of(context)!.footRight,
+      'left': AppLocalizations.of(context)!.footLeft,
+      'both': AppLocalizations.of(context)!.footBoth,
+    };
   }
 
   @override
@@ -79,7 +86,7 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ToobaSnackBar.error(context, 'تعذّر تحميل بيانات اللاعب');
+      ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToLoadPlayer);
     }
   }
 
@@ -101,7 +108,7 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
       initialDate: _birthDate ?? DateTime(now.year - 20),
       firstDate: DateTime(now.year - 70),
       lastDate: DateTime(now.year - 5),
-      helpText: 'اختر تاريخ الميلاد',
+      helpText: AppLocalizations.of(context)!.chooseBirthDate,
     );
     if (picked != null) setState(() => _birthDate = picked);
   }
@@ -140,10 +147,12 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
         birthDate: _birthDate,
         bio: _bio.text.trim().isEmpty ? null : _bio.text.trim(),
       );
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم حفظ تفاصيلك'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.detailsSaved));
       if (mounted) Navigator.pop(context);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر حفظ التفاصيل'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToSaveDetails));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -155,14 +164,14 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('تفاصيل اللاعب'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.playerDetails), centerTitle: true),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(20),
               children: [
                 // القدم المفضّلة
-                _label('القدم المفضّلة'),
+                _label(AppLocalizations.of(context)!.preferredFoot),
                 Wrap(
                   spacing: 8,
                   children: _footLabels.entries.map((e) {
@@ -180,11 +189,11 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _numberField(_height, 'الطول (سم)', isDark),
+                      child: _numberField(_height, AppLocalizations.of(context)!.heightCm, isDark),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _numberField(_weight, 'الوزن (كغم)', isDark),
+                      child: _numberField(_weight, AppLocalizations.of(context)!.weightKg, isDark),
                     ),
                   ],
                 ),
@@ -195,7 +204,7 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
                   borderRadius: BorderRadius.circular(12),
                   child: InputDecorator(
                     decoration: InputDecoration(
-                      labelText: 'تاريخ الميلاد',
+                      labelText: AppLocalizations.of(context)!.birthDate,
                       prefixIcon: const Icon(Icons.cake_outlined),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
@@ -204,9 +213,9 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
                     ),
                     child: Text(
                       _birthDate == null
-                          ? 'غير محدد'
+                          ? AppLocalizations.of(context)!.notSpecified
                           : '${_birthDate!.year}/${_birthDate!.month}/${_birthDate!.day}'
-                              '${_age != null ? '  •  العمر $_age سنة' : ''}',
+                              '${_age != null ? '  •  ${AppLocalizations.of(context)!.ageYears(_age!)}' : ''}',
                     ),
                   ),
                 ),
@@ -217,8 +226,8 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
                   maxLines: 4,
                   maxLength: 300,
                   decoration: InputDecoration(
-                    labelText: 'نبذة عنك',
-                    hintText: 'اكتب نبذة مختصرة عن أسلوب لعبك...',
+                    labelText: AppLocalizations.of(context)!.bioTitle,
+                    hintText: AppLocalizations.of(context)!.bioHint,
                     alignLabelWithHint: true,
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12)),
@@ -228,7 +237,7 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
                 ),
                 const SizedBox(height: 8),
                 // معرض الصور
-                _label('معرض صورك (${_gallery.length}/$_maxGallery)'),
+                _label(AppLocalizations.of(context)!.yourGallery(_gallery.length, _maxGallery)),
                 const SizedBox(height: 8),
                 _galleryGrid(isDark),
                 const SizedBox(height: 28),
@@ -247,8 +256,8 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
                           height: 22,
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
-                      : const Text('حفظ التفاصيل',
-                          style: TextStyle(
+                      : Text(AppLocalizations.of(context)!.saveDetails,
+                          style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold)),
                 ),
               ],

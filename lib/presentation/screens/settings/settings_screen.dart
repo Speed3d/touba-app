@@ -18,6 +18,7 @@ import '../referee/referee_profile_screen.dart';
 import '../subscription/subscription_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة الإعدادات (تبويب) — في الأعلى صورة المستخدم واسمه وكارت
 /// تفاصيله (ينقل للملف الشخصي)، يليها المظهر واللغة والسياسات وحذف الحساب.
@@ -34,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('الإعدادات'),
+        title: Text(AppLocalizations.of(context)!.settings),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -58,13 +59,13 @@ class SettingsScreen extends StatelessWidget {
                     color: authState.user.isSubscriptionActive
                         ? Colors.green
                         : theme.colorScheme.primary),
-                title: const Text('اشتراكي'),
+                title: Text(AppLocalizations.of(context)!.mySubscription),
                 subtitle: Text(
                     authState.user.isSubscriptionActive
                         ? (authState.user.subscriptionStatus == 'free_trial'
-                            ? 'تجربة مجانية فعّالة'
-                            : 'مشترك فعّال')
-                        : 'غير مشترك — فعّل للتحدّيات',
+                            ? AppLocalizations.of(context)!.activeFreeTrial
+                            : AppLocalizations.of(context)!.activeSubscriber)
+                        : AppLocalizations.of(context)!.notSubscribedActivate,
                     style: const TextStyle(fontSize: 12)),
                 trailing: const Icon(Icons.chevron_left, size: 20),
                 onTap: () => Navigator.push(
@@ -83,9 +84,9 @@ class SettingsScreen extends StatelessWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(Icons.sports, color: theme.colorScheme.primary),
-                title: const Text('مبارياتي كحكم'),
-                subtitle: const Text('المباريات المعيّن لها',
-                    style: TextStyle(fontSize: 12)),
+                title: Text(AppLocalizations.of(context)!.myRefereeMatches),
+                subtitle: Text(AppLocalizations.of(context)!.assignedMatches,
+                    style: const TextStyle(fontSize: 12)),
                 trailing: const Icon(Icons.chevron_left, size: 20),
                 onTap: () => Navigator.push(
                   context,
@@ -99,9 +100,9 @@ class SettingsScreen extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 leading:
                     Icon(Icons.badge_outlined, color: theme.colorScheme.primary),
-                title: const Text('صفحتي كحكم'),
-                subtitle: const Text('الصفحة العامة + تعديل بياناتي',
-                    style: TextStyle(fontSize: 12)),
+                title: Text(AppLocalizations.of(context)!.myRefereeProfile),
+                subtitle: Text(AppLocalizations.of(context)!.publicProfileAndEdit,
+                    style: const TextStyle(fontSize: 12)),
                 trailing: const Icon(Icons.chevron_left, size: 20),
                 onTap: () => Navigator.push(
                   context,
@@ -114,19 +115,19 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16),
           ],
 
-          _section(context, 'المظهر'),
+          _section(context, AppLocalizations.of(context)!.appearance),
           _card(context, isDark, [
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               secondary: Icon(isDark ? Icons.dark_mode : Icons.light_mode,
                   color: theme.colorScheme.primary),
-              title: const Text('الوضع الداكن'),
+              title: Text(AppLocalizations.of(context)!.darkMode),
               value: isDark,
               onChanged: (_) => context.read<ThemeCubit>().toggle(),
             ),
           ]),
           const SizedBox(height: 16),
-          _section(context, 'اللغة'),
+          _section(context, AppLocalizations.of(context)!.language),
           _card(context, isDark, [
             RadioGroup<String>(
               groupValue: locale.languageCode,
@@ -134,30 +135,35 @@ class SettingsScreen extends StatelessWidget {
                 if (v == null) return;
                 context.read<LocaleCubit>().setLocale(Locale(v));
               },
-              child: const Column(
+              child: Column(
                 children: [
                   RadioListTile<String>(
                     contentPadding: EdgeInsets.zero,
-                    title: Text('العربية'),
+                    title: Text(AppLocalizations.of(context)!.arabic),
                     value: 'ar',
                   ),
                   RadioListTile<String>(
                     contentPadding: EdgeInsets.zero,
-                    title: Text('English'),
+                    title: Text(AppLocalizations.of(context)!.english),
                     value: 'en',
+                  ),
+                  RadioListTile<String>(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(AppLocalizations.of(context)!.kurdish),
+                    value: 'ku',
                   ),
                 ],
               ),
             ),
           ]),
           const SizedBox(height: 16),
-          _section(context, 'عن التطبيق والسياسات'),
+          _section(context, AppLocalizations.of(context)!.aboutAppAndPolicies),
           _card(context, isDark, [
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.privacy_tip_outlined,
                   color: theme.colorScheme.primary),
-              title: const Text('سياسة الخصوصية'),
+              title: Text(AppLocalizations.of(context)!.privacyPolicy),
               trailing: const Icon(Icons.chevron_left, size: 20),
               onTap: () => Navigator.push(context,
                   ToobaRoute.to(const PrivacyPolicyScreen())),
@@ -167,7 +173,7 @@ class SettingsScreen extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.description_outlined,
                   color: theme.colorScheme.primary),
-              title: const Text('الشروط والأحكام'),
+              title: Text(AppLocalizations.of(context)!.termsConditions),
               trailing: const Icon(Icons.chevron_left, size: 20),
               onTap: () => Navigator.push(context,
                   ToobaRoute.to(const TermsConditionsScreen())),
@@ -183,7 +189,7 @@ class SettingsScreen extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(Icons.info_outline,
                       color: theme.colorScheme.primary),
-                  title: const Text('إصدار التطبيق'),
+                  title: Text(AppLocalizations.of(context)!.appVersion),
                   trailing: Text(v, style: const TextStyle(color: Colors.grey)),
                 );
               },
@@ -193,12 +199,12 @@ class SettingsScreen extends StatelessWidget {
           // ── منطقة الحساب (حذف + خروج) — للمستخدم المسجّل فقط ──
           if (authState is AuthAuthenticated) ...[
             const SizedBox(height: 16),
-            _section(context, 'الحساب'),
+            _section(context, AppLocalizations.of(context)!.account),
             _card(context, isDark, [
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.logout, color: Colors.orange),
-                title: const Text('تسجيل الخروج'),
+                title: Text(AppLocalizations.of(context)!.logout),
                 trailing: const Icon(Icons.chevron_left, size: 20),
                 onTap: () => _showLogoutDialog(context),
               ),
@@ -206,10 +212,10 @@ class SettingsScreen extends StatelessWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.delete_forever, color: Colors.red),
-                title: const Text('حذف الحساب',
-                    style: TextStyle(color: Colors.red)),
-                subtitle: const Text('حذف نهائي لحسابك وبياناتك الشخصية',
-                    style: TextStyle(fontSize: 12)),
+                title: Text(AppLocalizations.of(context)!.deleteAccount,
+                    style: const TextStyle(color: Colors.red)),
+                subtitle: Text(AppLocalizations.of(context)!.deleteAccountSub,
+                    style: const TextStyle(fontSize: 12)),
                 trailing: const Icon(Icons.chevron_left, size: 20),
                 onTap: () => _showDeleteAccountDialog(context),
               ),
@@ -252,7 +258,7 @@ class SettingsScreen extends StatelessWidget {
         FutureBuilder<String>(
           future: _resolveTeamLabel(context, user),
           builder: (context, snap) => Text(
-            snap.data ?? _roleLabel(user.role),
+            snap.data ?? _roleLabel(AppLocalizations.of(context)!, user),
             style: theme.textTheme.bodyMedium
                 ?.copyWith(color: theme.colorScheme.primary),
           ),
@@ -263,9 +269,9 @@ class SettingsScreen extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             leading: Icon(Icons.account_circle_outlined,
                 color: theme.colorScheme.primary),
-            title: const Text('الملف الشخصي وتفاصيل اللاعب'),
-            subtitle: const Text('عرض وتعديل بياناتك',
-                style: TextStyle(fontSize: 12)),
+            title: Text(AppLocalizations.of(context)!.profileAndPlayerDetails),
+            subtitle: Text(AppLocalizations.of(context)!.viewAndEditData,
+                style: const TextStyle(fontSize: 12)),
             trailing: const Icon(Icons.chevron_left, size: 20),
             onTap: () =>
                 Navigator.push(context, ToobaRoute.to(const ProfileScreen())),
@@ -280,12 +286,12 @@ class SettingsScreen extends StatelessWidget {
       children: [
         Icon(Icons.person_off, size: 64, color: Colors.grey[400]),
         const SizedBox(height: 12),
-        const Text('أنت مسجّل كزائر'),
+        Text(AppLocalizations.of(context)!.youAreVisitor),
         const SizedBox(height: 12),
         ElevatedButton.icon(
           onPressed: () => context.read<AuthCubit>().logout(),
           icon: const Icon(Icons.login),
-          label: const Text('تسجيل الدخول / إنشاء حساب'),
+          label: Text(AppLocalizations.of(context)!.loginOrRegister),
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: Colors.white,
@@ -301,39 +307,41 @@ class SettingsScreen extends StatelessWidget {
     return NetworkImage(path);
   }
 
-  String _roleLabel(String role) {
-    switch (role) {
+  String _roleLabel(AppLocalizations loc, UserModel user) {
+    switch (user.role) {
       case 'captain':
-        return 'كابتن فريق';
+        return loc.teamCaptain;
       case 'admin':
-        return 'مدير المنصة';
+        return loc.platformAdmin;
       default:
-        return 'لاعب';
+        return loc.player;
     }
   }
 
-  // 📝 HINT AR: «كابتن فريق X» / «لاعب مع فريق X» — يحلّ فريق المستخدم.
   Future<String> _resolveTeamLabel(BuildContext context, UserModel user) async {
-    if (user.role == 'admin') return 'مدير المنصة';
+    final loc = AppLocalizations.of(context)!;
+    if (user.role == 'admin') return loc.platformAdmin;
     final teamRepo = context.read<TeamRepository>();
     try {
       if (user.role == 'captain') {
         final team = await teamRepo.getTeamByCaptain(user.id);
-        return team != null ? 'كابتن فريق ${team.name}' : 'كابتن (بلا فريق)';
+        if (!context.mounted) return _roleLabel(loc, user);
+        return team != null ? '${loc.captainOfTeam}${team.name}' : loc.captainNoTeam;
       }
       // لاعب
       if (user.linkedPlayerId != null && user.linkedPlayerId!.isNotEmpty) {
         final player = await context
             .read<PlayerRepository>()
             .getPlayerById(user.linkedPlayerId!);
+        if (!context.mounted) return _roleLabel(loc, user);
         if (player.currentTeamId.isNotEmpty) {
           final team = await teamRepo.getTeamById(player.currentTeamId);
-          return 'لاعب مع فريق ${team.name}';
+          return '${loc.playerWithTeam}${team.name}';
         }
       }
-      return 'لاعب (بلا فريق)';
+      return loc.playerNoTeam;
     } catch (_) {
-      return _roleLabel(user.role);
+      return _roleLabel(loc, user);
     }
   }
 
@@ -341,13 +349,13 @@ class SettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('تسجيل الخروج'),
-        content: const Text('هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟'),
+        title: Text(AppLocalizations.of(context)!.logout),
+        content: Text(AppLocalizations.of(context)!.confirmLogoutMsg),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
@@ -355,7 +363,7 @@ class SettingsScreen extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, foregroundColor: Colors.white),
-            child: const Text('تسجيل الخروج'),
+            child: Text(AppLocalizations.of(context)!.logout),
           ),
         ],
       ),
@@ -369,46 +377,45 @@ class SettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('حذف الحساب نهائياً'),
+        title: Text(AppLocalizations.of(context)!.deleteAccountPermanently),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: const Text(
-          'سيتم حذف حسابك وبياناتك الشخصية نهائياً ولا يمكن التراجع.\n\n'
-          'ملاحظة: إن كنت كابتن فريق، احذف فريقك أو انقل الكابتنية أولاً.',
-        ),
+        content: Text(AppLocalizations.of(context)!.deleteAccountPermanentlyMsg),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              messenger
-                  .showSnackBar(ToobaSnackBar.buildInfo('جارٍ حذف الحساب...'));
               try {
+                messenger
+                  .showSnackBar(ToobaSnackBar.buildInfo(AppLocalizations.of(context)!.deletingAccount));
                 await FunctionsService().deleteMyAccount();
                 await authCubit.logout();
+                if (!context.mounted) return;
                 messenger
-                    .showSnackBar(ToobaSnackBar.buildSuccess('تم حذف حسابك'));
+                    .showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.accountDeleted));
               } catch (e) {
                 messenger.showSnackBar(
-                    ToobaSnackBar.buildError(_deleteErrorMessage(e)));
+                    ToobaSnackBar.buildError(_deleteErrorMessage(context, e)));
               }
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, foregroundColor: Colors.white),
-            child: const Text('حذف نهائي'),
+            child: Text(AppLocalizations.of(context)!.permanentDelete),
           ),
         ],
       ),
     );
   }
 
-  String _deleteErrorMessage(Object e) {
+  String _deleteErrorMessage(BuildContext context, Object e) {
+    final loc = AppLocalizations.of(context)!;
     final msg = e.toString();
     if (msg.contains('كابتن')) {
-      return 'أنت كابتن فريق — احذف فريقك أو انقل الكابتنية أولاً.';
+      return loc.captainDeleteError;
     }
-    return 'تعذّر حذف الحساب — حاول مرة أخرى لاحقاً.';
+    return loc.generalError;
   }
 
   Widget _section(BuildContext context, String title) => Padding(

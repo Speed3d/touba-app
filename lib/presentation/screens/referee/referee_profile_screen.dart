@@ -3,10 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../../data/models/match_model.dart';
 import '../../../data/repositories/match_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: صفحة الحكم العامة (الوجبة 7 — D). تعرض الاسم/الصورة/المدينة/عدد
 /// المباريات التي أدارها/متوسط التقييم/النبذة، وقائمة مبارياته. صاحب الحساب
@@ -66,7 +67,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final p = _profile ?? const {};
-    final name = (p['name'] as String?) ?? widget.refereeName ?? 'حكم';
+    final name = (p['name'] as String?) ?? widget.refereeName ?? AppLocalizations.of(context)!.referee;
     final photo = p['photoUrl'] as String?;
     final city = p['city'] as String?;
     final bio = p['bio'] as String?;
@@ -75,13 +76,13 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('صفحة الحكم'),
+        title: Text(AppLocalizations.of(context)!.refereeProfile),
         centerTitle: true,
         actions: [
           if (_isOwner && !_loading)
             IconButton(
               icon: const Icon(Icons.edit),
-              tooltip: 'تعديل بياناتي',
+              tooltip: AppLocalizations.of(context)!.editMyData,
               onPressed: () => _editProfile(city, bio),
             ),
         ],
@@ -130,7 +131,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
                   children: [
                     Expanded(
                       child: _statCard(Icons.sports_soccer, '$_matchesCount',
-                          'مباريات أدارها', theme.colorScheme.primary),
+                          AppLocalizations.of(context)!.matchesManaged, theme.colorScheme.primary),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -139,7 +140,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
                           ratingCount > 0
                               ? '${rating.toStringAsFixed(1)} ($ratingCount)'
                               : '—',
-                          'متوسط التقييم',
+                          AppLocalizations.of(context)!.averageRating,
                           Colors.amber.shade700),
                     ),
                   ],
@@ -154,8 +155,8 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('نبذة',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(AppLocalizations.of(context)!.bioLabel,
+                              style: const TextStyle(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 6),
                           Text(bio, style: const TextStyle(height: 1.5)),
                         ],
@@ -164,14 +165,14 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
                   ),
                 ],
                 const SizedBox(height: 20),
-                Text('المباريات',
+                Text(AppLocalizations.of(context)!.matchesList,
                     style: theme.textTheme.titleMedium
                         ?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 if (_matches.isEmpty)
                   Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text('لم يُدِر أي مباراة بعد',
+                    child: Text(AppLocalizations.of(context)!.noMatchesManaged,
                         style: TextStyle(color: Colors.grey[600])),
                   )
                 else
@@ -206,7 +207,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
   Widget _matchTile(MatchModel m) {
     final score = m.resultConfirmed
         ? '${m.homeScore} - ${m.awayScore}'
-        : (m.status == 'live' ? 'مباشر' : '—');
+        : (m.status == 'live' ? AppLocalizations.of(context)!.matchLive : '—');
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -250,32 +251,32 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('تعديل بياناتي'),
+        title: Text(AppLocalizations.of(context)!.editMyData),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: cityCtrl,
-              decoration: const InputDecoration(
-                  labelText: 'المدينة', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.city, border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: bioCtrl,
               maxLines: 3,
-              decoration: const InputDecoration(
-                  labelText: 'نبذة/خبرة', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.bioExperience, border: const OutlineInputBorder()),
             ),
           ],
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancel)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('حفظ')),
+              child: Text(AppLocalizations.of(context)!.save)),
         ],
       ),
     );
@@ -289,10 +290,12 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
         'bio': bioCtrl.text.trim(),
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم حفظ بياناتك'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.dataSavedSuccessfully));
       _load();
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر الحفظ'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToSave));
     }
   }
 }

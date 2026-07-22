@@ -8,6 +8,7 @@ import '../../widgets/core/tooba_empty_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../players/player_detail_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: مراجعة المنظّم لتشكيلات البطولة (بند 8). يعرض تشكيلة كل فريق على
 /// الملعب + الاحتياط، ويقبلها أو يرفضها (مع ملاحظة). الإشعار للكابتن عبر CF.
@@ -47,7 +48,7 @@ class _TournamentLineupsReviewScreenState
       if (!mounted) return;
       Navigator.push(context, ToobaRoute.to(PlayerDetailScreen(player: p)));
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر فتح صفحة اللاعب');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToOpenPlayerProfile);
     }
   }
 
@@ -67,12 +68,14 @@ class _TournamentLineupsReviewScreenState
     }
     try {
       await repo.review(l.id, status, note: note);
+      if (!mounted) return;
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(
-          status == 'approved' ? 'قُبلت التشكيلة' : 'رُفضت التشكيلة'));
+          status == 'approved' ? AppLocalizations.of(context)!.lineupApprovedMsg : AppLocalizations.of(context)!.lineupRejectedMsg));
       _editing.remove(l.id); // أعد إخفاء الأزرار بعد القرار
       _reload();
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر تحديث الحالة'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToUpdateStatus));
     }
   }
 
@@ -81,21 +84,21 @@ class _TournamentLineupsReviewScreenState
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('سبب الرفض (اختياري)'),
+        title: Text(AppLocalizations.of(context)!.rejectionReasonOptional),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: TextField(
           controller: ctrl,
           maxLines: 2,
-          decoration: const InputDecoration(
-              hintText: 'مثال: نقص في عدد الأساسيين',
-              border: OutlineInputBorder()),
+          decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.rejectionReasonExample,
+              border: const OutlineInputBorder()),
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+              onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
-              child: const Text('رفض التشكيلة')),
+              child: Text(AppLocalizations.of(context)!.rejectLineupBtn)),
         ],
       ),
     );
@@ -104,7 +107,7 @@ class _TournamentLineupsReviewScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('مراجعة التشكيلات'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.reviewLineupsTitle), centerTitle: true),
       body: FutureBuilder<List<TournamentLineupModel>>(
         future: _future,
         builder: (context, snap) {
@@ -113,10 +116,10 @@ class _TournamentLineupsReviewScreenState
           }
           final lineups = snap.data ?? [];
           if (lineups.isEmpty) {
-            return const ToobaEmptyState(
+            return ToobaEmptyState(
               icon: Icons.groups_outlined,
-              title: 'لا توجد تشكيلات مُرسَلة بعد',
-              subtitle: 'ستظهر هنا تشكيلات الكباتن عند إرسالها',
+              title: AppLocalizations.of(context)!.noLineupsSentYet,
+              subtitle: AppLocalizations.of(context)!.lineupsWillAppearHereWhenSent,
             );
           }
           return RefreshIndicator(
@@ -133,10 +136,10 @@ class _TournamentLineupsReviewScreenState
 
   Widget _lineupCard(TournamentLineupModel l) {
     final (color, label) = l.isApproved
-        ? (Colors.green, 'مقبولة')
+        ? (Colors.green, AppLocalizations.of(context)!.approvedStatus)
         : l.isRejected
-            ? (Colors.red, 'مرفوضة')
-            : (Colors.blue, 'قيد المراجعة');
+            ? (Colors.red, AppLocalizations.of(context)!.rejectedStatus)
+            : (Colors.blue, AppLocalizations.of(context)!.pendingReviewStatus);
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -168,7 +171,7 @@ class _TournamentLineupsReviewScreenState
               ],
             ),
             const SizedBox(height: 4),
-            Text('الخطة: ${l.formation ?? "—"}',
+            Text(AppLocalizations.of(context)!.formationX(l.formation ?? "—"),
                 style: TextStyle(color: Colors.grey[600], fontSize: 12)),
             const SizedBox(height: 10),
             // الملعب (الأساسيون بترتيب الخانات) — الضغط على لاعب يفتح صفحته.
@@ -182,8 +185,8 @@ class _TournamentLineupsReviewScreenState
             ),
             const SizedBox(height: 10),
             if (l.subs.isNotEmpty) ...[
-              const Text('الاحتياط:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text(AppLocalizations.of(context)!.subsLabel,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 4),
               Wrap(
                 spacing: 6,
@@ -202,7 +205,7 @@ class _TournamentLineupsReviewScreenState
             if (l.isRejected && l.reviewNote != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text('ملاحظتك: ${l.reviewNote}',
+                child: Text(AppLocalizations.of(context)!.yourNoteX(l.reviewNote!),
                     style: const TextStyle(
                         color: Colors.red, fontStyle: FontStyle.italic)),
               ),
@@ -217,8 +220,8 @@ class _TournamentLineupsReviewScreenState
                       onPressed: () => _review(l, 'approved'),
                       icon: const Icon(Icons.check,
                           size: 18, color: Colors.green),
-                      label: const Text('قبول',
-                          style: TextStyle(color: Colors.green)),
+                      label: Text(AppLocalizations.of(context)!.acceptBtn,
+                          style: const TextStyle(color: Colors.green)),
                       style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Colors.green)),
                     ),
@@ -229,8 +232,8 @@ class _TournamentLineupsReviewScreenState
                       onPressed: () => _review(l, 'rejected'),
                       icon: const Icon(Icons.close,
                           size: 18, color: Colors.red),
-                      label: const Text('رفض',
-                          style: TextStyle(color: Colors.red)),
+                      label: Text(AppLocalizations.of(context)!.rejectBtn,
+                          style: const TextStyle(color: Colors.red)),
                       style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Colors.red)),
                     ),
@@ -243,8 +246,8 @@ class _TournamentLineupsReviewScreenState
                 child: TextButton.icon(
                   onPressed: () => setState(() => _editing.add(l.id)),
                   icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('تغيير القرار',
-                      style: TextStyle(fontSize: 12)),
+                  label: Text(AppLocalizations.of(context)!.changeDecisionBtn,
+                      style: const TextStyle(fontSize: 12)),
                 ),
               ),
           ],

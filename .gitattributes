@@ -1,0 +1,31 @@
+# 📝 توحيد نهايات الأسطر بين ويندوز والماك — يمنع تعارضات وهمية في git
+# (يظهر ملف كامل كأنه تغيّر لمجرّد اختلاف CRLF/LF).
+* text=auto eol=lf
+
+# ملفات خاصة بويندوز تبقى CRLF
+*.bat        text eol=crlf
+*.cmd        text eol=crlf
+*.ps1        text eol=crlf
+
+# سكربتات يونكس/ماك تبقى LF دائماً
+*.sh         text eol=lf
+
+# ملفات ثنائية — لا تمسّها git إطلاقاً
+*.png        binary
+*.jpg        binary
+*.jpeg       binary
+*.gif        binary
+*.webp       binary
+*.ico        binary
+*.ttf        binary
+*.otf        binary
+*.woff       binary
+*.woff2      binary
+*.jks        binary
+*.keystore   binary
+*.pdf        binary
+*.zip        binary
+*.tgz        binary
+
+# ملفات الترجمة — نصّية UTF-8
+*.arb        text eol=lf

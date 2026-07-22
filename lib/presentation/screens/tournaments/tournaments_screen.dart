@@ -1,7 +1,7 @@
 import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/tournament/tournament_cubit.dart';
@@ -15,6 +15,7 @@ import '../../widgets/core/tooba_shimmer.dart';
 import 'create_tournament_screen.dart';
 import 'tournament_details_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: قائمة البطولات الحقيقية (من Firestore) بدل البيانات الوهمية.
 class TournamentsScreen extends StatefulWidget {
@@ -55,8 +56,8 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('طوبة',
-            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
+        title: Text(AppLocalizations.of(context)!.toubaAppTitle,
+            style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
         centerTitle: false,
       ),
       floatingActionButton: canManage
@@ -66,7 +67,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                 ToobaRoute.to(const CreateTournamentScreen()),
               ),
               icon: const Icon(Icons.add),
-              label: const Text('إنشاء بطولة'),
+              label: Text(AppLocalizations.of(context)!.createTournamentBtn),
             )
           : null,
       body: BlocBuilder<TournamentCubit, TournamentState>(
@@ -74,9 +75,9 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
           if (state is TournamentError) {
             return ToobaEmptyState(
               icon: Icons.wifi_off_rounded,
-              title: 'تعذّر تحميل البطولات',
+              title: AppLocalizations.of(context)!.failedToLoadTournaments,
               subtitle: state.message,
-              actionLabel: 'إعادة المحاولة',
+              actionLabel: AppLocalizations.of(context)!.retryBtn,
               onAction: () =>
                   context.read<TournamentCubit>().fetchTournaments(),
             );
@@ -93,10 +94,10 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             if (state.tournaments.isEmpty) {
               return ToobaEmptyState(
                 icon: Icons.emoji_events,
-                title: 'لا توجد بطولات بعد',
+                title: AppLocalizations.of(context)!.noTournamentsYet,
                 subtitle: canManage
-                    ? 'أنشئ أول بطولة بزر «إنشاء بطولة» أدناه'
-                    : 'لم يُنشئ أحد بطولةً في منطقتك بعد',
+                    ? AppLocalizations.of(context)!.createFirstTournamentHint
+                    : AppLocalizations.of(context)!.noTournamentsInYourAreaYet,
               );
             }
 
@@ -107,18 +108,18 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 children: [
                   if (ongoing.isNotEmpty) ...[
-                    _header('بطولات جارية'),
-                    ...ongoing.map((t) => _tournamentCard(theme, t)),
+                    _header(AppLocalizations.of(context)!.ongoingTournaments),
+                    ...ongoing.map((t) => _tournamentCard(context, theme, t)),
                     const SizedBox(height: 16),
                   ],
                   if (finished.isNotEmpty) ...[
-                    _header('بطولات منتهية'),
-                    ...finished.map((t) => _tournamentCard(theme, t)),
+                    _header(AppLocalizations.of(context)!.finishedTournaments),
+                    ...finished.map((t) => _tournamentCard(context, theme, t)),
                     const SizedBox(height: 16),
                   ],
                   if (others.isNotEmpty) ...[
-                    _header('بطولات أخرى'),
-                    ...others.map((t) => _tournamentCard(theme, t)),
+                    _header(AppLocalizations.of(context)!.otherTournaments),
+                    ...others.map((t) => _tournamentCard(context, theme, t)),
                   ],
                 ],
               ),
@@ -129,10 +130,10 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(vertical: 16),
             children: [
-              _header('بطولات جارية'),
+              _header(AppLocalizations.of(context)!.ongoingTournaments),
               const ToobaShimmerBanner(),
               const SizedBox(height: 16),
-              _header('بطولات أخرى'),
+              _header(AppLocalizations.of(context)!.otherTournaments),
               const ToobaShimmerList(count: 3, tileHeight: 72),
             ],
           );
@@ -159,7 +160,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
 
   // 📝 HINT AR: كارت بطولة موحّد (نفس الحجم للجارية والمنتهية). المنتهية تأخذ
   // تدرّجاً ذهبياً + شارة «منتهية» + اسم البطل.
-  Widget _tournamentCard(ThemeData theme, TournamentModel t) {
+  Widget _tournamentCard(BuildContext context, ThemeData theme, TournamentModel t) {
     final finished = t.status == 'finished';
     final gradient = finished
         ? [Colors.amber.shade700, Colors.orange.shade900]
@@ -206,12 +207,12 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                     children: [
                       Row(
                         children: [
-                          _miniBadge(finished ? 'منتهية' : 'جارية'),
+                          _miniBadge(finished ? AppLocalizations.of(context)!.finishedBadge : AppLocalizations.of(context)!.ongoingBadge),
                           const SizedBox(width: 6),
-                          _miniBadge('${t.playerFormat} ضد ${t.playerFormat}'),
+                          _miniBadge(AppLocalizations.of(context)!.vXFormat(t.playerFormat.toString())),
                           if (!t.isFree) ...[
                             const SizedBox(width: 6),
-                            _miniBadge('باشتراك'),
+                            _miniBadge(AppLocalizations.of(context)!.paidSubscriptionBadge),
                           ],
                         ],
                       ),
@@ -229,7 +230,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                                 color: Colors.white, size: 16),
                             const SizedBox(width: 4),
                             Flexible(
-                              child: Text('البطل: ${t.winnerTeamName}',
+                              child: Text(AppLocalizations.of(context)!.championX(t.winnerTeamName!),
                                   style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
@@ -240,7 +241,7 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
                           ],
                         )
                       else
-                        Text('${t.city} • ${t.teamIds.length} فريق',
+                        Text(AppLocalizations.of(context)!.cityAndTeamsCount(t.city, t.teamIds.length.toString()),
                             style: const TextStyle(
                                 color: Colors.white70, fontSize: 14)),
                     ],

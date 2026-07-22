@@ -1,10 +1,11 @@
 import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../../data/models/challenge_model.dart';
 import '../../../data/repositories/challenge_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: إدارة التحديات (للأدمن) — إلغاء الطلبات **المتروكة** (مفتوحة بلا
 /// متقدّمين منذ عدّة أيام، لم يُلغها الكابتن) أو أي طلب مفتوح. القاعدة تسمح للأدمن
@@ -17,7 +18,7 @@ class AdminChallengesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final repo = context.read<ChallengeRepository>();
     return Scaffold(
-      appBar: AppBar(title: const Text('إدارة التحديات'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.manageChallenges), centerTitle: true),
       body: StreamBuilder<List<ChallengeModel>>(
         stream: repo.streamOpen(limit: 100),
         builder: (context, snap) {
@@ -27,7 +28,7 @@ class AdminChallengesScreen extends StatelessWidget {
           final list = snap.data!;
           if (list.isEmpty) {
             return Center(
-                child: Text('لا توجد طلبات تحدٍّ مفتوحة',
+                child: Text(AppLocalizations.of(context)!.noOpenChallengeRequests,
                     style: TextStyle(color: Colors.grey[600])));
           }
           return ListView.builder(
@@ -79,7 +80,7 @@ class AdminChallengesScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: Colors.red.shade50,
                         borderRadius: BorderRadius.circular(12)),
-                    child: Text('متروك',
+                    child: Text(AppLocalizations.of(context)!.stale,
                         style: TextStyle(
                             fontSize: 11,
                             color: Colors.red.shade700,
@@ -89,7 +90,7 @@ class AdminChallengesScreen extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-                '${c.city} • متقدّمون: ${c.applicants.length} • منذ $ageDays يوم',
+                AppLocalizations.of(context)!.challengeDetailsRow(c.city, c.applicants.length, ageDays),
                 style: TextStyle(fontSize: 12, color: Colors.grey[600])),
             if (c.note != null && c.note!.isNotEmpty) ...[
               const SizedBox(height: 4),
@@ -101,8 +102,8 @@ class AdminChallengesScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _confirmCancel(context, c, repo),
                 icon: const Icon(Icons.close, size: 16, color: Colors.red),
-                label: const Text('إلغاء الطلب',
-                    style: TextStyle(color: Colors.red)),
+                label: Text(AppLocalizations.of(context)!.cancelRequestBtn,
+                    style: const TextStyle(color: Colors.red)),
               ),
             ),
           ],
@@ -114,27 +115,28 @@ class AdminChallengesScreen extends StatelessWidget {
   Future<void> _confirmCancel(
       BuildContext context, ChallengeModel c, ChallengeRepository repo) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('إلغاء الطلب'),
-        content: Text('إلغاء طلب تحدّي فريق «${c.requesterTeamName}»؟'),
+        title: Text(l10n.cancelRequestBtn),
+        content: Text(l10n.cancelChallengeRequestConfirm(c.requesterTeamName)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('تراجع')),
+              child: Text(l10n.cancelBtn)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('إلغاء الطلب')),
+              child: Text(l10n.cancelRequestBtn)),
         ],
       ),
     );
     if (ok != true) return;
     try {
       await repo.cancel(c.id);
-      messenger.showSnackBar(ToobaSnackBar.buildInfo('أُلغي الطلب'));
+      messenger.showSnackBar(ToobaSnackBar.buildInfo(l10n.requestCancelledStatus));
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر الإلغاء'));
+      messenger.showSnackBar(ToobaSnackBar.buildError(l10n.failedToCancel));
     }
   }
 }

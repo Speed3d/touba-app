@@ -14,6 +14,7 @@ import '../tournaments/tournament_details_screen.dart';
 import '../chat/chat_screen.dart';
 import '../challenges/challenges_screen.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../../l10n/app_localizations.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -38,7 +39,7 @@ class _NotificationsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('الإشعارات'),
+        title: Text(AppLocalizations.of(context)!.notifications),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -51,7 +52,7 @@ class _NotificationsView extends StatelessWidget {
               return TextButton(
                 onPressed: () =>
                     context.read<NotificationsCubit>().markAllAsRead(),
-                child: const Text('قراءة الكل'),
+                child: Text(AppLocalizations.of(context)!.readAll),
               );
             },
           ),
@@ -63,7 +64,7 @@ class _NotificationsView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is NotificationsError) {
-            return Center(child: Text('خطأ: ${state.message}'));
+            return Center(child: Text(AppLocalizations.of(context)!.errorPrefix(state.message)));
           }
           if (state is NotificationsLoaded) {
             if (state.notifications.isEmpty) {
@@ -74,7 +75,7 @@ class _NotificationsView extends StatelessWidget {
                     Icon(Icons.notifications_none_outlined,
                         size: 80, color: Colors.grey[400]),
                     const SizedBox(height: 16),
-                    Text('لا توجد إشعارات بعد',
+                    Text(AppLocalizations.of(context)!.noNotificationsYet,
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: isDark ? Colors.white54 : Colors.black45,
                         )),
@@ -177,7 +178,7 @@ class _NotificationTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
                 Text(
-                  _timeAgo(notification.createdAt),
+                  _timeAgo(context, notification.createdAt),
                   style: TextStyle(
                     fontSize: 11,
                     color: Colors.grey[500],
@@ -214,7 +215,7 @@ class _NotificationTile extends StatelessWidget {
     if (chatId.isNotEmpty) {
       Navigator.push(
         context,
-        ToobaRoute.to(ChatScreen(chatId: chatId, title: 'محادثة التحدّي')),
+        ToobaRoute.to(ChatScreen(chatId: chatId, title: AppLocalizations.of(context)!.challengeChat)),
       );
     } else if (challengeId.isNotEmpty) {
       Navigator.push(context, ToobaRoute.to(const ChallengesScreen()));
@@ -244,12 +245,12 @@ class _NotificationTile extends StatelessWidget {
     }
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(BuildContext context, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'الآن';
-    if (diff.inHours < 1) return 'منذ ${diff.inMinutes} دقيقة';
-    if (diff.inDays < 1) return 'منذ ${diff.inHours} ساعة';
-    if (diff.inDays == 1) return 'أمس';
-    return 'منذ ${diff.inDays} يوم';
+    if (diff.inMinutes < 1) return AppLocalizations.of(context)!.justNow;
+    if (diff.inHours < 1) return AppLocalizations.of(context)!.minutesAgo(diff.inMinutes);
+    if (diff.inDays < 1) return diff.inHours == 1 ? AppLocalizations.of(context)!.oneHourAgo : AppLocalizations.of(context)!.hoursAgo(diff.inHours);
+    if (diff.inDays == 1) return AppLocalizations.of(context)!.yesterday;
+    return diff.inDays == 1 ? AppLocalizations.of(context)!.oneDayAgo : AppLocalizations.of(context)!.daysAgo(diff.inDays);
   }
 }

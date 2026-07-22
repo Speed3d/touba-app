@@ -11,6 +11,7 @@ import '../../widgets/core/tooba_shimmer.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 import 'news_detail_screen.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// شاشة الأخبار المحسّنة (Stunning UI)
 class NewsScreen extends StatefulWidget {
@@ -40,7 +41,7 @@ class _NewsScreenState extends State<NewsScreen> {
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: Text(
-                'آخر الأخبار',
+                AppLocalizations.of(context)!.latestNews,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontWeight: FontWeight.w900,
@@ -85,7 +86,7 @@ class _NewsScreenState extends State<NewsScreen> {
                       Icon(Icons.newspaper_rounded, size: 80, color: Colors.grey.withValues(alpha: 0.3)),
                       const SizedBox(height: 16),
                       Text(
-                        'لا توجد أخبار حالياً',
+                        AppLocalizations.of(context)!.noNewsCurrently,
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.grey.shade600,
@@ -133,7 +134,7 @@ class _NewsCardState extends State<_NewsCard> {
   Future<void> _toggleLike() async {
     final authState = context.read<AuthCubit>().state;
     if (authState is! AuthAuthenticated) {
-      ToobaSnackBar.info(context, 'سجّل الدخول لتتمكن من الإعجاب');
+      ToobaSnackBar.info(context, AppLocalizations.of(context)!.loginToLike);
       return;
     }
     if (_busy) return;
@@ -148,7 +149,7 @@ class _NewsCardState extends State<_NewsCard> {
       await context.read<HomeRepository>().toggleLike(widget.news.id, uid, !liked);
     } catch (_) {
       if (!mounted) return;
-      ToobaSnackBar.error(context, 'حدث خطأ أثناء الإعجاب');
+      ToobaSnackBar.error(context, AppLocalizations.of(context)!.errorLiking);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -156,7 +157,7 @@ class _NewsCardState extends State<_NewsCard> {
 
   Future<void> _share() async {
     final repo = context.read<HomeRepository>();
-    final text = '📰 ${widget.news.title}\n\n${widget.news.body}\n\n📲 عبر تطبيق طوبة للمحترفين';
+    final text = '📰 ${widget.news.title}\n\n${widget.news.body}\n\n📲 ${AppLocalizations.of(context)!.viaToobaApp}';
     try {
       await Share.share(text);
       await repo.incrementShare(widget.news.id);
@@ -248,7 +249,7 @@ class _NewsCardState extends State<_NewsCard> {
                         color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text('الأبرز', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)!.featured, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -385,7 +386,7 @@ class _NewsCardState extends State<_NewsCard> {
               Icon(Icons.access_time_rounded, size: 14, color: textColor.withValues(alpha: 0.6)),
               const SizedBox(width: 4),
               Text(
-                _formatDate(widget.news.createdAt!),
+                _formatDate(context, widget.news.createdAt!),
                 style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ],
@@ -394,16 +395,16 @@ class _NewsCardState extends State<_NewsCard> {
     );
   }
 
-  String _formatDate(DateTime dt) {
+  String _formatDate(BuildContext context, DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 60) {
-      return diff.inMinutes <= 1 ? 'الآن' : 'منذ ${diff.inMinutes} دقيقة';
+      return diff.inMinutes <= 1 ? AppLocalizations.of(context)!.justNow : AppLocalizations.of(context)!.minutesAgo(diff.inMinutes);
     }
     if (diff.inHours < 24) {
-      return 'منذ ${diff.inHours} ${diff.inHours == 1 ? 'ساعة' : 'ساعات'}';
+      return diff.inHours == 1 ? AppLocalizations.of(context)!.oneHourAgo : AppLocalizations.of(context)!.hoursAgo(diff.inHours);
     }
     if (diff.inDays < 7) {
-      return 'منذ ${diff.inDays} ${diff.inDays == 1 ? 'يوم' : 'أيام'}';
+      return diff.inDays == 1 ? AppLocalizations.of(context)!.oneDayAgo : AppLocalizations.of(context)!.daysAgo(diff.inDays);
     }
     // عرض التاريخ الفعلي إذا مر عليه أكثر من أسبوع
     return DateFormat('yyyy/MM/dd', 'en').format(dt);

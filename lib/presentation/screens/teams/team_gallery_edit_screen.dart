@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: تحرير معرض صور الفريق (حتى 5) — يديره الكابتن من إدارة الفريق
 /// (بند 13). يضيف/يحذف الصور ويحفظها في `teams/{id}/gallery` + `teams.photos`.
@@ -66,10 +67,12 @@ class _TeamGalleryEditScreenState extends State<TeamGalleryEditScreen> {
         }
       }
       await repo.setTeamPhotos(widget.teamId, urls);
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم حفظ صور الفريق'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.teamPhotosSaved));
       if (mounted) Navigator.pop(context, true);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر حفظ الصور'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToSavePhotos));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -81,11 +84,11 @@ class _TeamGalleryEditScreenState extends State<TeamGalleryEditScreen> {
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('صور الفريق'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.teamPhotosTitle), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          Text('أضِف حتى $_max صور لفريقك (${_items.length}/$_max)',
+          Text(AppLocalizations.of(context)!.addUpToMaxPhotos(_max.toString(), _items.length.toString()),
               style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Wrap(
@@ -163,9 +166,9 @@ class _TeamGalleryEditScreenState extends State<TeamGalleryEditScreen> {
                     height: 22,
                     child: CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2))
-                : const Text('حفظ الصور',
+                : Text(AppLocalizations.of(context)!.savePhotosBtn,
                     style:
-                        TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

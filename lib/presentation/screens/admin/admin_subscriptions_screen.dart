@@ -6,6 +6,7 @@ import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/activation_code_model.dart';
 import '../../../data/repositories/subscription_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: لوحة الأدمن للاشتراكات (المرحلة 8): إعدادات (مدة التجربة + واتساب)
 /// + توليد أكواد (1/3/6/12 شهر) + قائمة الأكواد (نسخ/حذف/فكّ قفل). التوليد كتابة
@@ -59,10 +60,10 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
             freeTrialDays: int.tryParse(_trialCtrl.text.trim()) ?? 14,
             whatsapp: _whatsappCtrl.text.trim(),
           );
-      if (mounted) ToobaSnackBar.success(context, 'تم حفظ الإعدادات');
+      if (mounted) ToobaSnackBar.success(context, AppLocalizations.of(context)!.settingsSaved);
     } catch (_) {
       if (mounted) {
-        ToobaSnackBar.error(context, 'تعذّر الحفظ (يتطلّب صلاحية مدير أعلى)');
+        ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToSaveHighPermission);
       }
     } finally {
       if (mounted) setState(() => _savingSettings = false);
@@ -85,10 +86,10 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
           );
       if (mounted) {
         _notesCtrl.clear();
-        ToobaSnackBar.success(context, 'تم توليد ${codes.length} كود');
+        ToobaSnackBar.success(context, AppLocalizations.of(context)!.generatedXCodes(codes.length));
       }
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر التوليد');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToGenerate);
     } finally {
       if (mounted) setState(() => _generating = false);
     }
@@ -98,7 +99,7 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
   Widget build(BuildContext context) {
     final repo = context.read<SubscriptionRepository>();
     return Scaffold(
-      appBar: AppBar(title: const Text('أكواد التفعيل'), centerTitle: true),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.activationCodesTitle), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -106,8 +107,8 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
           const SizedBox(height: 16),
           _generateCard(),
           const SizedBox(height: 20),
-          const Text('الأكواد',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(AppLocalizations.of(context)!.codesLabel,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 8),
           StreamBuilder<List<ActivationCodeModel>>(
             stream: repo.streamCodes(),
@@ -121,7 +122,7 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
               if (codes.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text('لا توجد أكواد بعد',
+                  child: Text(AppLocalizations.of(context)!.noCodesYet,
                       style: TextStyle(color: Colors.grey[600])),
                 );
               }
@@ -142,23 +143,23 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('الإعدادات',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.settingsCardTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             TextField(
               controller: _trialCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                  labelText: 'مدة التجربة المجانية (أيام)',
-                  border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.freeTrialDaysLabel,
+                  border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _whatsappCtrl,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                  labelText: 'واتساب التفعيل (مثال: 9647xx)',
-                  border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.activationWhatsappLabel,
+                  border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
@@ -168,7 +169,7 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('حفظ الإعدادات'),
+                  : Text(AppLocalizations.of(context)!.saveSettingsBtn),
             ),
           ],
         ),
@@ -184,21 +185,21 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('توليد أكواد',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.generateCodesTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: DropdownButtonFormField<int>(
                     initialValue: _duration,
-                    decoration: const InputDecoration(
-                        labelText: 'المدة', border: OutlineInputBorder()),
-                    items: const [
-                      DropdownMenuItem(value: 1, child: Text('شهر')),
-                      DropdownMenuItem(value: 3, child: Text('3 أشهر')),
-                      DropdownMenuItem(value: 6, child: Text('6 أشهر')),
-                      DropdownMenuItem(value: 12, child: Text('سنة')),
+                    decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.durationLabel, border: const OutlineInputBorder()),
+                    items: [
+                      DropdownMenuItem(value: 1, child: Text(AppLocalizations.of(context)!.month1Label)),
+                      DropdownMenuItem(value: 3, child: Text(AppLocalizations.of(context)!.months3Label)),
+                      DropdownMenuItem(value: 6, child: Text(AppLocalizations.of(context)!.months6Label)),
+                      DropdownMenuItem(value: 12, child: Text(AppLocalizations.of(context)!.yearLabel)),
                     ],
                     onChanged: (v) => setState(() => _duration = v ?? 1),
                   ),
@@ -207,8 +208,8 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
                 Expanded(
                   child: DropdownButtonFormField<int>(
                     initialValue: _count,
-                    decoration: const InputDecoration(
-                        labelText: 'العدد', border: OutlineInputBorder()),
+                    decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.countLabel, border: const OutlineInputBorder()),
                     items: const [1, 5, 10, 20, 50]
                         .map((n) =>
                             DropdownMenuItem(value: n, child: Text('$n')))
@@ -221,8 +222,8 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
             const SizedBox(height: 12),
             TextField(
               controller: _notesCtrl,
-              decoration: const InputDecoration(
-                  labelText: 'ملاحظة (اختياري)', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.notesOptional, border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
@@ -234,7 +235,7 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white))
                   : const Icon(Icons.add),
-              label: const Text('توليد'),
+              label: _generating ? const SizedBox.shrink() : Text(AppLocalizations.of(context)!.generateBtn),
             ),
           ],
         ),
@@ -266,22 +267,22 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
             if (!c.isUsed)
               IconButton(
                 icon: const Icon(Icons.copy, size: 20),
-                tooltip: 'نسخ',
+                tooltip: AppLocalizations.of(context)!.copyTooltip,
                 onPressed: () async {
                   await Clipboard.setData(ClipboardData(text: c.code));
-                  if (mounted) ToobaSnackBar.info(context, 'تم نسخ الكود');
+                  if (mounted) ToobaSnackBar.info(context, AppLocalizations.of(context)!.codeCopied);
                 },
               ),
             if (c.isLocked)
               IconButton(
                 icon: const Icon(Icons.lock_open, size: 20, color: Colors.orange),
-                tooltip: 'فكّ القفل',
+                tooltip: AppLocalizations.of(context)!.unlockTooltip,
                 onPressed: () => repo.unlockCode(c.code),
               ),
             IconButton(
               icon: const Icon(Icons.delete_outline,
                   size: 20, color: Colors.red),
-              tooltip: 'حذف',
+              tooltip: AppLocalizations.of(context)!.delete,
               onPressed: () => repo.deleteCode(c.code),
             ),
           ],

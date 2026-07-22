@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:share_plus/share_plus.dart';
 import '../../../data/models/player_model.dart';
 import '../../../data/models/match_model.dart';
@@ -12,6 +12,7 @@ import '../../../data/repositories/team_repository.dart';
 import '../../../core/utils/formations.dart';
 import '../../widgets/core/pitch_formation_view.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: محرّر تشكيلة الفريق التفاعلي (يُفتح من «عرض/مشاركة» في إدارة الفريق).
 /// الكابتن يختار الخطة (قالب ثابت أو مخصّصة)، يعيّن لاعبيه تفاعلياً على الملعب
@@ -128,7 +129,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               Center(
-                child: Text('اختر لاعب الخانة ${slotIndex + 1}',
+                child: Text(AppLocalizations.of(context)!.choosePlayerForSlotX((slotIndex + 1).toString()),
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold)),
               ),
@@ -136,7 +137,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
               if (current != null)
                 ListTile(
                   leading: const Icon(Icons.remove_circle, color: Colors.red),
-                  title: const Text('إزالة اللاعب من هذه الخانة'),
+                  title: Text(AppLocalizations.of(context)!.removePlayerFromSlot),
                   onTap: () {
                     Navigator.pop(ctx);
                     setState(() => _slots[slotIndex] = null);
@@ -158,7 +159,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
                   ),
                   title: Text(p.name),
                   subtitle: Text(p.position +
-                      (isElsewhere ? ' • معيّن في خانة أخرى' : '')),
+                      (isElsewhere ? AppLocalizations.of(context)!.assignedToAnotherSlot : '')),
                   trailing: isHere
                       ? const Icon(Icons.check_circle, color: Colors.green)
                       : null,
@@ -190,14 +191,14 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(
-                child: Text('اختر خطة الفريق (حارس-دفاع-وسط-هجوم)',
+              Center(
+                child: Text(AppLocalizations.of(context)!.chooseTeamFormation,
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 16),
               for (final format in kPlayerFormats) ...[
-                Text('$format لاعبين',
+                Text(AppLocalizations.of(context)!.playersCountX(format.toString()),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(ctx).colorScheme.primary)),
@@ -226,7 +227,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
                     _customFormation();
                   },
                   icon: const Icon(Icons.dashboard_customize, size: 18),
-                  label: const Text('خطة مخصّصة'),
+                  label: Text(AppLocalizations.of(context)!.customFormation),
                 ),
               ),
             ],
@@ -274,7 +275,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
 
   Future<void> _save() async {
     if (_slots.any((s) => s == null)) {
-      ToobaSnackBar.warning(context, 'عيّن لاعباً لكل خانة في التشكيلة');
+      ToobaSnackBar.warning(context, AppLocalizations.of(context)!.assignPlayerToEachSlot);
       return;
     }
     setState(() => _saving = true);
@@ -283,10 +284,12 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
     try {
       await repo.setLineup(
           widget.teamId, _formation, _slots.whereType<String>().toList());
-      messenger.showSnackBar(ToobaSnackBar.buildSuccess('تم حفظ تشكيلة الفريق'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.teamFormationSaved));
       if (mounted) Navigator.pop(context, true);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر حفظ التشكيلة'));
+      if (!mounted) return;
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToSaveFormation));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -300,6 +303,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
       final boundary =
           _boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return;
+      final text = AppLocalizations.of(context)!.formationShareText(widget.teamName, _formation);
       final image = await boundary.toImage(pixelRatio: 3.0);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
       if (bytes == null) return;
@@ -307,10 +311,11 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
               '${Directory.systemTemp.path}/touba_lineup_${DateTime.now().millisecondsSinceEpoch}.png')
           .writeAsBytes(bytes.buffer.asUint8List());
       await Share.shareXFiles([XFile(file.path, mimeType: 'image/png')],
-          text: 'تشكيلة ${widget.teamName} — خطة $_formation');
+          text: text);
     } catch (_) {
+      if (!mounted) return;
       messenger
-          .showSnackBar(ToobaSnackBar.buildError('تعذّرت مشاركة التشكيلة'));
+          .showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToShareFormation));
     } finally {
       if (mounted) setState(() => _sharing = false);
     }
@@ -322,11 +327,11 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('تشكيلة الفريق'),
+        title: Text(AppLocalizations.of(context)!.teamFormation),
         centerTitle: true,
         actions: [
           IconButton(
-            tooltip: 'مشاركة',
+            tooltip: AppLocalizations.of(context)!.share,
             onPressed: _sharing ? null : _share,
             icon: _sharing
                 ? const SizedBox(
@@ -346,15 +351,15 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
             child: ListTile(
               leading: Icon(Icons.dashboard_customize,
                   color: theme.colorScheme.primary),
-              title: const Text('الخطة',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text('$_formation (${formationTotal(_formation)} لاعبين)'),
+              title: Text(AppLocalizations.of(context)!.formationPlan,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(AppLocalizations.of(context)!.formationWithPlayersCount(_formation, formationTotal(_formation).toString())),
               trailing:
-                  OutlinedButton(onPressed: _pickFormation, child: const Text('تغيير')),
+                  OutlinedButton(onPressed: _pickFormation, child: Text(AppLocalizations.of(context)!.changeBtn)),
             ),
           ),
           const SizedBox(height: 8),
-          Text('اضغط أي دائرة على الملعب لتعيين لاعبها',
+          Text(AppLocalizations.of(context)!.tapCircleToAssignPlayer,
               style: TextStyle(fontSize: 12, color: Colors.grey[600])),
           const SizedBox(height: 8),
           // 📝 HINT AR: نلتقط هذا الجزء كصورة عند المشاركة.
@@ -378,7 +383,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
                 child: OutlinedButton.icon(
                   onPressed: _sharing ? null : _share,
                   icon: const Icon(Icons.share, size: 18),
-                  label: const Text('مشاركة'),
+                  label: Text(AppLocalizations.of(context)!.share),
                 ),
               ),
               const SizedBox(width: 12),
@@ -386,7 +391,7 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _saving ? null : _save,
                   icon: const Icon(Icons.save, size: 18),
-                  label: const Text('حفظ'),
+                  label: Text(AppLocalizations.of(context)!.saveBtn),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
@@ -460,13 +465,13 @@ class _CustomPlanBodyState extends State<_CustomPlanBody> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('خطة مخصّصة',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(AppLocalizations.of(context)!.customFormation,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('عدد اللاعبين: '),
+              Text(AppLocalizations.of(context)!.numberOfPlayersLabel),
               for (final t in kPlayerFormats)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -479,12 +484,12 @@ class _CustomPlanBodyState extends State<_CustomPlanBody> {
             ],
           ),
           const Divider(),
-          stepper('المدافعون', _def, () => setState(() => _def--),
+          stepper(AppLocalizations.of(context)!.defendersCount, _def, () => setState(() => _def--),
               () => setState(() => _def++)),
-          stepper('الهجوم', _fwd, () => setState(() => _fwd--),
+          stepper(AppLocalizations.of(context)!.attackersCount, _fwd, () => setState(() => _fwd--),
               () => setState(() => _fwd++)),
           const SizedBox(height: 4),
-          Text('خط الوسط: $mid  •  المجموع: $_total',
+          Text(AppLocalizations.of(context)!.midfieldAndTotalCount(mid.toString(), _total.toString()),
               style: TextStyle(color: Colors.grey[600])),
           const SizedBox(height: 16),
           SizedBox(
@@ -493,7 +498,7 @@ class _CustomPlanBodyState extends State<_CustomPlanBody> {
               onPressed: mid < 0
                   ? null
                   : () => widget.onApply('1-$_def-$mid-$_fwd'),
-              child: const Text('اعتماد الخطة'),
+              child: Text(AppLocalizations.of(context)!.confirmFormation),
             ),
           ),
         ],

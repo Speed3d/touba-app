@@ -8,6 +8,7 @@ import '../../../data/models/team_model.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: شاشة إدخال نتيجة المباراة بأسلوب «ورقة المباراة»: قسمان (فريق
 /// لكل جهة)، تحت كل فريق لاعبوه، ولكل لاعب عدّادات +/− لـ (هدف/صناعة/إنذار/طرد).
@@ -182,7 +183,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
     if (_isKnockout && _isDraw &&
         (_advancedTeamId == null || _advancedTeamId!.isEmpty)) {
       ToobaSnackBar.warning(
-          context, 'حدّد الفريق المتأهّل (لا يجوز تعادل في دور إقصائي)');
+          context, AppLocalizations.of(context)!.selectAdvancedTeamNoDrawInKnockout);
       return;
     }
     final events = <Map<String, dynamic>>[];
@@ -272,7 +273,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('إدخال النتيجة'),
+          title: Text(AppLocalizations.of(context)!.enterResultTitle),
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -291,9 +292,9 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('حفظ وتأكيد النتيجة',
+                    child: Text(AppLocalizations.of(context)!.saveAndConfirmResultBtn,
                         style:
-                            TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ),
@@ -315,7 +316,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                   ],
                   const SizedBox(height: 8),
                   Text(
-                    'النتيجة تُحسب تلقائياً من الأهداف. قاعدة: إنذاران = طرد.',
+                    AppLocalizations.of(context)!.resultCalculatedAutomatically,
                     style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     textAlign: TextAlign.center,
                   ),
@@ -343,31 +344,31 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
             children: [
               Icon(Icons.account_tree, color: Colors.amber.shade800, size: 18),
               const SizedBox(width: 6),
-              const Text('حسم التعادل (دور إقصائي)',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(AppLocalizations.of(context)!.tieBreakKnockoutStage,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 10),
-          const Text('طريقة الحسم:', style: TextStyle(fontSize: 13)),
+          Text(AppLocalizations.of(context)!.tieBreakMethod, style: const TextStyle(fontSize: 13)),
           const SizedBox(height: 6),
           Wrap(
             spacing: 8,
             children: [
               ChoiceChip(
-                label: const Text('أشواط إضافية ثم جزاءات'),
+                label: Text(AppLocalizations.of(context)!.extraTimeThenPenalties),
                 selected: _decidedBy == 'extratime_penalties',
                 onSelected: (_) =>
                     setState(() => _decidedBy = 'extratime_penalties'),
               ),
               ChoiceChip(
-                label: const Text('جزاءات مباشرة'),
+                label: Text(AppLocalizations.of(context)!.straightToPenalties),
                 selected: _decidedBy == 'penalties',
                 onSelected: (_) => setState(() => _decidedBy = 'penalties'),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          const Text('ركلات الترجيح (اختياري):', style: TextStyle(fontSize: 13)),
+          Text(AppLocalizations.of(context)!.penaltyShootoutOptional, style: const TextStyle(fontSize: 13)),
           const SizedBox(height: 4),
           Row(
             children: [
@@ -377,8 +378,8 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          const Text('الفريق المتأهّل للدور التالي:',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context)!.advancedTeamToNextRound,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
           Wrap(
             spacing: 8,
@@ -509,7 +510,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
           if (players.isEmpty)
             Padding(
               padding: const EdgeInsets.all(12),
-              child: Text('لا لاعبون مسجّلون في هذا الفريق',
+              child: Text(AppLocalizations.of(context)!.noPlayersRegisteredInTeam,
                   style: TextStyle(color: Colors.grey[600], fontSize: 13)),
             )
           else
@@ -561,31 +562,31 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
           const SizedBox(height: 4),
           Row(
             children: [
-              _stepper('هدف', Colors.green, c.goals,
+              _stepper(AppLocalizations.of(context)!.goalEvent, Colors.green, c.goals,
                   () => _change(p.id, 'goals', 1), () => _change(p.id, 'goals', -1)),
-              _stepper('صناعة', Colors.blue, c.assists,
+              _stepper(AppLocalizations.of(context)!.assistEvent, Colors.blue, c.assists,
                   () => _change(p.id, 'assists', 1), () => _change(p.id, 'assists', -1)),
-              _stepper('إنذار', Colors.amber, c.yellow,
+              _stepper(AppLocalizations.of(context)!.yellowCardEvent, Colors.amber, c.yellow,
                   () => _change(p.id, 'yellow', 1), () => _change(p.id, 'yellow', -1)),
-              _stepper('طرد', Colors.red, c.red,
+              _stepper(AppLocalizations.of(context)!.redCardEvent, Colors.red, c.red,
                   () => _change(p.id, 'red', 1), () => _change(p.id, 'red', -1)),
             ],
           ),
           const SizedBox(height: 4),
           Row(
             children: [
-              _stepper('ركلة جزاء', Colors.green.shade800, c.penalties,
+              _stepper(AppLocalizations.of(context)!.penaltyEvent, Colors.green.shade800, c.penalties,
                   () => _change(p.id, 'penalties', 1),
                   () => _change(p.id, 'penalties', -1)),
-              _stepper('هدف بالخطأ', Colors.redAccent, c.ownGoals,
+              _stepper(AppLocalizations.of(context)!.ownGoalEvent, Colors.redAccent, c.ownGoals,
                   () => _change(p.id, 'ownGoals', 1),
                   () => _change(p.id, 'ownGoals', -1)),
               // إصابة — زرّ تبديل بسيط.
               Expanded(
                 child: Column(
                   children: [
-                    const Text('إصابة',
-                        style: TextStyle(fontSize: 10, color: Colors.red)),
+                    Text(AppLocalizations.of(context)!.injuryEvent,
+                        style: const TextStyle(fontSize: 10, color: Colors.red)),
                     const SizedBox(height: 2),
                     InkWell(
                       onTap: () => _toggleInjured(p.id),

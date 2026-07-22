@@ -2,7 +2,7 @@ import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../../cubits/auth/auth_cubit.dart';
@@ -20,6 +20,7 @@ import '../../../app/router/tooba_route.dart';
 import '../chat/chat_screen.dart';
 import '../teams/team_details_screen.dart';
 import '../subscription/subscription_locked_sheet.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: تحدّيات الفرق الودّية (المرحلة 7). تبويبان: «طلبات الفرق» (المفتوحة)
 /// و«تحدياتي» (طلباتي + ما تقدّمت إليه). القبول يفتح محادثة بين الكابتنين.
@@ -76,17 +77,17 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('تحدّيات الفرق'),
+          title: Text(AppLocalizations.of(context)!.teamChallengesTitle),
           centerTitle: true,
-          bottom: const TabBar(
-            tabs: [Tab(text: 'طلبات الفرق'), Tab(text: 'تحدياتي')],
+          bottom: TabBar(
+            tabs: [Tab(text: AppLocalizations.of(context)!.teamRequestsTab), Tab(text: AppLocalizations.of(context)!.myChallengesTab)],
           ),
         ),
         floatingActionButton: (!_loading && _hasTeam)
             ? FloatingActionButton.extended(
                 onPressed: _createChallenge,
                 icon: const Icon(Icons.add),
-                label: const Text('أطلب تحدّياً'),
+                label: Text(AppLocalizations.of(context)!.requestChallengeBtn),
               )
             : null,
         body: _loading
@@ -109,7 +110,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
         // نستثني طلبي ونعرض المفتوحة فقط.
         final list =
             snap.data!.where((c) => c.requesterCaptainId != _uid).toList();
-        if (list.isEmpty) return _empty('لا توجد طلبات تحدٍّ مفتوحة حالياً');
+        if (list.isEmpty) return _empty(AppLocalizations.of(context)!.noOpenChallengeRequests);
         return ListView(
           padding: const EdgeInsets.all(12),
           children: list.map(_openCard).toList(),
@@ -149,7 +150,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                           Text(c.requesterTeamName,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15)),
-                          Text('اضغط لعرض صفحة الفريق',
+                          Text(AppLocalizations.of(context)!.tapToViewTeamPage,
                               style: TextStyle(
                                   fontSize: 10, color: Colors.grey[500])),
                         ],
@@ -177,7 +178,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                 onPressed: (applied || !_hasTeam) ? null : () => _apply(c),
                 icon: Icon(applied ? Icons.check : Icons.sports_soccer,
                     size: 18),
-                label: Text(applied ? 'تم التقديم' : 'أوافق على التحدي'),
+                label: Text(applied ? AppLocalizations.of(context)!.appliedStatus : AppLocalizations.of(context)!.acceptChallengeBtn),
               ),
             ),
           ],
@@ -189,11 +190,11 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
   // ─── تبويب «تحدياتي» ─────────────────────────────────────────────────
   Widget _myTab() {
     final repo = context.read<ChallengeRepository>();
-    if (_uid == null) return _empty('سجّل الدخول');
+    if (_uid == null) return _empty(AppLocalizations.of(context)!.pleaseLoginToView);
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
-        _sectionTitle('طلباتي'),
+        _sectionTitle(AppLocalizations.of(context)!.myRequestsLabel),
         StreamBuilder<List<ChallengeModel>>(
           stream: repo.streamMine(_uid!),
           builder: (context, snap) {
@@ -203,12 +204,12 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                   child: Center(child: CircularProgressIndicator()));
             }
             final list = snap.data!;
-            if (list.isEmpty) return _hint('لم تُرسل أي طلب تحدٍّ بعد');
+            if (list.isEmpty) return _hint(AppLocalizations.of(context)!.noChallengeRequestsSentYet);
             return Column(children: list.map(_mySentCard).toList());
           },
         ),
         const SizedBox(height: 16),
-        _sectionTitle('تقدّمت إليها'),
+        _sectionTitle(AppLocalizations.of(context)!.appliedToLabel),
         StreamBuilder<List<ChallengeModel>>(
           stream: repo.streamApplied(_uid!),
           builder: (context, snap) {
@@ -216,7 +217,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
               return const SizedBox.shrink();
             }
             final list = snap.data!;
-            if (list.isEmpty) return _hint('لم تتقدّم لأي تحدٍّ بعد');
+            if (list.isEmpty) return _hint(AppLocalizations.of(context)!.noChallengeRequestsAppliedYet);
             return Column(children: list.map(_appliedCard).toList());
           },
         ),
@@ -241,7 +242,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
             Row(
               children: [
                 Expanded(
-                  child: Text(c.note?.isNotEmpty == true ? c.note! : 'طلب تحدٍّ',
+                  child: Text(c.note?.isNotEmpty == true ? c.note! : AppLocalizations.of(context)!.challengeRequestLabel,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 _statusChip(c.status),
@@ -254,25 +255,25 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
             ],
             const Divider(height: 18),
             if (c.isMatched) ...[
-              _info(Icons.verified, 'الخصم: ${c.matchedTeamName ?? "—"}'),
+              _info(Icons.verified, AppLocalizations.of(context)!.opponentLabelX(c.matchedTeamName ?? "—")),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: c.chatId == null
                       ? null
-                      : () => _openChat(c.chatId!, c.matchedTeamName ?? 'الخصم'),
+                      : () => _openChat(c.chatId!, c.matchedTeamName ?? AppLocalizations.of(context)!.opponentLabel),
                   icon: const Icon(Icons.chat, size: 18),
-                  label: const Text('فتح المحادثة'),
+                  label: Text(AppLocalizations.of(context)!.openChatBtn),
                 ),
               ),
             ] else if (c.isOpen) ...[
-              Text('المتقدّمون (${c.applicants.length})',
+              Text(AppLocalizations.of(context)!.applicantsLabelX(c.applicants.length),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 6),
               if (c.applicants.isEmpty)
-                Text('بانتظار تقديم الفرق…',
+                Text(AppLocalizations.of(context)!.waitingForTeamsToApply,
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]))
               else
                 ...c.applicants.map((a) => ListTile(
@@ -281,14 +282,14 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                       onTap: () => _openTeam(a.teamId),
                       leading: _logo(a.logoUrl, 16),
                       title: Text(a.teamName),
-                      subtitle: Text('اضغط لعرض الفريق قبل القبول',
+                      subtitle: Text(AppLocalizations.of(context)!.tapToViewTeamBeforeAccepting,
                           style:
                               TextStyle(fontSize: 10, color: Colors.grey[500])),
                       trailing: ElevatedButton(
                         onPressed: () => _accept(c, a),
                         style: ElevatedButton.styleFrom(
                             visualDensity: VisualDensity.compact),
-                        child: const Text('قبول'),
+                        child: Text(AppLocalizations.of(context)!.acceptBtn),
                       ),
                     )),
               const SizedBox(height: 6),
@@ -297,19 +298,19 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                   TextButton.icon(
                     onPressed: () => _createChallenge(editing: c),
                     icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('تعديل'),
+                    label: Text(AppLocalizations.of(context)!.editBtn),
                   ),
                   const Spacer(),
                   TextButton.icon(
                     onPressed: () => _cancel(c),
                     icon: const Icon(Icons.close, size: 16, color: Colors.red),
-                    label: const Text('إلغاء الطلب',
-                        style: TextStyle(color: Colors.red)),
+                    label: Text(AppLocalizations.of(context)!.cancelRequestBtn,
+                        style: const TextStyle(color: Colors.red)),
                   ),
                 ],
               ),
             ] else
-              Text('أُلغي الطلب',
+              Text(AppLocalizations.of(context)!.requestCancelledStatus,
                   style: TextStyle(fontSize: 12, color: Colors.grey[600])),
           ],
         ),
@@ -341,12 +342,12 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   Text(
                     c.isOpen
-                        ? 'بانتظار اختيار صاحب الطلب'
+                        ? AppLocalizations.of(context)!.waitingForRequesterSelection
                         : iAmMatched
-                            ? 'تم اختيار فريقك! 🎉'
+                            ? AppLocalizations.of(context)!.yourTeamSelected
                             : c.isMatched
-                                ? 'اختار فريقاً آخر'
-                                : 'أُلغي الطلب',
+                                ? AppLocalizations.of(context)!.anotherTeamSelected
+                                : AppLocalizations.of(context)!.requestCancelledStatus,
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
@@ -357,7 +358,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                 onPressed: () =>
                     _openChat(c.chatId!, c.requesterTeamName),
                 icon: const Icon(Icons.chat, size: 16),
-                label: const Text('محادثة'),
+                label: Text(AppLocalizations.of(context)!.chatLabel),
               ),
           ],
         ),
@@ -367,7 +368,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
 
   // ─── إجراءات ─────────────────────────────────────────────────────────
   Future<void> _apply(ChallengeModel c) async {
-    if (!_requireSub('الموافقة على التحدّي')) return;
+    if (!_requireSub(AppLocalizations.of(context)!.agreeToChallengeSub)) return;
     final t = _myTeam!;
     try {
       await context.read<ChallengeRepository>().apply(
@@ -378,14 +379,14 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                 captainId: _uid!,
                 logoUrl: t.logoUrl),
           );
-      if (mounted) ToobaSnackBar.success(context, 'تم تقديم فريقك للتحدّي');
+      if (mounted) ToobaSnackBar.success(context, AppLocalizations.of(context)!.teamAppliedSuccessfully);
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر التقديم');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToApply);
     }
   }
 
   Future<void> _accept(ChallengeModel c, ChallengeApplicant a) async {
-    if (!_requireSub('قبول التحدّي')) return;
+    if (!_requireSub(AppLocalizations.of(context)!.acceptChallengeSub)) return;
     final messenger = ScaffoldMessenger.of(context);
     final chatRepo = context.read<ChatRepository>();
     final challengeRepo = context.read<ChallengeRepository>();
@@ -400,23 +401,23 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
         otherPhoto: a.logoUrl,
         challengeId: c.id,
         welcome:
-            'تم قبول التحدّي بين «${c.requesterTeamName}» و«${a.teamName}» 👋 اتفقوا على الموعد والمكان.',
+            AppLocalizations.of(context)!.challengeAcceptedBetweenTeams(c.requesterTeamName, a.teamName),
       );
       // 2) قفل الطلب وربط المحادثة (CF يُشعر الفريق الآخر).
       await challengeRepo.matchWith(c.id, a, chatId);
       if (!mounted) return;
       _openChat(chatId, a.teamName);
     } catch (_) {
-      messenger.showSnackBar(ToobaSnackBar.buildError('تعذّر قبول التحدّي'));
+      messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToAcceptChallenge));
     }
   }
 
   Future<void> _cancel(ChallengeModel c) async {
     try {
       await context.read<ChallengeRepository>().cancel(c.id);
-      if (mounted) ToobaSnackBar.info(context, 'أُلغي الطلب');
+      if (mounted) ToobaSnackBar.info(context, AppLocalizations.of(context)!.requestCancelledStatus);
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر الإلغاء');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToCancel);
     }
   }
 
@@ -426,7 +427,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
   }
 
   Future<void> _createChallenge({ChallengeModel? editing}) async {
-    if (!_requireSub('طلب تحدٍّ')) return;
+    if (!_requireSub(AppLocalizations.of(context)!.requestChallengeSub)) return;
     final t = _myTeam!;
     final challengeRepo = context.read<ChallengeRepository>();
     // 📝 HINT AR: طلب واحد مفتوح فقط لكل كابتن (منع التلاعب) — عدّله أو ألغِه.
@@ -458,20 +459,20 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Center(
-                  child: Text(editing == null ? 'طلب تحدٍّ ودّي' : 'تعديل الطلب',
+                  child: Text(editing == null ? AppLocalizations.of(context)!.friendlyChallengeRequestTitle : AppLocalizations.of(context)!.editRequestTitle,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold))),
               const SizedBox(height: 4),
               Center(
-                  child: Text('باسم فريق «${t.name}» • ${t.city}',
+                  child: Text(AppLocalizations.of(context)!.onBehalfOfTeam(t.name, t.city),
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]))),
               const SizedBox(height: 16),
               TextField(
                 controller: noteCtrl,
                 maxLines: 2,
-                decoration: const InputDecoration(
-                    labelText: 'ملاحظة (اختياري) — المكان/التوقيت المقترح',
-                    border: OutlineInputBorder()),
+                decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.noteOptionalHint,
+                    border: const OutlineInputBorder()),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
@@ -493,7 +494,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                 },
                 icon: const Icon(Icons.event, size: 18),
                 label: Text(date == null
-                    ? 'موعد مقترح (اختياري)'
+                    ? AppLocalizations.of(context)!.suggestedDateOptional
                     : DateFormat('EEE d MMM • HH:mm', 'ar').format(date!)),
               ),
               const SizedBox(height: 16),
@@ -501,7 +502,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                 onPressed: () => Navigator.pop(ctx, true),
                 style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14)),
-                child: Text(editing == null ? 'نشر الطلب' : 'حفظ التعديل'),
+                child: Text(editing == null ? AppLocalizations.of(context)!.publishRequestBtn : AppLocalizations.of(context)!.saveEditBtn),
               ),
             ],
           ),
@@ -514,7 +515,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
       if (editing != null) {
         await challengeRepo.updateChallenge(editing.id,
             note: note, matchDate: date);
-        if (mounted) ToobaSnackBar.success(context, 'تم تحديث الطلب');
+        if (mounted) ToobaSnackBar.success(context, AppLocalizations.of(context)!.requestUpdatedSuccessfully);
       } else {
         final c = ChallengeModel(
           id: const Uuid().v4(),
@@ -528,10 +529,10 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
           status: 'open',
         );
         await challengeRepo.createChallenge(c);
-        if (mounted) ToobaSnackBar.success(context, 'تم نشر طلب التحدّي');
+        if (mounted) ToobaSnackBar.success(context, AppLocalizations.of(context)!.challengeRequestPublished);
       }
     } catch (_) {
-      if (mounted) ToobaSnackBar.error(context, 'تعذّر حفظ الطلب');
+      if (mounted) ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToSaveRequest);
     }
   }
 
@@ -540,28 +541,28 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('لديك طلب مفتوح'),
+        title: Text(AppLocalizations.of(context)!.youHaveAnOpenRequestTitle),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: const Text(
-            'لا يمكن نشر أكثر من طلب تحدٍّ مفتوح في آنٍ واحد. عدّل طلبك الحالي أو ألغِه أولاً.'),
+        content: Text(
+            AppLocalizations.of(context)!.cannotPublishMultipleRequests),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('حسناً')),
+              child: Text(AppLocalizations.of(context)!.okBtn)),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               _cancel(existing);
             },
-            child: const Text('إلغاء الطلب',
-                style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.cancelRequestBtn,
+                style: const TextStyle(color: Colors.red)),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
               _createChallenge(editing: existing);
             },
-            child: const Text('تعديل الطلب'),
+            child: Text(AppLocalizations.of(context)!.editRequestTitle),
           ),
         ],
       ),
@@ -624,9 +625,9 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
 
   Widget _statusChip(String status) {
     final (label, color) = switch (status) {
-      'matched' => ('تم القبول', Colors.green),
-      'cancelled' => ('ملغى', Colors.grey),
-      _ => ('مفتوح', Colors.blue),
+      'matched' => (AppLocalizations.of(context)!.acceptedStatus, Colors.green),
+      'cancelled' => (AppLocalizations.of(context)!.cancelledStatus, Colors.grey),
+      _ => (AppLocalizations.of(context)!.openStatus, Colors.blue),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

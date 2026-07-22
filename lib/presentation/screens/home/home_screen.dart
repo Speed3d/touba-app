@@ -1,4 +1,4 @@
-import '../../../core/utils/image_helper.dart';
+
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +22,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../players/player_detail_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: الشاشة الرئيسية — تصميم جديد عصري مستوحى من تطبيق FotMob
 /// يحتوي على:
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = theme.brightness == Brightness.dark;
     final authState = context.watch<AuthCubit>().state;
     final userName =
-        authState is AuthAuthenticated ? authState.user.name : 'زائر';
+        authState is AuthAuthenticated ? authState.user.name : AppLocalizations.of(context)!.visitor;
 
     // 📝 HINT AR: خلفية الشاشة تستخدم ألوان التصميم الجديد
     return Scaffold(
@@ -129,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 children: [
                   Text(
-                    'طوبة',
+                    'طوبة', // Brand name
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w900,
@@ -143,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'أهلاً بك، $userName',
+                AppLocalizations.of(context)!.welcomeUser(userName),
                 style: TextStyle(
                   fontSize: 13,
                   color: context.secondaryTextColor,
@@ -188,37 +189,37 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             children: [
               _quickActionChip(
-                title: 'المباريات',
+                title: AppLocalizations.of(context)!.matches,
                 icon: '⚽',
                 isDark: isDark,
                 onTap: () => Navigator.push(context, ToobaRoute.to(const MatchesScreen())),
               ),
               if (showTournaments)
                 _quickActionChip(
-                  title: 'البطولات',
+                  title: AppLocalizations.of(context)!.tournaments,
                   icon: '🏆',
                   isDark: isDark,
                   onTap: () => Navigator.push(context, ToobaRoute.to(const TournamentsScreen())),
                 ),
               _quickActionChip(
-                title: 'الأخبار',
+                title: AppLocalizations.of(context)!.news,
                 icon: '📰',
                 isDark: isDark,
                 onTap: () => Navigator.push(context, ToobaRoute.to(const NewsScreen())),
               ),
               _quickActionChip(
-                title: 'بطاقتي',
+                title: AppLocalizations.of(context)!.myCard,
                 icon: '🃏',
                 isDark: isDark,
                 onTap: () async {
                   final authState = context.read<AuthCubit>().state;
                   if (authState is! AuthAuthenticated) {
-                    ToobaSnackBar.info(context, 'يجب تسجيل الدخول أولاً');
+                    ToobaSnackBar.info(context, AppLocalizations.of(context)!.mustLoginFirst);
                     return;
                   }
                   final pid = authState.user.linkedPlayerId;
                   if (pid == null || pid.isEmpty) {
-                    ToobaSnackBar.info(context, 'لا تملك بطاقة لاعب حالياً');
+                    ToobaSnackBar.info(context, AppLocalizations.of(context)!.noPlayerCardCurrently);
                     return;
                   }
                   showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
@@ -226,15 +227,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     final pModel = await context.read<PlayerRepository>().getPlayerById(pid);
                     if (!context.mounted) return;
                     Navigator.pop(context);
-                    if (pModel != null) {
-                      Navigator.push(context, ToobaRoute.to(PlayerDetailScreen(player: pModel)));
-                    } else {
-                      ToobaSnackBar.error(context, 'اللاعب غير موجود');
-                    }
+                    Navigator.push(context, ToobaRoute.to(PlayerDetailScreen(player: pModel)));
                   } catch (e) {
                     if (!context.mounted) return;
                     Navigator.pop(context);
-                    ToobaSnackBar.error(context, 'حدث خطأ أثناء جلب البطاقة');
+                    ToobaSnackBar.error(context, AppLocalizations.of(context)!.errorFetchingCard);
                   }
                 },
               ),
@@ -315,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: const BorderRadius.horizontal(right: Radius.circular(11)),
                       ),
                       alignment: Alignment.center,
-                      child: const Text('عاجل', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                      child: Text(AppLocalizations.of(context)!.urgent, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
                     ),
                     Expanded(
                       child: Marquee(
@@ -354,8 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // 📝 HINT AR: بيانات ثابتة كعينة مبدئية للبطولات لتطبيق التصميم
         final mockTourneys = [
-          {'title': 'بطولة بغداد الكبرى', 'subtitle': 'الجولة ٣ من ٤ · ٨ فرق', 'status': 'جارية', 'icon': '🏆', 'color': context.primaryColor},
-          {'title': 'دوري الشباب المحلي', 'subtitle': 'الجولة ١ من ٦ · ٦ فرق', 'status': 'قريباً', 'icon': '⭐', 'color': Colors.amber},
+          {'title': AppLocalizations.of(context)!.baghdadMajorTournament, 'subtitle': AppLocalizations.of(context)!.round3of4_8teams, 'status': AppLocalizations.of(context)!.ongoing, 'icon': '🏆', 'color': context.primaryColor},
+          {'title': AppLocalizations.of(context)!.localYouthLeague, 'subtitle': AppLocalizations.of(context)!.round1of6_6teams, 'status': AppLocalizations.of(context)!.comingSoon, 'icon': '⭐', 'color': Colors.amber},
         ];
 
         return Padding(
@@ -369,13 +366,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '🏆 البطولات الجارية',
+                      AppLocalizations.of(context)!.ongoingTournaments,
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: context.textColor),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.push(context, ToobaRoute.to(const TournamentsScreen())),
                       child: Text(
-                        'عرض الكل ›',
+                        AppLocalizations.of(context)!.viewAll,
                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.primaryColor),
                       ),
                     ),

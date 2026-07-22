@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import '../../../data/models/banner_model.dart';
 import '../../../data/repositories/home_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: إدارة الإعلانات (للأدمن) — عرض/إضافة/تعديل/تفعيل/حذف البانرات.
 class AdminBannersScreen extends StatefulWidget {
@@ -34,13 +35,13 @@ class _AdminBannersScreenState extends State<AdminBannersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('إدارة الإعلانات'),
+        title: Text(AppLocalizations.of(context)!.adminBannersTitle),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEditor(),
         icon: const Icon(Icons.add),
-        label: const Text('إعلان جديد'),
+        label: Text(AppLocalizations.of(context)!.newBannerBtn),
       ),
       body: FutureBuilder<List<BannerModel>>(
         future: _future,
@@ -51,7 +52,7 @@ class _AdminBannersScreenState extends State<AdminBannersScreen> {
           final banners = snap.data ?? [];
           if (banners.isEmpty) {
             return Center(
-              child: Text('لا توجد إعلانات — أضف أول إعلان',
+              child: Text(AppLocalizations.of(context)!.noBanners,
                   style: TextStyle(color: Colors.grey[600])),
             );
           }
@@ -92,9 +93,9 @@ class _AdminBannersScreenState extends State<AdminBannersScreen> {
             ),
           ),
           ListTile(
-            title: Text(b.title?.isNotEmpty == true ? b.title! : 'بدون عنوان',
+            title: Text(b.title?.isNotEmpty == true ? b.title! : AppLocalizations.of(context)!.bannerWithoutTitle,
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text('الترتيب: ${b.order}'),
+            subtitle: Text(AppLocalizations.of(context)!.orderX(b.order)),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -128,16 +129,16 @@ class _AdminBannersScreenState extends State<AdminBannersScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('حذف الإعلان'),
-        content: const Text('هل تريد حذف هذا الإعلان نهائياً؟'),
+        title: Text(AppLocalizations.of(context)!.deleteBannerTitle),
+        content: Text(AppLocalizations.of(context)!.deleteBannerBody),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
+              child: Text(AppLocalizations.of(context)!.cancelBtn)),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('حذف'),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),
@@ -280,12 +281,12 @@ class _BannerEditorState extends State<_BannerEditor> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('اختيار من المعرض'),
+              title: Text(AppLocalizations.of(context)!.chooseFromGallery),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('التقاط صورة'),
+              title: Text(AppLocalizations.of(context)!.takePhoto),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
           ],
@@ -301,7 +302,7 @@ class _BannerEditorState extends State<_BannerEditor> {
   Future<void> _save() async {
     final isNew = widget.banner == null;
     if (isNew && _image == null) {
-      ToobaSnackBar.warning(context, 'اختر صورة الإعلان');
+      ToobaSnackBar.warning(context, AppLocalizations.of(context)!.chooseBannerImage);
       return;
     }
     setState(() => _saving = true);
@@ -341,7 +342,7 @@ class _BannerEditorState extends State<_BannerEditor> {
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ToobaSnackBar.error(context, 'تعذّر حفظ الإعلان');
+        ToobaSnackBar.error(context, AppLocalizations.of(context)!.failedToSaveBanner);
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -363,7 +364,7 @@ class _BannerEditorState extends State<_BannerEditor> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(b == null ? 'إعلان جديد' : 'تعديل الإعلان',
+      Text(b == null ? AppLocalizations.of(context)!.newBanner : AppLocalizations.of(context)!.editBanner,
               style: const TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center),
@@ -395,17 +396,17 @@ class _BannerEditorState extends State<_BannerEditor> {
           const SizedBox(height: 12),
           TextField(
             controller: _title,
-            decoration: const InputDecoration(
-                labelText: 'العنوان (اختياري)',
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.bannerTitleOptional,
+                border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _description,
             maxLines: 3,
-            decoration: const InputDecoration(
-                labelText: 'الوصف / التفاصيل (اختياري)',
-                border: OutlineInputBorder(),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.bannerDescOptional,
+                border: const OutlineInputBorder(),
                 alignLabelWithHint: true),
           ),
           const SizedBox(height: 12),
@@ -414,16 +415,16 @@ class _BannerEditorState extends State<_BannerEditor> {
               Expanded(
                 child: TextField(
                   controller: _city,
-                  decoration: const InputDecoration(
-                      labelText: 'المحافظة', border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.governorate, border: const OutlineInputBorder()),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
                   controller: _area,
-                  decoration: const InputDecoration(
-                      labelText: 'المنطقة', border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.areaOptional, border: const OutlineInputBorder()),
                 ),
               ),
             ],
@@ -432,57 +433,57 @@ class _BannerEditorState extends State<_BannerEditor> {
           TextField(
             controller: _phone,
             keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(
-                labelText: 'رقم الهاتف (اختياري)',
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.phoneOptional,
+                border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _whatsapp,
             keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(
-                labelText: 'واتساب (مع رمز الدولة، اختياري)',
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.whatsappOptional,
+                border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _facebook,
-            decoration: const InputDecoration(
-                labelText: 'رابط فيسبوك (اختياري)',
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.facebookLinkOptional,
+                border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _instagram,
-            decoration: const InputDecoration(
-                labelText: 'رابط إنستغرام (اختياري)',
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.instagramLinkOptional,
+                border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _targetUrl,
-            decoration: const InputDecoration(
-                labelText: 'رابط الموقع عند النقر (اختياري)',
-                border: OutlineInputBorder()),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.targetUrlOptional,
+                border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _order,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-                labelText: 'ترتيب الظهور', border: OutlineInputBorder()),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.displayOrder, border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 16),
           // صور إضافية لشاشة التفاصيل.
           Row(
             children: [
-              const Text('صور إضافية',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(AppLocalizations.of(context)!.extraImages,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
               const Spacer(),
               TextButton.icon(
                 onPressed: _pickExtras,
                 icon: const Icon(Icons.add_photo_alternate, size: 18),
-                label: const Text('إضافة'),
+                label: Text(AppLocalizations.of(context)!.addBtn),
               ),
             ],
           ),
@@ -513,7 +514,7 @@ class _BannerEditorState extends State<_BannerEditor> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('حفظ'),
+                : Text(AppLocalizations.of(context)!.saveBtn),
           ),
         ],
       ),
