@@ -2678,7 +2678,7 @@ class AppLocalizationsKu extends AppLocalizations {
   }
 
   @override
-  String get failedToShareFormation => 'نەتوانرا پێکهاتە هاوبەشی پێبکرێت';
+  String get failedToShareFormation => 'هاوبەشکردنی هێڵبەندی سەرنەکەوت';
 
   @override
   String get teamFormation => 'پێکهاتەی تیم';
@@ -3386,4 +3386,88 @@ class AppLocalizationsKu extends AppLocalizations {
   String confirmDeleteCityX(String name) {
     return 'دڵنیای کە $name و هەمووی ناوچەکانی بسڕیتەوە؟';
   }
+
+  @override
+  String get toBeDetermined => 'دواتر دیاری دەکرێت';
+
+  @override
+  String get finalRoundName => 'کۆتایی';
+
+  @override
+  String get semiFinalName => 'نیمە کۆتایی';
+
+  @override
+  String get quarterFinalName => 'چارەکی کۆتایی';
+
+  @override
+  String get roundOf16 => 'قۆناغی ١٦';
+
+  @override
+  String get roundOf32 => 'قۆناغی ٣٢';
+
+  @override
+  String knockoutRoundX(int round) {
+    return 'قۆناغی $round';
+  }
+
+  @override
+  String formationCaptionX(String title, String formation) {
+    return '$title — هێڵبەندی $formation';
+  }
+
+  @override
+  String endOfHalfX(int half) {
+    return 'کۆتایی خولی $half';
+  }
+
+  @override
+  String liveMinuteX(String minute) {
+    return 'ڕاستەوخۆ • $minute';
+  }
+
+  @override
+  String get noFormationSet => 'هیچ هێڵبەندێک دیاری نەکراوە';
+
+  @override
+  String get standingsEmptyHint => 'ڕیزبەندی دوای یەکەم ئەنجام دەردەکەوێت';
+
+  @override
+  String groupNameX(String group) {
+    return 'گرووپی $group';
+  }
+
+  @override
+  String get standingsColTeam => 'تیم';
+
+  @override
+  String get standingsColPlayed => 'ی';
+
+  @override
+  String get standingsColWon => 'بر';
+
+  @override
+  String get standingsColDraw => 'یک';
+
+  @override
+  String get standingsColLost => 'دۆ';
+
+  @override
+  String get standingsColPoints => 'خاڵ';
+
+  @override
+  String get oneMonthLabel => 'مانگێک';
+
+  @override
+  String monthsCountX(int count) {
+    return '$count مانگ';
+  }
+
+  @override
+  String get codeUsed => 'بەکارهاتوو';
+
+  @override
+  String get codeLocked => 'داخراو 🔒';
+
+  @override
+  String get codeAvailable => 'بەردەست ✅';
 }

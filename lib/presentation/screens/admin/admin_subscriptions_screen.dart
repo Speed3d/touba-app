@@ -243,8 +243,22 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
     );
   }
 
+  // 📝 HINT AR: تسمية مدّة الكود مترجمة (بدل getter عربي على النموذج).
+  String _durationText(AppLocalizations l10n, ActivationCodeModel c) {
+    if (c.durationMonths == 1) return l10n.oneMonthLabel;
+    if (c.durationMonths == 12) return l10n.yearLabel;
+    return l10n.monthsCountX(c.durationMonths);
+  }
+
+  String _statusText(AppLocalizations l10n, ActivationCodeModel c) {
+    if (c.isUsed) return l10n.codeUsed;
+    if (c.isLocked) return l10n.codeLocked;
+    return l10n.codeAvailable;
+  }
+
   Widget _codeTile(ActivationCodeModel c) {
     final repo = context.read<SubscriptionRepository>();
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -255,7 +269,7 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
                 fontFamily: 'monospace',
                 letterSpacing: 1)),
         subtitle: Text(
-          '${c.durationLabel} • ${c.statusText}'
+          '${_durationText(l10n, c)} • ${_statusText(l10n, c)}'
           '${c.isUsed && c.usedByName != null ? ' • ${c.usedByName}' : ''}'
           '${c.notes != null && c.notes!.isNotEmpty ? '\n${c.notes}' : ''}',
           style: const TextStyle(fontSize: 12),

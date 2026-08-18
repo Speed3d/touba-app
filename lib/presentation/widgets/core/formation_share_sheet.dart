@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../data/models/match_model.dart';
+import '../../../l10n/app_localizations.dart';
 import 'pitch_formation_view.dart';
 
 /// 📝 HINT AR: شيت سفلي يعرض التشكيلة على الملعب + زر **مشاركة** يلتقط صورة
@@ -54,6 +55,7 @@ class _FormationShareSheetState extends State<FormationShareSheet> {
 
   Future<void> _share() async {
     if (_sharing) return;
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _sharing = true);
     try {
       final boundary = _boundaryKey.currentContext?.findRenderObject()
@@ -67,7 +69,7 @@ class _FormationShareSheetState extends State<FormationShareSheet> {
               '${Directory.systemTemp.path}/touba_lineup_${DateTime.now().millisecondsSinceEpoch}.png')
           .writeAsBytes(bytes.buffer.asUint8List());
       final caption = widget.formation != null && widget.formation!.isNotEmpty
-          ? '${widget.title} — خطة ${widget.formation}'
+          ? l10n.formationCaptionX(widget.title, widget.formation!)
           : widget.title;
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'image/png')],
@@ -76,7 +78,7 @@ class _FormationShareSheetState extends State<FormationShareSheet> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('تعذّرت مشاركة التشكيلة')));
+            SnackBar(content: Text(l10n.failedToShareFormation)));
       }
     } finally {
       if (mounted) setState(() => _sharing = false);
@@ -120,7 +122,7 @@ class _FormationShareSheetState extends State<FormationShareSheet> {
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white))
                   : const Icon(Icons.share, size: 18),
-              label: const Text('مشاركة التشكيلة'),
+              label: Text(AppLocalizations.of(context)!.shareFormation),
             ),
           ),
         ],

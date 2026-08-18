@@ -3332,4 +3332,88 @@ class AppLocalizationsAr extends AppLocalizations {
   String confirmDeleteCityX(String name) {
     return 'هل أنت متأكد من حذف $name وجميع مناطقها؟';
   }
+
+  @override
+  String get toBeDetermined => 'يُحدَّد لاحقاً';
+
+  @override
+  String get finalRoundName => 'النهائي';
+
+  @override
+  String get semiFinalName => 'نصف النهائي';
+
+  @override
+  String get quarterFinalName => 'ربع النهائي';
+
+  @override
+  String get roundOf16 => 'دور الـ16';
+
+  @override
+  String get roundOf32 => 'دور الـ32';
+
+  @override
+  String knockoutRoundX(int round) {
+    return 'الدور $round';
+  }
+
+  @override
+  String formationCaptionX(String title, String formation) {
+    return '$title — خطة $formation';
+  }
+
+  @override
+  String endOfHalfX(int half) {
+    return 'نهاية الشوط $half';
+  }
+
+  @override
+  String liveMinuteX(String minute) {
+    return 'مباشر • $minute';
+  }
+
+  @override
+  String get noFormationSet => 'لا توجد تشكيلة محدّدة';
+
+  @override
+  String get standingsEmptyHint => 'سيظهر الترتيب بعد إدخال أول نتيجة';
+
+  @override
+  String groupNameX(String group) {
+    return 'المجموعة $group';
+  }
+
+  @override
+  String get standingsColTeam => 'الفريق';
+
+  @override
+  String get standingsColPlayed => 'ل';
+
+  @override
+  String get standingsColWon => 'ف';
+
+  @override
+  String get standingsColDraw => 'ت';
+
+  @override
+  String get standingsColLost => 'خ';
+
+  @override
+  String get standingsColPoints => 'نقاط';
+
+  @override
+  String get oneMonthLabel => 'شهر';
+
+  @override
+  String monthsCountX(int count) {
+    return '$count أشهر';
+  }
+
+  @override
+  String get codeUsed => 'مُستخدم';
+
+  @override
+  String get codeLocked => 'مقفل 🔒';
+
+  @override
+  String get codeAvailable => 'متاح ✅';
 }

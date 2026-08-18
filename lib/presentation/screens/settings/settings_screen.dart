@@ -439,7 +439,12 @@ class SettingsScreen extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: Column(children: children),
+          // 📝 HINT AR: Material شفّافة حتى تُرسَم تموّجات نقر الـ ListTile فوق
+          // خلفية الكارت لا خلفها (تفادي تحذير «ink splashes may be invisible»).
+          child: Material(
+            type: MaterialType.transparency,
+            child: Column(children: children),
+          ),
         ),
       );
 }

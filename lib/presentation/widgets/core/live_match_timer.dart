@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: مؤقّت المباراة الحيّة — خادمي بالكامل: كل جهاز يحسب الدقيقة من
 /// `matchStartedAt` (وقت بدء الشوط الحالي). لا حالة على الخادم سوى لحظة البدء،
@@ -53,8 +54,9 @@ class _LiveMatchTimerState extends State<LiveMatchTimer> {
     final displayMinute =
         (widget.currentHalf - 1) * widget.matchDuration + cappedInHalf;
 
+    final l10n = AppLocalizations.of(context)!;
     final label = reachedEnd
-        ? 'نهاية الشوط ${widget.currentHalf}'
+        ? l10n.endOfHalfX(widget.currentHalf)
         : "$displayMinute'";
 
     return Container(
@@ -76,7 +78,7 @@ class _LiveMatchTimerState extends State<LiveMatchTimer> {
           ),
           const SizedBox(width: 6),
           Text(
-            reachedEnd ? label : 'مباشر • $label',
+            reachedEnd ? label : l10n.liveMinuteX(label),
             style: TextStyle(
               color: Colors.red.shade700,
               fontWeight: FontWeight.bold,

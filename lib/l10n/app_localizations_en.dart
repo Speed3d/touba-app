@@ -2655,7 +2655,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failedToShareFormation => 'Failed to share formation';
+  String get failedToShareFormation => 'Failed to share the formation';
 
   @override
   String get teamFormation => 'Team Formation';
@@ -3362,4 +3362,89 @@ class AppLocalizationsEn extends AppLocalizations {
   String confirmDeleteCityX(String name) {
     return 'Are you sure you want to delete $name and all its districts?';
   }
+
+  @override
+  String get toBeDetermined => 'To be determined';
+
+  @override
+  String get finalRoundName => 'Final';
+
+  @override
+  String get semiFinalName => 'Semi-final';
+
+  @override
+  String get quarterFinalName => 'Quarter-final';
+
+  @override
+  String get roundOf16 => 'Round of 16';
+
+  @override
+  String get roundOf32 => 'Round of 32';
+
+  @override
+  String knockoutRoundX(int round) {
+    return 'Round $round';
+  }
+
+  @override
+  String formationCaptionX(String title, String formation) {
+    return '$title — $formation formation';
+  }
+
+  @override
+  String endOfHalfX(int half) {
+    return 'End of half $half';
+  }
+
+  @override
+  String liveMinuteX(String minute) {
+    return 'Live • $minute';
+  }
+
+  @override
+  String get noFormationSet => 'No formation set';
+
+  @override
+  String get standingsEmptyHint =>
+      'Standings will appear after the first result';
+
+  @override
+  String groupNameX(String group) {
+    return 'Group $group';
+  }
+
+  @override
+  String get standingsColTeam => 'Team';
+
+  @override
+  String get standingsColPlayed => 'P';
+
+  @override
+  String get standingsColWon => 'W';
+
+  @override
+  String get standingsColDraw => 'D';
+
+  @override
+  String get standingsColLost => 'L';
+
+  @override
+  String get standingsColPoints => 'Pts';
+
+  @override
+  String get oneMonthLabel => '1 month';
+
+  @override
+  String monthsCountX(int count) {
+    return '$count months';
+  }
+
+  @override
+  String get codeUsed => 'Used';
+
+  @override
+  String get codeLocked => 'Locked 🔒';
+
+  @override
+  String get codeAvailable => 'Available ✅';
 }

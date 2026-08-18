@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/match_model.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: عرض شجرة خروج المغلوب (الوجبة 7). يُجمّع مباريات الإقصائي حسب
 /// bracketRound في أعمدة (دور بعد دور حتى النهائي)، قابلة للتمرير أفقياً. يُبرِز
@@ -11,13 +12,14 @@ class BracketView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final knockout =
         matches.where((m) => m.stage == 'knockout').toList();
     if (knockout.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(24),
         child: Center(
-          child: Text('لم تُولَّد المرحلة الإقصائية بعد',
+          child: Text(l10n.bracketNotGeneratedYet,
               style: TextStyle(color: Colors.grey[600])),
         ),
       );
@@ -37,15 +39,16 @@ class BracketView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             for (final r in rounds)
-              _roundColumn(context, _roundLabel(r, lastRound), byRound[r]!),
+              _roundColumn(
+                  context, l10n, _roundLabel(l10n, r, lastRound), byRound[r]!),
           ],
         ),
       ),
     );
   }
 
-  Widget _roundColumn(
-      BuildContext context, String label, List<MatchModel> ms) {
+  Widget _roundColumn(BuildContext context, AppLocalizations l10n, String label,
+      List<MatchModel> ms) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Column(
@@ -59,13 +62,13 @@ class BracketView extends StatelessWidget {
                     fontSize: 12,
                     color: Theme.of(context).colorScheme.primary)),
           ),
-          for (final m in ms) _matchCard(context, m),
+          for (final m in ms) _matchCard(context, l10n, m),
         ],
       ),
     );
   }
 
-  Widget _matchCard(BuildContext context, MatchModel m) {
+  Widget _matchCard(BuildContext context, AppLocalizations l10n, MatchModel m) {
     // المتأهّل: advancedTeamId (للتعادل المحسوم) وإلا الأعلى نتيجةً.
     String? winnerId;
     if (m.resultConfirmed) {
@@ -90,20 +93,20 @@ class BracketView extends StatelessWidget {
         ),
         child: Column(
           children: [
-            _teamRow(context, m.homeTeamName, m.homeScore, m.resultConfirmed,
-                winnerId != null && winnerId == m.homeTeamId),
+            _teamRow(context, l10n, m.homeTeamName, m.homeScore,
+                m.resultConfirmed, winnerId != null && winnerId == m.homeTeamId),
             Divider(height: 1, color: Colors.grey.withValues(alpha: 0.3)),
-            _teamRow(context, m.awayTeamName, m.awayScore, m.resultConfirmed,
-                winnerId != null && winnerId == m.awayTeamId),
+            _teamRow(context, l10n, m.awayTeamName, m.awayScore,
+                m.resultConfirmed, winnerId != null && winnerId == m.awayTeamId),
           ],
         ),
       ),
     );
   }
 
-  Widget _teamRow(BuildContext context, String name, int score, bool played,
-      bool isWinner) {
-    final label = name.isEmpty ? 'يُحدَّد لاحقاً' : name;
+  Widget _teamRow(BuildContext context, AppLocalizations l10n, String name,
+      int score, bool played, bool isWinner) {
+    final label = name.isEmpty ? l10n.toBeDetermined : name;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Row(
@@ -135,21 +138,21 @@ class BracketView extends StatelessWidget {
   }
 
   // 📝 HINT AR: تسمية الدور من موقعه من النهاية (النهائي/نصف/ربع/دور الـ16...).
-  String _roundLabel(int round, int lastRound) {
+  String _roundLabel(AppLocalizations l10n, int round, int lastRound) {
     final fromEnd = lastRound - round;
     switch (fromEnd) {
       case 0:
-        return 'النهائي';
+        return l10n.finalRoundName;
       case 1:
-        return 'نصف النهائي';
+        return l10n.semiFinalName;
       case 2:
-        return 'ربع النهائي';
+        return l10n.quarterFinalName;
       case 3:
-        return 'دور الـ16';
+        return l10n.roundOf16;
       case 4:
-        return 'دور الـ32';
+        return l10n.roundOf32;
       default:
-        return 'الدور $round';
+        return l10n.knockoutRoundX(round);
     }
   }
 }

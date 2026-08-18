@@ -6196,6 +6196,150 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'هل أنت متأكد من حذف {name} وجميع مناطقها؟'**
   String confirmDeleteCityX(String name);
+
+  /// No description provided for @toBeDetermined.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُحدَّد لاحقاً'**
+  String get toBeDetermined;
+
+  /// No description provided for @finalRoundName.
+  ///
+  /// In ar, this message translates to:
+  /// **'النهائي'**
+  String get finalRoundName;
+
+  /// No description provided for @semiFinalName.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصف النهائي'**
+  String get semiFinalName;
+
+  /// No description provided for @quarterFinalName.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربع النهائي'**
+  String get quarterFinalName;
+
+  /// No description provided for @roundOf16.
+  ///
+  /// In ar, this message translates to:
+  /// **'دور الـ16'**
+  String get roundOf16;
+
+  /// No description provided for @roundOf32.
+  ///
+  /// In ar, this message translates to:
+  /// **'دور الـ32'**
+  String get roundOf32;
+
+  /// No description provided for @knockoutRoundX.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدور {round}'**
+  String knockoutRoundX(int round);
+
+  /// No description provided for @formationCaptionX.
+  ///
+  /// In ar, this message translates to:
+  /// **'{title} — خطة {formation}'**
+  String formationCaptionX(String title, String formation);
+
+  /// No description provided for @endOfHalfX.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهاية الشوط {half}'**
+  String endOfHalfX(int half);
+
+  /// No description provided for @liveMinuteX.
+  ///
+  /// In ar, this message translates to:
+  /// **'مباشر • {minute}'**
+  String liveMinuteX(String minute);
+
+  /// No description provided for @noFormationSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تشكيلة محدّدة'**
+  String get noFormationSet;
+
+  /// No description provided for @standingsEmptyHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيظهر الترتيب بعد إدخال أول نتيجة'**
+  String get standingsEmptyHint;
+
+  /// No description provided for @groupNameX.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجموعة {group}'**
+  String groupNameX(String group);
+
+  /// No description provided for @standingsColTeam.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفريق'**
+  String get standingsColTeam;
+
+  /// No description provided for @standingsColPlayed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ل'**
+  String get standingsColPlayed;
+
+  /// No description provided for @standingsColWon.
+  ///
+  /// In ar, this message translates to:
+  /// **'ف'**
+  String get standingsColWon;
+
+  /// No description provided for @standingsColDraw.
+  ///
+  /// In ar, this message translates to:
+  /// **'ت'**
+  String get standingsColDraw;
+
+  /// No description provided for @standingsColLost.
+  ///
+  /// In ar, this message translates to:
+  /// **'خ'**
+  String get standingsColLost;
+
+  /// No description provided for @standingsColPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقاط'**
+  String get standingsColPoints;
+
+  /// No description provided for @oneMonthLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهر'**
+  String get oneMonthLabel;
+
+  /// No description provided for @monthsCountX.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} أشهر'**
+  String monthsCountX(int count);
+
+  /// No description provided for @codeUsed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُستخدم'**
+  String get codeUsed;
+
+  /// No description provided for @codeLocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقفل 🔒'**
+  String get codeLocked;
+
+  /// No description provided for @codeAvailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح ✅'**
+  String get codeAvailable;
 }
 
 class _AppLocalizationsDelegate

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'l10n/app_localizations.dart';
+import 'l10n/ku_material_localizations.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -147,6 +148,12 @@ class PopularFootballApp extends StatelessWidget {
                   ],
                   localizationsDelegates: const [
                     AppLocalizations.delegate,
+                    // 📝 HINT AR: مفوّضات الكردية (ku) — تُحمّل موارد العربية
+                    // (Material/Cupertino/Widgets) لأن Flutter لا يشحنها لـku.
+                    // تُسجَّل قبل العامة فتلتقط ku، وتمرّ ar/en للعامة.
+                    KuMaterialLocalizationsDelegate(),
+                    KuCupertinoLocalizationsDelegate(),
+                    KuWidgetsLocalizationsDelegate(),
                     GlobalMaterialLocalizations.delegate,
                     GlobalWidgetsLocalizations.delegate,
                     GlobalCupertinoLocalizations.delegate,

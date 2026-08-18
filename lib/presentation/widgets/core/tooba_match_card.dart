@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 
 /// 📝 HINT AR: بطاقة مباراة. تُعرض في قائمة المباريات وتفاصيل البطولة.
@@ -78,12 +79,13 @@ class ToobaMatchCard extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: const Color(0xFFFF4B4B).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4)),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.circle, color: Color(0xFFFF4B4B), size: 6),
-                          SizedBox(width: 4),
-                          Text('مباشر',
-                              style: TextStyle(
+                          const Icon(Icons.circle,
+                              color: Color(0xFFFF4B4B), size: 6),
+                          const SizedBox(width: 4),
+                          Text(AppLocalizations.of(context)!.live,
+                              style: const TextStyle(
                                   color: Color(0xFFFF4B4B),
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../data/models/team_model.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: جدول الترتيب المشترك (الوجبة 7) — واعٍ بالمجموعات: إن حملت الصفوف
 /// حقل group يعرض جدولاً لكل مجموعة بعنوانها، وإلا جدولاً واحداً (الدوري).
@@ -15,11 +16,12 @@ class StandingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (standings.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(16),
         child: Center(
-          child: Text('سيظهر الترتيب بعد إدخال أول نتيجة',
+          child: Text(l10n.standingsEmptyHint,
               style: TextStyle(color: Colors.grey[600])),
         ),
       );
@@ -42,7 +44,7 @@ class StandingsView extends StatelessWidget {
         for (final g in groups) ...[
           Padding(
             padding: const EdgeInsets.only(top: 12, bottom: 6, right: 4),
-            child: Text('المجموعة $g',
+            child: Text(l10n.groupNameX(g),
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.primary)),
@@ -54,21 +56,22 @@ class StandingsView extends StatelessWidget {
   }
 
   Widget _table(BuildContext context, List<Map<String, dynamic>> rows) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columnSpacing: 16,
-          columns: const [
-            DataColumn(label: Text('#')),
-            DataColumn(label: Text('الفريق')),
-            DataColumn(label: Text('ل')),
-            DataColumn(label: Text('ف')),
-            DataColumn(label: Text('ت')),
-            DataColumn(label: Text('خ')),
-            DataColumn(label: Text('±')),
-            DataColumn(label: Text('نقاط')),
+          columns: [
+            const DataColumn(label: Text('#')),
+            DataColumn(label: Text(l10n.standingsColTeam)),
+            DataColumn(label: Text(l10n.standingsColPlayed)),
+            DataColumn(label: Text(l10n.standingsColWon)),
+            DataColumn(label: Text(l10n.standingsColDraw)),
+            DataColumn(label: Text(l10n.standingsColLost)),
+            const DataColumn(label: Text('±')),
+            DataColumn(label: Text(l10n.standingsColPoints)),
           ],
           rows: List.generate(rows.length, (i) {
             final s = rows[i];

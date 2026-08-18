@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/city_model.dart';
 import '../../../data/repositories/location_repository.dart';
+import '../../../l10n/app_localizations.dart';
 import 'manage_districts_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
@@ -17,37 +18,40 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
   bool _isSeeding = false;
 
   void _showAddCityDialog([CityModel? cityToEdit]) {
+    final l10n = AppLocalizations.of(context)!;
     final arController = TextEditingController(text: cityToEdit?.nameAr);
     final enController = TextEditingController(text: cityToEdit?.nameEn);
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(cityToEdit == null ? 'إضافة محافظة' : 'تعديل محافظة'),
+        title: Text(cityToEdit == null
+            ? l10n.addGovernorate
+            : l10n.editGovernorate),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: arController,
-              decoration: const InputDecoration(labelText: 'الاسم (عربي)'),
+              decoration: InputDecoration(labelText: l10n.nameArabic),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: enController,
-              decoration: const InputDecoration(labelText: 'الاسم (إنجليزي)'),
+              decoration: InputDecoration(labelText: l10n.nameEnglish),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('إلغاء'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
               if (arController.text.isEmpty) return;
               Navigator.pop(ctx);
-              
+
               final city = CityModel(
                 id: cityToEdit?.id ?? '',
                 nameAr: arController.text,
@@ -62,7 +66,7 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
                 await _repo.updateCity(city);
               }
             },
-            child: const Text('حفظ'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -70,6 +74,7 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
   }
 
   Future<void> _seedAllIraq() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _isSeeding = true);
     try {
       await _repo.seedAllIraq();
@@ -77,18 +82,18 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('تم الاستيراد بنجاح'),
-          content: const Text('تم جلب جميع محافظات ومناطق العراق.'),
+          title: Text(l10n.importSuccessTitle),
+          content: Text(l10n.importSuccessBody),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('حسناً'),
+              child: Text(l10n.okBtn),
             ),
           ],
         ),
       );
     } catch (e) {
-      ToobaSnackBar.error(context, 'خطأ: $e');
+      if (mounted) ToobaSnackBar.error(context, l10n.errorX(e.toString()));
     } finally {
       if (mounted) setState(() => _isSeeding = false);
     }
@@ -96,9 +101,10 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('إدارة المحافظات'),
+        title: Text(l10n.manageGovernoratesTitle),
         actions: [
           if (_isSeeding)
             const Center(
@@ -114,21 +120,21 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
           else
             IconButton(
               icon: const Icon(Icons.download),
-              tooltip: 'استيراد كل العراق',
+              tooltip: l10n.importIraqTooltip,
               onPressed: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text('تأكيد الاستيراد'),
-                    content: const Text('سيتم حقن كافة محافظات ومناطق العراق. هل أنت متأكد؟'),
+                    title: Text(l10n.importConfirmTitle),
+                    content: Text(l10n.importConfirmBody),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('إلغاء'),
+                        child: Text(l10n.cancel),
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('استيراد'),
+                        child: Text(l10n.importBtn),
                       ),
                     ],
                   ),
@@ -148,14 +154,14 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
         stream: _repo.getCitiesStream(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Center(child: Text('خطأ: ${snapshot.error}'));
+            return Center(child: Text(l10n.errorX(snapshot.error.toString())));
           }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
           final cities = snapshot.data!;
           if (cities.isEmpty) {
-            return const Center(child: Text('لا توجد محافظات. اضغط على زر التحميل لاستيراد العراق.'));
+            return Center(child: Text(l10n.noGovernorates));
           }
 
           return ListView.builder(
@@ -166,7 +172,8 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: ListTile(
-                  title: Text(city.nameAr, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text(city.nameAr,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(city.nameEn),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -187,14 +194,19 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (ctx) => AlertDialog(
-                              title: const Text('تأكيد الحذف'),
-                              content: Text('هل أنت متأكد من حذف ${city.nameAr} وجميع مناطقها؟'),
+                              title: Text(l10n.confirmDeleteTitle),
+                              content:
+                                  Text(l10n.confirmDeleteCityX(city.nameAr)),
                               actions: [
-                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+                                TextButton(
+                                    onPressed: () => Navigator.pop(ctx, false),
+                                    child: Text(l10n.cancel)),
                                 ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white),
                                   onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('حذف'),
+                                  child: Text(l10n.delete),
                                 ),
                               ],
                             ),

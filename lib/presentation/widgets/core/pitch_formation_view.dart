@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../data/models/match_model.dart';
 import '../../../core/utils/formations.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// 📝 HINT AR: عرض تشكيلة فريق على أرضية الملعب (المرحلة 6). الأرضية أصل مرفق
 /// (`assets/images/pitch.jpg`) — لا تستهلك بيانات إنترنت. أفقية فتُدوّر 90° لتصير
@@ -49,9 +50,9 @@ class PitchFormationView extends StatelessWidget {
             ),
             Container(color: Colors.black.withValues(alpha: 0.08)),
             if (players.isEmpty && onSlotTap == null)
-              const Center(
-                child: Text('لا توجد تشكيلة محدّدة',
-                    style: TextStyle(
+              Center(
+                child: Text(AppLocalizations.of(context)!.noFormationSet,
+                    style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             for (final c in placed)
@@ -159,24 +160,26 @@ class _PlayerChip extends StatelessWidget {
     return n.isEmpty ? '' : n.characters.first;
   }
 
-  String get _label {
+  // 📝 HINT AR: اسم اللاعب، أو اسم المركز المُترجَم للخانة الفارغة (عرض فقط —
+  // قيم المراكز في البيانات تبقى عربية للمقارنة).
+  String _label(AppLocalizations l10n) {
     final n = player?.name.trim() ?? '';
     if (n.isNotEmpty) return n.split(RegExp(r'\s+')).first;
-    // خانة فارغة: نعرض اسم المركز.
     switch (line) {
       case 'gk':
-        return 'حارس';
+        return l10n.posGoalkeeper;
       case 'def':
-        return 'مدافع';
+        return l10n.posDefender;
       case 'fwd':
-        return 'مهاجم';
+        return l10n.posForward;
       default:
-        return 'وسط';
+        return l10n.posMidfielder;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final empty = player == null;
     final img = _image;
     return Column(
@@ -243,7 +246,7 @@ class _PlayerChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
-            _label,
+            _label(l10n),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
