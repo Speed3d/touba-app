@@ -46,10 +46,11 @@ class TeamManagementScreen extends StatelessWidget {
       ),
       body: BlocConsumer<TeamManageCubit, TeamManageState>(
         listener: (context, state) {
+          final l10n = AppLocalizations.of(context)!;
           if (state is TeamManageActionSuccess) {
-            ToobaSnackBar.success(context, state.message);
+            ToobaSnackBar.success(context, _resolveTeamManageSuccess(l10n, state.message));
           } else if (state is TeamManageError) {
-            ToobaSnackBar.error(context, state.message);
+            ToobaSnackBar.error(context, _resolveTeamManageError(l10n, state.message));
           }
         },
         builder: (context, state) {
@@ -599,5 +600,49 @@ class TeamManagementScreen extends StatelessWidget {
       shirtNumber: result['shirtNumber'] as int?,
       preferredFoot: result['preferredFoot'] as String?,
     );
+  }
+
+  String _resolveTeamManageSuccess(AppLocalizations l10n, String raw) {
+    switch (raw) {
+      case 'تم حفظ خطة الفريق':
+        return l10n.teamSuccessFormationSaved;
+      case 'تم حفظ تشكيلة الفريق':
+        return l10n.teamSuccessLineupSaved;
+      case 'تم تحديث رقم اللاعب':
+        return l10n.teamSuccessShirtNumberUpdated;
+      case 'تم قبول الخروج وفكّ ارتباط اللاعب':
+        return l10n.teamSuccessReleaseAccepted;
+      case 'تم رفض طلب الخروج':
+        return l10n.teamSuccessReleaseRejected;
+      case 'تمت إضافة اللاعب للتشكيلة':
+        return l10n.teamSuccessPlayerAdded;
+      case 'تم قبول الطلب — سيُضاف اللاعب للتشكيلة تلقائياً':
+        return l10n.teamSuccessJoinAccepted;
+      case 'تم رفض الطلب':
+        return l10n.teamSuccessJoinRejected;
+      default:
+        return raw;
+    }
+  }
+
+  String _resolveTeamManageError(AppLocalizations l10n, String raw) {
+    if (raw.contains('مستخدم من لاعب آخر') || raw.contains('مستخدم — اختر رقماً آخر')) {
+      final match = RegExp(r'\d+').firstMatch(raw);
+      final num = match?.group(0) ?? '';
+      return l10n.teamErrorShirtNumberDuplicate(num);
+    }
+    if (raw.contains('أنت منضم لهذا الفريق بالفعل')) {
+      return l10n.teamErrorAlreadyJoined;
+    }
+    if (raw.contains('لديك طلب معلّق لهذا الفريق بالفعل')) {
+      return l10n.teamErrorPendingRequestExists;
+    }
+    if (raw.contains('لديك طلب خروج قيد المراجعة بالفعل')) {
+      return l10n.teamErrorPendingReleaseExists;
+    }
+    if (raw.contains('الفريق غير موجود')) {
+      return l10n.teamErrorTeamNotFound;
+    }
+    return raw.replaceFirst('Exception: ', '');
   }
 }

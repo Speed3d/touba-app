@@ -1798,5 +1798,110 @@
   "@monthsCountX": { "placeholders": { "count": { "type": "int" } } },
   "codeUsed": "Used",
   "codeLocked": "Locked 🔒",
-  "codeAvailable": "Available ✅"
+  "codeAvailable": "Available ✅",
+  "authErrorUserNotFound": "No account found with this email",
+  "authErrorWrongPassword": "Incorrect password",
+  "authErrorEmailAlreadyInUse": "This email is already in use by another account",
+  "authErrorInvalidEmail": "Invalid email address format",
+  "authErrorWeakPassword": "Password is too weak",
+  "authErrorUserDisabled": "This account has been disabled by administration",
+  "authErrorTooManyRequests": "Too many attempts, please try again later",
+  "authErrorNetworkFailed": "Network connection error, please check your connection",
+  "authErrorPhoneAlreadyInUse": "This phone number is already registered",
+  "authErrorGeneric": "Authentication error, please try again",
+  "authErrorFetchUserDataFailed": "Failed to fetch user data",
+  "authErrorCreateAccountFailed": "Failed to create account",
+  "authErrorResetPasswordFailed": "Failed to send password reset link",
+  "authErrorUpdateProfileFailed": "Failed to update profile data",
+  "authErrorLogoutFailed": "Failed to log out",
+  "teamErrorAlreadyJoined": "You have already joined this team",
+  "teamErrorPendingRequestExists": "You already have a pending request for this team",
+  "teamErrorPendingReleaseExists": "You already have a release request under review",
+  "teamErrorShirtNumberDuplicate": "Number {number} is already taken by another player",
+  "@teamErrorShirtNumberDuplicate": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "teamErrorFailedCreateTeam": "Failed to create team",
+  "teamErrorFailedUploadLogo": "Failed to upload team logo",
+  "teamErrorFailedFetchTeams": "Failed to fetch teams",
+  "teamErrorTeamNotFound": "Team not found",
+  "teamErrorFailedFetchTeamDetails": "Failed to fetch team details",
+  "teamErrorFailedFetchJoinRequests": "Failed to fetch join requests",
+  "teamErrorFailedUpdateJoinRequest": "Failed to update join request",
+  "teamSuccessFormationSaved": "Team formation saved successfully",
+  "teamSuccessLineupSaved": "Team lineup saved successfully",
+  "teamSuccessShirtNumberUpdated": "Player shirt number updated",
+  "teamSuccessReleaseAccepted": "Release request accepted and player released",
+  "teamSuccessReleaseRejected": "Release request rejected",
+  "teamSuccessPlayerAdded": "Player added to roster",
+  "teamSuccessJoinAccepted": "Request accepted — player will be added to lineup",
+  "teamSuccessJoinRejected": "Request rejected",
+  "tournamentErrorNotFound": "Tournament not found",
+  "tournamentErrorAlreadyReferee": "You are already registered as a referee in this tournament",
+  "tournamentErrorPendingRefereeExists": "You already have a pending referee request for this tournament",
+  "tournamentSuccessMatchScheduled": "Match date and time scheduled successfully",
+  "tournamentSuccessMatchStarted": "Match started",
+  "tournamentSuccessHalfStarted": "Half {half} started",
+  "@tournamentSuccessHalfStarted": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentSuccessFormationUpdated": "Your team's formation updated for this match",
+  "tournamentSuccessRefereeAssigned": "Referee assigned",
+  "tournamentSuccessRefereeRemoved": "Referee unassigned",
+  "tournamentSuccessResultEntered": "Result saved — standings and stats will update shortly",
+  "matchErrorNotFound": "Match not found",
+  "playerErrorNotFound": "Player not found",
+  "chatErrorEmptyMessage": "Cannot send an empty message",
+  "chatErrorMessageTooLong": "Message is too long (maximum 1000 characters)",
+  "chatErrorWaitBeforeSending": "Please wait a moment before sending another message",
+  "chatErrorInappropriateWords": "Message contains inappropriate words",
+  "nameKurdish": "Name (Kurdish)",
+  "userErrorFetchFailed": "Failed to fetch user data",
+  "userErrorSaveFailed": "Failed to save user data",
+  "userErrorPhoneCheckFailed": "Failed to verify phone number",
+  "userErrorUpdateFailed": "Failed to update user profile",
+  "userErrorUploadAvatarFailed": "Failed to upload profile picture",
+  "userErrorFetchRefereesFailed": "Failed to fetch referees",
+  "userErrorSearchFailed": "Failed to search users",
+  "pdfTournamentScheduleTitle": "{name} Tournament Schedule",
+  "@pdfTournamentScheduleTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfHeaderMatch": "Match",
+  "pdfHeaderResult": "Result",
+  "pdfHeaderDate": "Date",
+  "pdfHeaderTime": "Time",
+  "pdfHeaderReferee": "Referee",
+  "pdfStatusOngoing": "Ongoing",
+  "pdfStatusFinished": "Finished",
+  "pdfStatusUpcoming": "Upcoming",
+  "pdfRoundTitle": "Round {round}",
+  "@pdfRoundTitle": {
+    "placeholders": {
+      "round": {
+        "type": "int"
+      }
+    }
+  },
+  "pdfExportedViaTooba": "📲 Exported via Touba App — {time}",
+  "@pdfExportedViaTooba": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfUnspecified": "Not specified"
 }

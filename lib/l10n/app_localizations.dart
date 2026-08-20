@@ -6340,6 +6340,426 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'متاح ✅'**
   String get codeAvailable;
+
+  /// No description provided for @authErrorUserNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد حساب مرتبط بهذا البريد الإلكتروني'**
+  String get authErrorUserNotFound;
+
+  /// No description provided for @authErrorWrongPassword.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور غير صحيحة'**
+  String get authErrorWrongPassword;
+
+  /// No description provided for @authErrorEmailAlreadyInUse.
+  ///
+  /// In ar, this message translates to:
+  /// **'البريد الإلكتروني مستخدم بالفعل لحساب آخر'**
+  String get authErrorEmailAlreadyInUse;
+
+  /// No description provided for @authErrorInvalidEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'صيغة البريد الإلكتروني غير صالحة'**
+  String get authErrorInvalidEmail;
+
+  /// No description provided for @authErrorWeakPassword.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور ضعيفة جداً'**
+  String get authErrorWeakPassword;
+
+  /// No description provided for @authErrorUserDisabled.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إيقاف هذا الحساب من قبل الإدارة'**
+  String get authErrorUserDisabled;
+
+  /// No description provided for @authErrorTooManyRequests.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حظر الحساب مؤقتاً بسبب كثرة المحاولات، يرجى المحاولة لاحقاً'**
+  String get authErrorTooManyRequests;
+
+  /// No description provided for @authErrorNetworkFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر الاتصال بالإنترنت، يرجى التحقق من الشبكة'**
+  String get authErrorNetworkFailed;
+
+  /// No description provided for @authErrorPhoneAlreadyInUse.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف مستخدم بالفعل لحساب آخر'**
+  String get authErrorPhoneAlreadyInUse;
+
+  /// No description provided for @authErrorGeneric.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ في المصادقة، يرجى المحاولة مرة أخرى'**
+  String get authErrorGeneric;
+
+  /// No description provided for @authErrorFetchUserDataFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل جلب بيانات المستخدم'**
+  String get authErrorFetchUserDataFailed;
+
+  /// No description provided for @authErrorCreateAccountFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إنشاء الحساب'**
+  String get authErrorCreateAccountFailed;
+
+  /// No description provided for @authErrorResetPasswordFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء إرسال رابط الاستعادة'**
+  String get authErrorResetPasswordFailed;
+
+  /// No description provided for @authErrorUpdateProfileFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء تحديث البيانات'**
+  String get authErrorUpdateProfileFailed;
+
+  /// No description provided for @authErrorLogoutFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء تسجيل الخروج'**
+  String get authErrorLogoutFailed;
+
+  /// No description provided for @teamErrorAlreadyJoined.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت منضم لهذا الفريق بالفعل'**
+  String get teamErrorAlreadyJoined;
+
+  /// No description provided for @teamErrorPendingRequestExists.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك طلب معلّق لهذا الفريق بالفعل'**
+  String get teamErrorPendingRequestExists;
+
+  /// No description provided for @teamErrorPendingReleaseExists.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك طلب خروج قيد المراجعة بالفعل'**
+  String get teamErrorPendingReleaseExists;
+
+  /// No description provided for @teamErrorShirtNumberDuplicate.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم {number} مستخدم من لاعب آخر'**
+  String teamErrorShirtNumberDuplicate(String number);
+
+  /// No description provided for @teamErrorFailedCreateTeam.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء إنشاء الفريق'**
+  String get teamErrorFailedCreateTeam;
+
+  /// No description provided for @teamErrorFailedUploadLogo.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء رفع الشعار'**
+  String get teamErrorFailedUploadLogo;
+
+  /// No description provided for @teamErrorFailedFetchTeams.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء جلب الفرق'**
+  String get teamErrorFailedFetchTeams;
+
+  /// No description provided for @teamErrorTeamNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفريق غير موجود'**
+  String get teamErrorTeamNotFound;
+
+  /// No description provided for @teamErrorFailedFetchTeamDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء جلب تفاصيل الفريق'**
+  String get teamErrorFailedFetchTeamDetails;
+
+  /// No description provided for @teamErrorFailedFetchJoinRequests.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء جلب طلبات الانضمام'**
+  String get teamErrorFailedFetchJoinRequests;
+
+  /// No description provided for @teamErrorFailedUpdateJoinRequest.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء تحديث الطلب'**
+  String get teamErrorFailedUpdateJoinRequest;
+
+  /// No description provided for @teamSuccessFormationSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ خطة الفريق'**
+  String get teamSuccessFormationSaved;
+
+  /// No description provided for @teamSuccessLineupSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ تشكيلة الفريق'**
+  String get teamSuccessLineupSaved;
+
+  /// No description provided for @teamSuccessShirtNumberUpdated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث رقم اللاعب'**
+  String get teamSuccessShirtNumberUpdated;
+
+  /// No description provided for @teamSuccessReleaseAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قبول الخروج وفكّ ارتباط اللاعب'**
+  String get teamSuccessReleaseAccepted;
+
+  /// No description provided for @teamSuccessReleaseRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض طلب الخروج'**
+  String get teamSuccessReleaseRejected;
+
+  /// No description provided for @teamSuccessPlayerAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت إضافة اللاعب للتشكيلة'**
+  String get teamSuccessPlayerAdded;
+
+  /// No description provided for @teamSuccessJoinAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قبول الطلب — سيُضاف اللاعب للتشكيلة تلقائياً'**
+  String get teamSuccessJoinAccepted;
+
+  /// No description provided for @teamSuccessJoinRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم رفض الطلب'**
+  String get teamSuccessJoinRejected;
+
+  /// No description provided for @tournamentErrorNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'البطولة غير موجودة'**
+  String get tournamentErrorNotFound;
+
+  /// No description provided for @tournamentErrorAlreadyReferee.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت مسجّل كحكم في هذه البطولة مسبقاً'**
+  String get tournamentErrorAlreadyReferee;
+
+  /// No description provided for @tournamentErrorPendingRefereeExists.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك طلب تحكيم معلّق لهذه البطولة'**
+  String get tournamentErrorPendingRefereeExists;
+
+  /// No description provided for @tournamentSuccessMatchScheduled.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديد موعد المباراة بنجاح'**
+  String get tournamentSuccessMatchScheduled;
+
+  /// No description provided for @tournamentSuccessMatchStarted.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدأت المباراة'**
+  String get tournamentSuccessMatchStarted;
+
+  /// No description provided for @tournamentSuccessHalfStarted.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدأ الشوط {half}'**
+  String tournamentSuccessHalfStarted(int half);
+
+  /// No description provided for @tournamentSuccessFormationUpdated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث خطة فريقك لهذه المباراة'**
+  String get tournamentSuccessFormationUpdated;
+
+  /// No description provided for @tournamentSuccessRefereeAssigned.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تعيين الحكم'**
+  String get tournamentSuccessRefereeAssigned;
+
+  /// No description provided for @tournamentSuccessRefereeRemoved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إلغاء تعيين الحكم'**
+  String get tournamentSuccessRefereeRemoved;
+
+  /// No description provided for @tournamentSuccessResultEntered.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ النتيجة — يُحدَّث الترتيب والإحصائيات خلال ثوانٍ'**
+  String get tournamentSuccessResultEntered;
+
+  /// No description provided for @matchErrorNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'المباراة غير موجودة'**
+  String get matchErrorNotFound;
+
+  /// No description provided for @playerErrorNotFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللاعب غير موجود'**
+  String get playerErrorNotFound;
+
+  /// No description provided for @chatErrorEmptyMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن إرسال رسالة فارغة'**
+  String get chatErrorEmptyMessage;
+
+  /// No description provided for @chatErrorMessageTooLong.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرسالة طويلة جداً (الحد 1000 حرف)'**
+  String get chatErrorMessageTooLong;
+
+  /// No description provided for @chatErrorWaitBeforeSending.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجاء الانتظار لحظة قبل إرسال رسالة أخرى'**
+  String get chatErrorWaitBeforeSending;
+
+  /// No description provided for @chatErrorInappropriateWords.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرسالة تحتوي كلمات غير لائقة'**
+  String get chatErrorInappropriateWords;
+
+  /// No description provided for @nameKurdish.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم (كردي)'**
+  String get nameKurdish;
+
+  /// No description provided for @userErrorFetchFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء جلب بيانات المستخدم'**
+  String get userErrorFetchFailed;
+
+  /// No description provided for @userErrorSaveFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء حفظ بيانات المستخدم'**
+  String get userErrorSaveFailed;
+
+  /// No description provided for @userErrorPhoneCheckFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء التحقق من رقم الهاتف'**
+  String get userErrorPhoneCheckFailed;
+
+  /// No description provided for @userErrorUpdateFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء تحديث بيانات المستخدم'**
+  String get userErrorUpdateFailed;
+
+  /// No description provided for @userErrorUploadAvatarFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء رفع الصورة الشخصية'**
+  String get userErrorUploadAvatarFailed;
+
+  /// No description provided for @userErrorFetchRefereesFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء جلب الحكّام'**
+  String get userErrorFetchRefereesFailed;
+
+  /// No description provided for @userErrorSearchFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ أثناء البحث عن المستخدمين'**
+  String get userErrorSearchFailed;
+
+  /// No description provided for @pdfTournamentScheduleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جدول بطولة {name}'**
+  String pdfTournamentScheduleTitle(String name);
+
+  /// No description provided for @pdfHeaderMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'المباراة'**
+  String get pdfHeaderMatch;
+
+  /// No description provided for @pdfHeaderResult.
+  ///
+  /// In ar, this message translates to:
+  /// **'النتيجة'**
+  String get pdfHeaderResult;
+
+  /// No description provided for @pdfHeaderDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ'**
+  String get pdfHeaderDate;
+
+  /// No description provided for @pdfHeaderTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت'**
+  String get pdfHeaderTime;
+
+  /// No description provided for @pdfHeaderReferee.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحكم'**
+  String get pdfHeaderReferee;
+
+  /// No description provided for @pdfStatusOngoing.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارية'**
+  String get pdfStatusOngoing;
+
+  /// No description provided for @pdfStatusFinished.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهية'**
+  String get pdfStatusFinished;
+
+  /// No description provided for @pdfStatusUpcoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'قادمة'**
+  String get pdfStatusUpcoming;
+
+  /// No description provided for @pdfRoundTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجولة {round}'**
+  String pdfRoundTitle(int round);
+
+  /// No description provided for @pdfExportedViaTooba.
+  ///
+  /// In ar, this message translates to:
+  /// **'📲 صُدِّر عبر تطبيق طوبة — {time}'**
+  String pdfExportedViaTooba(String time);
+
+  /// No description provided for @pdfUnspecified.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محدد'**
+  String get pdfUnspecified;
 }
 
 class _AppLocalizationsDelegate

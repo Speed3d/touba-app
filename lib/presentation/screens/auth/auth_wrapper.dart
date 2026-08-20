@@ -6,6 +6,8 @@ import 'login_screen.dart';
 import '../main/main_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 
+import '../../../core/error/auth_error_resolver.dart';
+
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
@@ -14,7 +16,7 @@ class AuthWrapper extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthError) {
-          ToobaSnackBar.error(context, state.message);
+          ToobaSnackBar.error(context, AuthErrorResolver.resolve(context, state.message));
         }
       },
       builder: (context, state) {

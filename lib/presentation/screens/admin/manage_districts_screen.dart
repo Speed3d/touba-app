@@ -19,25 +19,33 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
   void _showAddDistrictDialog([DistrictModel? districtToEdit]) {
     final arController = TextEditingController(text: districtToEdit?.nameAr);
     final enController = TextEditingController(text: districtToEdit?.nameEn);
+    final kuController = TextEditingController(text: districtToEdit?.nameKu);
     final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(districtToEdit == null ? l10n.addDistrict : l10n.editDistrict),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: arController,
-              decoration: InputDecoration(labelText: l10n.nameArabic),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: enController,
-              decoration: InputDecoration(labelText: l10n.nameEnglish),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: arController,
+                decoration: InputDecoration(labelText: l10n.nameArabic),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: enController,
+                decoration: InputDecoration(labelText: l10n.nameEnglish),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: kuController,
+                decoration: InputDecoration(labelText: l10n.nameKurdish),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -53,6 +61,7 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
                 id: districtToEdit?.id ?? '',
                 nameAr: arController.text,
                 nameEn: enController.text,
+                nameKu: kuController.text,
                 cityId: widget.city.id,
                 isActive: districtToEdit?.isActive ?? true,
                 order: districtToEdit?.order ?? 0,

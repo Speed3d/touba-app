@@ -61,8 +61,19 @@ class _ChatScreenState extends State<ChatScreen> {
       _controller.clear();
     } catch (e) {
       if (mounted) {
-        ToobaSnackBar.error(
-            context, e.toString().replaceFirst('Exception: ', ''));
+        final raw = e.toString().replaceFirst('Exception: ', '').trim();
+        final l10n = AppLocalizations.of(context)!;
+        String msg = raw;
+        if (raw == 'لا يمكن إرسال رسالة فارغة' || raw == 'empty_message') {
+          msg = l10n.chatErrorEmptyMessage;
+        } else if (raw == 'الرسالة طويلة جداً (الحد 1000 حرف)' || raw == 'message_too_long') {
+          msg = l10n.chatErrorMessageTooLong;
+        } else if (raw == 'الرجاء الانتظار لحظة قبل إرسال رسالة أخرى' || raw == 'rate_limit') {
+          msg = l10n.chatErrorWaitBeforeSending;
+        } else if (raw == 'الرسالة تحتوي كلمات غير لائقة' || raw == 'prohibited_words') {
+          msg = l10n.chatErrorInappropriateWords;
+        }
+        ToobaSnackBar.error(context, msg);
       }
     } finally {
       if (mounted) setState(() => _sending = false);

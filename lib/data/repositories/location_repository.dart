@@ -100,6 +100,7 @@ class LocationRepository {
         {
           'nameAr': gov.nameAr,
           'nameEn': gov.nameEn,
+          'nameKu': gov.nameKu,
           'order': order++,
           'isActive': true,
         },
@@ -114,6 +115,7 @@ class LocationRepository {
           {
             'nameAr': dist.nameAr,
             'nameEn': dist.nameEn,
+            'nameKu': dist.nameKu,
             'cityId': gov.key,
             'order': dOrder++,
             'isActive': true,

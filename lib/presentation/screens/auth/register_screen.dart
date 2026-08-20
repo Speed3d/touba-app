@@ -6,6 +6,7 @@ import '../../cubits/auth/auth_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../widgets/core/decorated_background.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../core/error/auth_error_resolver.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -255,7 +256,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Pop back to let the AuthWrapper handle navigation
                       Navigator.of(context).pop();
                     } else if (state is AuthError) {
-                      ToobaSnackBar.error(context, state.message);
+                      ToobaSnackBar.error(context, AuthErrorResolver.resolve(context, state.message));
                     }
                   },
                   builder: (context, state) {

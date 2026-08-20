@@ -1797,5 +1797,110 @@
   "@monthsCountX": { "placeholders": { "count": { "type": "int" } } },
   "codeUsed": "مُستخدم",
   "codeLocked": "مقفل 🔒",
-  "codeAvailable": "متاح ✅"
+  "codeAvailable": "متاح ✅",
+  "authErrorUserNotFound": "لا يوجد حساب مرتبط بهذا البريد الإلكتروني",
+  "authErrorWrongPassword": "كلمة المرور غير صحيحة",
+  "authErrorEmailAlreadyInUse": "البريد الإلكتروني مستخدم بالفعل لحساب آخر",
+  "authErrorInvalidEmail": "صيغة البريد الإلكتروني غير صالحة",
+  "authErrorWeakPassword": "كلمة المرور ضعيفة جداً",
+  "authErrorUserDisabled": "تم إيقاف هذا الحساب من قبل الإدارة",
+  "authErrorTooManyRequests": "تم حظر الحساب مؤقتاً بسبب كثرة المحاولات، يرجى المحاولة لاحقاً",
+  "authErrorNetworkFailed": "تعذّر الاتصال بالإنترنت، يرجى التحقق من الشبكة",
+  "authErrorPhoneAlreadyInUse": "رقم الهاتف مستخدم بالفعل لحساب آخر",
+  "authErrorGeneric": "حدث خطأ في المصادقة، يرجى المحاولة مرة أخرى",
+  "authErrorFetchUserDataFailed": "فشل جلب بيانات المستخدم",
+  "authErrorCreateAccountFailed": "تعذّر إنشاء الحساب",
+  "authErrorResetPasswordFailed": "حدث خطأ أثناء إرسال رابط الاستعادة",
+  "authErrorUpdateProfileFailed": "حدث خطأ أثناء تحديث البيانات",
+  "authErrorLogoutFailed": "حدث خطأ أثناء تسجيل الخروج",
+  "teamErrorAlreadyJoined": "أنت منضم لهذا الفريق بالفعل",
+  "teamErrorPendingRequestExists": "لديك طلب معلّق لهذا الفريق بالفعل",
+  "teamErrorPendingReleaseExists": "لديك طلب خروج قيد المراجعة بالفعل",
+  "teamErrorShirtNumberDuplicate": "الرقم {number} مستخدم من لاعب آخر",
+  "@teamErrorShirtNumberDuplicate": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "teamErrorFailedCreateTeam": "حدث خطأ أثناء إنشاء الفريق",
+  "teamErrorFailedUploadLogo": "حدث خطأ أثناء رفع الشعار",
+  "teamErrorFailedFetchTeams": "حدث خطأ أثناء جلب الفرق",
+  "teamErrorTeamNotFound": "الفريق غير موجود",
+  "teamErrorFailedFetchTeamDetails": "حدث خطأ أثناء جلب تفاصيل الفريق",
+  "teamErrorFailedFetchJoinRequests": "حدث خطأ أثناء جلب طلبات الانضمام",
+  "teamErrorFailedUpdateJoinRequest": "حدث خطأ أثناء تحديث الطلب",
+  "teamSuccessFormationSaved": "تم حفظ خطة الفريق",
+  "teamSuccessLineupSaved": "تم حفظ تشكيلة الفريق",
+  "teamSuccessShirtNumberUpdated": "تم تحديث رقم اللاعب",
+  "teamSuccessReleaseAccepted": "تم قبول الخروج وفكّ ارتباط اللاعب",
+  "teamSuccessReleaseRejected": "تم رفض طلب الخروج",
+  "teamSuccessPlayerAdded": "تمت إضافة اللاعب للتشكيلة",
+  "teamSuccessJoinAccepted": "تم قبول الطلب — سيُضاف اللاعب للتشكيلة تلقائياً",
+  "teamSuccessJoinRejected": "تم رفض الطلب",
+  "tournamentErrorNotFound": "البطولة غير موجودة",
+  "tournamentErrorAlreadyReferee": "أنت مسجّل كحكم في هذه البطولة مسبقاً",
+  "tournamentErrorPendingRefereeExists": "لديك طلب تحكيم معلّق لهذه البطولة",
+  "tournamentSuccessMatchScheduled": "تم تحديد موعد المباراة بنجاح",
+  "tournamentSuccessMatchStarted": "بدأت المباراة",
+  "tournamentSuccessHalfStarted": "بدأ الشوط {half}",
+  "@tournamentSuccessHalfStarted": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentSuccessFormationUpdated": "تم تحديث خطة فريقك لهذه المباراة",
+  "tournamentSuccessRefereeAssigned": "تم تعيين الحكم",
+  "tournamentSuccessRefereeRemoved": "تم إلغاء تعيين الحكم",
+  "tournamentSuccessResultEntered": "تم حفظ النتيجة — يُحدَّث الترتيب والإحصائيات خلال ثوانٍ",
+  "matchErrorNotFound": "المباراة غير موجودة",
+  "playerErrorNotFound": "اللاعب غير موجود",
+  "chatErrorEmptyMessage": "لا يمكن إرسال رسالة فارغة",
+  "chatErrorMessageTooLong": "الرسالة طويلة جداً (الحد 1000 حرف)",
+  "chatErrorWaitBeforeSending": "الرجاء الانتظار لحظة قبل إرسال رسالة أخرى",
+  "chatErrorInappropriateWords": "الرسالة تحتوي كلمات غير لائقة",
+  "nameKurdish": "الاسم (كردي)",
+  "userErrorFetchFailed": "حدث خطأ أثناء جلب بيانات المستخدم",
+  "userErrorSaveFailed": "حدث خطأ أثناء حفظ بيانات المستخدم",
+  "userErrorPhoneCheckFailed": "حدث خطأ أثناء التحقق من رقم الهاتف",
+  "userErrorUpdateFailed": "حدث خطأ أثناء تحديث بيانات المستخدم",
+  "userErrorUploadAvatarFailed": "حدث خطأ أثناء رفع الصورة الشخصية",
+  "userErrorFetchRefereesFailed": "حدث خطأ أثناء جلب الحكّام",
+  "userErrorSearchFailed": "حدث خطأ أثناء البحث عن المستخدمين",
+  "pdfTournamentScheduleTitle": "جدول بطولة {name}",
+  "@pdfTournamentScheduleTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfHeaderMatch": "المباراة",
+  "pdfHeaderResult": "النتيجة",
+  "pdfHeaderDate": "التاريخ",
+  "pdfHeaderTime": "الوقت",
+  "pdfHeaderReferee": "الحكم",
+  "pdfStatusOngoing": "جارية",
+  "pdfStatusFinished": "منتهية",
+  "pdfStatusUpcoming": "قادمة",
+  "pdfRoundTitle": "الجولة {round}",
+  "@pdfRoundTitle": {
+    "placeholders": {
+      "round": {
+        "type": "int"
+      }
+    }
+  },
+  "pdfExportedViaTooba": "📲 صُدِّر عبر تطبيق طوبة — {time}",
+  "@pdfExportedViaTooba": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfUnspecified": "غير محدد"
 }

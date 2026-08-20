@@ -6,17 +6,20 @@ import 'package:printing/printing.dart';
 import '../models/tournament_model.dart';
 import '../models/match_model.dart';
 
-/// 📝 HINT AR: توليد تقرير PDF لجدول البطولة (بند 12) — ترويسة بشعار «طوبة» واسم
-/// البطولة وحالتها، ثم كل المباريات بجولاتها وتواريخها وأوقاتها والحكّام
-/// و**النتيجة** (للمنتهية). يستخدم خطّ Cairo مع اتجاه RTL ليظهر العربي صحيحاً.
+/// 📝 HINT AR: توليد تقرير PDF لجدول البطولة بدعم اللغات الثلاث (عربي، إنجليزي، كردي)
+/// ترويسة بشعار «طوبة» واسم البطولة وحالتها، ثم كل المباريات بجولاتها وتواريخها وأوقاتها والحكّام والنتيجة.
 class FixturesPdfService {
   static Future<void> shareTournamentSchedule({
     required TournamentModel tournament,
     required List<MatchModel> matches,
+    String langCode = 'ar',
   }) async {
     final doc = pw.Document();
     final base = await PdfGoogleFonts.cairoRegular();
     final bold = await PdfGoogleFonts.cairoBold();
+
+    final isRtl = langCode != 'en';
+    final textDir = isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr;
 
     // 📝 HINT AR: شعار طوبة الرسمي للترويسة (cache-first من الأصول).
     pw.MemoryImage? logo;
@@ -24,7 +27,7 @@ class FixturesPdfService {
       final bytes = await rootBundle.load('assets/images/logo.png');
       logo = pw.MemoryImage(bytes.buffer.asUint8List());
     } catch (_) {
-      logo = null; // إن تعذّر تحميل الشعار نكمل بلا صورة.
+      logo = null;
     }
 
     // 📝 HINT AR: تجميع المباريات بالجولة + ترتيبها.
@@ -34,27 +37,62 @@ class FixturesPdfService {
     }
     final rounds = byRound.keys.toList()..sort();
 
-    String dateStr(DateTime? dt) =>
-        dt == null ? 'غير محدد' : DateFormat('yyyy/MM/dd', 'ar').format(dt);
+    String dateStr(DateTime? dt) {
+      if (dt == null) {
+        return langCode == 'en' ? 'Unspecified' : (langCode == 'ku' ? 'دیارینەکراو' : 'غير محدد');
+      }
+      return DateFormat('yyyy/MM/dd', langCode == 'en' ? 'en' : 'ar').format(dt);
+    }
+
     String timeStr(DateTime? dt) =>
         dt == null ? '—' : DateFormat('HH:mm').format(dt);
-    // 📝 HINT AR: عمود النتيجة — السكور للمباريات المنتهية فقط، وإلا «—».
+
     String scoreStr(MatchModel m) =>
         m.resultConfirmed ? '${m.homeScore} - ${m.awayScore}' : '—';
 
-    final statusLabel = tournament.status == 'finished'
-        ? 'منتهية'
-        : (tournament.status == 'ongoing' ? 'جارية' : 'قادمة');
-    final exportedAt =
-        DateFormat('yyyy/MM/dd • HH:mm', 'ar').format(DateTime.now());
+    final String appName = langCode == 'en' ? 'Touba ⚽' : (langCode == 'ku' ? 'توبە ⚽' : 'طوبة ⚽');
+    final String scheduleTitle = langCode == 'en'
+        ? '${tournament.name} Tournament Schedule'
+        : (langCode == 'ku'
+            ? 'خشتەی پاڵەوانێتی ${tournament.name}'
+            : 'جدول بطولة ${tournament.name}');
+
+    final String statusLabel = tournament.status == 'finished'
+        ? (langCode == 'en' ? 'Finished' : (langCode == 'ku' ? 'کۆتاییهاتوو' : 'منتهية'))
+        : (tournament.status == 'ongoing'
+            ? (langCode == 'en' ? 'Ongoing' : (langCode == 'ku' ? 'بەردەوامە' : 'جارية'))
+            : (langCode == 'en' ? 'Upcoming' : (langCode == 'ku' ? 'داهاتوو' : 'قادمة')));
+
+    final String cityLabel = langCode == 'en' ? 'City' : (langCode == 'ku' ? 'شار' : 'المدينة');
+    final String statusPrefix = langCode == 'en' ? 'Status' : (langCode == 'ku' ? 'دۆخ' : 'الحالة');
+    final String matchesLabel = langCode == 'en' ? 'Matches' : (langCode == 'ku' ? 'یارییەکان' : 'المباريات');
+
+    final String headerMatch = langCode == 'en' ? 'Match' : (langCode == 'ku' ? 'یاری' : 'المباراة');
+    final String headerResult = langCode == 'en' ? 'Result' : (langCode == 'ku' ? 'ئەنجام' : 'النتيجة');
+    final String headerDate = langCode == 'en' ? 'Date' : (langCode == 'ku' ? 'بەروار' : 'التاريخ');
+    final String headerTime = langCode == 'en' ? 'Time' : (langCode == 'ku' ? 'کات' : 'الوقت');
+    final String headerReferee = langCode == 'en' ? 'Referee' : (langCode == 'ku' ? 'ناوبژیوان' : 'الحكم');
+
+    String roundTitle(int r) {
+      if (langCode == 'en') return 'Round $r';
+      if (langCode == 'ku') return 'گەڕی $r';
+      return 'الجولة $r';
+    }
+
+    final exportedAt = DateFormat('yyyy/MM/dd • HH:mm', langCode == 'en' ? 'en' : 'ar').format(DateTime.now());
+    final exportFooter = langCode == 'en'
+        ? '📲 Exported via Touba App — $exportedAt'
+        : (langCode == 'ku'
+            ? '📲 لە ڕێگەی ئەپی توبەوە دەرکراوە — $exportedAt'
+            : '📲 صُدِّر عبر تطبيق طوبة — $exportedAt');
 
     doc.addPage(
       pw.MultiPage(
-        textDirection: pw.TextDirection.rtl,
+        textDirection: textDir,
         theme: pw.ThemeData.withFont(base: base, bold: bold),
         margin: const pw.EdgeInsets.all(28),
         build: (ctx) => [
-          // ── ترويسة العلامة (شعار طوبة + اسم البطولة) ──
+          // ── ترويسة العلامة ──
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.center,
             crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -70,25 +108,25 @@ class FixturesPdfService {
                 ),
                 pw.SizedBox(width: 10),
               ],
-              pw.Text('طوبة ⚽',
+              pw.Text(appName,
                   style: pw.TextStyle(
                       font: bold, fontSize: 20, color: PdfColors.blue800)),
             ],
           ),
           pw.SizedBox(height: 10),
           pw.Center(
-            child: pw.Text('جدول بطولة ${tournament.name}',
+            child: pw.Text(scheduleTitle,
                 style: pw.TextStyle(font: bold, fontSize: 18)),
           ),
           pw.SizedBox(height: 4),
           pw.Center(
             child: pw.Text(
-                'المدينة: ${tournament.city}  •  الحالة: $statusLabel  •  المباريات: ${matches.length}',
+                '$cityLabel: ${tournament.city}  •  $statusPrefix: $statusLabel  •  $matchesLabel: ${matches.length}',
                 style: pw.TextStyle(font: base, fontSize: 11)),
           ),
           pw.Divider(height: 18, color: PdfColors.grey400),
           for (final r in rounds) ...[
-            pw.Text('الجولة $r',
+            pw.Text(roundTitle(r),
                 style: pw.TextStyle(font: bold, fontSize: 15)),
             pw.SizedBox(height: 6),
             pw.TableHelper.fromTextArray(
@@ -97,12 +135,12 @@ class FixturesPdfService {
               cellAlignment: pw.Alignment.center,
               headerDecoration:
                   const pw.BoxDecoration(color: PdfColors.grey300),
-              headers: const [
-                'المباراة',
-                'النتيجة',
-                'التاريخ',
-                'الوقت',
-                'الحكم'
+              headers: [
+                headerMatch,
+                headerResult,
+                headerDate,
+                headerTime,
+                headerReferee,
               ],
               data: byRound[r]!
                   .map((m) => [
@@ -120,7 +158,7 @@ class FixturesPdfService {
           ],
           pw.SizedBox(height: 10),
           pw.Center(
-            child: pw.Text('📲 صُدِّر عبر تطبيق طوبة — $exportedAt',
+            child: pw.Text(exportFooter,
                 style: pw.TextStyle(
                     font: base, fontSize: 10, color: PdfColors.grey600)),
           ),

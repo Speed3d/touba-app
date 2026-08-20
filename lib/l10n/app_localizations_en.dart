@@ -3447,4 +3447,244 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get codeAvailable => 'Available ✅';
+
+  @override
+  String get authErrorUserNotFound => 'No account found with this email';
+
+  @override
+  String get authErrorWrongPassword => 'Incorrect password';
+
+  @override
+  String get authErrorEmailAlreadyInUse =>
+      'This email is already in use by another account';
+
+  @override
+  String get authErrorInvalidEmail => 'Invalid email address format';
+
+  @override
+  String get authErrorWeakPassword => 'Password is too weak';
+
+  @override
+  String get authErrorUserDisabled =>
+      'This account has been disabled by administration';
+
+  @override
+  String get authErrorTooManyRequests =>
+      'Too many attempts, please try again later';
+
+  @override
+  String get authErrorNetworkFailed =>
+      'Network connection error, please check your connection';
+
+  @override
+  String get authErrorPhoneAlreadyInUse =>
+      'This phone number is already registered';
+
+  @override
+  String get authErrorGeneric => 'Authentication error, please try again';
+
+  @override
+  String get authErrorFetchUserDataFailed => 'Failed to fetch user data';
+
+  @override
+  String get authErrorCreateAccountFailed => 'Failed to create account';
+
+  @override
+  String get authErrorResetPasswordFailed =>
+      'Failed to send password reset link';
+
+  @override
+  String get authErrorUpdateProfileFailed => 'Failed to update profile data';
+
+  @override
+  String get authErrorLogoutFailed => 'Failed to log out';
+
+  @override
+  String get teamErrorAlreadyJoined => 'You have already joined this team';
+
+  @override
+  String get teamErrorPendingRequestExists =>
+      'You already have a pending request for this team';
+
+  @override
+  String get teamErrorPendingReleaseExists =>
+      'You already have a release request under review';
+
+  @override
+  String teamErrorShirtNumberDuplicate(String number) {
+    return 'Number $number is already taken by another player';
+  }
+
+  @override
+  String get teamErrorFailedCreateTeam => 'Failed to create team';
+
+  @override
+  String get teamErrorFailedUploadLogo => 'Failed to upload team logo';
+
+  @override
+  String get teamErrorFailedFetchTeams => 'Failed to fetch teams';
+
+  @override
+  String get teamErrorTeamNotFound => 'Team not found';
+
+  @override
+  String get teamErrorFailedFetchTeamDetails => 'Failed to fetch team details';
+
+  @override
+  String get teamErrorFailedFetchJoinRequests =>
+      'Failed to fetch join requests';
+
+  @override
+  String get teamErrorFailedUpdateJoinRequest =>
+      'Failed to update join request';
+
+  @override
+  String get teamSuccessFormationSaved => 'Team formation saved successfully';
+
+  @override
+  String get teamSuccessLineupSaved => 'Team lineup saved successfully';
+
+  @override
+  String get teamSuccessShirtNumberUpdated => 'Player shirt number updated';
+
+  @override
+  String get teamSuccessReleaseAccepted =>
+      'Release request accepted and player released';
+
+  @override
+  String get teamSuccessReleaseRejected => 'Release request rejected';
+
+  @override
+  String get teamSuccessPlayerAdded => 'Player added to roster';
+
+  @override
+  String get teamSuccessJoinAccepted =>
+      'Request accepted — player will be added to lineup';
+
+  @override
+  String get teamSuccessJoinRejected => 'Request rejected';
+
+  @override
+  String get tournamentErrorNotFound => 'Tournament not found';
+
+  @override
+  String get tournamentErrorAlreadyReferee =>
+      'You are already registered as a referee in this tournament';
+
+  @override
+  String get tournamentErrorPendingRefereeExists =>
+      'You already have a pending referee request for this tournament';
+
+  @override
+  String get tournamentSuccessMatchScheduled =>
+      'Match date and time scheduled successfully';
+
+  @override
+  String get tournamentSuccessMatchStarted => 'Match started';
+
+  @override
+  String tournamentSuccessHalfStarted(int half) {
+    return 'Half $half started';
+  }
+
+  @override
+  String get tournamentSuccessFormationUpdated =>
+      'Your team\'s formation updated for this match';
+
+  @override
+  String get tournamentSuccessRefereeAssigned => 'Referee assigned';
+
+  @override
+  String get tournamentSuccessRefereeRemoved => 'Referee unassigned';
+
+  @override
+  String get tournamentSuccessResultEntered =>
+      'Result saved — standings and stats will update shortly';
+
+  @override
+  String get matchErrorNotFound => 'Match not found';
+
+  @override
+  String get playerErrorNotFound => 'Player not found';
+
+  @override
+  String get chatErrorEmptyMessage => 'Cannot send an empty message';
+
+  @override
+  String get chatErrorMessageTooLong =>
+      'Message is too long (maximum 1000 characters)';
+
+  @override
+  String get chatErrorWaitBeforeSending =>
+      'Please wait a moment before sending another message';
+
+  @override
+  String get chatErrorInappropriateWords =>
+      'Message contains inappropriate words';
+
+  @override
+  String get nameKurdish => 'Name (Kurdish)';
+
+  @override
+  String get userErrorFetchFailed => 'Failed to fetch user data';
+
+  @override
+  String get userErrorSaveFailed => 'Failed to save user data';
+
+  @override
+  String get userErrorPhoneCheckFailed => 'Failed to verify phone number';
+
+  @override
+  String get userErrorUpdateFailed => 'Failed to update user profile';
+
+  @override
+  String get userErrorUploadAvatarFailed => 'Failed to upload profile picture';
+
+  @override
+  String get userErrorFetchRefereesFailed => 'Failed to fetch referees';
+
+  @override
+  String get userErrorSearchFailed => 'Failed to search users';
+
+  @override
+  String pdfTournamentScheduleTitle(String name) {
+    return '$name Tournament Schedule';
+  }
+
+  @override
+  String get pdfHeaderMatch => 'Match';
+
+  @override
+  String get pdfHeaderResult => 'Result';
+
+  @override
+  String get pdfHeaderDate => 'Date';
+
+  @override
+  String get pdfHeaderTime => 'Time';
+
+  @override
+  String get pdfHeaderReferee => 'Referee';
+
+  @override
+  String get pdfStatusOngoing => 'Ongoing';
+
+  @override
+  String get pdfStatusFinished => 'Finished';
+
+  @override
+  String get pdfStatusUpcoming => 'Upcoming';
+
+  @override
+  String pdfRoundTitle(int round) {
+    return 'Round $round';
+  }
+
+  @override
+  String pdfExportedViaTooba(String time) {
+    return '📲 Exported via Touba App — $time';
+  }
+
+  @override
+  String get pdfUnspecified => 'Not specified';
 }

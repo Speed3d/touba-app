@@ -3416,4 +3416,239 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get codeAvailable => 'متاح ✅';
+
+  @override
+  String get authErrorUserNotFound =>
+      'لا يوجد حساب مرتبط بهذا البريد الإلكتروني';
+
+  @override
+  String get authErrorWrongPassword => 'كلمة المرور غير صحيحة';
+
+  @override
+  String get authErrorEmailAlreadyInUse =>
+      'البريد الإلكتروني مستخدم بالفعل لحساب آخر';
+
+  @override
+  String get authErrorInvalidEmail => 'صيغة البريد الإلكتروني غير صالحة';
+
+  @override
+  String get authErrorWeakPassword => 'كلمة المرور ضعيفة جداً';
+
+  @override
+  String get authErrorUserDisabled => 'تم إيقاف هذا الحساب من قبل الإدارة';
+
+  @override
+  String get authErrorTooManyRequests =>
+      'تم حظر الحساب مؤقتاً بسبب كثرة المحاولات، يرجى المحاولة لاحقاً';
+
+  @override
+  String get authErrorNetworkFailed =>
+      'تعذّر الاتصال بالإنترنت، يرجى التحقق من الشبكة';
+
+  @override
+  String get authErrorPhoneAlreadyInUse => 'رقم الهاتف مستخدم بالفعل لحساب آخر';
+
+  @override
+  String get authErrorGeneric => 'حدث خطأ في المصادقة، يرجى المحاولة مرة أخرى';
+
+  @override
+  String get authErrorFetchUserDataFailed => 'فشل جلب بيانات المستخدم';
+
+  @override
+  String get authErrorCreateAccountFailed => 'تعذّر إنشاء الحساب';
+
+  @override
+  String get authErrorResetPasswordFailed =>
+      'حدث خطأ أثناء إرسال رابط الاستعادة';
+
+  @override
+  String get authErrorUpdateProfileFailed => 'حدث خطأ أثناء تحديث البيانات';
+
+  @override
+  String get authErrorLogoutFailed => 'حدث خطأ أثناء تسجيل الخروج';
+
+  @override
+  String get teamErrorAlreadyJoined => 'أنت منضم لهذا الفريق بالفعل';
+
+  @override
+  String get teamErrorPendingRequestExists =>
+      'لديك طلب معلّق لهذا الفريق بالفعل';
+
+  @override
+  String get teamErrorPendingReleaseExists =>
+      'لديك طلب خروج قيد المراجعة بالفعل';
+
+  @override
+  String teamErrorShirtNumberDuplicate(String number) {
+    return 'الرقم $number مستخدم من لاعب آخر';
+  }
+
+  @override
+  String get teamErrorFailedCreateTeam => 'حدث خطأ أثناء إنشاء الفريق';
+
+  @override
+  String get teamErrorFailedUploadLogo => 'حدث خطأ أثناء رفع الشعار';
+
+  @override
+  String get teamErrorFailedFetchTeams => 'حدث خطأ أثناء جلب الفرق';
+
+  @override
+  String get teamErrorTeamNotFound => 'الفريق غير موجود';
+
+  @override
+  String get teamErrorFailedFetchTeamDetails =>
+      'حدث خطأ أثناء جلب تفاصيل الفريق';
+
+  @override
+  String get teamErrorFailedFetchJoinRequests =>
+      'حدث خطأ أثناء جلب طلبات الانضمام';
+
+  @override
+  String get teamErrorFailedUpdateJoinRequest => 'حدث خطأ أثناء تحديث الطلب';
+
+  @override
+  String get teamSuccessFormationSaved => 'تم حفظ خطة الفريق';
+
+  @override
+  String get teamSuccessLineupSaved => 'تم حفظ تشكيلة الفريق';
+
+  @override
+  String get teamSuccessShirtNumberUpdated => 'تم تحديث رقم اللاعب';
+
+  @override
+  String get teamSuccessReleaseAccepted => 'تم قبول الخروج وفكّ ارتباط اللاعب';
+
+  @override
+  String get teamSuccessReleaseRejected => 'تم رفض طلب الخروج';
+
+  @override
+  String get teamSuccessPlayerAdded => 'تمت إضافة اللاعب للتشكيلة';
+
+  @override
+  String get teamSuccessJoinAccepted =>
+      'تم قبول الطلب — سيُضاف اللاعب للتشكيلة تلقائياً';
+
+  @override
+  String get teamSuccessJoinRejected => 'تم رفض الطلب';
+
+  @override
+  String get tournamentErrorNotFound => 'البطولة غير موجودة';
+
+  @override
+  String get tournamentErrorAlreadyReferee =>
+      'أنت مسجّل كحكم في هذه البطولة مسبقاً';
+
+  @override
+  String get tournamentErrorPendingRefereeExists =>
+      'لديك طلب تحكيم معلّق لهذه البطولة';
+
+  @override
+  String get tournamentSuccessMatchScheduled => 'تم تحديد موعد المباراة بنجاح';
+
+  @override
+  String get tournamentSuccessMatchStarted => 'بدأت المباراة';
+
+  @override
+  String tournamentSuccessHalfStarted(int half) {
+    return 'بدأ الشوط $half';
+  }
+
+  @override
+  String get tournamentSuccessFormationUpdated =>
+      'تم تحديث خطة فريقك لهذه المباراة';
+
+  @override
+  String get tournamentSuccessRefereeAssigned => 'تم تعيين الحكم';
+
+  @override
+  String get tournamentSuccessRefereeRemoved => 'تم إلغاء تعيين الحكم';
+
+  @override
+  String get tournamentSuccessResultEntered =>
+      'تم حفظ النتيجة — يُحدَّث الترتيب والإحصائيات خلال ثوانٍ';
+
+  @override
+  String get matchErrorNotFound => 'المباراة غير موجودة';
+
+  @override
+  String get playerErrorNotFound => 'اللاعب غير موجود';
+
+  @override
+  String get chatErrorEmptyMessage => 'لا يمكن إرسال رسالة فارغة';
+
+  @override
+  String get chatErrorMessageTooLong => 'الرسالة طويلة جداً (الحد 1000 حرف)';
+
+  @override
+  String get chatErrorWaitBeforeSending =>
+      'الرجاء الانتظار لحظة قبل إرسال رسالة أخرى';
+
+  @override
+  String get chatErrorInappropriateWords => 'الرسالة تحتوي كلمات غير لائقة';
+
+  @override
+  String get nameKurdish => 'الاسم (كردي)';
+
+  @override
+  String get userErrorFetchFailed => 'حدث خطأ أثناء جلب بيانات المستخدم';
+
+  @override
+  String get userErrorSaveFailed => 'حدث خطأ أثناء حفظ بيانات المستخدم';
+
+  @override
+  String get userErrorPhoneCheckFailed => 'حدث خطأ أثناء التحقق من رقم الهاتف';
+
+  @override
+  String get userErrorUpdateFailed => 'حدث خطأ أثناء تحديث بيانات المستخدم';
+
+  @override
+  String get userErrorUploadAvatarFailed => 'حدث خطأ أثناء رفع الصورة الشخصية';
+
+  @override
+  String get userErrorFetchRefereesFailed => 'حدث خطأ أثناء جلب الحكّام';
+
+  @override
+  String get userErrorSearchFailed => 'حدث خطأ أثناء البحث عن المستخدمين';
+
+  @override
+  String pdfTournamentScheduleTitle(String name) {
+    return 'جدول بطولة $name';
+  }
+
+  @override
+  String get pdfHeaderMatch => 'المباراة';
+
+  @override
+  String get pdfHeaderResult => 'النتيجة';
+
+  @override
+  String get pdfHeaderDate => 'التاريخ';
+
+  @override
+  String get pdfHeaderTime => 'الوقت';
+
+  @override
+  String get pdfHeaderReferee => 'الحكم';
+
+  @override
+  String get pdfStatusOngoing => 'جارية';
+
+  @override
+  String get pdfStatusFinished => 'منتهية';
+
+  @override
+  String get pdfStatusUpcoming => 'قادمة';
+
+  @override
+  String pdfRoundTitle(int round) {
+    return 'الجولة $round';
+  }
+
+  @override
+  String pdfExportedViaTooba(String time) {
+    return '📲 صُدِّر عبر تطبيق طوبة — $time';
+  }
+
+  @override
+  String get pdfUnspecified => 'غير محدد';
 }

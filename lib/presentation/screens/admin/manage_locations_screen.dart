@@ -21,6 +21,7 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final arController = TextEditingController(text: cityToEdit?.nameAr);
     final enController = TextEditingController(text: cityToEdit?.nameEn);
+    final kuController = TextEditingController(text: cityToEdit?.nameKu);
 
     showDialog(
       context: context,
@@ -28,19 +29,26 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
         title: Text(cityToEdit == null
             ? l10n.addGovernorate
             : l10n.editGovernorate),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: arController,
-              decoration: InputDecoration(labelText: l10n.nameArabic),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: enController,
-              decoration: InputDecoration(labelText: l10n.nameEnglish),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: arController,
+                decoration: InputDecoration(labelText: l10n.nameArabic),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: enController,
+                decoration: InputDecoration(labelText: l10n.nameEnglish),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: kuController,
+                decoration: InputDecoration(labelText: l10n.nameKurdish),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -56,6 +64,7 @@ class _ManageLocationsScreenState extends State<ManageLocationsScreen> {
                 id: cityToEdit?.id ?? '',
                 nameAr: arController.text,
                 nameEn: enController.text,
+                nameKu: kuController.text,
                 isActive: cityToEdit?.isActive ?? true,
                 order: cityToEdit?.order ?? 0,
               );

@@ -63,10 +63,11 @@ class TournamentDetailsScreen extends StatelessWidget {
       ),
       body: BlocConsumer<TournamentCubit, TournamentState>(
         listener: (context, state) {
+          final l10n = AppLocalizations.of(context)!;
           if (state is TournamentActionSuccess) {
-            ToobaSnackBar.success(context, state.message);
+            ToobaSnackBar.success(context, _resolveTournamentSuccess(l10n, state.message));
           } else if (state is TournamentError) {
-            ToobaSnackBar.error(context, state.message);
+            ToobaSnackBar.error(context, _resolveTournamentError(l10n, state.message));
           }
         },
         builder: (context, state) {
@@ -1105,9 +1106,11 @@ class TournamentDetailsScreen extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     messenger.showSnackBar(ToobaSnackBar.buildInfo(AppLocalizations.of(context)!.preparingReport));
     try {
+      final langCode = Localizations.localeOf(context).languageCode;
       await FixturesPdfService.shareTournamentSchedule(
         tournament: state.tournament,
         matches: state.matches,
+        langCode: langCode,
       );
     } catch (_) {
       if (context.mounted) {
@@ -1254,6 +1257,49 @@ class TournamentDetailsScreen extends StatelessWidget {
           match.id,
           combined,
         );
+  }
+
+  String _resolveTournamentSuccess(AppLocalizations l10n, String raw) {
+    if (raw == 'تم تحديد موعد المباراة بنجاح') {
+      return l10n.tournamentSuccessMatchScheduled;
+    }
+    if (raw == 'بدأت المباراة') {
+      return l10n.tournamentSuccessMatchStarted;
+    }
+    if (raw.startsWith('بدأ الشوط ')) {
+      final match = RegExp(r'\d+').firstMatch(raw);
+      final half = int.tryParse(match?.group(0) ?? '1') ?? 1;
+      return l10n.tournamentSuccessHalfStarted(half);
+    }
+    if (raw == 'تم تحديث خطة فريقك لهذه المباراة') {
+      return l10n.tournamentSuccessFormationUpdated;
+    }
+    if (raw == 'تم تعيين الحكم') {
+      return l10n.tournamentSuccessRefereeAssigned;
+    }
+    if (raw == 'تم إلغاء تعيين الحكم') {
+      return l10n.tournamentSuccessRefereeRemoved;
+    }
+    if (raw.contains('تم حفظ النتيجة')) {
+      return l10n.tournamentSuccessResultEntered;
+    }
+    return raw;
+  }
+
+  String _resolveTournamentError(AppLocalizations l10n, String raw) {
+    if (raw.contains('البطولة غير موجودة')) {
+      return l10n.tournamentErrorNotFound;
+    }
+    if (raw.contains('أنت مسجّل كحكم في هذه البطولة مسبقاً')) {
+      return l10n.tournamentErrorAlreadyReferee;
+    }
+    if (raw.contains('لديك طلب تحكيم معلّق لهذه البطولة')) {
+      return l10n.tournamentErrorPendingRefereeExists;
+    }
+    if (raw.contains('المباراة غير موجودة')) {
+      return l10n.matchErrorNotFound;
+    }
+    return raw.replaceFirst('Exception: ', '');
   }
 }
 

@@ -1798,5 +1798,110 @@
   "@monthsCountX": { "placeholders": { "count": { "type": "int" } } },
   "codeUsed": "بەکارهاتوو",
   "codeLocked": "داخراو 🔒",
-  "codeAvailable": "بەردەست ✅"
+  "codeAvailable": "بەردەست ✅",
+  "authErrorUserNotFound": "هیچ هەژمارێک بەم ئیمەیڵە نەدۆزرایەوە",
+  "authErrorWrongPassword": "تێپەڕەوشە هەڵەیە",
+  "authErrorEmailAlreadyInUse": "ئەم ئیمەیڵە پێشتر بۆ هەژمارێکی تر بەکارهاتووە",
+  "authErrorInvalidEmail": "شێوازی ئیمەیڵ نادروستە",
+  "authErrorWeakPassword": "تێپەڕەوشە زۆر لاوازە",
+  "authErrorUserDisabled": "ئەم هەژمارە لەلایەن بەڕێوەبەرایەتی ڕاگیراوە",
+  "authErrorTooManyRequests": "هەوڵی زۆر دراوە، تکایە کەمێکی تر هەوڵ بدەوە",
+  "authErrorNetworkFailed": "کێشەی هێڵی ئینتەرنێت هەیە، تکایە پەیوەندی بپشکنە",
+  "authErrorPhoneAlreadyInUse": "ئەم ژمارەی مۆبایلە پێشتر تۆمارکراوە",
+  "authErrorGeneric": "هەڵەیەک لە چوونەژوورەوە ڕوویدا، تکایە دووبارە هەوڵ بدەوە",
+  "authErrorFetchUserDataFailed": "وەرگرتنی زانیارییەکانی بەکارهێنەر سەرکەوتوو نەبوو",
+  "authErrorCreateAccountFailed": "دروستکردنی هەژمار سەرکەوتوو نەبوو",
+  "authErrorResetPasswordFailed": "ناردنی بەستەری گێڕانەوەی وشەی نهێنی سەرکەوتوو نەبوو",
+  "authErrorUpdateProfileFailed": "نوێکردنەوەی زانیارییەکان سەرکەوتوو نەبوو",
+  "authErrorLogoutFailed": "دەرچوون لە هەژمار سەرکەوتوو نەبوو",
+  "teamErrorAlreadyJoined": "تۆ پێشتر پەیوەندیت بەم تیمەوە کردووە",
+  "teamErrorPendingRequestExists": "داواکارییەکی هەڵپەسێردراوت بۆ ئەم تیمە هەیە",
+  "teamErrorPendingReleaseExists": "داواکاری دەرچوونت هەیە و لە پێداچوونەوەدایە",
+  "teamErrorShirtNumberDuplicate": "ژمارە {number} لەلایەن یاریزانێکی ترەوە بەکارهاتووە",
+  "@teamErrorShirtNumberDuplicate": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "teamErrorFailedCreateTeam": "هەڵەیەک لە دروستکردنی تیمدا ڕوویدا",
+  "teamErrorFailedUploadLogo": "هەڵەیەک لە بەرزکردنەوەی لۆگۆدا ڕوویدا",
+  "teamErrorFailedFetchTeams": "هەڵەیەک لە هێنانی تیمەکاندا ڕوویدا",
+  "teamErrorTeamNotFound": "تیمەکە نەدۆزرایەوە",
+  "teamErrorFailedFetchTeamDetails": "هەڵەیەک لە هێنانی وردەکارییەکانی تیمدا ڕوویدا",
+  "teamErrorFailedFetchJoinRequests": "هەڵەیەک لە هێنانی داواکارییەکانی پەیوەندیکردندا ڕوویدا",
+  "teamErrorFailedUpdateJoinRequest": "هەڵەیەک لە نوێکردنەوەی داواکاریدا ڕوویدا",
+  "teamSuccessFormationSaved": "پلانی تیم خەزن کرا",
+  "teamSuccessLineupSaved": "پێکهاتەی تیم خەزن کرا",
+  "teamSuccessShirtNumberUpdated": "ژمارەی درێسی یاریزان نوێکرایەوە",
+  "teamSuccessReleaseAccepted": "داواکاری دەرچوون پەسەندکرا و یاریزانەکە ئازادکرا",
+  "teamSuccessReleaseRejected": "داواکاری دەرچوون ڕەتکرایەوە",
+  "teamSuccessPlayerAdded": "یاریزانەکە زیادکرا بۆ پێکهاتە",
+  "teamSuccessJoinAccepted": "داواکارییەکە پەسەندکرا — یاریزانەکە زیاددەکرێت بۆ پێکهاتە",
+  "teamSuccessJoinRejected": "داواکارییەکە ڕەتکرایەوە",
+  "tournamentErrorNotFound": "پاڵەوانێتییەکە نەدۆزرایەوە",
+  "tournamentErrorAlreadyReferee": "تۆ پێشتر وەک ناوبژیوان لەم پاڵەوانێتییەدا تۆمارکراویت",
+  "tournamentErrorPendingRefereeExists": "داواکارییەکی هەڵپەسێردراوت بۆ ناوبژیوانی لەم پاڵەوانێتییەدا هەیە",
+  "tournamentSuccessMatchScheduled": "کاتی یارییەکە بە سەرکەوتوویی دیاریکرا",
+  "tournamentSuccessMatchStarted": "یارییەکە دەستیپێکرد",
+  "tournamentSuccessHalfStarted": "گێمی {half} دەستیپێکرد",
+  "@tournamentSuccessHalfStarted": {
+    "placeholders": {
+      "half": {
+        "type": "int"
+      }
+    }
+  },
+  "tournamentSuccessFormationUpdated": "پلانی تیمەکەت بۆ ئەم یارییە نوێکرایەوە",
+  "tournamentSuccessRefereeAssigned": "ناوبژیوان دیاریکرا",
+  "tournamentSuccessRefereeRemoved": "ناوبژیوان لادرا",
+  "tournamentSuccessResultEntered": "ئەنجامەکە خەزن کرا — ڕیزبەندی بە زوویی نوێ دەبێتەوە",
+  "matchErrorNotFound": "یارییەکە نەدۆزرایەوە",
+  "playerErrorNotFound": "یاریزانەکە نەدۆزرایەوە",
+  "chatErrorEmptyMessage": "ناتوانرێت پەیامی بەتاڵ بنێردرێت",
+  "chatErrorMessageTooLong": "پەیامەکە زۆر درێژە (ئەوپەڕی 1000 پیت)",
+  "chatErrorWaitBeforeSending": "تکایە کەمێک بوەستە پێش ناردنی پەیامێکی تر",
+  "chatErrorInappropriateWords": "پەیامەکە وشەی نەشیاوی تێدایە",
+  "nameKurdish": "ناو (کوردی)",
+  "userErrorFetchFailed": "هەڵەیەک لە هێنانی زانیارییەکانی بەکارهێنەردا ڕوویدا",
+  "userErrorSaveFailed": "هەڵەیەک لە خەزنکردنی زانیارییەکانی بەکارهێنەردا ڕوویدا",
+  "userErrorPhoneCheckFailed": "هەڵەیەک لە پشکنینی ژمارەی مۆبایلدا ڕوویدا",
+  "userErrorUpdateFailed": "هەڵەیەک لە نوێکردنەوەی زانیارییەکانی بەکارهێنەردا ڕوویدا",
+  "userErrorUploadAvatarFailed": "هەڵەیەک لە بەرزکردنەوەی وێنەی پرۆفایلدا ڕوویدا",
+  "userErrorFetchRefereesFailed": "هەڵەیەک لە هێنانی ناوبژیواناندا ڕوویدا",
+  "userErrorSearchFailed": "هەڵەیەک لە گەڕان بەدوای بەکارهێنەراندا ڕوویدا",
+  "pdfTournamentScheduleTitle": "خشتەی پاڵەوانێتی {name}",
+  "@pdfTournamentScheduleTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfHeaderMatch": "یاری",
+  "pdfHeaderResult": "ئەنجام",
+  "pdfHeaderDate": "بەروار",
+  "pdfHeaderTime": "کات",
+  "pdfHeaderReferee": "ناوبژیوان",
+  "pdfStatusOngoing": "بەردەوامە",
+  "pdfStatusFinished": "کۆتاییهاتوو",
+  "pdfStatusUpcoming": "داهاتوو",
+  "pdfRoundTitle": "گەڕی {round}",
+  "@pdfRoundTitle": {
+    "placeholders": {
+      "round": {
+        "type": "int"
+      }
+    }
+  },
+  "pdfExportedViaTooba": "📲 لە ڕێگەی ئەپی توبەوە دەرکراوە — {time}",
+  "@pdfExportedViaTooba": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfUnspecified": "دیارینەکراو"
 }

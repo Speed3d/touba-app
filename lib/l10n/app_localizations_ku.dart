@@ -3470,4 +3470,255 @@ class AppLocalizationsKu extends AppLocalizations {
 
   @override
   String get codeAvailable => 'بەردەست ✅';
+
+  @override
+  String get authErrorUserNotFound => 'هیچ هەژمارێک بەم ئیمەیڵە نەدۆزرایەوە';
+
+  @override
+  String get authErrorWrongPassword => 'تێپەڕەوشە هەڵەیە';
+
+  @override
+  String get authErrorEmailAlreadyInUse =>
+      'ئەم ئیمەیڵە پێشتر بۆ هەژمارێکی تر بەکارهاتووە';
+
+  @override
+  String get authErrorInvalidEmail => 'شێوازی ئیمەیڵ نادروستە';
+
+  @override
+  String get authErrorWeakPassword => 'تێپەڕەوشە زۆر لاوازە';
+
+  @override
+  String get authErrorUserDisabled =>
+      'ئەم هەژمارە لەلایەن بەڕێوەبەرایەتی ڕاگیراوە';
+
+  @override
+  String get authErrorTooManyRequests =>
+      'هەوڵی زۆر دراوە، تکایە کەمێکی تر هەوڵ بدەوە';
+
+  @override
+  String get authErrorNetworkFailed =>
+      'کێشەی هێڵی ئینتەرنێت هەیە، تکایە پەیوەندی بپشکنە';
+
+  @override
+  String get authErrorPhoneAlreadyInUse =>
+      'ئەم ژمارەی مۆبایلە پێشتر تۆمارکراوە';
+
+  @override
+  String get authErrorGeneric =>
+      'هەڵەیەک لە چوونەژوورەوە ڕوویدا، تکایە دووبارە هەوڵ بدەوە';
+
+  @override
+  String get authErrorFetchUserDataFailed =>
+      'وەرگرتنی زانیارییەکانی بەکارهێنەر سەرکەوتوو نەبوو';
+
+  @override
+  String get authErrorCreateAccountFailed =>
+      'دروستکردنی هەژمار سەرکەوتوو نەبوو';
+
+  @override
+  String get authErrorResetPasswordFailed =>
+      'ناردنی بەستەری گێڕانەوەی وشەی نهێنی سەرکەوتوو نەبوو';
+
+  @override
+  String get authErrorUpdateProfileFailed =>
+      'نوێکردنەوەی زانیارییەکان سەرکەوتوو نەبوو';
+
+  @override
+  String get authErrorLogoutFailed => 'دەرچوون لە هەژمار سەرکەوتوو نەبوو';
+
+  @override
+  String get teamErrorAlreadyJoined => 'تۆ پێشتر پەیوەندیت بەم تیمەوە کردووە';
+
+  @override
+  String get teamErrorPendingRequestExists =>
+      'داواکارییەکی هەڵپەسێردراوت بۆ ئەم تیمە هەیە';
+
+  @override
+  String get teamErrorPendingReleaseExists =>
+      'داواکاری دەرچوونت هەیە و لە پێداچوونەوەدایە';
+
+  @override
+  String teamErrorShirtNumberDuplicate(String number) {
+    return 'ژمارە $number لەلایەن یاریزانێکی ترەوە بەکارهاتووە';
+  }
+
+  @override
+  String get teamErrorFailedCreateTeam => 'هەڵەیەک لە دروستکردنی تیمدا ڕوویدا';
+
+  @override
+  String get teamErrorFailedUploadLogo =>
+      'هەڵەیەک لە بەرزکردنەوەی لۆگۆدا ڕوویدا';
+
+  @override
+  String get teamErrorFailedFetchTeams => 'هەڵەیەک لە هێنانی تیمەکاندا ڕوویدا';
+
+  @override
+  String get teamErrorTeamNotFound => 'تیمەکە نەدۆزرایەوە';
+
+  @override
+  String get teamErrorFailedFetchTeamDetails =>
+      'هەڵەیەک لە هێنانی وردەکارییەکانی تیمدا ڕوویدا';
+
+  @override
+  String get teamErrorFailedFetchJoinRequests =>
+      'هەڵەیەک لە هێنانی داواکارییەکانی پەیوەندیکردندا ڕوویدا';
+
+  @override
+  String get teamErrorFailedUpdateJoinRequest =>
+      'هەڵەیەک لە نوێکردنەوەی داواکاریدا ڕوویدا';
+
+  @override
+  String get teamSuccessFormationSaved => 'پلانی تیم خەزن کرا';
+
+  @override
+  String get teamSuccessLineupSaved => 'پێکهاتەی تیم خەزن کرا';
+
+  @override
+  String get teamSuccessShirtNumberUpdated => 'ژمارەی درێسی یاریزان نوێکرایەوە';
+
+  @override
+  String get teamSuccessReleaseAccepted =>
+      'داواکاری دەرچوون پەسەندکرا و یاریزانەکە ئازادکرا';
+
+  @override
+  String get teamSuccessReleaseRejected => 'داواکاری دەرچوون ڕەتکرایەوە';
+
+  @override
+  String get teamSuccessPlayerAdded => 'یاریزانەکە زیادکرا بۆ پێکهاتە';
+
+  @override
+  String get teamSuccessJoinAccepted =>
+      'داواکارییەکە پەسەندکرا — یاریزانەکە زیاددەکرێت بۆ پێکهاتە';
+
+  @override
+  String get teamSuccessJoinRejected => 'داواکارییەکە ڕەتکرایەوە';
+
+  @override
+  String get tournamentErrorNotFound => 'پاڵەوانێتییەکە نەدۆزرایەوە';
+
+  @override
+  String get tournamentErrorAlreadyReferee =>
+      'تۆ پێشتر وەک ناوبژیوان لەم پاڵەوانێتییەدا تۆمارکراویت';
+
+  @override
+  String get tournamentErrorPendingRefereeExists =>
+      'داواکارییەکی هەڵپەسێردراوت بۆ ناوبژیوانی لەم پاڵەوانێتییەدا هەیە';
+
+  @override
+  String get tournamentSuccessMatchScheduled =>
+      'کاتی یارییەکە بە سەرکەوتوویی دیاریکرا';
+
+  @override
+  String get tournamentSuccessMatchStarted => 'یارییەکە دەستیپێکرد';
+
+  @override
+  String tournamentSuccessHalfStarted(int half) {
+    return 'گێمی $half دەستیپێکرد';
+  }
+
+  @override
+  String get tournamentSuccessFormationUpdated =>
+      'پلانی تیمەکەت بۆ ئەم یارییە نوێکرایەوە';
+
+  @override
+  String get tournamentSuccessRefereeAssigned => 'ناوبژیوان دیاریکرا';
+
+  @override
+  String get tournamentSuccessRefereeRemoved => 'ناوبژیوان لادرا';
+
+  @override
+  String get tournamentSuccessResultEntered =>
+      'ئەنجامەکە خەزن کرا — ڕیزبەندی بە زوویی نوێ دەبێتەوە';
+
+  @override
+  String get matchErrorNotFound => 'یارییەکە نەدۆزرایەوە';
+
+  @override
+  String get playerErrorNotFound => 'یاریزانەکە نەدۆزرایەوە';
+
+  @override
+  String get chatErrorEmptyMessage => 'ناتوانرێت پەیامی بەتاڵ بنێردرێت';
+
+  @override
+  String get chatErrorMessageTooLong => 'پەیامەکە زۆر درێژە (ئەوپەڕی 1000 پیت)';
+
+  @override
+  String get chatErrorWaitBeforeSending =>
+      'تکایە کەمێک بوەستە پێش ناردنی پەیامێکی تر';
+
+  @override
+  String get chatErrorInappropriateWords => 'پەیامەکە وشەی نەشیاوی تێدایە';
+
+  @override
+  String get nameKurdish => 'ناو (کوردی)';
+
+  @override
+  String get userErrorFetchFailed =>
+      'هەڵەیەک لە هێنانی زانیارییەکانی بەکارهێنەردا ڕوویدا';
+
+  @override
+  String get userErrorSaveFailed =>
+      'هەڵەیەک لە خەزنکردنی زانیارییەکانی بەکارهێنەردا ڕوویدا';
+
+  @override
+  String get userErrorPhoneCheckFailed =>
+      'هەڵەیەک لە پشکنینی ژمارەی مۆبایلدا ڕوویدا';
+
+  @override
+  String get userErrorUpdateFailed =>
+      'هەڵەیەک لە نوێکردنەوەی زانیارییەکانی بەکارهێنەردا ڕوویدا';
+
+  @override
+  String get userErrorUploadAvatarFailed =>
+      'هەڵەیەک لە بەرزکردنەوەی وێنەی پرۆفایلدا ڕوویدا';
+
+  @override
+  String get userErrorFetchRefereesFailed =>
+      'هەڵەیەک لە هێنانی ناوبژیواناندا ڕوویدا';
+
+  @override
+  String get userErrorSearchFailed =>
+      'هەڵەیەک لە گەڕان بەدوای بەکارهێنەراندا ڕوویدا';
+
+  @override
+  String pdfTournamentScheduleTitle(String name) {
+    return 'خشتەی پاڵەوانێتی $name';
+  }
+
+  @override
+  String get pdfHeaderMatch => 'یاری';
+
+  @override
+  String get pdfHeaderResult => 'ئەنجام';
+
+  @override
+  String get pdfHeaderDate => 'بەروار';
+
+  @override
+  String get pdfHeaderTime => 'کات';
+
+  @override
+  String get pdfHeaderReferee => 'ناوبژیوان';
+
+  @override
+  String get pdfStatusOngoing => 'بەردەوامە';
+
+  @override
+  String get pdfStatusFinished => 'کۆتاییهاتوو';
+
+  @override
+  String get pdfStatusUpcoming => 'داهاتوو';
+
+  @override
+  String pdfRoundTitle(int round) {
+    return 'گەڕی $round';
+  }
+
+  @override
+  String pdfExportedViaTooba(String time) {
+    return '📲 لە ڕێگەی ئەپی توبەوە دەرکراوە — $time';
+  }
+
+  @override
+  String get pdfUnspecified => 'دیارینەکراو';
 }

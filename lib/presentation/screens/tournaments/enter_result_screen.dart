@@ -266,6 +266,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
     return BlocListener<TournamentCubit, TournamentState>(
       listener: (context, state) {
         if (state is TournamentActionSuccess) {
+          ToobaSnackBar.success(context, AppLocalizations.of(context)!.tournamentSuccessResultEntered);
           Navigator.pop(context);
         } else if (state is TournamentError) {
           ToobaSnackBar.error(context, state.message);
