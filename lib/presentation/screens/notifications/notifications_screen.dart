@@ -140,7 +140,6 @@ class _NotificationTile extends StatelessWidget {
                     ? theme.colorScheme.primary.withValues(alpha: 0.12)
                     : theme.colorScheme.primary.withValues(alpha: 0.06))
                 : (isDark ? AppColors.surfaceDark : Colors.white),
-            borderRadius: BorderRadius.circular(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
               side: BorderSide(

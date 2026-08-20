@@ -21,8 +21,9 @@ class DecoratedBackground extends StatelessWidget {
     // الألوان
     final bgColor = AppColors.getBackground(isDark);
 
-    return Container(
+    return Material(
       color: bgColor,
+      type: MaterialType.canvas,
       child: Stack(
         fit: StackFit.expand,
         children: [
