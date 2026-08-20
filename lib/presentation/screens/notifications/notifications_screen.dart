@@ -132,22 +132,25 @@ class _NotificationTile extends StatelessWidget {
           }
           _navigate(context);
         },
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: Material(
             color: isUnread
                 ? (isDark
                     ? theme.colorScheme.primary.withValues(alpha: 0.12)
                     : theme.colorScheme.primary.withValues(alpha: 0.06))
                 : (isDark ? AppColors.surfaceDark : Colors.white),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(
+                color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+              ),
             ),
-          ),
-          child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            clipBehavior: Clip.antiAlias,
+            child: ListTile(
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: Container(
               width: 44,
               height: 44,
@@ -200,8 +203,9 @@ class _NotificationTile extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   // 📝 HINT AR: يفتح الشاشة المناسبة حسب محتوى الإشعار (data): بطولة → تفاصيلها،
   // فريق → تفاصيله (حيث يجد الكابتن زر الإدارة والطلبات).
