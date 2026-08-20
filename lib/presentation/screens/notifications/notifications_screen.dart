@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/notification_model.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../data/repositories/player_repository.dart';
@@ -9,6 +10,7 @@ import '../../cubits/notifications/notifications_cubit.dart';
 import '../../cubits/notifications/notifications_state.dart';
 import '../../cubits/team/team_cubit.dart';
 import '../../cubits/tournament/tournament_cubit.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../teams/team_details_screen.dart';
 import '../tournaments/tournament_details_screen.dart';
 import '../chat/chat_screen.dart';
@@ -37,7 +39,7 @@ class _NotificationsView extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.notifications),
         centerTitle: true,
@@ -58,42 +60,45 @@ class _NotificationsView extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<NotificationsCubit, NotificationsState>(
-        builder: (context, state) {
-          if (state is NotificationsInitial) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is NotificationsError) {
-            return Center(child: Text(AppLocalizations.of(context)!.errorPrefix(state.message)));
-          }
-          if (state is NotificationsLoaded) {
-            if (state.notifications.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.notifications_none_outlined,
-                        size: 80, color: Colors.grey[400]),
-                    const SizedBox(height: 16),
-                    Text(AppLocalizations.of(context)!.noNotificationsYet,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: isDark ? Colors.white54 : Colors.black45,
-                        )),
-                  ],
-                ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: BlocBuilder<NotificationsCubit, NotificationsState>(
+          builder: (context, state) {
+            if (state is NotificationsInitial) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is NotificationsError) {
+              return Center(child: Text(AppLocalizations.of(context)!.errorPrefix(state.message)));
+            }
+            if (state is NotificationsLoaded) {
+              if (state.notifications.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.notifications_none_outlined,
+                          size: 80, color: Colors.grey[400]),
+                      const SizedBox(height: 16),
+                      Text(AppLocalizations.of(context)!.noNotificationsYet,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: isDark ? Colors.white54 : Colors.black45,
+                          )),
+                    ],
+                  ),
+                );
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: state.notifications.length,
+                itemBuilder: (context, i) {
+                  final n = state.notifications[i];
+                  return _NotificationTile(notification: n);
+                },
               );
             }
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: state.notifications.length,
-              itemBuilder: (context, i) {
-                final n = state.notifications[i];
-                return _NotificationTile(notification: n);
-              },
-            );
-          }
-          return const SizedBox.shrink();
-        },
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -134,15 +139,11 @@ class _NotificationTile extends StatelessWidget {
                 ? (isDark
                     ? theme.colorScheme.primary.withValues(alpha: 0.12)
                     : theme.colorScheme.primary.withValues(alpha: 0.06))
-                : (isDark ? Colors.grey[850] : Colors.white),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
+                : (isDark ? AppColors.surfaceDark : Colors.white),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+            ),
           ),
           child: ListTile(
             contentPadding:

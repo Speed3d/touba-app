@@ -17,6 +17,8 @@ import 'tournament_details_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
 
+import '../../widgets/core/decorated_background.dart';
+
 /// 📝 HINT AR: قائمة البطولات الحقيقية (من Firestore) بدل البيانات الوهمية.
 class TournamentsScreen extends StatefulWidget {
   const TournamentsScreen({super.key});
@@ -55,10 +57,13 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
         (user.isAdmin || user.adminPermissions.contains('organizer'));
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.toubaAppTitle,
             style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
-        centerTitle: false,
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       floatingActionButton: canManage
           ? FloatingActionButton.extended(
@@ -70,74 +75,77 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
               label: Text(AppLocalizations.of(context)!.createTournamentBtn),
             )
           : null,
-      body: BlocBuilder<TournamentCubit, TournamentState>(
-        builder: (context, state) {
-          if (state is TournamentError) {
-            return ToobaEmptyState(
-              icon: Icons.wifi_off_rounded,
-              title: AppLocalizations.of(context)!.failedToLoadTournaments,
-              subtitle: state.message,
-              actionLabel: AppLocalizations.of(context)!.retryBtn,
-              onAction: () =>
-                  context.read<TournamentCubit>().fetchTournaments(),
-            );
-          }
-          if (state is TournamentsLoaded) {
-            final ongoing =
-                state.tournaments.where((t) => t.status == 'ongoing').toList();
-            final finished =
-                state.tournaments.where((t) => t.status == 'finished').toList();
-            final others = state.tournaments
-                .where((t) => t.status != 'ongoing' && t.status != 'finished')
-                .toList();
-
-            if (state.tournaments.isEmpty) {
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: BlocBuilder<TournamentCubit, TournamentState>(
+          builder: (context, state) {
+            if (state is TournamentError) {
               return ToobaEmptyState(
-                icon: Icons.emoji_events,
-                title: AppLocalizations.of(context)!.noTournamentsYet,
-                subtitle: canManage
-                    ? AppLocalizations.of(context)!.createFirstTournamentHint
-                    : AppLocalizations.of(context)!.noTournamentsInYourAreaYet,
+                icon: Icons.wifi_off_rounded,
+                title: AppLocalizations.of(context)!.failedToLoadTournaments,
+                subtitle: state.message,
+                actionLabel: AppLocalizations.of(context)!.retryBtn,
+                onAction: () =>
+                    context.read<TournamentCubit>().fetchTournaments(),
               );
             }
+            if (state is TournamentsLoaded) {
+              final ongoing =
+                  state.tournaments.where((t) => t.status == 'ongoing').toList();
+              final finished =
+                  state.tournaments.where((t) => t.status == 'finished').toList();
+              final others = state.tournaments
+                  .where((t) => t.status != 'ongoing' && t.status != 'finished')
+                  .toList();
 
-            return RefreshIndicator(
-              onRefresh: () =>
-                  context.read<TournamentCubit>().fetchTournaments(),
-              child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                children: [
-                  if (ongoing.isNotEmpty) ...[
-                    _header(AppLocalizations.of(context)!.ongoingTournaments),
-                    ...ongoing.map((t) => _tournamentCard(context, theme, t)),
-                    const SizedBox(height: 16),
+              if (state.tournaments.isEmpty) {
+                return ToobaEmptyState(
+                  icon: Icons.emoji_events,
+                  title: AppLocalizations.of(context)!.noTournamentsYet,
+                  subtitle: canManage
+                      ? AppLocalizations.of(context)!.createFirstTournamentHint
+                      : AppLocalizations.of(context)!.noTournamentsInYourAreaYet,
+                );
+              }
+
+              return RefreshIndicator(
+                onRefresh: () =>
+                    context.read<TournamentCubit>().fetchTournaments(),
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  children: [
+                    if (ongoing.isNotEmpty) ...[
+                      _header(AppLocalizations.of(context)!.ongoingTournaments),
+                      ...ongoing.map((t) => _tournamentCard(context, theme, t)),
+                      const SizedBox(height: 16),
+                    ],
+                    if (finished.isNotEmpty) ...[
+                      _header(AppLocalizations.of(context)!.finishedTournaments),
+                      ...finished.map((t) => _tournamentCard(context, theme, t)),
+                      const SizedBox(height: 16),
+                    ],
+                    if (others.isNotEmpty) ...[
+                      _header(AppLocalizations.of(context)!.otherTournaments),
+                      ...others.map((t) => _tournamentCard(context, theme, t)),
+                    ],
                   ],
-                  if (finished.isNotEmpty) ...[
-                    _header(AppLocalizations.of(context)!.finishedTournaments),
-                    ...finished.map((t) => _tournamentCard(context, theme, t)),
-                    const SizedBox(height: 16),
-                  ],
-                  if (others.isNotEmpty) ...[
-                    _header(AppLocalizations.of(context)!.otherTournaments),
-                    ...others.map((t) => _tournamentCard(context, theme, t)),
-                  ],
-                ],
-              ),
+                ),
+              );
+            }
+            // Shimmer loading
+            return ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              children: [
+                _header(AppLocalizations.of(context)!.ongoingTournaments),
+                const ToobaShimmerBanner(),
+                const SizedBox(height: 16),
+                _header(AppLocalizations.of(context)!.otherTournaments),
+                const ToobaShimmerList(count: 3, tileHeight: 72),
+              ],
             );
-          }
-          // Shimmer loading
-          return ListView(
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            children: [
-              _header(AppLocalizations.of(context)!.ongoingTournaments),
-              const ToobaShimmerBanner(),
-              const SizedBox(height: 16),
-              _header(AppLocalizations.of(context)!.otherTournaments),
-              const ToobaShimmerList(count: 3, tileHeight: 72),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -163,8 +171,8 @@ class _TournamentsScreenState extends State<TournamentsScreen> {
   Widget _tournamentCard(BuildContext context, ThemeData theme, TournamentModel t) {
     final finished = t.status == 'finished';
     final gradient = finished
-        ? [Colors.amber.shade700, Colors.orange.shade900]
-        : const [Color(0xFF1877F2), Color(0xFF0C5EBF)];
+        ? [const Color(0xFFD97706), const Color(0xFF92400E)]
+        : const [Color(0xFF00D166), Color(0xFF00924A)];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: InkWell(

@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/repositories/match_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -66,6 +68,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final p = _profile ?? const {};
     final name = (p['name'] as String?) ?? widget.refereeName ?? AppLocalizations.of(context)!.referee;
     final photo = p['photoUrl'] as String?;
@@ -75,9 +78,12 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
     final ratingCount = (p['ratingCount'] ?? 0) as int;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.refereeProfile),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         actions: [
           if (_isOwner && !_loading)
             IconButton(
@@ -87,107 +93,120 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
             ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Center(
-                  child: CircleAvatar(
-                    radius: 48,
-                    backgroundColor: Colors.grey.shade200,
-                    backgroundImage: (photo != null && photo.isNotEmpty)
-                        ? ImageHelper.getProvider(photo)
-                        : null,
-                    child: (photo == null || photo.isEmpty)
-                        ? Icon(Icons.sports, size: 48, color: Colors.grey[500])
-                        : null,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Center(
-                  child: Text(name,
-                      style: theme.textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold)),
-                ),
-                if (city != null && city.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
                   Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.location_on,
-                            size: 14, color: Colors.grey[600]),
-                        const SizedBox(width: 4),
-                        Text(city,
-                            style: TextStyle(color: Colors.grey[700])),
-                      ],
+                    child: CircleAvatar(
+                      radius: 48,
+                      backgroundColor: Colors.grey.shade200,
+                      backgroundImage: (photo != null && photo.isNotEmpty)
+                          ? ImageHelper.getProvider(photo)
+                          : null,
+                      child: (photo == null || photo.isEmpty)
+                          ? Icon(Icons.sports, size: 48, color: Colors.grey[500])
+                          : null,
                     ),
                   ),
-                ],
-                const SizedBox(height: 16),
-                // ── بطاقتا الإحصائية: عدد المباريات + التقييم ──
-                Row(
-                  children: [
-                    Expanded(
-                      child: _statCard(Icons.sports_soccer, '$_matchesCount',
-                          AppLocalizations.of(context)!.matchesManaged, theme.colorScheme.primary),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _statCard(
-                          Icons.star,
-                          ratingCount > 0
-                              ? '${rating.toStringAsFixed(1)} ($ratingCount)'
-                              : '—',
-                          AppLocalizations.of(context)!.averageRating,
-                          Colors.amber.shade700),
-                    ),
-                  ],
-                ),
-                if (bio != null && bio.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 12),
+                  Center(
+                    child: Text(name,
+                        style: theme.textTheme.titleLarge
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                  ),
+                  if (city != null && city.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(AppLocalizations.of(context)!.bioLabel,
-                              style: const TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 6),
-                          Text(bio, style: const TextStyle(height: 1.5)),
+                          Icon(Icons.location_on,
+                              size: 14, color: isDark ? Colors.white70 : Colors.grey[600]),
+                          const SizedBox(width: 4),
+                          Text(city,
+                              style: TextStyle(color: isDark ? Colors.white70 : Colors.grey[700])),
                         ],
                       ),
                     ),
+                  ],
+                  const SizedBox(height: 16),
+                  // ── بطاقتا الإحصائية: عدد المباريات + التقييم ──
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _statCard(Icons.sports_soccer, '$_matchesCount',
+                            AppLocalizations.of(context)!.matchesManaged, theme.colorScheme.primary, isDark),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _statCard(
+                            Icons.star,
+                            ratingCount > 0
+                                ? '${rating.toStringAsFixed(1)} ($ratingCount)'
+                                : '—',
+                            AppLocalizations.of(context)!.averageRating,
+                            Colors.amber.shade700,
+                            isDark),
+                      ),
+                    ],
                   ),
+                  if (bio != null && bio.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      elevation: 0,
+                      color: isDark ? AppColors.surfaceDark : Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(
+                          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(AppLocalizations.of(context)!.bioLabel,
+                                style: const TextStyle(fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 6),
+                            Text(bio, style: const TextStyle(height: 1.5)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 20),
+                  Text(AppLocalizations.of(context)!.matchesList,
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  if (_matches.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(AppLocalizations.of(context)!.noMatchesManaged,
+                          style: TextStyle(color: isDark ? Colors.white60 : Colors.grey[600])),
+                    )
+                  else
+                    ..._matches.map((m) => _matchTile(m, isDark)),
                 ],
-                const SizedBox(height: 20),
-                Text(AppLocalizations.of(context)!.matchesList,
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                if (_matches.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(AppLocalizations.of(context)!.noMatchesManaged,
-                        style: TextStyle(color: Colors.grey[600])),
-                  )
-                else
-                  ..._matches.map(_matchTile),
-              ],
-            ),
+              ),
+      ),
     );
   }
 
-  Widget _statCard(IconData icon, String value, String label, Color color) {
+  Widget _statCard(IconData icon, String value, String label, Color color, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         children: [
@@ -198,19 +217,26 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
                   fontSize: 18, fontWeight: FontWeight.bold, color: color)),
           const SizedBox(height: 2),
           Text(label,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              style: TextStyle(fontSize: 12, color: isDark ? Colors.white60 : Colors.grey[600])),
         ],
       ),
     );
   }
 
-  Widget _matchTile(MatchModel m) {
+  Widget _matchTile(MatchModel m, bool isDark) {
     final score = m.resultConfirmed
         ? '${m.homeScore} - ${m.awayScore}'
         : (m.status == 'live' ? AppLocalizations.of(context)!.matchLive : '—');
     return Card(
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
       margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Row(
@@ -226,7 +252,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: isDark ? const Color(0xFF1E2A38) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(score,

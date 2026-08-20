@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
+import '../../../app/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: نموذج إضافة لاعب للتشكيلة (يديره الكابتن). يُعيد بيانات اللاعب
 /// عبر Navigator.pop ليستدعي معها cubit الإدارة createPlayer.
@@ -39,17 +40,24 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final fill = isDark ? Colors.grey[900] : Colors.grey[100];
-    final border = OutlineInputBorder(borderRadius: BorderRadius.circular(12));
+    final fill = isDark ? AppColors.surfaceDark : Colors.white;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide(
+        color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+      ),
+    );
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.addPlayer),
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: SafeArea(
+      body: DecoratedBackground(
+        showOrbs: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(

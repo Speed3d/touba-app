@@ -21,6 +21,7 @@ import '../../../core/utils/tooba_snack_bar.dart';
 import '../../widgets/core/pitch_formation_view.dart';
 import '../../widgets/core/formation_share_sheet.dart';
 import '../../widgets/core/live_match_timer.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../referee/referee_profile_screen.dart';
 import '../tournaments/enter_result_screen.dart';
 import '../../../app/router/tooba_route.dart';
@@ -222,6 +223,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.matchDetails),
           centerTitle: true,
@@ -234,14 +236,17 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
             ],
           ),
         ),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : TabBarView(
-                children: [
-                  _detailsView(m),
-                  _formationsView(m),
-                ],
-              ),
+        body: DecoratedBackground(
+          showOrbs: false,
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : TabBarView(
+                  children: [
+                    _detailsView(m),
+                    _formationsView(m),
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -737,7 +742,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(
-          colors: [Color(0xFF1877F2), Color(0xFF0C5EBF)],
+          colors: [Color(0xFF00D166), Color(0xFF00924A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

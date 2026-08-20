@@ -8,6 +8,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/chat_model.dart';
 import '../../../data/repositories/chat_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../app/router/tooba_route.dart';
 import 'chat_screen.dart';
 import '../../../l10n/app_localizations.dart';
@@ -24,41 +25,50 @@ class ChatsListScreen extends StatelessWidget {
     final repo = context.read<ChatRepository>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.myChatsTitle), centerTitle: true),
-      body: uid == null
-          ? _visitorView(context)
-          : StreamBuilder<List<ChatModel>>(
-              stream: repo.streamUserChats(uid),
-              builder: (context, snap) {
-                if (!snap.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final chats = snap.data!;
-                if (chats.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.forum_outlined,
-                            size: 56, color: Colors.grey.shade400),
-                        const SizedBox(height: 8),
-                        Text(AppLocalizations.of(context)!.noChatsYet,
-                            style: TextStyle(color: Colors.grey[600])),
-                        const SizedBox(height: 4),
-                        Text(AppLocalizations.of(context)!.chatOpensWhenChallengeAccepted,
-                            style: TextStyle(
-                                fontSize: 12, color: Colors.grey[500])),
-                      ],
-                    ),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.myChatsTitle),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: uid == null
+            ? _visitorView(context)
+            : StreamBuilder<List<ChatModel>>(
+                stream: repo.streamUserChats(uid),
+                builder: (context, snap) {
+                  if (!snap.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final chats = snap.data!;
+                  if (chats.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.forum_outlined,
+                              size: 56, color: Colors.grey.shade400),
+                          const SizedBox(height: 8),
+                          Text(AppLocalizations.of(context)!.noChatsYet,
+                              style: TextStyle(color: Colors.grey[600])),
+                          const SizedBox(height: 4),
+                          Text(AppLocalizations.of(context)!.chatOpensWhenChallengeAccepted,
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.grey[500])),
+                        ],
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    itemCount: chats.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (context, i) => _tile(context, chats[i], uid),
                   );
-                }
-                return ListView.separated(
-                  itemCount: chats.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (context, i) => _tile(context, chats[i], uid),
-                );
-              },
-            ),
+                },
+              ),
+      ),
     );
   }
 

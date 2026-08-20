@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/tournament_lineup_model.dart';
 import '../../../data/repositories/tournament_lineup_repository.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../../widgets/core/pitch_formation_view.dart';
 import '../../widgets/core/tooba_empty_state.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../players/player_detail_screen.dart';
 import '../../../app/router/tooba_route.dart';
@@ -107,34 +109,44 @@ class _TournamentLineupsReviewScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.reviewLineupsTitle), centerTitle: true),
-      body: FutureBuilder<List<TournamentLineupModel>>(
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final lineups = snap.data ?? [];
-          if (lineups.isEmpty) {
-            return ToobaEmptyState(
-              icon: Icons.groups_outlined,
-              title: AppLocalizations.of(context)!.noLineupsSentYet,
-              subtitle: AppLocalizations.of(context)!.lineupsWillAppearHereWhenSent,
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.reviewLineupsTitle),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: FutureBuilder<List<TournamentLineupModel>>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final lineups = snap.data ?? [];
+            if (lineups.isEmpty) {
+              return ToobaEmptyState(
+                icon: Icons.groups_outlined,
+                title: AppLocalizations.of(context)!.noLineupsSentYet,
+                subtitle: AppLocalizations.of(context)!.lineupsWillAppearHereWhenSent,
+              );
+            }
+            return RefreshIndicator(
+              onRefresh: () async => _reload(),
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: lineups.map(_lineupCard).toList(),
+              ),
             );
-          }
-          return RefreshIndicator(
-            onRefresh: () async => _reload(),
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: lineups.map(_lineupCard).toList(),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
 
   Widget _lineupCard(TournamentLineupModel l) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, label) = l.isApproved
         ? (Colors.green, AppLocalizations.of(context)!.approvedStatus)
         : l.isRejected
@@ -142,7 +154,14 @@ class _TournamentLineupsReviewScreenState
             : (Colors.blue, AppLocalizations.of(context)!.pendingReviewStatus);
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(

@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/banner_model.dart';
 import '../../../data/repositories/home_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -34,50 +36,64 @@ class _AdminBannersScreenState extends State<AdminBannersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.adminBannersTitle),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEditor(),
         icon: const Icon(Icons.add),
         label: Text(AppLocalizations.of(context)!.newBannerBtn),
       ),
-      body: FutureBuilder<List<BannerModel>>(
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final banners = snap.data ?? [];
-          if (banners.isEmpty) {
-            return Center(
-              child: Text(AppLocalizations.of(context)!.noBanners,
-                  style: TextStyle(color: Colors.grey[600])),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: FutureBuilder<List<BannerModel>>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final banners = snap.data ?? [];
+            if (banners.isEmpty) {
+              return Center(
+                child: Text(AppLocalizations.of(context)!.noBanners,
+                    style: TextStyle(color: Colors.grey[600])),
+              );
+            }
+            return RefreshIndicator(
+              onRefresh: () async => setState(_reload),
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: banners.length,
+                itemBuilder: (context, i) => _bannerTile(banners[i]),
+              ),
             );
-          }
-          return RefreshIndicator(
-            onRefresh: () async => setState(_reload),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: banners.length,
-              itemBuilder: (context, i) => _bannerTile(banners[i]),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
 
   Widget _bannerTile(BannerModel b) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: Column(
         children: [
           ClipRRect(
             borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(12)),
+                const BorderRadius.vertical(top: Radius.circular(16)),
             child: CachedNetworkImage(
               imageUrl: b.imageUrl,
               height: 120,

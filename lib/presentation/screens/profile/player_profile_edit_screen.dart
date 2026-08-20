@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/repositories/player_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -162,106 +164,120 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final fill = isDark ? AppColors.surfaceDark : Colors.white;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide(
+        color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+      ),
+    );
+
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.playerDetails), centerTitle: true),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                // القدم المفضّلة
-                _label(AppLocalizations.of(context)!.preferredFoot),
-                Wrap(
-                  spacing: 8,
-                  children: _footLabels.entries.map((e) {
-                    final selected = _preferredFoot == e.key;
-                    return ChoiceChip(
-                      label: Text(e.value),
-                      selected: selected,
-                      onSelected: (_) =>
-                          setState(() => _preferredFoot = selected ? null : e.key),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 20),
-                // الطول والوزن
-                Row(
-                  children: [
-                    Expanded(
-                      child: _numberField(_height, AppLocalizations.of(context)!.heightCm, isDark),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.playerDetails),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  // القدم المفضّلة
+                  _label(AppLocalizations.of(context)!.preferredFoot),
+                  Wrap(
+                    spacing: 8,
+                    children: _footLabels.entries.map((e) {
+                      final selected = _preferredFoot == e.key;
+                      return ChoiceChip(
+                        label: Text(e.value),
+                        selected: selected,
+                        onSelected: (_) =>
+                            setState(() => _preferredFoot = selected ? null : e.key),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  // الطول والوزن
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _numberField(_height, AppLocalizations.of(context)!.heightCm, isDark, border, fill),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _numberField(_weight, AppLocalizations.of(context)!.weightKg, isDark, border, fill),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // تاريخ الميلاد + العمر
+                  InkWell(
+                    onTap: _pickBirthDate,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.birthDate,
+                        prefixIcon: const Icon(Icons.cake_outlined),
+                        border: border,
+                        filled: true,
+                        fillColor: fill,
+                      ),
+                      child: Text(
+                        _birthDate == null
+                            ? AppLocalizations.of(context)!.notSpecified
+                            : '${_birthDate!.year}/${_birthDate!.month}/${_birthDate!.day}'
+                                '${_age != null ? '  •  ${AppLocalizations.of(context)!.ageYears(_age!)}' : ''}',
+                      ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _numberField(_weight, AppLocalizations.of(context)!.weightKg, isDark),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // تاريخ الميلاد + العمر
-                InkWell(
-                  onTap: _pickBirthDate,
-                  borderRadius: BorderRadius.circular(12),
-                  child: InputDecorator(
+                  ),
+                  const SizedBox(height: 16),
+                  // النبذة
+                  TextField(
+                    controller: _bio,
+                    maxLines: 4,
+                    maxLength: 300,
                     decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.birthDate,
-                      prefixIcon: const Icon(Icons.cake_outlined),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                      labelText: AppLocalizations.of(context)!.bioTitle,
+                      hintText: AppLocalizations.of(context)!.bioHint,
+                      alignLabelWithHint: true,
+                      border: border,
                       filled: true,
-                      fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
-                    ),
-                    child: Text(
-                      _birthDate == null
-                          ? AppLocalizations.of(context)!.notSpecified
-                          : '${_birthDate!.year}/${_birthDate!.month}/${_birthDate!.day}'
-                              '${_age != null ? '  •  ${AppLocalizations.of(context)!.ageYears(_age!)}' : ''}',
+                      fillColor: fill,
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                // النبذة
-                TextField(
-                  controller: _bio,
-                  maxLines: 4,
-                  maxLength: 300,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.bioTitle,
-                    hintText: AppLocalizations.of(context)!.bioHint,
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                  const SizedBox(height: 8),
+                  // معرض الصور
+                  _label(AppLocalizations.of(context)!.yourGallery(_gallery.length, _maxGallery)),
+                  const SizedBox(height: 8),
+                  _galleryGrid(isDark),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    onPressed: _saving ? null : _save,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: _saving
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2))
+                        : Text(AppLocalizations.of(context)!.saveDetails,
+                            style: const TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold)),
                   ),
-                ),
-                const SizedBox(height: 8),
-                // معرض الصور
-                _label(AppLocalizations.of(context)!.yourGallery(_gallery.length, _maxGallery)),
-                const SizedBox(height: 8),
-                _galleryGrid(isDark),
-                const SizedBox(height: 28),
-                ElevatedButton(
-                  onPressed: _saving ? null : _save,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: _saving
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              color: Colors.white, strokeWidth: 2))
-                      : Text(AppLocalizations.of(context)!.saveDetails,
-                          style: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 
@@ -275,16 +291,15 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
       );
 
   Widget _numberField(
-      TextEditingController c, String label, bool isDark) {
+      TextEditingController c, String label, bool isDark, OutlineInputBorder border, Color fill) {
     return TextField(
       controller: c,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: label,
-        border:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: border,
         filled: true,
-        fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+        fillColor: fill,
       ),
     );
   }
@@ -299,7 +314,7 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
           return Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 child: SizedBox(
                   width: 96,
                   height: 96,
@@ -339,9 +354,11 @@ class _PlayerProfileEditScreenState extends State<PlayerProfileEditScreen> {
               width: 96,
               height: 96,
               decoration: BoxDecoration(
-                color: isDark ? Colors.grey[900] : Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade400),
+                color: isDark ? AppColors.surfaceDark : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF1E2A38) : Colors.grey.shade300,
+                ),
               ),
               child: const Icon(Icons.add_a_photo_outlined,
                   color: Colors.grey, size: 28),

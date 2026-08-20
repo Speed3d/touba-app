@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/report_model.dart';
 import '../../../data/services/functions_service.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -98,15 +100,16 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                     textAlign: TextAlign.center),
                 const SizedBox(height: 16),
                 actionTile('review', l10n.reviewOnlyAction,
-                    Icons.check, Colors.green),
-                actionTile('warn', l10n.warnAction, Icons.warning_amber,
-                    Colors.orange),
+                    Icons.check_circle_outline, Colors.blue),
+                actionTile('warn', l10n.warnAction,
+                    Icons.warning_amber_rounded, Colors.orange),
                 if (canRate)
                   actionTile('negativeRating', l10n.negativeRatingAction,
-                      Icons.trending_down, Colors.deepOrange),
-                actionTile('ban', l10n.banAction, Icons.block, Colors.red),
-                actionTile('dismiss', l10n.dismissReportAction, Icons.cancel_outlined,
-                    Colors.grey),
+                      Icons.star_half_rounded, Colors.deepOrange),
+                actionTile('ban', l10n.banAction,
+                    Icons.block, Colors.red),
+                actionTile('dismiss', l10n.dismissReportAction,
+                    Icons.cancel_outlined, Colors.grey),
                 const SizedBox(height: 12),
                 TextField(
                   controller: replyCtrl,
@@ -120,7 +123,10 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                 ElevatedButton(
                   onPressed: () => Navigator.pop(ctx, true),
                   style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14)),
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
                   child: Text(l10n.executeActionBtn),
                 ),
               ],
@@ -131,19 +137,21 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     );
 
     if (confirmed != true) return;
-    messenger.showSnackBar(ToobaSnackBar.buildInfo(l10n.executingAction));
     try {
+      messenger.showSnackBar(ToobaSnackBar.buildInfo(l10n.executingAction));
       await FunctionsService().moderateReport(
         reportId: report.id,
         action: action,
-        adminReply:
-            replyCtrl.text.trim().isEmpty ? null : replyCtrl.text.trim(),
+        adminReply: replyCtrl.text.trim().isEmpty ? null : replyCtrl.text.trim(),
       );
+      if (!mounted) return;
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(l10n.actionExecuted));
     } on FirebaseFunctionsException catch (e) {
+      if (!mounted) return;
       messenger.showSnackBar(
           ToobaSnackBar.buildError(e.message ?? l10n.failedToExecuteAction));
     } catch (_) {
+      if (!mounted) return;
       messenger.showSnackBar(ToobaSnackBar.buildError(l10n.failedToExecuteAction));
     }
   }
@@ -153,75 +161,79 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.reports),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: Column(
-        children: [
-          // شريط تصفية الحالة
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                _filterChip(context, AppLocalizations.of(context)!.allLabel, null),
-                const SizedBox(width: 8),
-                _filterChip(context, AppLocalizations.of(context)!.pendingLabel, ReportStatus.pending),
-                const SizedBox(width: 8),
-                _filterChip(context, AppLocalizations.of(context)!.reviewedLabel, ReportStatus.reviewed),
-                const SizedBox(width: 8),
-                _filterChip(context, AppLocalizations.of(context)!.dismissedLabel, ReportStatus.dismissed),
-              ],
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: Column(
+          children: [
+            // شريط تصفية الحالة
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  _filterChip(context, AppLocalizations.of(context)!.allLabel, null),
+                  const SizedBox(width: 8),
+                  _filterChip(context, AppLocalizations.of(context)!.pendingLabel, ReportStatus.pending),
+                  const SizedBox(width: 8),
+                  _filterChip(context, AppLocalizations.of(context)!.reviewedLabel, ReportStatus.reviewed),
+                  const SizedBox(width: 8),
+                  _filterChip(context, AppLocalizations.of(context)!.dismissedLabel, ReportStatus.dismissed),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream: _buildStream(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.flag_outlined,
-                            size: 72, color: Colors.grey[300]),
-                        const SizedBox(height: 12),
-                        Text(AppLocalizations.of(context)!.noReports,
-                            style: theme.textTheme.bodyLarge
-                                ?.copyWith(color: Colors.grey)),
-                      ],
-                    ),
-                  );
-                }
-
-                final docs = snapshot.data!.docs;
-                return ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: docs.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, i) {
-                    final report =
-                        ReportModel.fromFirestore(docs[i]);
-                    return _ReportCard(
-                      report: report,
-                      onReview: () =>
-                          _updateStatus(report.id, ReportStatus.reviewed),
-                      onDismiss: () =>
-                          _updateStatus(report.id, ReportStatus.dismissed),
-                      onModerate: () => _openModeration(report),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: _buildStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.flag_outlined,
+                              size: 72, color: Colors.grey[300]),
+                          const SizedBox(height: 12),
+                          Text(AppLocalizations.of(context)!.noReports,
+                              style: theme.textTheme.bodyLarge
+                                  ?.copyWith(color: Colors.grey)),
+                        ],
+                      ),
                     );
-                  },
-                );
-              },
+                  }
+
+                  final docs = snapshot.data!.docs;
+                  return ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: docs.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, i) {
+                      final report =
+                          ReportModel.fromFirestore(docs[i]);
+                      return _ReportCard(
+                        report: report,
+                        onReview: () =>
+                            _updateStatus(report.id, ReportStatus.reviewed),
+                        onDismiss: () =>
+                            _updateStatus(report.id, ReportStatus.dismissed),
+                        onModerate: () => _openModeration(report),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -259,8 +271,11 @@ class _ReportCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),

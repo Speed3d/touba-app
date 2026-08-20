@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../widgets/core/decorated_background.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -175,6 +176,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final fill = isDark ? AppColors.surfaceDark : Colors.white;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide(
+        color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+      ),
+    );
     final state = context.watch<AuthCubit>().state;
 
     if (state is! AuthAuthenticated) {
@@ -186,14 +194,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = state.user;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.profile),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SafeArea(
+      body: DecoratedBackground(
+        showOrbs: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
@@ -213,10 +222,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.name,
                     prefixIcon: const Icon(Icons.person),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                    border: border,
                     filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    fillColor: fill,
                   ),
                   validator: (v) =>
                       v == null || v.isEmpty ? AppLocalizations.of(context)!.pleaseEnterName : null,
@@ -228,10 +236,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.phone,
                     prefixIcon: const Icon(Icons.phone),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                    border: border,
                     filled: true,
-                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    fillColor: fill,
                   ),
                   validator: (v) => v == null || v.length < 10
                       ? AppLocalizations.of(context)!.invalidPhoneNumber
@@ -245,10 +252,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.email,
                       prefixIcon: const Icon(Icons.email),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                      border: border,
                       filled: true,
-                      fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                      fillColor: fill,
                     ),
                   ),
                 ],
@@ -258,7 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(14)),
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
                   ),
@@ -269,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
                       : Text(AppLocalizations.of(context)!.saveChanges,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
 
@@ -474,12 +480,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         decoration: BoxDecoration(
           color: isDark ? AppColors.surfaceDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4)),
-          ],
+          border: Border.all(
+            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+          ),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(

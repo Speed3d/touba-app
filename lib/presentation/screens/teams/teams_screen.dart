@@ -21,6 +21,9 @@ import '../challenges/challenges_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
 
+import '../../../app/theme/app_colors.dart';
+import '../../widgets/core/decorated_background.dart';
+
 /// 📝 HINT AR: شاشة الفرق — تبويبان: «فريقي» (فريق المستخدم) و«الفرق الشعبية»
 /// (بقية الفرق). الزائر يرى «الفرق الشعبية» فقط. زر «تأسيس فريق» يظهر فقط
 /// لكابتن لا يملك فريقاً (قاعدة فريق واحد لكل كابتن).
@@ -103,7 +106,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.teamsTitle),
           centerTitle: true,
@@ -114,11 +117,14 @@ class _TeamsScreenState extends State<TeamsScreen> {
             indicatorSize: TabBarIndicatorSize.label,
           ),
         ),
-        body: TabBarView(
-          children: [
-            if (!isVisitor) _myTeamTab(user, isDark),
-            _popularTeamsTab(isDark, theme, user),
-          ],
+        body: DecoratedBackground(
+          showOrbs: false,
+          child: TabBarView(
+            children: [
+              if (!isVisitor) _myTeamTab(user, isDark),
+              _popularTeamsTab(isDark, theme, user),
+            ],
+          ),
         ),
         // 📝 HINT AR: زر التأسيس فقط لكابتن بلا فريق.
         floatingActionButton: (user != null && user.role == 'captain')
@@ -708,12 +714,20 @@ class _TeamsScreenState extends State<TeamsScreen> {
               hintText: AppLocalizations.of(context)!.searchForTeam,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                  color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                  color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                ),
               ),
               filled: true,
-              fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
-              contentPadding: EdgeInsets.zero,
+              fillColor: isDark ? AppColors.surfaceDark : Colors.white,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
           ),
         ),
@@ -815,20 +829,23 @@ class _TeamsScreenState extends State<TeamsScreen> {
       {bool isMine = false}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         side: isMine
             ? BorderSide(color: theme.colorScheme.primary, width: 1.5)
-            : BorderSide.none,
+            : BorderSide(
+                color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+              ),
       ),
-      color: isDark ? Colors.grey[900] : Colors.white,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
       child: ListTile(
         contentPadding: const EdgeInsets.all(12),
         leading: Hero(
           tag: 'team_logo_${team.id}',
           child: CircleAvatar(
             radius: 28,
-            backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+            backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
             backgroundImage: team.logoUrl != null
                 ? ImageHelper.getProvider(team.logoUrl!)
                 : null,

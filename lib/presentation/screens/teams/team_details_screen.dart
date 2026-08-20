@@ -30,6 +30,7 @@ import '../subscription/subscription_locked_sheet.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: صفحة الفريق — معلومات + إحصائيات + التشكيلة (سجلات اللاعبين).
 class TeamDetailsScreen extends StatefulWidget {
@@ -284,7 +285,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
               _myCurrentTeamId != team.id;
 
           return Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
+            backgroundColor: Colors.transparent,
             appBar: AppBar(
               title: Text(team.name),
               centerTitle: true,
@@ -347,8 +348,10 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                   ),
               ],
             ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+            body: DecoratedBackground(
+              showOrbs: false,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   Center(
@@ -650,6 +653,7 @@ class _TeamDetailsScreenState extends State<TeamDetailsScreen>
                   const SizedBox(height: 24),
                 ],
               ),
+            ),
             ),
           );
         }

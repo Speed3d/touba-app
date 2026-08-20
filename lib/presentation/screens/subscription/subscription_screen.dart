@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/services/functions_service.dart';
 import '../../../data/repositories/subscription_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -122,42 +124,57 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget build(BuildContext context) {
     final st = context.watch<AuthCubit>().state;
     final user = st is AuthAuthenticated ? st.user : null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.mySubscriptionTitle), centerTitle: true),
-      body: user == null
-          ? Center(child: Text(AppLocalizations.of(context)!.loginFirstToProceed))
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _statusCard(user),
-                const SizedBox(height: 16),
-                _benefitsCard(),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: _busy ? null : _redeem,
-                  icon: _busy
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
-                      : const Icon(Icons.vpn_key),
-                  label: Text(AppLocalizations.of(context)!.activateWithCode),
-                  style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14)),
-                ),
-                if (_whatsapp.isNotEmpty) ...[
-                  const SizedBox(height: 10),
-                  OutlinedButton.icon(
-                    onPressed: _contactWhatsapp,
-                    icon: const Icon(Icons.chat),
-                    label: Text(AppLocalizations.of(context)!.contactToGetCode),
-                    style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14)),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.mySubscriptionTitle),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: user == null
+            ? Center(child: Text(AppLocalizations.of(context)!.loginFirstToProceed))
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  _statusCard(user),
+                  const SizedBox(height: 16),
+                  _benefitsCard(isDark),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: _busy ? null : _redeem,
+                    icon: _busy
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white))
+                        : const Icon(Icons.vpn_key),
+                    label: Text(AppLocalizations.of(context)!.activateWithCode),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
                   ),
+                  if (_whatsapp.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: _contactWhatsapp,
+                      icon: const Icon(Icons.chat),
+                      label: Text(AppLocalizations.of(context)!.contactToGetCode),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
-            ),
+              ),
+      ),
     );
   }
 
@@ -210,9 +227,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _benefitsCard() {
+  Widget _benefitsCard(bool isDark) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

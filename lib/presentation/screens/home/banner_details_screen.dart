@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../data/models/banner_model.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -32,14 +33,16 @@ class BannerDetailsScreen extends StatelessWidget {
         .toList();
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(banner.title ?? AppLocalizations.of(context)!.bannerDetails),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: ListView(
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: ListView(
         children: [
           // الصورة الرئيسية + الإضافية (تمرير أفقي).
           SizedBox(
@@ -126,6 +129,7 @@ class BannerDetailsScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

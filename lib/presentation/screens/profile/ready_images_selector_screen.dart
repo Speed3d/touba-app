@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../l10n/app_localizations.dart';
 
 class ReadyImagesSelectorScreen extends StatefulWidget {
@@ -62,80 +63,84 @@ class _ReadyImagesSelectorScreenState extends State<ReadyImagesSelectorScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.chooseReadyImage),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              AppLocalizations.of(context)!.chooseYourAvatar,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                AppLocalizations.of(context)!.chooseYourAvatar,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white70 : Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
-          Expanded(
-            child: _imagePaths.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                    ),
-                    itemCount: _imagePaths.length,
-                    itemBuilder: (context, index) {
-                      final isSelected = _selectedIndex == index;
+            Expanded(
+              child: _imagePaths.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: _imagePaths.length,
+                      itemBuilder: (context, index) {
+                        final isSelected = _selectedIndex == index;
 
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() => _selectedIndex = index);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected ? theme.colorScheme.primary : Colors.grey[300]!,
-                              width: isSelected ? 4 : 2,
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() => _selectedIndex = index);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected ? theme.colorScheme.primary : (isDark ? const Color(0xFF1E2A38) : Colors.grey[300]!),
+                                width: isSelected ? 4 : 2,
+                              ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                                        blurRadius: 12,
+                                        spreadRadius: 2,
+                                      ),
+                                    ]
+                                  : null,
                             ),
-                            boxShadow: isSelected
-                                ? [
-                                    BoxShadow(
-                                      color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                                      blurRadius: 12,
-                                      spreadRadius: 2,
-                                    ),
-                                  ]
-                                : null,
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              _imagePaths[index],
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.broken_image, color: Colors.grey),
+                            child: ClipOval(
+                              child: Image.asset(
+                                _imagePaths[index],
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  color: Colors.grey[200],
+                                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -145,7 +150,7 @@ class _ReadyImagesSelectorScreenState extends State<ReadyImagesSelectorScreen> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(14),
               ),
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: Colors.white,

@@ -31,6 +31,7 @@ import '../../../data/services/fixtures_pdf_service.dart';
 import '../../../core/utils/formations.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: تفاصيل البطولة — جدول الترتيب الحيّ + المباريات + إدخال النتيجة
 /// (للمنظّم/الأدمن). إدخال النتيجة يُشغّل المحرّك الذرّي فيُحدّث الترتيب.
@@ -47,6 +48,7 @@ class TournamentDetailsScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.tournamentDetailsTitle),
         centerTitle: true,
@@ -61,7 +63,9 @@ class TournamentDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: BlocConsumer<TournamentCubit, TournamentState>(
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: BlocConsumer<TournamentCubit, TournamentState>(
         listener: (context, state) {
           final l10n = AppLocalizations.of(context)!;
           if (state is TournamentActionSuccess) {
@@ -232,6 +236,7 @@ class TournamentDetailsScreen extends StatelessWidget {
           }
           return const Center(child: CircularProgressIndicator());
         },
+      ),
       ),
       ),
     );

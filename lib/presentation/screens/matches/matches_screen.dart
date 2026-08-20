@@ -13,6 +13,9 @@ import '../../../app/router/tooba_route.dart';
 import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
 
+import '../../../app/theme/app_colors.dart';
+import '../../widgets/core/decorated_background.dart';
+
 /// 📝 HINT AR: شاشة المباريات بتصميم FotMob. تتيح التبديل بين عرض البطولات أو جميع المباريات.
 class MatchesScreen extends StatefulWidget {
   const MatchesScreen({super.key});
@@ -56,7 +59,7 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF060D18) : Colors.grey[50],
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -71,9 +74,11 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
             // Toggle
             Container(
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0D1826) : Colors.grey[200],
+                color: isDark ? AppColors.surfaceDark : Colors.grey[200],
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[300]!),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                ),
               ),
               child: Row(
                 children: [
@@ -99,7 +104,10 @@ class _MatchesScreenState extends State<MatchesScreen> with SingleTickerProvider
               )
             : null,
       ),
-      body: _showAllMatches ? _buildAllMatches(isDark) : _buildTournaments(isDark),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: _showAllMatches ? _buildAllMatches(isDark) : _buildTournaments(isDark),
+      ),
     );
   }
 

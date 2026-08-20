@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/news_model.dart';
 import '../../../data/repositories/home_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -95,122 +97,128 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     final liked = _news.likedBy(uid);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 350,
-            pinned: true,
-            stretch: true,
-            backgroundColor: theme.scaffoldBackgroundColor,
-            elevation: 0,
-            iconTheme: const IconThemeData(color: Colors.white),
-            flexibleSpace: FlexibleSpaceBar(
-              stretchModes: const [StretchMode.zoomBackground],
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (_news.imageUrl != null && _news.imageUrl!.isNotEmpty)
-                    CachedNetworkImage(
-                      imageUrl: _news.imageUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (c, u) => Container(color: isDark ? Colors.grey[800] : Colors.grey.shade300),
-                      errorWidget: (c, u, e) => Container(color: isDark ? Colors.grey[800] : Colors.grey.shade300),
-                    )
-                  else
-                    Container(color: theme.primaryColor, child: const Icon(Icons.newspaper, size: 80, color: Colors.white54)),
-                  
-                  // تدرج لوني لتوضيح أيقونة الرجوع والنص
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.5),
-                          Colors.transparent,
-                          theme.scaffoldBackgroundColor,
-                        ],
-                        stops: const [0.0, 0.5, 1.0],
+      backgroundColor: Colors.transparent,
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 350,
+              pinned: true,
+              stretch: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              iconTheme: const IconThemeData(color: Colors.white),
+              flexibleSpace: FlexibleSpaceBar(
+                stretchModes: const [StretchMode.zoomBackground],
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (_news.imageUrl != null && _news.imageUrl!.isNotEmpty)
+                      CachedNetworkImage(
+                        imageUrl: _news.imageUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (c, u) => Container(color: isDark ? Colors.grey[800] : Colors.grey.shade300),
+                        errorWidget: (c, u, e) => Container(color: isDark ? Colors.grey[800] : Colors.grey.shade300),
+                      )
+                    else
+                      Container(color: theme.primaryColor, child: const Icon(Icons.newspaper, size: 80, color: Colors.white54)),
+                    
+                    // تدرج لوني لتوضيح أيقونة الرجوع والنص
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.5),
+                            Colors.transparent,
+                            isDark ? AppColors.surfaceDark : Colors.white,
+                          ],
+                          stops: const [0.0, 0.5, 1.0],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (_news.createdAt != null)
-                    Row(
-                      children: [
-                        Icon(Icons.calendar_today_rounded, size: 16, color: theme.primaryColor),
-                        const SizedBox(width: 8),
-                        Text(
-                          _formatDate(_news.createdAt!),
-                          style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 13, fontWeight: FontWeight.bold),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_news.createdAt != null)
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today_rounded, size: 16, color: theme.primaryColor),
+                          const SizedBox(width: 8),
+                          Text(
+                            _formatDate(_news.createdAt!),
+                            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _news.title,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : Colors.black87,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // شريط التفاعل
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.surfaceDark : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
                         ),
-                      ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildActionBtn(
+                            icon: liked ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+                            color: liked ? Colors.redAccent : (isDark ? Colors.grey[300]! : Colors.grey[700]!),
+                            label: AppLocalizations.of(context)!.likeCount(_news.likeCount),
+                            onTap: _toggleLike,
+                          ),
+                          Container(height: 30, width: 1, color: Colors.grey.withValues(alpha: 0.3)),
+                          _buildActionBtn(
+                            icon: Icons.share_rounded,
+                            color: isDark ? Colors.grey[300]! : Colors.grey[700]!,
+                            label: AppLocalizations.of(context)!.shareCount(_news.shareCount),
+                            onTap: _share,
+                          ),
+                        ],
+                      ),
                     ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _news.title,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black87,
-                      height: 1.4,
+                    
+                    const SizedBox(height: 24),
+                    Text(
+                      _news.body,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.grey[300] : Colors.grey[800],
+                        height: 1.8,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  
-                  // شريط التفاعل
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildActionBtn(
-                          icon: liked ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
-                          color: liked ? Colors.redAccent : (isDark ? Colors.grey[300]! : Colors.grey[700]!),
-                          label: AppLocalizations.of(context)!.likeCount(_news.likeCount),
-                          onTap: _toggleLike,
-                        ),
-                        Container(height: 30, width: 1, color: Colors.grey.withValues(alpha: 0.3)),
-                        _buildActionBtn(
-                          icon: Icons.share_rounded,
-                          color: isDark ? Colors.grey[300]! : Colors.grey[700]!,
-                          label: AppLocalizations.of(context)!.shareCount(_news.shareCount),
-                          onTap: _share,
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  Text(
-                    _news.body,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: isDark ? Colors.grey[300] : Colors.grey[800],
-                      height: 1.8,
-                    ),
-                  ),
-                  const SizedBox(height: 60), // Space at bottom
-                ],
+                    const SizedBox(height: 60), // Space at bottom
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -7,8 +7,10 @@ import '../../../data/models/player_model.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../../../data/repositories/team_repository.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: شاشة إدخال نتيجة المباراة بأسلوب «ورقة المباراة»: قسمان (فريق
 /// لكل جهة)، تحت كل فريق لاعبوه، ولكل لاعب عدّادات +/− لـ (هدف/صناعة/إنذار/طرد).
@@ -273,6 +275,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.enterResultTitle),
           centerTitle: true,
@@ -289,7 +292,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(14)),
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: Colors.white,
                     ),
@@ -299,30 +302,33 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                   ),
                 ),
               ),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView(
-                padding: const EdgeInsets.all(12),
-                children: [
-                  // النتيجة المحسوبة تلقائياً من الأهداف
-                  _scoreHeader(theme, m),
-                  const SizedBox(height: 16),
-                  _teamSection(m.homeTeamName, _homePlayers),
-                  const SizedBox(height: 16),
-                  _teamSection(m.awayTeamName, _awayPlayers),
-                  // 📝 HINT AR: حسم التعادل — يظهر فقط لمباراة إقصائية متعادلة.
-                  if (_isKnockout && _isDraw) ...[
+        body: DecoratedBackground(
+          showOrbs: false,
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : ListView(
+                  padding: const EdgeInsets.all(12),
+                  children: [
+                    // النتيجة المحسوبة تلقائياً من الأهداف
+                    _scoreHeader(theme, m),
                     const SizedBox(height: 16),
-                    _tieBreakCard(m),
+                    _teamSection(m.homeTeamName, _homePlayers),
+                    const SizedBox(height: 16),
+                    _teamSection(m.awayTeamName, _awayPlayers),
+                    // 📝 HINT AR: حسم التعادل — يظهر فقط لمباراة إقصائية متعادلة.
+                    if (_isKnockout && _isDraw) ...[
+                      const SizedBox(height: 16),
+                      _tieBreakCard(m),
+                    ],
+                    const SizedBox(height: 8),
+                    Text(
+                      AppLocalizations.of(context)!.resultCalculatedAutomatically,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
-                  const SizedBox(height: 8),
-                  Text(
-                    AppLocalizations.of(context)!.resultCalculatedAutomatically,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+                ),
+        ),
       ),
     );
   }
@@ -451,7 +457,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(
-          colors: [Color(0xFF1877F2), Color(0xFF0C5EBF)],
+          colors: [Color(0xFF00D166), Color(0xFF00924A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -489,13 +495,14 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
 
   Widget _teamSection(String teamName, List<PlayerModel> players) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.grey[900]
-            : Colors.white,
+        color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
       ),
       padding: const EdgeInsets.all(8),
       child: Column(

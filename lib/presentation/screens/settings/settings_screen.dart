@@ -16,6 +16,7 @@ import '../profile/profile_screen.dart';
 import '../matches/referee_matches_screen.dart';
 import '../referee/referee_profile_screen.dart';
 import '../subscription/subscription_screen.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -33,21 +34,23 @@ class SettingsScreen extends StatelessWidget {
     final authState = context.watch<AuthCubit>().state;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.settings),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // ── ترويسة المستخدم + كارت الملف الشخصي ──
-          if (authState is AuthAuthenticated)
-            _profileHeader(context, isDark, authState),
-          if (authState is AuthVisitor) _visitorHeader(context, theme),
-          const SizedBox(height: 20),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // ── ترويسة المستخدم + كارت الملف الشخصي ──
+            if (authState is AuthAuthenticated)
+              _profileHeader(context, isDark, authState),
+            if (authState is AuthVisitor) _visitorHeader(context, theme),
+            const SizedBox(height: 20),
 
           // ── كارت الاشتراك (للكابتن — المرحلة 8) ──
           if (authState is AuthAuthenticated &&
@@ -229,8 +232,9 @@ class SettingsScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   // 📝 HINT AR: ترويسة المستخدم — صورة + اسم + دور، يليها كارت ينقل للملف الشخصي.
   Widget _profileHeader(
@@ -435,7 +439,7 @@ class SettingsScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? AppColors.surfaceDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+          border: Border.all(color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0)),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),

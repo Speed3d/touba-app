@@ -4,6 +4,8 @@ import '../auth/auth_wrapper.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
 
+import '../../widgets/core/decorated_background.dart';
+
 /// 📝 HINT AR: شاشات التعريف — تُعرض مرة واحدة عند أول تشغيل. عند الإنهاء
 /// نحفظ العلم في PreferencesService وننتقل لـ AuthWrapper.
 class OnboardingScreen extends StatefulWidget {
@@ -45,8 +47,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final theme = Theme.of(context);
     final isLast = _index == pages.length - 1;
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: DecoratedBackground(
+        showOrbs: true,
         child: Column(
           children: [
             Align(

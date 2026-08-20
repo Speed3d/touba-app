@@ -24,6 +24,8 @@ import '../players/player_detail_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
+import '../../widgets/core/decorated_background.dart';
+
 /// 📝 HINT AR: الشاشة الرئيسية — تصميم جديد عصري مستوحى من تطبيق FotMob
 /// يحتوي على:
 /// - شريط علوي مخصص (مرحباً + جرس الإشعارات)
@@ -80,11 +82,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final userName =
         authState is AuthAuthenticated ? authState.user.name : AppLocalizations.of(context)!.visitor;
 
-    // 📝 HINT AR: خلفية الشاشة تستخدم ألوان التصميم الجديد
     return Scaffold(
-      backgroundColor: context.backgroundColor,
-      body: SafeArea(
-        bottom: false,
+      backgroundColor: Colors.transparent,
+      body: DecoratedBackground(
+        showOrbs: true,
         child: RefreshIndicator(
           onRefresh: _reload,
           color: context.primaryColor,

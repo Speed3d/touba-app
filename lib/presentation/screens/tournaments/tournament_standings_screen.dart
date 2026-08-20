@@ -8,6 +8,7 @@ import '../../../data/repositories/team_repository.dart';
 import '../../../data/repositories/tournament_repository.dart';
 import '../../widgets/core/standings_view.dart';
 import '../../widgets/core/bracket_view.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../matches/match_detail_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
@@ -68,50 +69,59 @@ class _TournamentStandingsScreenState extends State<TournamentStandingsScreen> {
     final knockoutMatches =
         _matches.where((m) => m.stage == 'knockout').toList();
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.standingsTableTitle), centerTitle: true),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _load,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  if (t.type != 'knockout')
-                    StandingsView(
-                        standings: t.standings, teamsById: _teamsById),
-                  if (knockoutMatches.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Icon(Icons.account_tree,
-                            size: 18,
-                            color: Theme.of(context).colorScheme.primary),
-                        const SizedBox(width: 6),
-                        Text(AppLocalizations.of(context)!.knockoutStageLabel,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    BracketView(
-                      matches: knockoutMatches,
-                      onMatchTap: (m) => Navigator.push(context,
-                          ToobaRoute.to(MatchDetailScreen(match: m))),
-                    ),
-                  ],
-                  if (t.type == 'knockout' && knockoutMatches.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Center(
-                        child: Text(AppLocalizations.of(context)!.bracketNotGeneratedYet,
-                            style: TextStyle(color: Colors.grey[600])),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.standingsTableTitle),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : RefreshIndicator(
+                onRefresh: _load,
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    if (t.type != 'knockout')
+                      StandingsView(
+                          standings: t.standings, teamsById: _teamsById),
+                    if (knockoutMatches.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Icon(Icons.account_tree,
+                              size: 18,
+                              color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 6),
+                          Text(AppLocalizations.of(context)!.knockoutStageLabel,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold)),
+                        ],
                       ),
-                    ),
-                ],
+                      const SizedBox(height: 8),
+                      BracketView(
+                        matches: knockoutMatches,
+                        onMatchTap: (m) => Navigator.push(context,
+                            ToobaRoute.to(MatchDetailScreen(match: m))),
+                      ),
+                    ],
+                    if (t.type == 'knockout' && knockoutMatches.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Center(
+                          child: Text(AppLocalizations.of(context)!.bracketNotGeneratedYet,
+                              style: TextStyle(color: Colors.grey[600])),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }

@@ -7,6 +7,8 @@ import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
 
+import '../../widgets/core/decorated_background.dart';
+
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -36,15 +38,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final appBarColor = isDark ? Colors.white : theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.resetPasswordTitle),
+        title: Text(
+          AppLocalizations.of(context)!.resetPasswordTitle,
+          style: TextStyle(color: appBarColor, fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
         backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: appBarColor),
+        centerTitle: true,
       ),
-      body: SafeArea(
+      body: DecoratedBackground(
+        showOrbs: true,
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Form(

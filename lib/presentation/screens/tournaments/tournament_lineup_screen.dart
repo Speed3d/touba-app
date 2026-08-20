@@ -2,6 +2,7 @@ import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/player_model.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/models/tournament_lineup_model.dart';
@@ -9,6 +10,7 @@ import '../../../data/repositories/player_repository.dart';
 import '../../../data/repositories/tournament_lineup_repository.dart';
 import '../../../core/utils/formations.dart';
 import '../../widgets/core/pitch_formation_view.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -385,77 +387,89 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
     // نستنتج captainId من أول لاعب createdBy أو نتركه ليُملأ من سياق الفتح.
     _captainId ??= _players.isNotEmpty ? _players.first.createdByUid : null;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.tournamentLineupTitle),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Text('${widget.teamName} • ${widget.tournamentName}',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                if (_existing != null) ...[
-                  const SizedBox(height: 8),
-                  _statusBanner(_existing!),
-                ],
-                const SizedBox(height: 12),
-                // الخطة + زر التغيير
-                Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    leading: Icon(Icons.dashboard_customize,
-                        color: theme.colorScheme.primary),
-                    title: Text(AppLocalizations.of(context)!.formationLabel,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(_formation),
-                    trailing: OutlinedButton(
-                        onPressed: _pickFormation,
-                        child: Text(AppLocalizations.of(context)!.changeFormationBtn)),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(AppLocalizations.of(context)!.tapCircleToAssignPlayer,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-                const SizedBox(height: 8),
-                // الملعب التفاعلي
-                PitchFormationView(
-                  players: _slotPlayers,
-                  formation: _formation,
-                  bySlotOrder: true,
-                  onSlotTap: _onSlotTap,
-                ),
-                const SizedBox(height: 20),
-                // الاحتياط
-                Text(AppLocalizations.of(context)!.subsCountX(_subs.length.toString()),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15)),
-                const SizedBox(height: 8),
-                _subsPicker(),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _submitting ? null : _submit,
-                    icon: const Icon(Icons.send),
-                    label: Text(_submitting
-                        ? AppLocalizations.of(context)!.sendingBtn
-                        : AppLocalizations.of(context)!.sendForReviewBtn),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Text('${widget.teamName} • ${widget.tournamentName}',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  if (_existing != null) ...[
+                    const SizedBox(height: 8),
+                    _statusBanner(_existing!),
+                  ],
+                  const SizedBox(height: 12),
+                  // الخطة + زر التغيير
+                  Card(
+                    elevation: 0,
+                    color: isDark ? AppColors.surfaceDark : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(
+                        color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.dashboard_customize,
+                          color: theme.colorScheme.primary),
+                      title: Text(AppLocalizations.of(context)!.formationLabel,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text(_formation),
+                      trailing: OutlinedButton(
+                          onPressed: _pickFormation,
+                          child: Text(AppLocalizations.of(context)!.changeFormationBtn)),
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 8),
+                  Text(AppLocalizations.of(context)!.tapCircleToAssignPlayer,
+                      style: TextStyle(fontSize: 12, color: isDark ? Colors.white60 : Colors.grey[600])),
+                  const SizedBox(height: 8),
+                  // الملعب التفاعلي
+                  PitchFormationView(
+                    players: _slotPlayers,
+                    formation: _formation,
+                    bySlotOrder: true,
+                    onSlotTap: _onSlotTap,
+                  ),
+                  const SizedBox(height: 20),
+                  // الاحتياط
+                  Text(AppLocalizations.of(context)!.subsCountX(_subs.length.toString()),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 8),
+                  _subsPicker(),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _submitting ? null : _submit,
+                      icon: const Icon(Icons.send),
+                      label: Text(_submitting
+                          ? AppLocalizations.of(context)!.sendingBtn
+                          : AppLocalizations.of(context)!.sendForReviewBtn),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 
@@ -471,7 +485,7 @@ class _TournamentLineupScreenState extends State<TournamentLineupScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [

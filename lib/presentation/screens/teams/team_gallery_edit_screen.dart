@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: تحرير معرض صور الفريق (حتى 5) — يديره الكابتن من إدارة الفريق
 /// (بند 13). يضيف/يحذف الصور ويحفظها في `teams/{id}/gallery` + `teams.photos`.
@@ -83,94 +85,104 @@ class _TeamGalleryEditScreenState extends State<TeamGalleryEditScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.teamPhotosTitle), centerTitle: true),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Text(AppLocalizations.of(context)!.addUpToMaxPhotos(_max.toString(), _items.length.toString()),
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              ..._items.asMap().entries.map((e) {
-                final item = e.value;
-                return Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: SizedBox(
-                        width: 104,
-                        height: 104,
-                        child: item.isLocal
-                            ? Image.file(item.file!, fit: BoxFit.cover)
-                            : CachedNetworkImage(
-                                imageUrl: item.url!,
-                                fit: BoxFit.cover,
-                                placeholder: (c, u) =>
-                                    Container(color: Colors.grey.shade200),
-                                errorWidget: (c, u, err) =>
-                                    Container(color: Colors.grey.shade200),
-                              ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 2,
-                      right: 2,
-                      child: GestureDetector(
-                        onTap: () => setState(() => _items.removeAt(e.key)),
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: const BoxDecoration(
-                              color: Colors.black54, shape: BoxShape.circle),
-                          child: const Icon(Icons.close,
-                              size: 16, color: Colors.white),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.teamPhotosTitle),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Text(AppLocalizations.of(context)!.addUpToMaxPhotos(_max.toString(), _items.length.toString()),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                ..._items.asMap().entries.map((e) {
+                  final item = e.value;
+                  return Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: SizedBox(
+                          width: 104,
+                          height: 104,
+                          child: item.isLocal
+                              ? Image.file(item.file!, fit: BoxFit.cover)
+                              : CachedNetworkImage(
+                                  imageUrl: item.url!,
+                                  fit: BoxFit.cover,
+                                  placeholder: (c, u) =>
+                                      Container(color: isDark ? AppColors.surfaceDark : Colors.grey.shade200),
+                                  errorWidget: (c, u, err) =>
+                                      Container(color: isDark ? AppColors.surfaceDark : Colors.grey.shade200),
+                                ),
                         ),
                       ),
+                      Positioned(
+                        top: 2,
+                        right: 2,
+                        child: GestureDetector(
+                          onTap: () => setState(() => _items.removeAt(e.key)),
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                                color: Colors.black54, shape: BoxShape.circle),
+                            child: const Icon(Icons.close,
+                                size: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                if (_items.length < _max)
+                  GestureDetector(
+                    onTap: _pick,
+                    child: Container(
+                      width: 104,
+                      height: 104,
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.surfaceDark : Colors.grey[100],
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                        ),
+                      ),
+                      child: const Icon(Icons.add_a_photo_outlined,
+                          color: Colors.grey, size: 30),
                     ),
-                  ],
-                );
-              }),
-              if (_items.length < _max)
-                GestureDetector(
-                  onTap: _pick,
-                  child: Container(
-                    width: 104,
-                    height: 104,
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.grey[900] : Colors.grey[100],
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.grey.shade400),
-                    ),
-                    child: const Icon(Icons.add_a_photo_outlined,
-                        color: Colors.grey, size: 30),
                   ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 28),
-          ElevatedButton(
-            onPressed: _saving ? null : _save,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+              ],
             ),
-            child: _saving
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2))
-                : Text(AppLocalizations.of(context)!.savePhotosBtn,
-                    style:
-                        const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-          ),
-        ],
+            const SizedBox(height: 28),
+            ElevatedButton(
+              onPressed: _saving ? null : _save,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+              child: _saving
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                          color: Colors.white, strokeWidth: 2))
+                  : Text(AppLocalizations.of(context)!.savePhotosBtn,
+                      style:
+                          const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
       ),
     );
   }

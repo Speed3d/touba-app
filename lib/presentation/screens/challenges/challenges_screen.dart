@@ -15,6 +15,7 @@ import '../../../data/repositories/chat_repository.dart';
 import '../../../data/repositories/team_repository.dart';
 import '../../../data/repositories/player_repository.dart';
 import '../../cubits/team/team_cubit.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 import '../chat/chat_screen.dart';
@@ -76,9 +77,12 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.teamChallengesTitle),
           centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
           bottom: TabBar(
             tabs: [Tab(text: AppLocalizations.of(context)!.teamRequestsTab), Tab(text: AppLocalizations.of(context)!.myChallengesTab)],
           ),
@@ -90,11 +94,14 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
                 label: Text(AppLocalizations.of(context)!.requestChallengeBtn),
               )
             : null,
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : TabBarView(
-                children: [_openTab(), _myTab()],
-              ),
+        body: DecoratedBackground(
+          showOrbs: false,
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : TabBarView(
+                  children: [_openTab(), _myTab()],
+                ),
+        ),
       ),
     );
   }
@@ -127,7 +134,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+        border: Border.all(color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -232,7 +239,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+        border: Border.all(color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -326,7 +333,7 @@ class _ChallengesScreenState extends State<ChallengesScreen> {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.grey[200]!),
+        border: Border.all(color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

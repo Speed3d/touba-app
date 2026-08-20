@@ -8,6 +8,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/tournament/tournament_cubit.dart';
 import '../../cubits/tournament/tournament_state.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/models/city_model.dart';
 import '../../../data/models/user_model.dart';
@@ -16,6 +17,7 @@ import '../../../data/repositories/player_repository.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/location_repository.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: إنشاء بطولة دوري — اختيار الاسم والمدينة والفرق المشاركة، ثم
 /// يولّد النظام جدول المباريات تلقائياً (TournamentCubit.createTournament).
@@ -235,8 +237,13 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final fill = isDark ? Colors.grey[900] : Colors.grey[100];
-    final border = OutlineInputBorder(borderRadius: BorderRadius.circular(12));
+    final fill = isDark ? AppColors.surfaceDark : Colors.white;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide(
+        color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+      ),
+    );
 
     return BlocListener<TournamentCubit, TournamentState>(
       listener: (context, state) {
@@ -248,16 +255,18 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.createTournamentTitle),
+          centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
         ),
-        body: _loadingTeams
-            ? const Center(child: CircularProgressIndicator())
-            : SafeArea(
-                child: SingleChildScrollView(
+        body: DecoratedBackground(
+          showOrbs: false,
+          child: _loadingTeams
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
                   child: Form(
                     key: _formKey,
@@ -722,7 +731,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
+                                    borderRadius: BorderRadius.circular(14)),
                                 backgroundColor: theme.colorScheme.primary,
                                 foregroundColor: Colors.white,
                               ),
@@ -743,7 +752,7 @@ class _CreateTournamentScreenState extends State<CreateTournamentScreen> {
                     ),
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }

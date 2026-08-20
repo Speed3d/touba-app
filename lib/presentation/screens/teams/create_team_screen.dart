@@ -2,12 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../cubits/team/team_cubit.dart';
 import '../../cubits/team/team_state.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../widgets/core/decorated_background.dart';
 
 class CreateTeamScreen extends StatefulWidget {
   const CreateTeamScreen({super.key});
@@ -25,9 +27,10 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   final ImagePicker _picker = ImagePicker();
 
   final List<String> _iraqCities = [
-    'بغداد', 'البصرة', 'الموصل', 'أربيل', 'النجف', 
-    'كربلاء', 'كركوك', 'الأنبار', 'بابل', 'ذي قار'
-  ]; // This can be expanded or fetched from a constant file later.
+    'بغداد', 'البصرة', 'نينوى', 'أربيل', 'النجف', 'كربلاء', 
+    'كركوك', 'الأنبار', 'ديالى', 'بابل', 'ميسان', 'المثنى', 
+    'ذي قار', 'القادسية', 'صلاح الدين', 'واسط', 'دهوك', 'السليمانية'
+  ];
 
   @override
   void dispose() {
@@ -37,7 +40,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 70, maxWidth: 600);
     if (pickedFile != null) {
       setState(() {
         _logoFile = File(pickedFile.path);
@@ -79,21 +82,23 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       if (_selectedCity == null) {
-        ToobaSnackBar.warning(context, AppLocalizations.of(context)!.pleaseSelectCity);
+        ToobaSnackBar.info(context, AppLocalizations.of(context)!.pleaseSelectCity);
         return;
       }
-      
+
       final authState = context.read<AuthCubit>().state;
-      if (authState is AuthAuthenticated) {
-        final area = _areaController.text.trim();
-        context.read<TeamCubit>().createTeam(
-          name: _nameController.text.trim(),
-          city: _selectedCity!,
-          area: area.isEmpty ? null : area,
-          captainId: authState.user.id,
-          logoFile: _logoFile,
-        );
+      if (authState is! AuthAuthenticated) {
+        ToobaSnackBar.info(context, AppLocalizations.of(context)!.youMustLoginFirst);
+        return;
       }
+
+      context.read<TeamCubit>().createTeam(
+            name: _nameController.text.trim(),
+            city: _selectedCity!,
+            area: _areaController.text.trim().isEmpty ? null : _areaController.text.trim(),
+            captainId: authState.user.id,
+            logoFile: _logoFile,
+          );
     }
   }
 
@@ -102,165 +107,198 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return BlocListener<TeamCubit, TeamState>(
+    return BlocConsumer<TeamCubit, TeamState>(
       listener: (context, state) {
-        if (state is TeamsLoaded) {
-          // Because creating a team triggers fetchTeams() and then TeamsLoaded
-          ToobaSnackBar.success(context, AppLocalizations.of(context)!.teamCreatedSuccess);
+        if (state is TeamActionSuccess) {
+          ToobaSnackBar.success(context, state.message);
           Navigator.pop(context);
         } else if (state is TeamError) {
           ToobaSnackBar.error(context, state.message);
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.createTeamTitle),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-        ),
-        body: BlocBuilder<TeamCubit, TeamState>(
-          builder: (context, state) {
-            final isLoading = state is TeamLoading;
+      builder: (context, state) {
+        final isLoading = state is TeamLoading;
 
-            return SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Logo Picker
-                      Center(
-                        child: GestureDetector(
-                          onTap: isLoading ? null : _showImagePickerOptions,
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  color: isDark ? Colors.grey[800] : Colors.grey[200],
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: theme.colorScheme.primary,
-                                    width: 2,
-                                  ),
-                                  image: _logoFile != null
-                                      ? DecorationImage(
-                                          image: FileImage(_logoFile!),
-                                          fit: BoxFit.cover,
-                                        )
-                                      : null,
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.createTeamTitle),
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+          ),
+          body: DecoratedBackground(
+            showOrbs: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Logo Picker
+                    Center(
+                      child: GestureDetector(
+                        onTap: isLoading ? null : _showImagePickerOptions,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFF1F5F9),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: theme.colorScheme.primary,
+                                  width: 2,
                                 ),
-                                child: _logoFile == null
-                                    ? Icon(
-                                        Icons.shield,
-                                        size: 60,
-                                        color: isDark ? Colors.grey[600] : Colors.grey[400],
+                                image: _logoFile != null
+                                    ? DecorationImage(
+                                        image: FileImage(_logoFile!),
+                                        fit: BoxFit.cover,
                                       )
                                     : null,
                               ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white, width: 2),
-                                  ),
-                                  child: const Icon(Icons.add_a_photo, size: 20, color: Colors.white),
+                              child: _logoFile == null
+                                  ? Icon(
+                                      Icons.shield,
+                                      size: 60,
+                                      color: isDark ? Colors.grey[600] : Colors.grey[400],
+                                    )
+                                  : null,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
                                 ),
+                                child: const Icon(Icons.add_a_photo, size: 20, color: Colors.white),
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.teamLogoOptional,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Team Name
+                    TextFormField(
+                      controller: _nameController,
+                      enabled: !isLoading,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.teamNameLabel,
+                        prefixIcon: const Icon(Icons.sports_soccer),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.teamLogoOptional,
-                          style: const TextStyle(color: Colors.grey),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                          ),
                         ),
+                        filled: true,
+                        fillColor: isDark ? AppColors.surfaceDark : Colors.white,
                       ),
-                      const SizedBox(height: 32),
+                      validator: (val) => val == null || val.isEmpty ? AppLocalizations.of(context)!.pleaseEnterTeamName : null,
+                    ),
+                    const SizedBox(height: 16),
 
-                      // Team Name
-                      TextFormField(
-                        controller: _nameController,
-                        enabled: !isLoading,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.teamNameLabel,
-                          prefixIcon: const Icon(Icons.sports_soccer),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          filled: true,
-                          fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    // City
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedCity,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.cityOrGovernorate,
+                        prefixIcon: const Icon(Icons.location_on),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                          ),
                         ),
-                        validator: (val) => val == null || val.isEmpty ? AppLocalizations.of(context)!.pleaseEnterTeamName : null,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: isDark ? AppColors.surfaceDark : Colors.white,
                       ),
-                      const SizedBox(height: 16),
+                      items: _iraqCities.map((city) {
+                        return DropdownMenuItem(value: city, child: Text(city));
+                      }).toList(),
+                      onChanged: isLoading ? null : (val) => setState(() => _selectedCity = val),
+                    ),
+                    const SizedBox(height: 16),
 
-                      // City
-                      DropdownButtonFormField<String>(
-                        initialValue: _selectedCity,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.cityOrGovernorate,
-                          prefixIcon: const Icon(Icons.location_on),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          filled: true,
-                          fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    // Area / District
+                    TextFormField(
+                      controller: _areaController,
+                      enabled: !isLoading,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.areaOptional,
+                        hintText: AppLocalizations.of(context)!.areaExample,
+                        prefixIcon: const Icon(Icons.map_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                          ),
                         ),
-                        items: _iraqCities.map((city) {
-                          return DropdownMenuItem(value: city, child: Text(city));
-                        }).toList(),
-                        onChanged: isLoading ? null : (val) => setState(() => _selectedCity = val),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: isDark ? AppColors.surfaceDark : Colors.white,
                       ),
-                      const SizedBox(height: 16),
+                    ),
+                    const SizedBox(height: 32),
 
-                      // Area / District
-                      TextFormField(
-                        controller: _areaController,
-                        enabled: !isLoading,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.areaOptional,
-                          hintText: AppLocalizations.of(context)!.areaExample,
-                          prefixIcon: const Icon(Icons.map_outlined),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          filled: true,
-                          fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
-                        ),
+                    // Submit Button
+                    ElevatedButton(
+                      onPressed: isLoading ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
                       ),
-                      const SizedBox(height: 32),
-
-                      // Submit Button
-                      ElevatedButton(
-                        onPressed: isLoading ? null : _submit,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: isLoading
-                            ? const SizedBox(
-                                width: 24, height: 24,
-                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                              )
-                            : Text(
-                                AppLocalizations.of(context)!.createTeamBtn,
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                      ),
-                    ],
-                  ),
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 24, height: 24,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            )
+                          : Text(
+                              AppLocalizations.of(context)!.createTeamBtn,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

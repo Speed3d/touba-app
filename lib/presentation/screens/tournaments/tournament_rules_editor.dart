@@ -160,7 +160,7 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.rulesAndTermsLabel,
                 hintText: AppLocalizations.of(context)!.writeRulesAndTermsHere,
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                 alignLabelWithHint: true,
               ),
             ),
@@ -178,7 +178,9 @@ class _TournamentRulesEditorState extends State<TournamentRulesEditor> {
             ElevatedButton(
               onPressed: (_saving || _busy) ? null : _save,
               style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14)),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
               child: _saving
                   ? const SizedBox(
                       width: 20,

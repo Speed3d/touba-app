@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/activation_code_model.dart';
 import '../../../data/repositories/subscription_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -99,45 +101,62 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
   Widget build(BuildContext context) {
     final repo = context.read<SubscriptionRepository>();
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.activationCodesTitle), centerTitle: true),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _settingsCard(),
-          const SizedBox(height: 16),
-          _generateCard(),
-          const SizedBox(height: 20),
-          Text(AppLocalizations.of(context)!.codesLabel,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const SizedBox(height: 8),
-          StreamBuilder<List<ActivationCodeModel>>(
-            stream: repo.streamCodes(),
-            builder: (context, snap) {
-              if (!snap.hasData) {
-                return const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Center(child: CircularProgressIndicator()));
-              }
-              final codes = snap.data!;
-              if (codes.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(AppLocalizations.of(context)!.noCodesYet,
-                      style: TextStyle(color: Colors.grey[600])),
-                );
-              }
-              return Column(children: codes.map(_codeTile).toList());
-            },
-          ),
-          const SizedBox(height: 24),
-        ],
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.activationCodesTitle),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _settingsCard(),
+            const SizedBox(height: 16),
+            _generateCard(),
+            const SizedBox(height: 20),
+            Text(AppLocalizations.of(context)!.codesLabel,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 8),
+            StreamBuilder<List<ActivationCodeModel>>(
+              stream: repo.streamCodes(),
+              builder: (context, snap) {
+                if (!snap.hasData) {
+                  return const Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Center(child: CircularProgressIndicator()));
+                }
+                final codes = snap.data!;
+                if (codes.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(AppLocalizations.of(context)!.noCodesYet,
+                        style: TextStyle(color: Colors.grey[600])),
+                  );
+                }
+                return Column(children: codes.map(_codeTile).toList());
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
 
   Widget _settingsCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -178,8 +197,16 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
   }
 
   Widget _generateCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -195,6 +222,7 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
                     initialValue: _duration,
                     decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.durationLabel, border: const OutlineInputBorder()),
+                    dropdownColor: isDark ? AppColors.surfaceDark : Colors.white,
                     items: [
                       DropdownMenuItem(value: 1, child: Text(AppLocalizations.of(context)!.month1Label)),
                       DropdownMenuItem(value: 3, child: Text(AppLocalizations.of(context)!.months3Label)),
@@ -210,6 +238,7 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
                     initialValue: _count,
                     decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.countLabel, border: const OutlineInputBorder()),
+                    dropdownColor: isDark ? AppColors.surfaceDark : Colors.white,
                     items: const [1, 5, 10, 20, 50]
                         .map((n) =>
                             DropdownMenuItem(value: n, child: Text('$n')))
@@ -259,9 +288,17 @@ class _AdminSubscriptionsScreenState extends State<AdminSubscriptionsScreen> {
   Widget _codeTile(ActivationCodeModel c) {
     final repo = context.read<SubscriptionRepository>();
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: ListTile(
         title: Text(c.code,
             style: const TextStyle(

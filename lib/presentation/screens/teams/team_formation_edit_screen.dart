@@ -13,6 +13,7 @@ import '../../../core/utils/formations.dart';
 import '../../widgets/core/pitch_formation_view.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: محرّر تشكيلة الفريق التفاعلي (يُفتح من «عرض/مشاركة» في إدارة الفريق).
 /// الكابتن يختار الخطة (قالب ثابت أو مخصّصة)، يعيّن لاعبيه تفاعلياً على الملعب
@@ -324,11 +325,14 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.teamFormation),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         actions: [
           IconButton(
             tooltip: AppLocalizations.of(context)!.share,
@@ -342,65 +346,84 @@ class _TeamFormationEditScreenState extends State<TeamFormationEditScreen> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: ListTile(
-              leading: Icon(Icons.dashboard_customize,
-                  color: theme.colorScheme.primary),
-              title: Text(AppLocalizations.of(context)!.formationPlan,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text(AppLocalizations.of(context)!.formationWithPlayersCount(_formation, formationTotal(_formation).toString())),
-              trailing:
-                  OutlinedButton(onPressed: _pickFormation, child: Text(AppLocalizations.of(context)!.changeBtn)),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(AppLocalizations.of(context)!.tapCircleToAssignPlayer,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-          const SizedBox(height: 8),
-          // 📝 HINT AR: نلتقط هذا الجزء كصورة عند المشاركة.
-          RepaintBoundary(
-            key: _boundaryKey,
-            child: Container(
-              color: theme.scaffoldBackgroundColor,
-              padding: const EdgeInsets.all(8),
-              child: PitchFormationView(
-                players: _slotPlayers,
-                formation: _formation,
-                bySlotOrder: true,
-                onSlotTap: _onSlotTap,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _sharing ? null : _share,
-                  icon: const Icon(Icons.share, size: 18),
-                  label: Text(AppLocalizations.of(context)!.share),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: _saving ? null : _save,
-                  icon: const Icon(Icons.save, size: 18),
-                  label: Text(AppLocalizations.of(context)!.saveBtn),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: Colors.white,
+              color: isDark ? const Color(0xFF161D27) : Colors.white,
+              child: ListTile(
+                leading: Icon(Icons.dashboard_customize,
+                    color: theme.colorScheme.primary),
+                title: Text(AppLocalizations.of(context)!.formationPlan,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(AppLocalizations.of(context)!.formationWithPlayersCount(_formation, formationTotal(_formation).toString())),
+                trailing:
+                    OutlinedButton(onPressed: _pickFormation, child: Text(AppLocalizations.of(context)!.changeBtn)),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(AppLocalizations.of(context)!.tapCircleToAssignPlayer,
+                style: TextStyle(fontSize: 12, color: isDark ? Colors.white60 : Colors.grey[600])),
+            const SizedBox(height: 8),
+            // 📝 HINT AR: نلتقط هذا الجزء كصورة عند المشاركة.
+            RepaintBoundary(
+              key: _boundaryKey,
+              child: Container(
+                color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                padding: const EdgeInsets.all(8),
+                child: PitchFormationView(
+                  players: _slotPlayers,
+                  formation: _formation,
+                  bySlotOrder: true,
+                  onSlotTap: _onSlotTap,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _sharing ? null : _share,
+                    icon: const Icon(Icons.share, size: 18),
+                    label: Text(AppLocalizations.of(context)!.share),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _saving ? null : _save,
+                    icon: const Icon(Icons.save, size: 18),
+                    label: Text(AppLocalizations.of(context)!.saveBtn),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

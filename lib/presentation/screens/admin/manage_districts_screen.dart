@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/city_model.dart';
 import '../../../data/models/district_model.dart';
 import '../../../data/repositories/location_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../l10n/app_localizations.dart';
 
 class ManageDistrictsScreen extends StatefulWidget {
@@ -83,81 +85,97 @@ class _ManageDistrictsScreenState extends State<ManageDistrictsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(l10n.districtsOfCity(widget.city.nameAr)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddDistrictDialog(),
         child: const Icon(Icons.add),
       ),
-      body: StreamBuilder<List<DistrictModel>>(
-        stream: _repo.getDistrictsStream(widget.city.id),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text(l10n.errorX(snapshot.error.toString())));
-          }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final districts = snapshot.data!;
-          if (districts.isEmpty) {
-            return Center(child: Text(l10n.noDistricts));
-          }
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: StreamBuilder<List<DistrictModel>>(
+          stream: _repo.getDistrictsStream(widget.city.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text(l10n.errorX(snapshot.error.toString())));
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final districts = snapshot.data!;
+            if (districts.isEmpty) {
+              return Center(child: Text(l10n.noDistricts));
+            }
 
-          return ListView.builder(
-            itemCount: districts.length,
-            padding: const EdgeInsets.only(bottom: 80),
-            itemBuilder: (context, index) {
-              final dist = districts[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: ListTile(
-                  title: Text(dist.nameAr, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text(dist.nameEn),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Switch(
-                        value: dist.isActive,
-                        onChanged: (val) {
-                          _repo.updateDistrict(dist.copyWith(isActive: val));
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _showAddDistrictDialog(dist),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: Text(l10n.confirmDeleteTitle),
-                              content: Text(l10n.confirmDeleteDistrictX(dist.nameAr)),
-                              actions: [
-                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancelBtn)),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-                                  onPressed: () => Navigator.pop(ctx, true),
-                                  child: Text(l10n.delete),
-                                ),
-                              ],
-                            ),
-                          );
-                          if (confirm == true) {
-                            _repo.deleteDistrict(dist.id);
-                          }
-                        },
-                      ),
-                    ],
+            return ListView.builder(
+              itemCount: districts.length,
+              padding: const EdgeInsets.only(bottom: 80, top: 12),
+              itemBuilder: (context, index) {
+                final dist = districts[index];
+                return Card(
+                  elevation: 0,
+                  color: isDark ? AppColors.surfaceDark : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: ListTile(
+                    title: Text(dist.nameAr, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(dist.nameEn),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Switch(
+                          value: dist.isActive,
+                          onChanged: (val) {
+                            _repo.updateDistrict(dist.copyWith(isActive: val));
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => _showAddDistrictDialog(dist),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text(l10n.confirmDeleteTitle),
+                                content: Text(l10n.confirmDeleteDistrictX(dist.nameAr)),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancelBtn)),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    onPressed: () => Navigator.pop(ctx, true),
+                                    child: Text(l10n.delete),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              _repo.deleteDistrict(dist.id);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

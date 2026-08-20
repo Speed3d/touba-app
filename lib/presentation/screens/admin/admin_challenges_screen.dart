@@ -1,9 +1,10 @@
 import '../../../core/utils/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/challenge_model.dart';
 import '../../../data/repositories/challenge_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -18,38 +19,55 @@ class AdminChallengesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final repo = context.read<ChallengeRepository>();
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.manageChallenges), centerTitle: true),
-      body: StreamBuilder<List<ChallengeModel>>(
-        stream: repo.streamOpen(limit: 100),
-        builder: (context, snap) {
-          if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final list = snap.data!;
-          if (list.isEmpty) {
-            return Center(
-                child: Text(AppLocalizations.of(context)!.noOpenChallengeRequests,
-                    style: TextStyle(color: Colors.grey[600])));
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: list.length,
-            itemBuilder: (context, i) => _tile(context, list[i], repo),
-          );
-        },
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.manageChallenges),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: StreamBuilder<List<ChallengeModel>>(
+          stream: repo.streamOpen(limit: 100),
+          builder: (context, snap) {
+            if (!snap.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final list = snap.data!;
+            if (list.isEmpty) {
+              return Center(
+                  child: Text(AppLocalizations.of(context)!.noOpenChallengeRequests,
+                      style: TextStyle(color: Colors.grey[600])));
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: list.length,
+              itemBuilder: (context, i) => _tile(context, list[i], repo),
+            );
+          },
+        ),
       ),
     );
   }
 
   Widget _tile(
       BuildContext context, ChallengeModel c, ChallengeRepository repo) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final ageDays = c.createdAt == null
         ? 0
         : DateTime.now().difference(c.createdAt!).inDays;
     final stale = ageDays >= _staleDays && c.applicants.isEmpty;
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(

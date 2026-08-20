@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/repositories/match_repository.dart';
 import '../../widgets/core/tooba_empty_state.dart';
 import '../../widgets/core/tooba_shimmer.dart';
+import '../../widgets/core/decorated_background.dart';
 import 'match_detail_screen.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
@@ -40,52 +42,68 @@ class _RefereeMatchesScreenState extends State<RefereeMatchesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.myRefereeMatches), centerTitle: true),
-      body: FutureBuilder<List<MatchModel>>(
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const ToobaShimmerList(count: 5, tileHeight: 80);
-          }
-          final matches = snap.data ?? [];
-          if (matches.isEmpty) {
-            return ToobaEmptyState(
-              icon: Icons.sports_outlined,
-              title: AppLocalizations.of(context)!.noMatchesAssignedToYou,
-              subtitle: AppLocalizations.of(context)!.tournamentOrganizerAssignsMatches,
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.myRefereeMatches),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: FutureBuilder<List<MatchModel>>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const ToobaShimmerList(count: 5, tileHeight: 80);
+            }
+            final matches = snap.data ?? [];
+            if (matches.isEmpty) {
+              return ToobaEmptyState(
+                icon: Icons.sports_outlined,
+                title: AppLocalizations.of(context)!.noMatchesAssignedToYou,
+                subtitle: AppLocalizations.of(context)!.tournamentOrganizerAssignsMatches,
+              );
+            }
+            matches.sort((a, b) {
+              if (a.dateTime == null && b.dateTime == null) return 0;
+              if (a.dateTime == null) return 1;
+              if (b.dateTime == null) return -1;
+              return a.dateTime!.compareTo(b.dateTime!);
+            });
+            return RefreshIndicator(
+              onRefresh: _reload,
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: matches.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (context, i) => _tile(context, matches[i]),
+              ),
             );
-          }
-          matches.sort((a, b) {
-            if (a.dateTime == null && b.dateTime == null) return 0;
-            if (a.dateTime == null) return 1;
-            if (b.dateTime == null) return -1;
-            return a.dateTime!.compareTo(b.dateTime!);
-          });
-          return RefreshIndicator(
-            onRefresh: _reload,
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: matches.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
-              itemBuilder: (context, i) => _tile(context, matches[i]),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
 
   Widget _tile(BuildContext context, MatchModel m) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final finished = m.resultConfirmed;
-    // We can use Intl directly but we can also use formatting method if needed. Let's just keep Intl since it's already there and handles dates well. Or we can just use the provided strings. We'll leave the DateFormat as is but localizing "موعد غير محدد".
     final label = finished
         ? '${m.homeScore} - ${m.awayScore}'
         : (m.dateTime != null
             ? DateFormat('EEE d MMM • HH:mm', 'ar').format(m.dateTime!)
             : AppLocalizations.of(context)!.unspecifiedDate);
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: ListTile(
         onTap: finished
             ? () => Navigator.push(

@@ -6,6 +6,7 @@ import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/chat_message_model.dart';
 import '../../../data/repositories/chat_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -84,39 +85,48 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final repo = context.read<ChatRepository>();
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title), centerTitle: true),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<List<ChatMessageModel>>(
-              stream: repo.streamMessages(widget.chatId),
-              builder: (context, snap) {
-                if (!snap.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final msgs = snap.data!;
-                if (_uid != null) repo.markAsRead(widget.chatId, _uid!);
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (_scroll.hasClients) {
-                    _scroll.jumpTo(_scroll.position.maxScrollExtent);
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(widget.title),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<List<ChatMessageModel>>(
+                stream: repo.streamMessages(widget.chatId),
+                builder: (context, snap) {
+                  if (!snap.hasData) {
+                    return const Center(child: CircularProgressIndicator());
                   }
-                });
-                if (msgs.isEmpty) {
-                  return Center(
-                      child: Text(AppLocalizations.of(context)!.startConversation,
-                          style: TextStyle(color: Colors.grey[600])));
-                }
-                return ListView.builder(
-                  controller: _scroll,
-                  padding: const EdgeInsets.all(12),
-                  itemCount: msgs.length,
-                  itemBuilder: (c, i) => _bubble(msgs[i]),
-                );
-              },
+                  final msgs = snap.data!;
+                  if (_uid != null) repo.markAsRead(widget.chatId, _uid!);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (_scroll.hasClients) {
+                      _scroll.jumpTo(_scroll.position.maxScrollExtent);
+                    }
+                  });
+                  if (msgs.isEmpty) {
+                    return Center(
+                        child: Text(AppLocalizations.of(context)!.startConversation,
+                            style: TextStyle(color: Colors.grey[600])));
+                  }
+                  return ListView.builder(
+                    controller: _scroll,
+                    padding: const EdgeInsets.all(12),
+                    itemCount: msgs.length,
+                    itemBuilder: (c, i) => _bubble(msgs[i]),
+                  );
+                },
+              ),
             ),
-          ),
-          _inputBar(),
-        ],
+            _inputBar(),
+          ],
+        ),
       ),
     );
   }
@@ -133,7 +143,7 @@ class _ChatScreenState extends State<ChatScreen> {
           decoration: BoxDecoration(
               color: isDark ? AppColors.surfaceDark : Colors.grey.shade200,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.transparent),
+              border: Border.all(color: isDark ? const Color(0xFF1E2A38) : Colors.transparent),
           ),
           child: Text(m.content,
               textAlign: TextAlign.center,
@@ -156,7 +166,7 @@ class _ChatScreenState extends State<ChatScreen> {
               : (isDark ? AppColors.surfaceDark : Colors.grey.shade200),
           border: mine
               ? Border.all(color: isDark ? const Color(0xFF00D166).withValues(alpha: 0.5) : Colors.transparent)
-              : Border.all(color: isDark ? const Color(0xFF1A2A3A) : Colors.transparent),
+              : Border.all(color: isDark ? const Color(0xFF1E2A38) : Colors.transparent),
           borderRadius: BorderRadius.circular(16).copyWith(
             bottomRight: mine ? const Radius.circular(0) : const Radius.circular(16),
             bottomLeft: !mine ? const Radius.circular(0) : const Radius.circular(16),
@@ -204,7 +214,15 @@ class _ChatScreenState extends State<ChatScreen> {
                   fillColor: isDark ? AppColors.surfaceDark : Colors.grey[100],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(
+                      color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide(
+                      color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                    ),
                   ),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/challenge_model.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/repositories/challenge_repository.dart';
 import '../../../data/repositories/team_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -132,77 +134,95 @@ class _CreateChallengeScreenState extends State<CreateChallengeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     if (widget.targetTeamName != null && _note.text.startsWith('نطلب تحدّي فريق')) {
        _note.text = AppLocalizations.of(context)!.requestChallengeWithTeam(widget.targetTeamName!);
     }
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.requestChallengeTitle), centerTitle: true),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(_error!,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey[600])),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.requestChallengeTitle),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : _error != null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(_error!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: isDark ? Colors.white60 : Colors.grey[600])),
+                    ),
+                  )
+                : ListView(
+                    padding: const EdgeInsets.all(20),
+                    children: [
+                      if (widget.targetTeamName != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(AppLocalizations.of(context)!.directedChallengeToTeam(widget.targetTeamName!),
+                              style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      Text(AppLocalizations.of(context)!.onBehalfOfTeam(_myTeam!.name, _myTeam!.city),
+                          style: TextStyle(color: isDark ? Colors.white60 : Colors.grey[600])),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _note,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.noteSuggestedPlaceTime,
+                          filled: true,
+                          fillColor: isDark ? AppColors.surfaceDark : Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(
+                              color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      OutlinedButton.icon(
+                        onPressed: _pickDate,
+                        icon: const Icon(Icons.event, size: 18),
+                        label: Text(_date == null
+                            ? AppLocalizations.of(context)!.suggestedDateOptional
+                            : DateFormat('EEE d MMM • HH:mm', 'ar').format(_date!)),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: _submitting ? null : _submit,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14)),
+                        ),
+                        child: _submitting
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white, strokeWidth: 2))
+                            : Text(AppLocalizations.of(context)!.publishChallengeRequestBtn,
+                                style: const TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.all(20),
-                  children: [
-                    if (widget.targetTeamName != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Text(AppLocalizations.of(context)!.directedChallengeToTeam(widget.targetTeamName!),
-                            style: TextStyle(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                    Text(AppLocalizations.of(context)!.onBehalfOfTeam(_myTeam!.name, _myTeam!.city),
-                        style: TextStyle(color: Colors.grey[600])),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _note,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.noteSuggestedPlaceTime,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    OutlinedButton.icon(
-                      onPressed: _pickDate,
-                      icon: const Icon(Icons.event, size: 18),
-                      label: Text(_date == null
-                          ? AppLocalizations.of(context)!.suggestedDateOptional
-                          : DateFormat('EEE d MMM • HH:mm', 'ar').format(_date!)),
-                      style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14)),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: _submitting ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: _submitting
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2))
-                          : Text(AppLocalizations.of(context)!.publishChallengeRequestBtn,
-                              style: const TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
+      ),
     );
   }
 }

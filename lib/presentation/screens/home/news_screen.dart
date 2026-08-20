@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
 import '../../../data/models/news_model.dart';
 import '../../../data/repositories/home_repository.dart';
+import '../../widgets/core/decorated_background.dart';
 import '../../widgets/core/tooba_shimmer.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
@@ -28,42 +30,32 @@ class _NewsScreenState extends State<NewsScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 120,
-            floating: false,
-            pinned: true,
-            backgroundColor: theme.scaffoldBackgroundColor,
-            elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text(
-                AppLocalizations.of(context)!.latestNews,
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 22,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      theme.primaryColor.withValues(alpha: 0.1),
-                      theme.scaffoldBackgroundColor,
-                    ],
+      backgroundColor: Colors.transparent,
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 120,
+              floating: false,
+              pinned: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(
+                  AppLocalizations.of(context)!.latestNews,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 22,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ),
+              iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
             ),
-            iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
-          ),
           StreamBuilder<List<NewsModel>>(
             stream: context.read<HomeRepository>().getPublishedNewsStream(limit: 30),
             builder: (context, snap) {
@@ -114,6 +106,7 @@ class _NewsScreenState extends State<NewsScreen> {
             },
           ),
         ],
+      ),
       ),
     );
   }
@@ -294,8 +287,11 @@ class _NewsCardState extends State<_NewsCard> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: isDark ? AppColors.surfaceDark : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+          ),
           boxShadow: [
             BoxShadow(
               color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),

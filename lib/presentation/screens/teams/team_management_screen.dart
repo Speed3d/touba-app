@@ -14,6 +14,8 @@ import 'team_formation_edit_screen.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../widgets/core/decorated_background.dart';
 
 /// 📝 HINT AR: شاشة إدارة الفريق للكابتن — طلبات الانضمام + التشكيلة + دعوات الربط.
 /// تتوقّع TeamManageCubit مُوفَّراً أعلاها (يُمرَّر عند التنقّل من صفحة الفريق).
@@ -22,10 +24,8 @@ class TeamManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.teamManagement),
         centerTitle: true,
@@ -44,24 +44,27 @@ class TeamManagementScreen extends StatelessWidget {
         icon: const Icon(Icons.person_add),
         label: Text(AppLocalizations.of(context)!.addPlayer),
       ),
-      body: BlocConsumer<TeamManageCubit, TeamManageState>(
-        listener: (context, state) {
-          final l10n = AppLocalizations.of(context)!;
-          if (state is TeamManageActionSuccess) {
-            ToobaSnackBar.success(context, _resolveTeamManageSuccess(l10n, state.message));
-          } else if (state is TeamManageError) {
-            ToobaSnackBar.error(context, _resolveTeamManageError(l10n, state.message));
-          }
-        },
-        builder: (context, state) {
-          if (state is TeamManageLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is TeamManageLoaded) {
-            return _buildContent(context, state);
-          }
-          return Center(child: Text(AppLocalizations.of(context)!.loading));
-        },
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: BlocConsumer<TeamManageCubit, TeamManageState>(
+          listener: (context, state) {
+            final l10n = AppLocalizations.of(context)!;
+            if (state is TeamManageActionSuccess) {
+              ToobaSnackBar.success(context, _resolveTeamManageSuccess(l10n, state.message));
+            } else if (state is TeamManageError) {
+              ToobaSnackBar.error(context, _resolveTeamManageError(l10n, state.message));
+            }
+          },
+          builder: (context, state) {
+            if (state is TeamManageLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is TeamManageLoaded) {
+              return _buildContent(context, state);
+            }
+            return Center(child: Text(AppLocalizations.of(context)!.loading));
+          },
+        ),
       ),
     );
   }
@@ -188,10 +191,18 @@ class TeamManagementScreen extends StatelessWidget {
   // 📝 HINT AR: بطاقة خطة الفريق — تعرض الخطة الحالية وتفتح منتقي القوالب الثابتة.
   Widget _formationCard(BuildContext context, TeamManageLoaded state) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final fmt = state.team.formation;
     final hasFmt = fmt != null && fmt.isNotEmpty;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: ListTile(
         leading:
             Icon(Icons.dashboard_customize, color: theme.colorScheme.primary),
@@ -211,9 +222,17 @@ class TeamManagementScreen extends StatelessWidget {
   // 📝 HINT AR: بطاقة معرض صور الفريق — تفتح شاشة التحرير (بند 13).
   Widget _galleryCard(BuildContext context, TeamManageLoaded state) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final count = state.team.photos.length;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: ListTile(
         leading: Icon(Icons.photo_library_outlined,
             color: theme.colorScheme.primary),
@@ -391,8 +410,17 @@ class TeamManagementScreen extends StatelessWidget {
   }
 
   Widget _playerTile(BuildContext context, PlayerModel p) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
+      elevation: 0,
+      color: isDark ? AppColors.surfaceDark : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: isDark ? const Color(0xFF1E2A38) : const Color(0xFFE2E8F0),
+        ),
+      ),
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: (p.photoUrl != null && p.photoUrl!.isNotEmpty)

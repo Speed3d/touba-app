@@ -7,6 +7,7 @@ import '../../../data/repositories/match_repository.dart';
 import '../../widgets/core/tooba_match_card.dart';
 import '../../widgets/core/tooba_empty_state.dart';
 import '../../widgets/core/tooba_shimmer.dart';
+import '../../widgets/core/decorated_background.dart';
 import 'match_detail_screen.dart';
 import '../tournaments/tournament_standings_screen.dart';
 import '../../../app/router/tooba_route.dart';
@@ -54,10 +55,13 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(widget.tournament.name,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         bottom: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.label,
@@ -68,11 +72,14 @@ class _TournamentMatchesScreenState extends State<TournamentMatchesScreen>
           ],
         ),
       ),
-      body: Column(
-        children: [
-          _standingsCard(context),
-          Expanded(child: _matchesBody()),
-        ],
+      body: DecoratedBackground(
+        showOrbs: false,
+        child: Column(
+          children: [
+            _standingsCard(context),
+            Expanded(child: _matchesBody()),
+          ],
+        ),
       ),
     );
   }
