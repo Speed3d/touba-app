@@ -1469,6 +1469,7 @@ exports.startTrialIfEligible = onCall(async (request) => {
   const userRef = db.collection("users").doc(uid);
   const snap = await userRef.get();
   if (!snap.exists) return {granted: false};
+  const u = snap.data() || {};
   let isCaptain = u.role === "captain";
   if (!isCaptain) {
     const teamsSnap = await db.collection("teams").where("captainId", "==", uid).limit(1).get();
