@@ -20,4 +20,28 @@ class ConfigRepository {
       SetOptions(merge: true),
     );
   }
+
+  Future<bool> isTournamentsEnabled() async {
+    try {
+      final doc = await _firestore.collection('settings').doc('features').get();
+      return doc.data()?['tournamentsEnabled'] as bool? ?? true;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  Stream<Map<String, dynamic>> streamFeatures() {
+    return _firestore
+        .collection('settings')
+        .doc('features')
+        .snapshots()
+        .map((snapshot) => snapshot.data() ?? {});
+  }
+
+  Future<void> setFeatureFlag(String key, bool value) async {
+    await _firestore.collection('settings').doc('features').set(
+      {key: value, 'updatedAt': FieldValue.serverTimestamp()},
+      SetOptions(merge: true),
+    );
+  }
 }

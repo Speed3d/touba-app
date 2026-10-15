@@ -563,7 +563,7 @@ class _EnterResultScreenState extends State<EnterResultScreen> {
                 child: Text(p.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ],
           ),

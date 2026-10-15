@@ -83,7 +83,7 @@ class _ReadyImagesSelectorScreenState extends State<ReadyImagesSelectorScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   color: isDark ? Colors.white70 : Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.normal,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -191,6 +191,27 @@ class TeamModel extends Equatable {
     };
   }
 
+  /// 📝 HINT AR: لتحديث بيانات الفريق التعريفية من طرف الكابتن. يستبعد الحقول
+  /// المحسوبة خادمياً (ratingPoints, stats, badges, captainId, roster, playerCount)
+  /// ليتوافق 100% مع قواعد أمان Firestore (!touches).
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'name': name,
+      'nameLower': nameLower,
+      if (logoUrl != null) 'logoUrl': logoUrl,
+      'city': city,
+      if (area != null) 'area': area,
+      if (foundedYear != null) 'foundedYear': foundedYear,
+      if (colorPrimary != null) 'colorPrimary': colorPrimary,
+      if (colorSecondary != null) 'colorSecondary': colorSecondary,
+      if (description != null) 'description': description,
+      if (managerPhone != null) 'managerPhone': managerPhone,
+      if (formation != null) 'formation': formation,
+      'photos': photos,
+      'lineupSlots': lineupSlots,
+    };
+  }
+
   TeamModel copyWith({
     String? name,
     String? logoUrl,

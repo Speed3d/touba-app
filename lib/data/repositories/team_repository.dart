@@ -253,4 +253,25 @@ class TeamRepository {
         .doc(id)
         .update({'escalated': true});
   }
+
+  // 📝 HINT AR: بث نزاعات فك الارتباط المصعّدة للأدمن.
+  Stream<List<ReleaseRequestModel>> streamDisputes({int limit = 100}) {
+    return _firestore
+        .collection('release_requests')
+        .where('escalated', isEqualTo: true)
+        .where('status', isEqualTo: 'rejected')
+        .limit(limit)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((d) => ReleaseRequestModel.fromJson(d.data(), d.id))
+            .toList());
+  }
+
+  // 📝 HINT AR: فك ارتباط اللاعب قسرياً من قبل الأدمن.
+  Future<void> forceRelease(String id) async {
+    await _firestore
+        .collection('release_requests')
+        .doc(id)
+        .update({'status': 'accepted'});
+  }
 }

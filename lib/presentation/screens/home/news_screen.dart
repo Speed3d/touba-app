@@ -323,7 +323,7 @@ class _NewsCardState extends State<_NewsCard> {
                   Text(
                     widget.news.title,
                     style: TextStyle(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.bold,
                       fontSize: 17,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
@@ -383,7 +383,7 @@ class _NewsCardState extends State<_NewsCard> {
               const SizedBox(width: 4),
               Text(
                 _formatDate(context, widget.news.createdAt!),
-                style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600),
+                style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -438,7 +438,7 @@ class _InteractionButton extends StatelessWidget {
               style: TextStyle(
                 color: textColor,
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

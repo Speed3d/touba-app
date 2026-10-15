@@ -1,5 +1,4 @@
 import '../../../core/utils/image_helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../data/models/match_model.dart';
 import '../../../data/repositories/match_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -44,15 +44,13 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
   Future<void> _load() async {
     // 📝 HINT AR: نلتقط المستودع قبل await (تفادي استخدام context عبر فجوة).
     final matchRepo = context.read<MatchRepository>();
+    final userRepo = context.read<UserRepository>();
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('refereeProfiles')
-          .doc(widget.refereeUid)
-          .get();
+      final profile = await userRepo.getRefereeProfile(widget.refereeUid);
       final matches = await matchRepo.getMatchesByReferee(widget.refereeUid);
       if (!mounted) return;
       setState(() {
-        _profile = doc.data();
+        _profile = profile;
         _matches = matches;
         _loading = false;
       });
@@ -274,6 +272,7 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
     final cityCtrl = TextEditingController(text: city ?? '');
     final bioCtrl = TextEditingController(text: bio ?? '');
     final messenger = ScaffoldMessenger.of(context);
+    final userRepo = context.read<UserRepository>();
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -308,14 +307,10 @@ class _RefereeProfileScreenState extends State<RefereeProfileScreen> {
     );
     if (ok != true) return;
     try {
-      await FirebaseFirestore.instance
-          .collection('refereeProfiles')
-          .doc(widget.refereeUid)
-          .set({
+      await userRepo.updateRefereeProfile(widget.refereeUid, {
         'city': cityCtrl.text.trim(),
         'bio': bioCtrl.text.trim(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      });
       if (!mounted) return;
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.dataSavedSuccessfully));
       _load();

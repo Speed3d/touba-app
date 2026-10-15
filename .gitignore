@@ -51,3 +51,11 @@ app.*.map.json
 .firebase/
 .firebaserc
 firebase.json
+
+# Local and Signing configurations
+**/local.properties
+**/key.properties
+*.jks
+*.keystore
+node_modules/
+

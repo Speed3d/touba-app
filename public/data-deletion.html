@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="html-root">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تعليمات حذف البيانات — حرفي العراق | Data Deletion Instructions</title>
-  <meta name="description" content="كيفية حذف الحساب وبيانات المستخدم في منصة حرفي العراق">
+  <title>تعليمات حذف البيانات والحساب — طوبة | Account & Data Deletion</title>
+  <meta name="description" content="تعليمات وإجراءات حذف حساب المستخدم والبيانات الشخصية من منصة طوبة لكرة القدم الشعبية">
   <link rel="icon" type="image/png" href="logo.png">
 
   <!-- Google Fonts -->
@@ -14,22 +14,15 @@
 
   <style>
     :root {
-      /* Theme Colors */
-      --primary: #10B981; /* Emerald Green */
-      --secondary: #3B82F6; /* Blue */
-      --accent: #8B5CF6; /* Purple for depth */
-      --danger: #ef4444; /* Red for deletion emphasis */
-      
-      --bg-dark: #0f172a;
-      --text-main: #f8fafc;
-      --text-sub: #cbd5e1;
-      
-      /* Glassmorphism settings */
-      --glass-bg: rgba(255, 255, 255, 0.03);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-blur: blur(20px);
-      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --radius: 20px;
+      --primary: #0D9488;
+      --primary-light: #10B981;
+      --danger: #EF4444;
+      --bg-dark: #0B1319;
+      --card-bg: #111C24;
+      --card-border: #1E2A38;
+      --text-main: #F8FAFC;
+      --text-sub: #94A3B8;
+      --radius: 16px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,151 +34,148 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-      position: relative;
+      line-height: 1.8;
     }
 
-    /* Animated Background Orbs */
-    .orbs-wrapper {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1; overflow: hidden; pointer-events: none;
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.5;
-      animation: float 20s infinite ease-in-out alternate;
-    }
-    .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
-    .orb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -200px; left: -100px; animation-delay: -5s; }
-    .orb-3 { width: 300px; height: 300px; background: var(--accent); top: 40%; left: 30%; animation-duration: 25s; opacity: 0.3; }
-
-    @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(100px, 150px) scale(1.2); }
-    }
-
-    /* Lang Toggle */
     .lang-bar {
-      position: absolute; top: 20px; right: 20px;
-      display: flex; gap: 8px; z-index: 10;
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 24px;
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
     }
-    body.en .lang-bar { right: auto; left: 20px; }
-    
-    .lang-btn {
-      padding: 8px 16px; border-radius: 12px;
-      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border); color: var(--text-main);
-      cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.2s;
-    }
-    .lang-btn.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
 
-    /* Layout */
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active, .lang-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
     .container {
       max-width: 900px;
       margin: 0 auto;
-      padding: 80px 16px 80px;
-      width: 100%;
+      padding: 0 20px 40px;
       flex: 1;
+      width: 100%;
     }
 
-    /* Logo */
-    .logo {
-      width: 140px; height: 140px; 
-      margin: 0 auto 30px;
-      border-radius: 50%;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      animation: pulse 3s infinite alternate;
-    }
-    .logo img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
-    }
-
-    /* Header */
     header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
 
-    header h1 {
-      font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;
-      background: linear-gradient(135deg, #fff, #94a3b8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .logo img {
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 2px solid var(--primary);
+      box-shadow: 0 8px 24px rgba(13, 148, 136, 0.25);
     }
 
-    .btn-back {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 24px; border-radius: 22px; margin-bottom: 20px;
-      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border); color: white;
-      text-decoration: none; font-size: 1rem; transition: all 0.3s;
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
     }
-    .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
-    body.en .btn-back:hover { transform: translateX(-5px); }
 
-    /* Content Card */
-    .content-card {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 40px;
-      box-shadow: var(--shadow);
-      line-height: 1.8;
+    .subtitle {
       color: var(--text-sub);
+      font-size: 15px;
     }
-    .content-card h2 {
-      font-size: 1.5rem; color: white; margin-top: 30px; margin-bottom: 15px; font-weight: 700;
-    }
-    .content-card h2:first-child { margin-top: 0; }
-    .content-card p { margin-bottom: 15px; }
-    .content-card ul, .content-card ol { margin-bottom: 15px; padding-right: 20px; }
-    body.en .content-card ul, body.en .content-card ol { padding-right: 0; padding-left: 20px; }
-    .content-card li { margin-bottom: 8px; }
 
-    /* Highlight box for procedure */
+    .content-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      font-size: 18px;
+      color: var(--primary-light);
+      margin: 28px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2:first-of-type { margin-top: 0; }
+
+    p, li {
+      color: var(--text-sub);
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+
+    ol, ul {
+      padding-right: 24px;
+      margin-bottom: 20px;
+    }
+
+    html[dir="ltr"] ol, html[dir="ltr"] ul {
+      padding-right: 0;
+      padding-left: 24px;
+    }
+
     .highlight-box {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-right: 4px solid var(--danger);
-      padding: 20px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
       border-radius: 12px;
+      padding: 20px;
       margin: 20px 0;
     }
-    body.en .highlight-box {
-      border-right: 1px solid rgba(239, 68, 68, 0.3);
-      border-left: 4px solid var(--danger);
+
+    .highlight-box h3 {
+      color: var(--danger);
+      font-size: 16px;
+      margin-bottom: 10px;
     }
 
-    /* Footer */
+    .contact-box {
+      background: rgba(13, 148, 136, 0.08);
+      border: 1px solid rgba(13, 148, 136, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
     footer {
-      background: rgba(0,0,0,0.3); text-align: center; padding: 30px 24px;
-      color: var(--text-sub); font-size: 0.9rem; border-top: 1px solid var(--glass-border);
-      backdrop-filter: blur(10px);
-      margin-top: auto;
+      text-align: center;
+      padding: 24px;
+      color: var(--text-sub);
+      font-size: 13px;
+      border-top: 1px solid var(--card-border);
     }
-
-    body.en { direction: ltr; text-align: left; }
   </style>
 </head>
-<body class="ar" id="body">
-
-  <div class="orbs-wrapper">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
+<body>
 
   <div class="lang-bar">
     <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
@@ -193,71 +183,84 @@
   </div>
 
   <div class="container">
-    <a href="https://iraqicraftsman.com/" class="btn-back" data-ar="→ العودة للرئيسية" data-en="← Back to Home">→ العودة للرئيسية</a>
-    
     <header>
-      <div class="logo"><img src="logo.png" alt="حرفي العراق"></div>
+      <div class="logo"><img src="logo.png" alt="طوبة - Touba"></div>
       <h1 data-ar="تعليمات حذف الحساب والبيانات" data-en="Account & Data Deletion Instructions">تعليمات حذف الحساب والبيانات</h1>
+      <p class="subtitle" data-ar="منصة «طوبة» لكرة القدم الشعبية (com.speed3d.touba)" data-en="Touba Amateur Football Platform (com.speed3d.touba)">منصة «طوبة» لكرة القدم الشعبية (com.speed3d.touba)</p>
     </header>
 
     <div class="content-card">
-      <p data-ar="نحن في منصة حرفي العراق نحترم خصوصيتك وحقك في التحكم ببياناتك. توضح هذه الصفحة كيفية طلب حذف حسابك نهائياً وكافة البيانات المرتبطة به تفصيلياً." data-en="At Iraqi Craftsman, we respect your privacy and your right to control your data. This page clearly explains how to request the permanent deletion of your account and all associated data.">نحن في منصة حرفي العراق نحترم خصوصيتك وحقك في التحكم ببياناتك. توضح هذه الصفحة كيفية طلب حذف حسابك نهائياً وكافة البيانات المرتبطة به تفصيلياً.</p>
+      <p data-ar="نحن في منصة «طوبة» نحترم خصوصيتك وحقك الكامل في التحكم ببياناتك وحذفها نهائياً. توضح هذه الصفحة الخطوات المباشرة لحذف حسابك وكافة البيانات المرتبطة به وفقاً لسياسات متجري Google Play و Apple App Store."
+         data-en="At Touba, we respect your privacy and your full right to control and permanently delete your data. This page outlines the direct steps to delete your account and all associated data in compliance with Google Play and Apple App Store policies.">
+        نحن في منصة «طوبة» نحترم خصوصيتك وحقك الكامل في التحكم ببياناتك وحذفها نهائياً. توضح هذه الصفحة الخطوات المباشرة لحذف حسابك وكافة البيانات المرتبطة به وفقاً لسياسات متجري Google Play و Apple App Store.
+      </p>
 
       <div class="highlight-box">
-        <h3 data-ar="معلومات هامة حول آلية وإجراءات الحذف" data-en="Important Information about the Deletion Process" style="color: white; margin-bottom: 10px;">معلومات هامة حول آلية وإجراءات الحذف</h3>
-        <p data-ar="بمجرد إرسالك لطلب حذف الحساب من داخل التطبيق:" data-en="Once you submit an account deletion request from within the application:">بمجرد إرسالك لطلب حذف الحساب من داخل التطبيق:</p>
-        <ol>
-          <li data-ar="يتم إرسال الطلب لإدارة التطبيق لغرض المراجعة والموافقة." data-en="The request is sent to the app management for review and approval.">يتم إرسال الطلب لإدارة التطبيق لغرض المراجعة والموافقة.</li>
-          <li data-ar="الخيار الأول: موافقة المسؤول (Admin) للحذف الفوري. بمجرد المراجعة والموافقة من الإدارة سيتم حذف الحساب وكافة بياناته على الفور." data-en="Option 1: Admin approval for immediate deletion. Upon review and approval by the administration, the account and all its data will be deleted immediately.">الخيار الأول: موافقة المسؤول (Admin) للحذف الفوري. بمجرد المراجعة والموافقة من الإدارة سيتم حذف الحساب وكافة بياناته على الفور.</li>
-          <li data-ar="الخيار الثاني: الحذف التلقائي. إذا لم يقم المسؤول بمراجعة الطلب أو الموافقة عليه، النظام مبرمج ليقوم بحذف حسابك وبياناتك مباشرة وبشكل تلقائي بعد مرور 7 أيام كاملة من تأريخ الطلب كحد أقصى." data-en="Option 2: Automatic Deletion. If the admin does not review or approve the request, the system is programmed to delete your account and data directly and automatically after exactly 7 days from the request date maximum.">الخيار الثاني: الحذف التلقائي. إذا لم يقم المسؤول بمراجعة الطلب أو الموافقة عليه، النظام مبرمج ليقوم بحذف حسابك وبياناتك مباشرة وبشكل تلقائي بعد مرور 7 أيام كاملة من تأريخ الطلب كحد أقصى.</li>
-        </ol>
+        <h3 data-ar="⚠️ تنبيه قبل بدء عملية الحذف" data-en="⚠️ Important Warning Before Deletion">⚠️ تنبيه قبل بدء عملية الحذف</h3>
+        <p data-ar="عملية الحذف نهائية وفورية ولا يمكن التراجع عنها. سيتم مسح حسابك وسجلاتك الشخصية بالكامل من خوادم التطبيق فور تأكيدك."
+           data-en="Deletion is permanent, immediate, and irreversible. Your account and personal records will be completely erased from our servers upon confirmation.">
+          عملية الحذف نهائية وفورية ولا يمكن التراجع عنها. سيتم مسح حسابك وسجلاتك الشخصية بالكامل من خوادم التطبيق فور تأكيدك.
+        </p>
+        <p data-ar="ملاحظة لكباتن الفرق: إذا كنت كابتن فريق مسجّل، يجب نقل قيادة الفريق إلى عضو آخر أو حذف الفريق أولاً قبل حذف حسابك الشخصي لمنع بقاء فرق يتيمة."
+           data-en="Notice for Team Captains: If you are an active team captain, you must transfer team captaincy or delete your team first before deleting your account to prevent orphaned teams.">
+          ملاحظة لكباتن الفرق: إذا كنت كابتن فريق مسجّل، يجب نقل قيادة الفريق إلى عضو آخر أو حذف الفريق أولاً قبل حذف حسابك الشخصي لمنع بقاء فرق يتيمة.
+        </p>
       </div>
 
-      <h2 data-ar="الطريقة الأولى: الحذف من داخل التطبيق" data-en="Method 1: Deleting from within the App">الطريقة الأولى: الحذف من داخل التطبيق</h2>
-      <p data-ar="يمكنك طلب حذف حسابك مباشرة وبسهولة من داخل تطبيق حرفي العراق باتباع الخطوات التالية:" data-en="You can request the deletion of your account directly and easily from within the Iraqi Craftsman app by following these steps:">يمكنك طلب حذف حسابك مباشرة وبسهولة من داخل تطبيق حرفي العراق باتباع الخطوات التالية:</p>
+      <h2 data-ar="1. طريقة الحذف المباشرة من داخل تطبيق طوبة" data-en="1. Direct Deletion From Inside the Touba App">1. طريقة الحذف المباشرة من داخل تطبيق طوبة</h2>
+      <p data-ar="يمكنك حذف حسابك فورياً وبنقرة زر واحدة من داخل التطبيق باتباع الخطوات الآتية:" data-en="You can delete your account immediately with a single tap inside the app following these steps:">يمكنك حذف حسابك فورياً وبنقرة زر واحدة من داخل التطبيق باتباع الخطوات الآتية:</p>
       <ol>
-        <li data-ar="افتح تطبيق حرفي العراق وقم بتسجيل الدخول إلى حسابك." data-en="Open the Iraqi Craftsman app and log into your account.">افتح تطبيق حرفي العراق وقم بتسجيل الدخول إلى حسابك.</li>
-        <li data-ar="انتقل إلى صفحة (الإعدادات)." data-en="Navigate to the (Settings) page.">انتقل إلى صفحة (الإعدادات).</li>
-        <li data-ar="ابحث عن خيار (حذف الحساب - Delete Account) وانقر عليه." data-en="Look for the (Delete Account) option and tap on it.">ابحث عن خيار (حذف الحساب - Delete Account) وانقر عليه.</li>
-        <li data-ar="سيظهر لك تنبيه لتأكيد رغبتك في حذف الحساب وبياناتك. قم بتأكيد الإجراء." data-en="A highly visible alert will appear to confirm your desire to delete the account and your data. Confirm the action.">سيظهر لك تنبيه لتأكيد رغبتك في حذف الحساب وبياناتك. قم بتأكيد الإجراء.</li>
-        <li data-ar="سيتم تسجيل الطلب في النظام ليمر بالمرحلة الموضحة أعلاه (الحذف الفوري من الإدارة أو التلقائي بعد 7 أيام)." data-en="The request will be registered in the system to go through the phase explained above (Immediate deletion by admin or automatic after 7 days).">سيتم تسجيل الطلب في النظام ليمر بالمرحلة الموضحة أعلاه (الحذف الفوري من الإدارة أو التلقائي بعد 7 أيام).</li>
+        <li data-ar="افتح تطبيق «طوبة» وسجّل دخولك لحسابك." data-en="Open the 'Touba' app and log in to your account.">افتح تطبيق «طوبة» وسجّل دخولك لحسابك.</li>
+        <li data-ar="انتقل إلى شاشة (الملف الشخصي) أو (الإعدادات)." data-en="Navigate to the (Profile) or (Settings) screen.">انتقل إلى شاشة (الملف الشخصي) أو (الإعدادات).</li>
+        <li data-ar="انزل لأسفل الشاشة واضغط على زر (حذف الحساب نهائياً) الملوّن بالأحمر." data-en="Scroll to the bottom and tap (Delete Account Permanently) in red.">انزل لأسفل الشاشة واضغط على زر (حذف الحساب نهائياً) الملوّن بالأحمر.</li>
+        <li data-ar="سيظهر مربع حوار يطلب تأكيدك النهائي — اضغط (تأكيد الحذف)." data-en="A confirmation dialog will appear — tap (Confirm Deletion).">سيظهر مربع حوار يطلب تأكيدك النهائي — اضغط (تأكيد الحذف).</li>
+        <li data-ar="يقوم الخادم فوراً (عبر Cloud Function آمنة) بفك ارتباطك بالفرق، وحذف طلباتك، ومسح بياناتك من قاعدة البيانات ونظام المصادقة Auth ثم تسجيل خروجك نهائياً."
+            data-en="The server immediately (via secure Cloud Function) unlinks your team records, deletes your requests, purges your data from database and Auth, and logs you out permanently.">
+          يقوم الخادم فوراً (عبر Cloud Function آمنة) بفك ارتباطك بالفرق، وحذف طلباتك، ومسح بياناتك من قاعدة البيانات ونظام المصادقة Auth ثم تسجيل خروجك نهائياً.
+        </li>
       </ol>
 
-      <h2 data-ar="الطريقة الثانية: طلب الحذف عبر البريد الإلكتروني" data-en="Method 2: Request Deletion via Email">الطريقة الثانية: طلب الحذف عبر البريد الإلكتروني</h2>
-      <p data-ar="إذا فقدت الوصول إلى حسابك أو التطبيق، يمكنك التواصل معنا مباشرة لطلب حذف البيانات:" data-en="If you have lost access to your account or the app, you can contact us directly to request data deletion:">إذا فقدت الوصول إلى حسابك أو التطبيق، يمكنك التواصل معنا مباشرة لطلب حذف البيانات:</p>
+      <h2 data-ar="2. طريقة طلب الحذف عبر البريد الإلكتروني" data-en="2. Requesting Deletion Via Email">2. طريقة طلب الحذف عبر البريد الإلكتروني</h2>
+      <p data-ar="إذا فقدت الوصول إلى هاتفك أو واجهتك أي صعوبة، يمكنك مراسلتنا لحذف حسابك يدوياً:" data-en="If you have lost access to your device or need assistance, you can contact us to delete your account manually:">إذا فقدت الوصول إلى هاتفك أو واجهتك أي صعوبة، يمكنك مراسلتنا لحذف حسابك يدوياً:</p>
       <ul>
-        <li data-ar="قم بإرسال بريد إلكتروني إلى: support@iraqicraftsman.com" data-en="Send an email to: support@iraqicraftsman.com">قم بإرسال بريد إلكتروني إلى: support@iraqicraftsman.com</li>
-        <li data-ar="اجعل عنوان الرسالة: طلب حذف حساب وبيانات المستخدم." data-en="Set the subject line to: Account and User Data Deletion Request.">اجعل عنوان الرسالة: طلب حذف حساب وبيانات المستخدم.</li>
-        <li data-ar="تأكد من إرسال الرسالة من نفس البريد الإلكتروني المسجل لدينا، أو اذكر رقم هاتفك المسجل لتأكيد هويتك." data-en="Ensure you send the message from the same email registered with us, or mention your registered phone number to verify your identity.">تأكد من إرسال الرسالة من نفس البريد الإلكتروني المسجل لدينا، أو اذكر رقم هاتفك المسجل لتأكيد هويتك.</li>
-        <li data-ar="سيتم معالجة طلبك خلال ساعات العمل الرسمية ويتم التأكيد لك بحذف الحساب." data-en="Your request will be processed within official working hours, and account deletion confirmation will be provided.">سيتم معالجة طلبك خلال ساعات العمل الرسمية ويتم التأكيد لك بحذف الحساب.</li>
+        <li data-ar="أرسل بريداً إلى: support@speed3d.com" data-en="Send an email to: support@speed3d.com">أرسل بريداً إلى: <a href="mailto:support@speed3d.com">support@speed3d.com</a></li>
+        <li data-ar="عنوان الرسالة: طلب حذف حساب منصة طوبة (com.speed3d.touba)" data-en="Subject line: Touba Account Deletion Request (com.speed3d.touba)">عنوان الرسالة: طلب حذف حساب منصة طوبة (com.speed3d.touba)</li>
+        <li data-ar="اذكر بريدك الإلكتروني أو رقم هاتفك المسجل لتأكيد ملكيتك للحساب." data-en="Include your registered email or phone number to verify your identity.">اذكر بريدك الإلكتروني أو رقم هاتفك المسجل لتأكيد ملكيتك للحساب.</li>
+        <li data-ar="سيتم تأكيد ومعالجة الحذف خلال مدة أقصاها 48 ساعة عمل." data-en="Your request will be verified and completed within 48 business hours.">سيتم تأكيد ومعالجة الحذف خلال مدة أقصاها 48 ساعة عمل.</li>
       </ul>
 
-      <h2 data-ar="ما هي البيانات التي سيتم حذفها؟" data-en="What data will be deleted?">ما هي البيانات التي سيتم حذفها؟</h2>
-      <p data-ar="عند حذف حسابك، سيتم إزالة كافة المعلومات التي ترتبط بك نهائياً من قواعد بيانتنا، ويشمل ذلك:" data-en="When your account is deleted, all information associated with you will be permanently removed from our databases, including:">عند حذف حسابك، سيتم إزالة كافة المعلومات التي ترتبط بك نهائياً من قواعد بيانتنا، ويشمل ذلك:</p>
+      <h2 data-ar="3. ما هي البيانات التي تُحذف وما يُحتفظ به؟" data-en="3. What Data Is Deleted and What Is Retained?">3. ما هي البيانات التي تُحذف وما يُحتفظ به؟</h2>
       <ul>
-        <li data-ar="البيانات الشخصية كالأسم ورقم الهاتف والبريد الإلكتروني والصورة الشخصية." data-en="Personal data such as Name, Phone Number, Email, and Profile Picture.">البيانات الشخصية كالأسم ورقم الهاتف والبريد الإلكتروني والصورة الشخصية.</li>
-        <li data-ar="تاريخ المواقع الجغرافية والعناوين المسجلة." data-en="Location history and registered addresses.">تاريخ المواقع الجغرافية والعناوين المسجلة.</li>
-        <li data-ar="سجل الحجوزات والطلبات وتقييمات الحرفيين." data-en="Booking history, requests, and craftsman reviews.">سجل الحجوزات والطلبات وتقييمات الحرفيين.</li>
-        <li data-ar="سجلات المحادثات و المراسلات المرتبطة بالحساب." data-en="Chat logs and correspondence linked to the account.">سجلات المحادثات و المراسلات المرتبطة بالحساب.</li>
+        <li data-ar="البيانات التي تُحذف نهائياً: الاسم، البريد الإلكتروني، رقم الهاتف، صورة الملف الشخصي، رموز الإشعارات FCM، طلبات الانضمام، وأي محادثات خاصة مسجلة."
+            data-en="Permanently Deleted Data: Name, email, phone number, profile photo, FCM push tokens, join requests, and private chats.">
+          البيانات التي تُحذف نهائياً: الاسم، البريد الإلكتروني، رقم الهاتف، صورة الملف الشخصي، رموز الإشعارات FCM، طلبات الانضمام، وأي محادثات خاصة مسجلة.
+        </li>
+        <li data-ar="البيانات الأرشيفية المجهولة: نتائج المباريات التي لعبها الفريق والأهداف المسجلة في البطولات تبقى كأرقام إحصائية للبطولة لمنع تشويه جداول الترتيب، لكنها تُفصل تماماً عن أي هوية شخصية."
+            data-en="Anonymized Historical Records: Match results and tournament match scores remain intact to prevent disrupting tournament standings, but are completely dissociated from any personal identity.">
+          البيانات الأرشيفية المجهولة: نتائج المباريات التي لعبها الفريق والأهداف المسجلة في البطولات تبقى كأرقام إحصائية للبطولة لمنع تشويه جداول الترتيب، لكنها تُفصل تماماً عن أي هوية شخصية.
+        </li>
       </ul>
 
-      <p style="margin-top:20px; color: var(--text-sub);"><small data-ar="آخر تحديث: أبريل 2026" data-en="Last updated: April 2026">آخر تحديث: أبريل 2026</small></p>
+      <div class="contact-box">
+        <p data-ar="للمزيد من الاستفسارات أو الشكاوى، تواصل معنا عبر البريد: support@speed3d.com"
+           data-en="For further inquiries or questions, contact us at: support@speed3d.com">
+          للمزيد من الاستفسارات أو الشكاوى، تواصل معنا عبر البريد: <a href="mailto:support@speed3d.com">support@speed3d.com</a>
+        </p>
+      </div>
     </div>
   </div>
 
   <footer>
-    <p>
-      © 2026 حرفي العراق — Iraqi Craftsman. <span data-ar="جميع الحقوق محفوظة." data-en="All Rights Reserved.">جميع الحقوق محفوظة.</span>
-    </p>
+    <p>© 2026 طوبة (Touba) — Speed3D. <span data-ar="جميع الحقوق محفوظة." data-en="All Rights Reserved.">جميع الحقوق محفوظة.</span></p>
   </footer>
 
   <script>
-    window.setLang = function(lang) {
+    function setLang(lang) {
       localStorage.setItem('preferredLang', lang);
-      const body = document.getElementById('body');
-      body.className = lang;
-      body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-      
+      const html = document.getElementById('html-root');
+      html.setAttribute('lang', lang);
+      html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
       document.querySelectorAll('.lang-btn').forEach((btn, i) => {
         btn.classList.toggle('active', (lang === 'ar' && i === 0) || (lang === 'en' && i === 1));
       });
@@ -265,17 +268,11 @@
       document.querySelectorAll('[data-ar]').forEach(el => {
         el.textContent = lang === 'ar' ? el.dataset.ar : (el.dataset.en || el.dataset.ar);
       });
-    };
-
-    window.addEventListener('storage', function(e) {
-      if (e.key === 'preferredLang' && e.newValue) {
-        setLang(e.newValue);
-      }
-    });
+    }
 
     window.onload = function() {
-      const savedLang = localStorage.getItem('preferredLang') || 'ar';
-      setLang(savedLang);
+      const saved = localStorage.getItem('preferredLang') || 'ar';
+      setLang(saved);
     };
   </script>
 </body>

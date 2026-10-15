@@ -1469,8 +1469,15 @@ exports.startTrialIfEligible = onCall(async (request) => {
   const userRef = db.collection("users").doc(uid);
   const snap = await userRef.get();
   if (!snap.exists) return {granted: false};
-  const u = snap.data();
-  if (u.role !== "captain") return {granted: false};
+  let isCaptain = u.role === "captain";
+  if (!isCaptain) {
+    const teamsSnap = await db.collection("teams").where("captainId", "==", uid).limit(1).get();
+    if (!teamsSnap.empty) {
+      isCaptain = true;
+      await userRef.set({role: "captain", captainTeamId: teamsSnap.docs[0].id}, {merge: true});
+    }
+  }
+  if (!isCaptain) return {granted: false};
   if (u.subscriptionExpiresAt) return {granted: false};
 
   let trialDays = 14;
@@ -1718,3 +1725,108 @@ exports.remindLineup = onCall(async (request) => {
   );
   return {success: true};
 });
+
+// ============================================================================
+// 25) إدارة دور وصلاحيات الكابتن تلقائياً عند إنشاء أو تعديل أو حذف الفريق
+// ============================================================================
+// 📝 HINT AR: عند إنشاء فريق — يُمنح الكابتن دور 'captain' وCustom Claim captain=true.
+// وعند حذف الفريق أو نقل الكابتنية — يُسحب الدور والـClaim إن لم يكن يمتلك فريقاً آخر.
+exports.onTeamWritten = onDocumentWritten("teams/{teamId}", async (event) => {
+  const before = event.data && event.data.before ? event.data.before.data() : null;
+  const after = event.data && event.data.after ? event.data.after.data() : null;
+  const teamId = event.params.teamId;
+  const fv = admin.firestore.FieldValue;
+
+  // 1. إنشاء فريق جديد
+  if (!before && after) {
+    const captainId = after.captainId;
+    if (captainId) {
+      try {
+        const user = await admin.auth().getUser(captainId);
+        const claims = Object.assign({}, user.customClaims || {});
+        claims.captain = true;
+        await admin.auth().setCustomUserClaims(captainId, claims);
+      } catch (e) {
+        logger.warn("تعذّر منح claim الكابتن", {captainId, error: `${e}`});
+      }
+      await db.collection("users").doc(captainId).set({
+        role: "captain",
+        captainTeamId: teamId,
+        updatedAt: fv.serverTimestamp(),
+      }, {merge: true});
+    }
+    return;
+  }
+
+  // 2. حذف الفريق
+  if (before && !after) {
+    const oldCaptainId = before.captainId;
+    if (oldCaptainId) {
+      const otherTeams = await db.collection("teams")
+        .where("captainId", "==", oldCaptainId)
+        .limit(1)
+        .get();
+      if (otherTeams.empty) {
+        try {
+          const user = await admin.auth().getUser(oldCaptainId);
+          const claims = Object.assign({}, user.customClaims || {});
+          delete claims.captain;
+          await admin.auth().setCustomUserClaims(oldCaptainId, claims);
+        } catch (e) {
+          logger.warn("تعذّر سحب claim الكابتن", {oldCaptainId, error: `${e}`});
+        }
+        await db.collection("users").doc(oldCaptainId).set({
+          role: "user",
+          captainTeamId: null,
+          updatedAt: fv.serverTimestamp(),
+        }, {merge: true});
+      }
+    }
+    return;
+  }
+
+  // 3. تعديل الكابتن (نقل الكابتنية)
+  if (before && after && before.captainId !== after.captainId) {
+    const oldCaptainId = before.captainId;
+    const newCaptainId = after.captainId;
+
+    if (newCaptainId) {
+      try {
+        const user = await admin.auth().getUser(newCaptainId);
+        const claims = Object.assign({}, user.customClaims || {});
+        claims.captain = true;
+        await admin.auth().setCustomUserClaims(newCaptainId, claims);
+      } catch (e) {
+        logger.warn("تعذّر منح claim الكابتن الجديد", {newCaptainId, error: `${e}`});
+      }
+      await db.collection("users").doc(newCaptainId).set({
+        role: "captain",
+        captainTeamId: teamId,
+        updatedAt: fv.serverTimestamp(),
+      }, {merge: true});
+    }
+
+    if (oldCaptainId) {
+      const otherTeams = await db.collection("teams")
+        .where("captainId", "==", oldCaptainId)
+        .limit(1)
+        .get();
+      if (otherTeams.empty) {
+        try {
+          const user = await admin.auth().getUser(oldCaptainId);
+          const claims = Object.assign({}, user.customClaims || {});
+          delete claims.captain;
+          await admin.auth().setCustomUserClaims(oldCaptainId, claims);
+        } catch (e) {
+          logger.warn("تعذّر سحب claim الكابتن السابق", {oldCaptainId, error: `${e}`});
+        }
+        await db.collection("users").doc(oldCaptainId).set({
+          role: "user",
+          captainTeamId: null,
+          updatedAt: fv.serverTimestamp(),
+        }, {merge: true});
+      }
+    }
+  }
+});
+

@@ -116,4 +116,20 @@ class UserRepository {
       throw AuthException('حدث خطأ أثناء البحث عن المستخدمين');
     }
   }
+
+  Future<Map<String, dynamic>?> getRefereeProfile(String uid) async {
+    try {
+      final doc = await _firestore.collection('refereeProfiles').doc(uid).get();
+      return doc.data();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> updateRefereeProfile(String uid, Map<String, dynamic> data) async {
+    await _firestore.collection('refereeProfiles').doc(uid).set({
+      ...data,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
 }

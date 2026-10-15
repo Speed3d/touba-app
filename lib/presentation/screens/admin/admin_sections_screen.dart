@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../data/repositories/config_repository.dart';
 import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -15,11 +16,7 @@ class AdminSectionsScreen extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context)!;
     try {
-      await FirebaseFirestore.instance
-          .collection('settings')
-          .doc('features')
-          .set({key: value, 'updatedAt': FieldValue.serverTimestamp()},
-              SetOptions(merge: true));
+      await context.read<ConfigRepository>().setFeatureFlag(key, value);
     } catch (_) {
       messenger.showSnackBar(ToobaSnackBar.buildError(l10n.failedToSaveSettings));
     }
@@ -38,13 +35,10 @@ class AdminSectionsScreen extends StatelessWidget {
       ),
       body: DecoratedBackground(
         showOrbs: false,
-        child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-          stream: FirebaseFirestore.instance
-              .collection('settings')
-              .doc('features')
-              .snapshots(),
+        child: StreamBuilder<Map<String, dynamic>>(
+          stream: context.read<ConfigRepository>().streamFeatures(),
           builder: (context, snap) {
-            final data = snap.data?.data() ?? {};
+            final data = snap.data ?? {};
             final tournamentsEnabled =
                 data['tournamentsEnabled'] as bool? ?? true;
             return ListView(

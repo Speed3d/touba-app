@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -22,6 +23,9 @@ class NotificationService {
 
   final _unreadCountController = StreamController<int>.broadcast();
   Stream<int> get unreadCountStream => _unreadCountController.stream;
+
+  final _tapController = StreamController<Map<String, dynamic>>.broadcast();
+  Stream<Map<String, dynamic>> get onNotificationTapped => _tapController.stream;
 
   bool _initialized = false;
 
@@ -47,6 +51,16 @@ class NotificationService {
     );
     await _localNotifications.initialize(
       const InitializationSettings(android: androidSettings, iOS: iosSettings),
+      onDidReceiveNotificationResponse: (response) {
+        if (response.payload != null && response.payload!.isNotEmpty) {
+          try {
+            final data = jsonDecode(response.payload!) as Map<String, dynamic>;
+            _tapController.add(data);
+          } catch (_) {
+            _tapController.add({'payload': response.payload});
+          }
+        }
+      },
     );
     await _localNotifications
         .resolvePlatformSpecificImplementation<
@@ -69,6 +83,20 @@ class NotificationService {
       _showLocalNotification(message);
       // 📝 HINT AR: إشعار جديد وصل والتطبيق مفتوح — نُحدّث بادج الجرس فوراً.
       refreshUnreadCount();
+    });
+
+    // النقر على الإشعار والتطبيق بالخلفية
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      if (message.data.isNotEmpty) {
+        _tapController.add(message.data);
+      }
+    });
+
+    // النقر على الإشعار والتطبيق مغلق تماماً (Terminated)
+    _fcm.getInitialMessage().then((message) {
+      if (message != null && message.data.isNotEmpty) {
+        _tapController.add(message.data);
+      }
     });
 
     // Token refresh — save updated token
@@ -131,6 +159,7 @@ class NotificationService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
+      payload: message.data.isNotEmpty ? jsonEncode(message.data) : null,
     );
   }
 

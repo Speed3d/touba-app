@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>باركود حرفي العراق — QR Code</title>
+  <title>باركود تطبيق طوبة — Touba QR Code</title>
   <link rel="icon" type="image/png" href="../logo.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
     :root {
       --primary: #10B981;
       --secondary: #3B82F6;
-      --accent: #8B5CF6;
+      --accent: #F59E0B;
       --bg-dark: #0f172a;
       --text-main: #f8fafc;
       --text-sub: #cbd5e1;
@@ -87,7 +87,6 @@
     }
     .subtitle { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 32px; }
 
-    /* QR preview */
     .qr-wrapper {
       display: inline-flex;
       align-items: center;
@@ -110,7 +109,6 @@
     }
     .qr-url span { color: var(--primary); font-weight: 700; }
 
-    /* Size selector */
     .size-selector {
       display: flex; align-items: center; justify-content: center;
       gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
@@ -129,7 +127,6 @@
       color: var(--primary);
     }
 
-    /* Download buttons */
     .download-row {
       display: flex; gap: 12px; justify-content: center;
       flex-wrap: wrap; margin-bottom: 20px;
@@ -152,7 +149,6 @@
     }
     .btn-svg:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.11); border-color: rgba(255, 255, 255, 0.25); }
 
-    /* Info */
     .info-box {
       background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2);
       border-radius: 12px; padding: 14px 18px; font-size: 0.82rem;
@@ -184,17 +180,15 @@
   </div>
 
   <div class="card">
-    <h1>باركود حرفي العراق</h1>
-    <p class="subtitle">امسح الكود لتحميل التطبيق — يعمل على Android و iOS</p>
+    <h1>باركود تطبيق طوبة</h1>
+    <p class="subtitle">امسح الكود لتحميل التطبيق — متاح للأجهزة الذكية</p>
 
-    <!-- QR preview — ملف SVG محلي، لا CDN -->
     <div class="qr-wrapper">
-      <img src="code.svg" alt="QR Code — iraqicraftsman.com/get">
+      <img src="code.svg" alt="QR Code — Touba App">
     </div>
 
-    <p class="qr-url">يشير إلى: <span>iraqicraftsman.com/get</span></p>
+    <p class="qr-url">رابط التحميل: <span>get/index.html</span></p>
 
-    <!-- Size selector -->
     <div class="size-selector">
       <span class="size-label">دقة التحميل:</span>
       <div class="size-btns">
@@ -205,23 +199,22 @@
       </div>
     </div>
 
-    <!-- Download buttons -->
     <div class="download-row">
-      <a id="btn-png" href="code-2000.png" download="craftsman-iraq-qr-2000px.png" class="btn-dl btn-png">
+      <a id="btn-png" href="code-2000.png" download="touba-qr-2000px.png" class="btn-dl btn-png">
         <i class="fas fa-download"></i> تحميل PNG عالي الدقة
       </a>
-      <a href="code.svg" download="craftsman-iraq-qr.svg" class="btn-dl btn-svg">
+      <a href="code.svg" download="touba-qr.svg" class="btn-dl btn-svg">
         <i class="fas fa-vector-square"></i> تحميل SVG للطباعة
       </a>
     </div>
 
     <div class="info-box">
-      <strong>✅ هذا الباركود خاص بك تماماً</strong> — لا يعتمد على أي موقع خارجي.<br>
-      يشفّر رابط موقعك المملوك لك، ويعمل للأبد طالما نطاقك نشط.<br>
-      <strong>SVG</strong> أفضل للطباعة — يمكن تكبيره بلا حدود بدون تشويه.
+      <strong>✅ هذا الباركود مخصص للترويج لمنصة طوبة</strong><br>
+      يمكنك طباعته على لافتات الملاعب، قمصان الفرق الشعبية، وبوسترات البطولات.<br>
+      <strong>SVG</strong> هو الخيار الأفضل للمطابع وتكبير الحجم بدون فقدان الجودة.
     </div>
 
-    <a href="https://iraqicraftsman.com" class="back-link">
+    <a href="../index.html" class="back-link">
       <i class="fas fa-arrow-right"></i>
       العودة للموقع الرئيسي
     </a>
@@ -235,7 +228,7 @@
       const size = file.replace('code-', '').replace('.png', '');
       const a = document.getElementById('btn-png');
       a.href = file;
-      a.download = 'craftsman-iraq-qr-' + size + '.png';
+      a.download = 'touba-qr-' + size + '.png';
     }
   </script>
 

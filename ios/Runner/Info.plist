@@ -2,27 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- أذونات الموقع الجغرافي — مطلوبة لمشاركة الموقع في المحادثة -->
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>يستخدم التطبيق موقعك لمشاركته في المحادثة مع الحرفي</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>يستخدم التطبيق موقعك لمشاركته في المحادثة مع الحرفي</string>
-
-	<!-- أذونات الكاميرا — مطلوبة لالتقاط صور الأعمال وصورة الملف الشخصي -->
+	<!-- أذونات الكاميرا — لالتقاط صورة الملف الشخصي وشعارات الفرق -->
 	<key>NSCameraUsageDescription</key>
-	<string>يستخدم التطبيق الكاميرا لالتقاط صور الأعمال وصورة الملف الشخصي</string>
+	<string>يحتاج تطبيق طوبة الوصول إلى الكاميرا لالتقاط صورة الملف الشخصي أو شعار الفريق أو صور اللاعبين</string>
 
-	<!-- أذونات مكتبة الصور — مطلوبة لاختيار الصور من الجهاز -->
+	<!-- أذونات مكتبة الصور — لاختيار الصور من الجهاز -->
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>يستخدم التطبيق مكتبة الصور لاختيار صور الأعمال وصورة الملف الشخصي</string>
+	<string>يحتاج تطبيق طوبة الوصول إلى مكتبة الصور لاختيار صورة الملف الشخصي، شعار الفريق، أو صور اللاعبين والبطولات</string>
 
 	<!-- إذن حفظ الصور في مكتبة الصور -->
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>يحتاج التطبيق إذنك لحفظ الصور في مكتبة الصور</string>
-
-	<!-- أذونات Face ID — مطلوبة لتسجيل الدخول السريع بالبصمة -->
-	<key>NSFaceIDUsageDescription</key>
-	<string>يستخدم التطبيق Face ID لتسجيل الدخول بشكل سريع وآمن</string>
+	<string>يحتاج تطبيق طوبة إذنك لحفظ صور التشكيلات وجداول البطولات في مكتبة الصور</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../../cubits/auth/auth_cubit.dart';
 import '../../cubits/auth/auth_state.dart';
@@ -14,15 +13,14 @@ import '../../../data/models/tournament_model.dart';
 import '../../../data/models/team_model.dart';
 import '../../../data/models/user_model.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../data/models/tournament_lineup_model.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/tournament_repository.dart';
-import '../../../data/repositories/tournament_lineup_repository.dart';
 import '../../../data/services/functions_service.dart';
 import 'enter_result_screen.dart';
-import 'tournament_rules_editor.dart';
 import 'tournament_lineup_screen.dart';
 import 'tournament_lineups_review_screen.dart';
+import 'widgets/tournament_rules_tab.dart';
+import 'widgets/tournament_teams_tab.dart';
 import '../matches/match_detail_screen.dart';
 import '../../widgets/core/live_match_timer.dart';
 import '../../widgets/core/standings_view.dart';
@@ -225,9 +223,9 @@ class TournamentDetailsScreen extends StatelessWidget {
               ),
                 ),
                 // ── تبويب «شروط وقوانين» ──
-                _rulesTab(context, state, canManage),
+                TournamentRulesTab(state: state, canManage: canManage),
                 // ── تبويب «الفرق المشاركة» ──
-                _teamsTab(context, state, canManage),
+                TournamentTeamsTab(state: state, canManage: canManage),
               ],
             );
           }
@@ -240,313 +238,6 @@ class TournamentDetailsScreen extends StatelessWidget {
       ),
       ),
     );
-  }
-
-  // 📝 HINT AR: تبويب «شروط وقوانين» — بانر إعلانات متحرك + نصّ الشروط/القوانين
-  // + لوكوات الداعمين بحجم كبير. المنظّم/الأدمن يحرّرها عبر زر «تعديل».
-  Widget _rulesTab(
-      BuildContext context, TournamentDetailsLoaded state, bool canManage) {
-    final t = state.tournament;
-    final hasRules = t.rules != null && t.rules!.trim().isNotEmpty;
-    final hasSponsors = t.sponsors.isNotEmpty;
-    final hasBanners = t.adBanners.isNotEmpty;
-    final empty = !hasRules && !hasSponsors && !hasBanners;
-
-    return RefreshIndicator(
-      onRefresh: () =>
-          context.read<TournamentCubit>().fetchDetails(tournamentId),
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          if (canManage) ...[
-            Align(
-              alignment: Alignment.centerLeft,
-              child: OutlinedButton.icon(
-                onPressed: () => _editRules(context, t),
-                icon: const Icon(Icons.edit, size: 16),
-                label: Text(AppLocalizations.of(context)!.editRulesAndSponsors),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-          if (hasBanners) ...[
-            _AdBannerSlider(images: t.adBanners),
-            const SizedBox(height: 20),
-          ],
-          if (hasRules) ...[
-            _sectionTitle(context, AppLocalizations.of(context)!.termsAndRulesTitle, Icons.gavel),
-            const SizedBox(height: 8),
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Text(t.rules!, style: const TextStyle(height: 1.6)),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-          if (hasSponsors) ...[
-            _sectionTitle(context, AppLocalizations.of(context)!.sponsorsTitle, Icons.handshake),
-            const SizedBox(height: 12),
-            _sponsorsView(t.sponsors),
-            const SizedBox(height: 20),
-          ],
-          if (empty)
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Center(
-                child: Column(
-                  children: [
-                    Icon(Icons.gavel, size: 48, color: Colors.grey.shade400),
-                    const SizedBox(height: 8),
-                    Text(
-                      canManage
-                          ? AppLocalizations.of(context)!.noRulesOrSponsorsEditToAdd
-                          : AppLocalizations.of(context)!.noRulesOrSponsors,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _sectionTitle(BuildContext context, String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(width: 6),
-        Text(title,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold)),
-      ],
-    );
-  }
-
-  // 📝 HINT AR: لوكوات الداعمين بحجم كبير (دوائر) + الاسم تحت كل لوغو.
-  Widget _sponsorsView(List<Sponsor> sponsors) {
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      alignment: WrapAlignment.center,
-      children: sponsors
-          .map((s) => SizedBox(
-                width: 100,
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.grey.shade100,
-                      backgroundImage: s.logoUrl.isNotEmpty
-                          ? ImageHelper.getProvider(s.logoUrl)
-                          : null,
-                      child: s.logoUrl.isEmpty
-                          ? const Icon(Icons.handshake, color: Colors.grey)
-                          : null,
-                    ),
-                    const SizedBox(height: 6),
-                    Text(s.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ))
-          .toList(),
-    );
-  }
-
-  // 📝 HINT AR: يفتح محرّر الشروط والداعمين (للمنظّم/الأدمن) ثم يعيد جلب التفاصيل.
-  void _editRules(BuildContext context, TournamentModel t) {
-    final cubit = context.read<TournamentCubit>();
-    final repo = context.read<TournamentRepository>();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => TournamentRulesEditor(
-        tournament: t,
-        repo: repo,
-        onSaved: () => cubit.fetchDetails(tournamentId),
-      ),
-    );
-  }
-
-  // 📝 HINT AR: تبويب «الفرق المشاركة» (بند 2) — كل الفرق مع حالة تشكيلتها (لم
-  // يُرسل / تم الإرسال / تم التحقق / مرفوضة). الضغط على فريق أرسل يفتح المراجعة
-  // (لاعبوها قابلون للنقر لفتح صفحاتهم)؛ وفريق لم يُرسل يفتح نافذة تذكير (للمنظّم).
-  Widget _teamsTab(
-      BuildContext context, TournamentDetailsLoaded state, bool canManage) {
-    final t = state.tournament;
-    return FutureBuilder<List<TournamentLineupModel>>(
-      future: context
-          .read<TournamentLineupRepository>()
-          .getLineupsForTournament(t.id),
-      builder: (context, snap) {
-        if (snap.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final byTeam = {
-          for (final l in snap.data ?? <TournamentLineupModel>[]) l.teamId: l
-        };
-        return RefreshIndicator(
-          onRefresh: () =>
-              context.read<TournamentCubit>().fetchDetails(tournamentId),
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Text(AppLocalizations.of(context)!.teamLineupsStatus(t.teamIds.length.toString()),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Text(
-                  canManage
-                      ? AppLocalizations.of(context)!.tapToReviewOrRemind
-                      : AppLocalizations.of(context)!.tapToViewLineup,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-              const SizedBox(height: 12),
-              if (t.teamIds.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(AppLocalizations.of(context)!.noParticipatingTeams,
-                      style: TextStyle(color: Colors.grey[600])),
-                )
-              else
-                ...t.teamIds.map((id) => _teamStatusCard(
-                    context, state, id, byTeam[id], canManage)),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _teamStatusCard(BuildContext context, TournamentDetailsLoaded state,
-      String teamId, TournamentLineupModel? lineup, bool canManage) {
-    final team = state.teamsById[teamId];
-    final name = team?.name ?? '—';
-    Color color;
-    String label;
-    IconData icon;
-    if (lineup == null) {
-      color = Colors.orange;
-      label = AppLocalizations.of(context)!.notSent;
-      icon = Icons.hourglass_empty;
-    } else if (lineup.isApproved) {
-      color = Colors.green;
-      label = AppLocalizations.of(context)!.verified;
-      icon = Icons.verified;
-    } else if (lineup.isRejected) {
-      color = Colors.red;
-      label = AppLocalizations.of(context)!.rejected;
-      icon = Icons.cancel;
-    } else {
-      color = Colors.blue;
-      label = AppLocalizations.of(context)!.sent;
-      icon = Icons.send;
-    }
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: _teamLogo(team?.logoUrl, 18),
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Row(
-          children: [
-            Icon(icon, size: 14, color: color),
-            const SizedBox(width: 4),
-            Text(label,
-                style: TextStyle(
-                    color: color,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold)),
-          ],
-        ),
-        trailing: Icon(
-            lineup == null && !canManage
-                ? Icons.lock_clock
-                : Icons.chevron_left,
-            color: Colors.grey[400]),
-        onTap: () {
-          if (lineup != null) {
-            Navigator.push(
-              context,
-              ToobaRoute.to(TournamentLineupsReviewScreen(
-                  tournamentId: state.tournament.id, canManage: canManage)),
-            );
-          } else if (canManage) {
-            _remindCaptain(context, state.tournament.id, teamId, name);
-          } else {
-            ToobaSnackBar.info(context, AppLocalizations.of(context)!.captainNotSentLineup);
-          }
-        },
-      ),
-    );
-  }
-
-  // 📝 HINT AR: تذكير كابتن لم يُرسل تشكيلته (عبر CF remindLineup) مع رسالة اختيارية.
-  Future<void> _remindCaptain(BuildContext context, String tournamentId,
-      String teamId, String teamName) async {
-    final ctrl = TextEditingController();
-    final messenger = ScaffoldMessenger.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.remindTeamX(teamName)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.remindCaptainMessageBody,
-              style: const TextStyle(fontSize: 13),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: ctrl,
-              maxLines: 2,
-              decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.customMessageOptional,
-                  border: const OutlineInputBorder()),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(AppLocalizations.of(context)!.cancelBtn)),
-          ElevatedButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(AppLocalizations.of(context)!.sendReminderBtn)),
-        ],
-      ),
-    );
-    if (ok != true) return;
-    try {
-      await FunctionsService()
-          .remindLineup(tournamentId, teamId, ctrl.text.trim());
-      if (context.mounted) {
-        messenger.showSnackBar(
-            ToobaSnackBar.buildSuccess(AppLocalizations.of(context)!.reminderSentToCaptainX(teamName)));
-      }
-    } catch (_) {
-      if (context.mounted) {
-        messenger.showSnackBar(ToobaSnackBar.buildError(AppLocalizations.of(context)!.failedToSendReminder));
-      }
-    }
   }
 
   // 📝 HINT AR: بانر تتويج البطل عند انتهاء البطولة — كأس/شعار البطل + الجوائز
@@ -633,6 +324,20 @@ class TournamentDetailsScreen extends StatelessWidget {
       default:
         return AppLocalizations.of(context)!.leagueType;
     }
+  }
+
+  Widget _sectionTitle(BuildContext context, String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
+        const SizedBox(width: 6),
+        Text(title,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold)),
+      ],
+    );
   }
 
   // 📝 HINT AR: الترتيب (دوري/مجموعات) و/أو شجرة الإقصائي (الوجبة 7). الدوري:
@@ -1308,92 +1013,3 @@ class TournamentDetailsScreen extends StatelessWidget {
   }
 }
 
-/// 📝 HINT AR: سلايدر صور إعلانات تلقائي للبطولة (PageView بلا اعتمادية إضافية)
-/// + نقاط مؤشّر. الصور cache-first. يلتفّ للبداية بعد آخر صورة كل 5 ثوانٍ.
-class _AdBannerSlider extends StatefulWidget {
-  final List<String> images;
-  const _AdBannerSlider({required this.images});
-
-  @override
-  State<_AdBannerSlider> createState() => _AdBannerSliderState();
-}
-
-class _AdBannerSliderState extends State<_AdBannerSlider> {
-  final _controller = PageController();
-  int _current = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.images.length > 1) {
-      _timer = Timer.periodic(const Duration(seconds: 5), (_) {
-        if (!mounted || !_controller.hasClients) return;
-        final next = (_current + 1) % widget.images.length;
-        _controller.animateToPage(
-          next,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
-        );
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 150,
-          child: PageView.builder(
-            controller: _controller,
-            itemCount: widget.images.length,
-            onPageChanged: (i) => setState(() => _current = i),
-            itemBuilder: (context, i) => ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: CachedNetworkImage(
-                imageUrl: widget.images[i],
-                fit: BoxFit.cover,
-                width: double.infinity,
-                placeholder: (c, u) => Container(color: Colors.grey.shade200),
-                errorWidget: (c, u, e) => Container(
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.image_not_supported,
-                      color: Colors.grey),
-                ),
-              ),
-            ),
-          ),
-        ),
-        if (widget.images.length > 1) ...[
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              widget.images.length,
-              (i) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: _current == i ? 18 : 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: _current == i
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}

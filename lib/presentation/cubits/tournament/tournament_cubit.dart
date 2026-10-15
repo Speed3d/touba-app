@@ -93,7 +93,6 @@ class TournamentCubit extends Cubit<TournamentState> {
         qualifiersPerGroup: qualifiersPerGroup,
         groups: groupsMap,
       );
-      await _tournamentRepo.createTournament(tournament);
 
       final teamsById = {for (final t in teams) t.id: t};
 
@@ -163,9 +162,9 @@ class TournamentCubit extends Cubit<TournamentState> {
       // 📝 HINT AR: توزيع الحكّام عشوائياً — لا يتكرّر حكم في نفس التاريخ/الوقت.
       final withReferees = _distributeReferees(matches, referees);
 
-      if (withReferees.isNotEmpty) {
-        await _matchRepo.createMatchesBatch(withReferees);
-      }
+      // 📝 HINT AR: حفظ البطولة ومبارياتها الأولية دفعة ذرّية واحدة (Atomic Batch)
+      // لضمان عدم وجود بطولات بدون مباريات عند حدوث أي انقطاع بالشبكة.
+      await _tournamentRepo.createTournamentWithMatches(tournament, withReferees);
 
       final list = await _tournamentRepo.getTournaments();
       emit(TournamentsLoaded(list));

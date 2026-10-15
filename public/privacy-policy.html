@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="html-root">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سياسة الخصوصية — حرفي العراق | Privacy Policy</title>
-  <meta name="description" content="سياسة الخصوصية لمنصة حرفي العراق">
+  <title>سياسة الخصوصية — طوبة | Privacy Policy</title>
+  <meta name="description" content="سياسة الخصوصية الرسمية لمنصة طوبة لكرة القدم الشعبية في العراق">
   <link rel="icon" type="image/png" href="logo.png">
 
   <!-- Google Fonts -->
@@ -14,21 +14,14 @@
 
   <style>
     :root {
-      /* Theme Colors */
-      --primary: #10B981; /* Emerald Green */
-      --secondary: #3B82F6; /* Blue */
-      --accent: #8B5CF6; /* Purple for depth */
-      
-      --bg-dark: #0f172a;
-      --text-main: #f8fafc;
-      --text-sub: #cbd5e1;
-      
-      /* Glassmorphism settings */
-      --glass-bg: rgba(255, 255, 255, 0.03);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-blur: blur(20px);
-      --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      --radius: 20px;
+      --primary: #0D9488;
+      --primary-light: #10B981;
+      --bg-dark: #0B1319;
+      --card-bg: #111C24;
+      --card-border: #1E2A38;
+      --text-main: #F8FAFC;
+      --text-sub: #94A3B8;
+      --radius: 16px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -40,139 +33,131 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-      position: relative;
+      line-height: 1.8;
     }
 
-    /* Animated Background Orbs */
-    .orbs-wrapper {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1; overflow: hidden; pointer-events: none;
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.5;
-      animation: float 20s infinite ease-in-out alternate;
-    }
-    .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
-    .orb-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -200px; left: -100px; animation-delay: -5s; }
-    .orb-3 { width: 300px; height: 300px; background: var(--accent); top: 40%; left: 30%; animation-duration: 25s; opacity: 0.3; }
-
-    @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(100px, 150px) scale(1.2); }
-    }
-
-    /* Lang Toggle */
     .lang-bar {
-      position: absolute; top: 20px; right: 20px;
-      display: flex; gap: 8px; z-index: 10;
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 24px;
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
     }
-    body.en .lang-bar { right: auto; left: 20px; }
-    
-    .lang-btn {
-      padding: 8px 16px; border-radius: 12px;
-      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border); color: var(--text-main);
-      cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.2s;
-    }
-    .lang-btn.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
 
-    /* Layout */
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active, .lang-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
     .container {
       max-width: 900px;
       margin: 0 auto;
-      padding: 80px 16px 80px;
-      width: 100%;
+      padding: 0 20px 40px;
       flex: 1;
+      width: 100%;
     }
 
-    /* Logo */
-    .logo {
-      width: 140px; height: 140px; 
-      margin: 0 auto 30px;
-      border-radius: 50%;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      /* Pulse Animation */
-      animation: pulse 3s infinite alternate;
-    }
-    .logo img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      100% { box-shadow: 0 0 0 30px rgba(16, 185, 129, 0); }
-    }
-
-    /* Header */
     header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
 
-    header h1 {
-      font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;
-      background: linear-gradient(135deg, #fff, #94a3b8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .logo img {
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 2px solid var(--primary);
+      box-shadow: 0 8px 24px rgba(13, 148, 136, 0.25);
     }
 
-    .btn-back {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 24px; border-radius: 22px; margin-bottom: 20px;
-      background: var(--glass-bg); backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border); color: white;
-      text-decoration: none; font-size: 1rem; transition: all 0.3s;
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
     }
-    .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
-    body.en .btn-back:hover { transform: translateX(-5px); }
 
-    /* Content Card */
-    .content-card {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 40px;
-      box-shadow: var(--shadow);
-      line-height: 1.8;
+    .subtitle {
       color: var(--text-sub);
+      font-size: 15px;
     }
-    .content-card h2 {
-      font-size: 1.5rem; color: white; margin-top: 30px; margin-bottom: 15px; font-weight: 700;
-    }
-    .content-card h2:first-child { margin-top: 0; }
-    .content-card p { margin-bottom: 15px; }
-    .content-card ul { margin-bottom: 15px; padding-right: 20px; }
-    body.en .content-card ul { padding-right: 0; padding-left: 20px; }
-    .content-card li { margin-bottom: 8px; }
 
-    /* Footer */
+    .content-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      font-size: 18px;
+      color: var(--primary-light);
+      margin: 28px 0 14px;
+    }
+
+    h2:first-of-type { margin-top: 0; }
+
+    p, li {
+      color: var(--text-sub);
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+
+    ul {
+      padding-right: 24px;
+      margin-bottom: 20px;
+    }
+
+    html[dir="ltr"] ul {
+      padding-right: 0;
+      padding-left: 24px;
+    }
+
+    a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .contact-box {
+      background: rgba(13, 148, 136, 0.08);
+      border: 1px solid rgba(13, 148, 136, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
     footer {
-      background: rgba(0,0,0,0.3); text-align: center; padding: 30px 24px;
-      color: var(--text-sub); font-size: 0.9rem; border-top: 1px solid var(--glass-border);
-      backdrop-filter: blur(10px);
-      margin-top: auto;
+      text-align: center;
+      padding: 24px;
+      color: var(--text-sub);
+      font-size: 13px;
+      border-top: 1px solid var(--card-border);
     }
-
-    body.en { direction: ltr; text-align: left; }
   </style>
 </head>
-<body class="ar" id="body">
-
-  <!-- Animated Background -->
-  <div class="orbs-wrapper">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
+<body>
 
   <div class="lang-bar">
     <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
@@ -180,76 +165,90 @@
   </div>
 
   <div class="container">
-    <a href="https://iraqicraftsman.com/" class="btn-back" data-ar="→ العودة للرئيسية" data-en="← Back to Home">→ العودة للرئيسية</a>
-    
     <header>
-      <div class="logo"><img src="logo.png" alt="حرفي العراق"></div>
+      <div class="logo"><img src="logo.png" alt="طوبة - Touba"></div>
       <h1 data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة الخصوصية</h1>
+      <p class="subtitle" data-ar="منصة «طوبة» لكرة القدم الشعبية (com.speed3d.touba)" data-en="Touba Amateur Football Platform (com.speed3d.touba)">منصة «طوبة» لكرة القدم الشعبية (com.speed3d.touba)</p>
     </header>
 
     <div class="content-card">
-      <h2 data-ar="1. المعلومات التي نجمعها" data-en="1. Information We Collect">1. المعلومات التي نجمعها</h2>
+      <p data-ar="أهلاً بك في منصة «طوبة» (Touba)، المنصة الرياضية الرائدة لإدارة بطولات وفرق كرة القدم الشعبية والهواة في العراق. نحن نلتزم بحماية خصوصية مستخدمينا ومعلوماتهم الشخصية وفقاً لأعلى المعايير القانونية والتقنية."
+         data-en="Welcome to Touba, the leading sports platform for managing amateur and grassroots football tournaments and teams in Iraq. We are committed to protecting our users' privacy and personal information in accordance with the highest legal and technical standards.">
+        أهلاً بك في منصة «طوبة» (Touba)، المنصة الرياضية الرائدة لإدارة بطولات وفرق كرة القدم الشعبية والهواة في العراق. نحن نلتزم بحماية خصوصية مستخدمينا ومعلوماتهم الشخصية وفقاً لأعلى المعايير القانونية والتقنية.
+      </p>
+
+      <h2 data-ar="1. البيانات التي نجمعها" data-en="1. Information We Collect">1. البيانات التي نجمعها</h2>
       <ul>
-        <li data-ar="الاسم، البريد الإلكتروني، ورقم الهاتف عند التسجيل كمعرف فريد لا يمكن تكراره." data-en="Name, email address, and Phone number upon registration as a unique, non-repeatable identifier.">الاسم، البريد الإلكتروني، ورقم الهاتف عند التسجيل كمعرف فريد لا يمكن تكراره.</li>
-        <li data-ar="الموقع الجغرافي (دقيق أو تقريبي): لعرض الحرفيين القريبين (بإذنك). يمكنك منح إذن الموقع التقريبي فقط إذا كنت تفضل ذلك." data-en="Location (precise or approximate): To show nearby craftsmen (with your permission). You may grant approximate location only if you prefer.">الموقع الجغرافي (دقيق أو تقريبي): لعرض الحرفيين القريبين (بإذنك). يمكنك منح إذن الموقع التقريبي فقط إذا كنت تفضل ذلك.</li>
-        <li data-ar="الكاميرا: لالتقاط صور الملف الشخصي. معرض الصور: لإرفاق أعمال الحرفيين وصور الطلبات." data-en="Camera: For capturing profile photos. Photo gallery: For attaching craftsmen portfolio images and service request photos.">الكاميرا: لالتقاط صور الملف الشخصي. معرض الصور: لإرفاق أعمال الحرفيين وصور الطلبات.</li>
-        <li data-ar="بيانات الجهاز والأعطال (Crashlytics): تُجمع بشكل مجهول لتحسين كفاءة التطبيق." data-en="Device info & Crash logs (Crashlytics): Collected anonymously to improve performance.">بيانات الجهاز والأعطال (Crashlytics): تُجمع بشكل مجهول لتحسين كفاءة التطبيق.</li>
-        <li data-ar="رمز الإحالة الخاص بك وبيانات الإحالات (مَن أحلت ومَن سجّل برمزك) بهدف احتساب المكافآت وتتبع برنامج الإحالة." data-en="Your referral code and referral data (who you referred and who registered using your code) for reward calculation and referral program tracking.">رمز الإحالة الخاص بك وبيانات الإحالات (مَن أحلت ومَن سجّل برمزك) بهدف احتساب المكافآت وتتبع برنامج الإحالة.</li>
+        <li data-ar="بيانات الحساب: الاسم، البريد الإلكتروني، رقم الهاتف، وصورة الحساب عند التسجيل."
+            data-en="Account Information: Name, email address, phone number, and profile picture upon registration.">
+          بيانات الحساب: الاسم، البريد الإلكتروني، رقم الهاتف، وصورة الحساب عند التسجيل.
+        </li>
+        <li data-ar="البيانات الرياضية (بطاقة اللاعب): المركز، رقم القميص، القدم المفضلة، الطول، الوزن، وتاريخ الميلاد لعرض العمر والتشكيلة."
+            data-en="Sports & Player Data: Playing position, shirt number, preferred foot, height, weight, and birth date to display player age and squad lineup.">
+          البيانات الرياضية (بطاقة اللاعب): المركز، رقم القميص، القدم المفضلة، الطول، الوزن، وتاريخ الميلاد لعرض العمر والتشكيلة.
+        </li>
+        <li data-ar="بيانات الفرق والبطولات: أسماء الفرق، الشعارات، تشكيلات المباريات، وإحصائيات النتائج والأهداف والإنذارات."
+            data-en="Teams & Tournaments Data: Team names, club logos, match lineups, and match stats (goals, cards, and standings).">
+          بيانات الفرق والبطولات: أسماء الفرق، الشعارات، تشكيلات المباريات، وإحصائيات النتائج والأهداف والإنذارات.
+        </li>
+        <li data-ar="الصور والوسائط: الصور التي يختار المستخدم رفعها كشعار للفريق أو صور شخصية أو معارض الفرق."
+            data-en="Media & Photos: Images chosen by users for profile avatars, team logos, or team photo galleries.">
+          الصور والوسائط: الصور التي يختار المستخدم رفعها كشعار للفريق أو صور شخصية أو معارض الفرق.
+        </li>
+        <li data-ar="معلومات الجهاز والإشعارات: رموز FCM Push Tokens لإرسال إشعارات المباريات وطلبات الانضمام والتحديات."
+            data-en="Device & Notification Data: FCM push tokens to deliver match updates, join requests, and challenge alerts.">
+          معلومات الجهاز والإشعارات: رموز FCM Push Tokens لإرسال إشعارات المباريات وطلبات الانضمام والتحديات.
+        </li>
       </ul>
 
-      <h2 data-ar="2. تسجيل الدخول عبر منصات خارجية" data-en="2. Social Login">2. تسجيل الدخول عبر منصات خارجية</h2>
+      <h2 data-ar="2. كيف نستخدم بياناتك؟" data-en="2. How We Use Your Information">2. كيف نستخدم بياناتك؟</h2>
       <ul>
-        <li data-ar="عند التسجيل بواسطة Google أو Facebook، نصل لمعلوماتك الأساسية المرتبطة بالحساب فقط." data-en="If you log in via Google or Facebook, we only access basic info linked to those accounts.">عند التسجيل بواسطة Google أو Facebook، نصل لمعلوماتك الأساسية المرتبطة بالحساب فقط.</li>
-        <li data-ar="لا نصل ولا نخزن كلمات المرور الخاصة بك على تلك المنصات بأي شكل." data-en="We do not have access to or store your external service passwords in any way.">لا نصل ولا نخزن كلمات المرور الخاصة بك على تلك المنصات بأي شكل.</li>
+        <li data-ar="تشغيل وإدارة مباريات وبطولات كرة القدم، وحساب جداول الترتيب وتصنيف الفرق آلياً."
+            data-en="Operating and managing football matches and tournaments, and automatically computing standings and team ratings.">
+          تشغيل وإدارة مباريات وبطولات كرة القدم، وحساب جداول الترتيب وتصنيف الفرق آلياً.
+        </li>
+        <li data-ar="تمكين التواصل والتنسيق بين كباتن الفرق لجدولة المباريات الودية والتحديات."
+            data-en="Enabling communication and match coordination between team captains for friendly challenges.">
+          تمكين التواصل والتنسيق بين كباتن الفرق لجدولة المباريات الودية والتحديات.
+        </li>
+        <li data-ar="إرسال التنبيهات والإشعارات الفورية بنتائج المباريات والقرارات الإدارية."
+            data-en="Sending instant push notifications for match results and administrative updates.">
+          إرسال التنبيهات والإشعارات الفورية بنتائج المباريات والقرارات الإدارية.
+        </li>
       </ul>
 
-      <h2 data-ar="3. كيف نستخدم معلوماتك" data-en="3. How We Use Information">3. كيف نستخدم معلوماتك</h2>
-      <ul>
-        <li data-ar="توفير الخدمات الأساسية في التطبيق وتسهيل التواصل." data-en="Provide core app features and facilitate communication.">توفير الخدمات الأساسية في التطبيق وتسهيل التواصل.</li>
-        <li data-ar="تحسين تجربة الاستخدام من خلال تحليل البيانات التشخيصية وتقارير الأعطال." data-en="Analyze diagnostic data to enhance user experience and app stability.">تحسين تجربة الاستخدام من خلال تحليل البيانات التشخيصية وتقارير الأعطال.</li>
-        <li data-ar="منع الاحتيال والمحافظة على أمان المنصة." data-en="Prevent fraud and ensure platform safety.">منع الاحتيال والمحافظة على أمان المنصة.</li>
-      </ul>
+      <h2 data-ar="3. مشاركة وحماية البيانات" data-en="3. Data Sharing & Security">3. مشاركة وحماية البيانات</h2>
+      <p data-ar="نحن لا نبيع أو نؤجر أي بيانات شخصية لأي أطراف ثالثة لأغراض إعلانية على الإطلاق. تُخزن البيانات بأمان فائق على بنية Google Cloud و Firebase السحابية، وتخضع لقواعد أمان مشددة تمنع الوصول غير المصرح به."
+         data-en="We strictly do not sell or rent personal information to third parties for advertising. Data is securely hosted on Google Cloud and Firebase infrastructure under strict security rules preventing unauthorized access.">
+        نحن لا نبيع أو نؤجر أي بيانات شخصية لأي أطراف ثالثة لأغراض إعلانية على الإطلاق. تُخزن البيانات بأمان فائق على بنية Google Cloud و Firebase السحابية، وتخضع لقواعد أمان مشددة تمنع الوصول غير المصرح به.
+      </p>
 
-      <h2 data-ar="4. مشاركة المعلومات وأمان البيانات" data-en="4. Information Sharing & Security">4. مشاركة المعلومات وأمان البيانات</h2>
-      <ul>
-        <li data-ar="لا نبيع أو نؤجر بياناتك الشخصية أبداً لأي أطراف ثالثة." data-en="We never sell or rent your personal data to third parties.">لا نبيع أو نؤجر بياناتك الشخصية أبداً لأي أطراف ثالثة.</li>
-        <li data-ar="نستخدم خدمات Firebase من Google لحفظ البيانات وتشفيرها (SSL/TLS)." data-en="We use Firebase (Google) to securely store and encrypt data (SSL/TLS).">نستخدم خدمات Firebase من Google لحفظ البيانات وتشفيرها (SSL/TLS).</li>
-        <li data-ar="تُخزن بيانات البصمة على جهازك المحلي فقط وتوفر حماية قصوى." data-en="Biometric login data is stored securely and locally on your device only.">تُخزن بيانات البصمة على جهازك المحلي فقط وتوفر حماية قصوى.</li>
-      </ul>
+      <h2 data-ar="4. حقوق المستخدم وحذف البيانات" data-en="4. User Rights & Data Deletion">4. حقوق المستخدم وحذف البيانات</h2>
+      <p data-ar="يحق لأي مستخدم حذف حسابه وكافة بياناته نهائياً في أي وقت مباشرة من شاشة الإعدادات داخل التطبيق أو بمراسلتنا. للمزيد من التفاصيل، راجع <a href='data-deletion.html'>صفحة تعليمات حذف البيانات</a>."
+         data-en="Every user has the right to permanently delete their account and data anytime directly from Settings inside the app or by contacting us. For full details, visit our <a href='data-deletion.html'>Data Deletion Instructions</a>.">
+        يحق لأي مستخدم حذف حسابه وكافة بياناته نهائياً في أي وقت مباشرة من شاشة الإعدادات داخل التطبيق أو بمراسلتنا. للمزيد من التفاصيل، راجع <a href="data-deletion.html">صفحة تعليمات حذف البيانات</a>.
+      </p>
 
-      <h2 data-ar="5. حقوقك وحذف البيانات" data-en="5. Your Rights & Data Deletion">5. حقوقك وحذف البيانات</h2>
-      <ul>
-        <li data-ar="وصول وتعديل: يحق لك الاطلاع على بياناتك وإدارتها من ملفك الشخصي." data-en="Access & Modify: You can view and edit your data from your profile.">وصول وتعديل: يحق لك الاطلاع على بياناتك وإدارتها من ملفك الشخصي.</li>
-        <li data-ar="حذف البيانات: يحق لك المطالبة بحذف حسابك وكافة بياناتك نهائياً من إعدادات التطبيق." data-en="Deletion: You have the right to permanently delete your account and data from 'Settings'.">حذف البيانات: يحق لك المطالبة بحذف حسابك وكافة بياناتك نهائياً من إعدادات التطبيق.</li>
-        <li data-ar="لحذف الحساب من خارج التطبيق، يُرجى التواصل على الإيميل: support@iraqicraftsman.com" data-en="To request deletion directly, email us at: support@iraqicraftsman.com.">لحذف الحساب من خارج التطبيق، يُرجى التواصل على الإيميل: support@iraqicraftsman.com</li>
-      </ul>
-
-      <h2 data-ar="6. خصوصية الأطفال" data-en="6. Children's Privacy">6. خصوصية الأطفال</h2>
-      <ul>
-        <li data-ar="التطبيق غير موجَّه للأشخاص دون 18 سنة." data-en="The app is not intended for individuals under 18.">التطبيق غير موجَّه للأشخاص دون 18 سنة.</li>
-        <li data-ar="لا نجمع بيانات الأطفال عن قصد وتُحذف فور اكتشافها." data-en="We do not knowingly collect children's data.">لا نجمع بيانات الأطفال عن قصد وتُحذف فور اكتشافها.</li>
-      </ul>
-
-      <h2 data-ar="7. التواصل معنا" data-en="7. Contact Us">7. التواصل معنا</h2>
-      <p data-ar="إذا كان لديك أي أسئلة، يُرجى زيارة قسم الدعم أو مراسلتنا عبر الإيميل أعلاه." data-en="If you have questions, contact us via Help & Support or the email above.">إذا كان لديك أي أسئلة، يُرجى زيارة قسم الدعم أو مراسلتنا عبر الإيميل أعلاه.</p>
-      
-      <p style="margin-top:20px; color: var(--text-sub);"><small data-ar="آخر تحديث: أبريل 2026" data-en="Last updated: April 2026">آخر تحديث: أبريل 2026</small></p>
+      <div class="contact-box">
+        <p data-ar="لأي استفسار بخصوص سياسة الخصوصية، يرجى التواصل مع فريق الدعم عبر: support@speed3d.com"
+           data-en="For any privacy-related inquiries, please contact our support team at: support@speed3d.com">
+          لأي استفسار بخصوص سياسة الخصوصية، يرجى التواصل مع فريق الدعم عبر: <a href="mailto:support@speed3d.com">support@speed3d.com</a>
+        </p>
+      </div>
     </div>
   </div>
 
   <footer>
-    <p>
-      © 2026 حرفي العراق — Iraqi Craftsman. <span data-ar="جميع الحقوق محفوظة." data-en="All Rights Reserved.">جميع الحقوق محفوظة.</span>
-    </p>
+    <p>© 2026 طوبة (Touba) — Speed3D. <span data-ar="جميع الحقوق محفوظة." data-en="All Rights Reserved.">جميع الحقوق محفوظة.</span></p>
   </footer>
 
   <script>
-    window.setLang = function(lang) {
+    function setLang(lang) {
       localStorage.setItem('preferredLang', lang);
-      const body = document.getElementById('body');
-      body.className = lang;
-      body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-      
+      const html = document.getElementById('html-root');
+      html.setAttribute('lang', lang);
+      html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
       document.querySelectorAll('.lang-btn').forEach((btn, i) => {
         btn.classList.toggle('active', (lang === 'ar' && i === 0) || (lang === 'en' && i === 1));
       });
@@ -257,17 +256,11 @@
       document.querySelectorAll('[data-ar]').forEach(el => {
         el.textContent = lang === 'ar' ? el.dataset.ar : (el.dataset.en || el.dataset.ar);
       });
-    };
-
-    window.addEventListener('storage', function(e) {
-      if (e.key === 'preferredLang' && e.newValue) {
-        setLang(e.newValue);
-      }
-    });
+    }
 
     window.onload = function() {
-      const savedLang = localStorage.getItem('preferredLang') || 'ar';
-      setLang(savedLang);
+      const saved = localStorage.getItem('preferredLang') || 'ar';
+      setLang(saved);
     };
   </script>
 </body>

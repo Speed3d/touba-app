@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/tournament_model.dart';
+import '../models/match_model.dart';
 import '../models/referee_application_model.dart';
 
 /// 📝 HINT AR: التعامل مع مجموعة البطولات. الترتيب (standings) يكتبه النظام (CF).
@@ -16,6 +17,19 @@ class TournamentRepository {
         .collection('tournaments')
         .doc(tournament.id)
         .set(tournament.toJson());
+  }
+
+  /// 📝 HINT AR: إنشاء مستند البطولة ومبارياتها الأولية ذرّياً (Atomic Batch)
+  /// لضمان عدم بقاء بطولة يتيمة بدون مباريات عند انقطاع الشبكة.
+  Future<void> createTournamentWithMatches(
+      TournamentModel tournament, List<MatchModel> matches) async {
+    final batch = _firestore.batch();
+    batch.set(_firestore.collection('tournaments').doc(tournament.id),
+        tournament.toJson());
+    for (final m in matches) {
+      batch.set(_firestore.collection('matches').doc(m.id), m.toJson());
+    }
+    await batch.commit();
   }
 
   // 📝 HINT AR: رفع صورة البطولة (cover/cup) — مسار tournaments/{id}/... .
@@ -93,6 +107,14 @@ class TournamentRepository {
         .map((s) => s.docs
             .map((d) => RefereeApplicationModel.fromJson(d.data(), d.id))
             .toList());
+  }
+
+  // 📝 HINT AR: حسم طلب التحكيم (قبول أو رفض) من قبل الأدمن.
+  Future<void> resolveRefereeApplication(String id, String status) async {
+    await _firestore
+        .collection('referee_applications')
+        .doc(id)
+        .update({'status': status});
   }
 
   // 📝 HINT AR: بطولات شارك بها هذا الفريق (لعرض مركزه ونقاطه في كل بطولة).

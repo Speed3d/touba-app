@@ -4,14 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تحميل حرفي العراق — Iraqi Craftsman</title>
-  <meta name="description" content="حمّل تطبيق حرفي العراق على هاتفك الآن — المنصة الأذكى لربط الزبائن بالحرفيين في العراق">
+  <title>تحميل تطبيق طوبة — Touba App</title>
+  <meta name="description" content="حمّل تطبيق طوبة على هاتفك الآن — المنصة الأولى لتنظيم بطولات وإحصائيات كرة القدم للهواة في العراق">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="حرفي العراق — حمّل التطبيق">
-  <meta property="og:description" content="المنصة الأذكى لربط الزبائن بأمهر الحرفيين في العراق">
-  <meta property="og:image" content="https://iraqicraftsman.com/logo.png">
-  <meta property="og:url" content="https://iraqicraftsman.com/get">
+  <meta property="og:title" content="طوبة — حمّل تطبيق كرة القدم للهواة">
+  <meta property="og:description" content="المنصة الأولى لإدارة الفرق والبطولات وحجز المباريات في العراق">
+  <meta property="og:image" content="../logo.png">
   <meta property="og:type" content="website">
 
   <link rel="icon" type="image/png" href="../logo.png">
@@ -27,7 +26,7 @@
     :root {
       --primary: #10B981;
       --secondary: #3B82F6;
-      --accent: #8B5CF6;
+      --accent: #F59E0B;
       --bg-dark: #0f172a;
       --text-main: #f8fafc;
       --text-sub: #cbd5e1;
@@ -102,7 +101,7 @@
       top: 40%;
       left: 30%;
       animation-duration: 25s;
-      opacity: 0.3;
+      opacity: 0.25;
     }
 
     @keyframes float {
@@ -333,7 +332,6 @@
       margin-top: 3px;
     }
 
-    /* Cancel redirect button */
     .btn-cancel {
       display: flex;
       align-items: center;
@@ -357,7 +355,6 @@
       background: rgba(248, 113, 113, 0.12);
     }
 
-    /* ─── Divider ─── */
     .divider {
       display: flex;
       align-items: center;
@@ -375,32 +372,6 @@
       background: var(--glass-border);
     }
 
-    /* ─── Web Button ─── */
-    .btn-web {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 13px 20px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--glass-border);
-      color: var(--text-sub);
-      text-decoration: none;
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.25s;
-    }
-
-    .btn-web:hover {
-      background: rgba(255, 255, 255, 0.09);
-      color: var(--text-main);
-      border-color: rgba(255, 255, 255, 0.22);
-    }
-
-    /* ─── Back Link ─── */
     .back-link {
       margin-top: 20px;
       color: var(--text-sub);
@@ -425,14 +396,12 @@
 
 <body class="ar" id="body">
 
-  <!-- Background -->
   <div class="orbs-wrapper">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
   </div>
 
-  <!-- Language Toggle -->
   <div class="lang-bar">
     <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
     <button class="lang-btn" onclick="setLang('en')">English</button>
@@ -440,10 +409,10 @@
 
   <div class="card">
     <div class="logo">
-      <img src="../logo.png" alt="حرفي العراق">
+      <img src="../logo.png" alt="طوبة Touba">
     </div>
 
-    <h1>حرفي العراق</h1>
+    <h1>طوبة — Touba</h1>
     <p class="subtitle" id="el-subtitle"></p>
 
     <div class="os-badge" id="el-os-badge">
@@ -462,21 +431,16 @@
 
     <div class="divider"><span id="el-divider"></span></div>
 
-    <a href="https://app.iraqicraftsman.com" class="btn-web" target="_blank" rel="noopener">
-      <i class="fas fa-globe"></i>
-      <span id="el-web"></span>
-    </a>
-
-    <a href="https://iraqicraftsman.com" class="back-link">
+    <a href="../index.html" class="back-link">
       <i id="el-back-icon" class="fas fa-arrow-right"></i>
       <span id="el-back"></span>
     </a>
   </div>
 
   <script>
-    const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.craftsmaniraq.craftsman_iraq';
-    const PLAY_MARKET = 'market://details?id=com.craftsmaniraq.craftsman_iraq';
-    const APP_STORE_URL = null; // set to App Store URL when published
+    const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.speed3d.touba';
+    const PLAY_MARKET = 'market://details?id=com.speed3d.touba';
+    const APP_STORE_URL = null;
 
     const ua = navigator.userAgent || '';
     const isAndroid = /android/i.test(ua);
@@ -484,7 +448,7 @@
 
     const T = {
       ar: {
-        subtitle: 'المنصة الأذكى والأسرع لربط الزبائن بأمهر الحرفيين في العراق',
+        subtitle: 'المنصة الأولى لتنظيم بطولات وإحصائيات كرة القدم للهواة في العراق',
         badgeAndroid: 'تم الكشف عن جهاز Android',
         badgeIOS: 'تم الكشف عن جهاز iPhone / iPad',
         badgeDesktop: 'اختر منصتك',
@@ -496,11 +460,10 @@
         iosSoon: 'قريباً',
         cancel: 'إلغاء التوجيه التلقائي',
         divider: 'أو',
-        web: 'افتح من المتصفح',
         back: 'العودة للموقع الرئيسي',
       },
       en: {
-        subtitle: 'The smartest and fastest platform connecting customers with professional craftsmen across Iraq',
+        subtitle: 'The primary platform for amateur football tournaments and stats in Iraq',
         badgeAndroid: 'Android device detected',
         badgeIOS: 'iPhone / iPad detected',
         badgeDesktop: 'Choose your platform',
@@ -512,7 +475,6 @@
         iosSoon: 'Coming Soon',
         cancel: 'Cancel auto-redirect',
         divider: 'or',
-        web: 'Open in Browser',
         back: 'Back to main website',
       },
     };
@@ -523,7 +485,6 @@
 
     function t(key) { return T[lang][key] || T.ar[key]; }
 
-    // يحاول فتح تطبيق المتجر أولاً، يتراجع للمتصفح إذا لم يكن مثبتاً
     function openPlayStore(e) {
       e.preventDefault();
       window.location.href = PLAY_MARKET;
@@ -588,7 +549,6 @@
         textEl.textContent = t('countdownTpl').replace('{n}', remaining);
         if (elapsed >= totalMs && !redirectCancelled) {
           clearInterval(countdownInterval);
-          // market:// يفتح تطبيق المتجر مباشرة، مع fallback للمتصفح بعد 600ms
           window.location.href = PLAY_MARKET;
           setTimeout(function () { window.location.href = PLAY_URL; }, 600);
         }
@@ -605,7 +565,6 @@
     function render() {
       document.getElementById('el-subtitle').textContent = t('subtitle');
       document.getElementById('el-divider').textContent = t('divider');
-      document.getElementById('el-web').textContent = t('web');
       document.getElementById('el-back').textContent = t('back');
       document.getElementById('el-back-icon').className = lang === 'ar' ? 'fas fa-arrow-right' : 'fas fa-arrow-left';
 

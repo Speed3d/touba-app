@@ -1,8 +1,6 @@
-import '../../../core/utils/image_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
-import '../../../app/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/match_model.dart';
@@ -22,8 +20,10 @@ import '../../widgets/core/pitch_formation_view.dart';
 import '../../widgets/core/formation_share_sheet.dart';
 import '../../widgets/core/live_match_timer.dart';
 import '../../widgets/core/decorated_background.dart';
-import '../referee/referee_profile_screen.dart';
 import '../tournaments/enter_result_screen.dart';
+import 'widgets/match_events_timeline.dart';
+import 'widgets/match_live_controls.dart';
+import 'widgets/match_referee_rating_card.dart';
 import '../../../app/router/tooba_route.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -207,16 +207,6 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
         _awayCaptainId == user.id;
   }
 
-  // 📝 HINT AR: اسم اللاعب مسبوقاً بمركزه (بند 7) — «المهاجم - صلاح».
-  String _displayName(String id) {
-    final name = _names[id] ?? 'لاعب';
-    final pos = _positions[id];
-    if (pos != null && pos.isNotEmpty && pos != 'غير محدد') {
-      return '$pos - $name';
-    }
-    return name;
-  }
-
   @override
   Widget build(BuildContext context) {
     final m = _match;
@@ -288,11 +278,25 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                   const SizedBox(height: 12),
                 ],
                 if (_canManage && !m.resultConfirmed) ...[
-                  _liveControls(m),
+                  MatchLiveControls(
+                    match: m,
+                    halves: _halves,
+                    busy: _busy,
+                    onStartMatch: _startMatch,
+                    onScoreChange: _changeLiveScore,
+                    onConfirmHalf: _confirmHalf,
+                    onStartNextHalf: _startNextHalf,
+                    onOpenFinalEntry: _openFinalEntry,
+                  ),
                   const SizedBox(height: 16),
                 ],
                 if (m.resultConfirmed)
-                  _lineupCard(m)
+                  MatchEventsTimeline(
+                    match: m,
+                    names: _names,
+                    photos: _photos,
+                    positions: _positions,
+                  )
                 else if (m.status == 'live')
                   Center(
                     child: Padding(
@@ -314,7 +318,12 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
                     m.refereeId != null &&
                     m.refereeId!.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  _refereeRatingCard(m),
+                  MatchRefereeRatingCard(
+                    match: m,
+                    canRate: _canRate(m),
+                    alreadyRated: _alreadyRated,
+                    onRate: () => _rateReferee(m),
+                  ),
                 ],
               ],
             );
@@ -427,77 +436,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     );
   }
 
-  // 📝 HINT AR: بطاقة تقييم الحكم — متوسطه الحالي + زر لفتح منتقي النجوم.
-  Widget _refereeRatingCard(MatchModel m) {
-    final repo = context.read<MatchRepository>();
-    return FutureBuilder<({double rating, int count})>(
-      future: repo.getRefereeProfile(m.refereeId!),
-      builder: (context, snap) {
-        final avg = snap.data?.rating ?? 0;
-        final count = snap.data?.count ?? 0;
-        return Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () => Navigator.push(
-                    context,
-                    ToobaRoute.to(RefereeProfileScreen(
-                        refereeUid: m.refereeId!,
-                        refereeName: m.refereeName)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.sports, size: 18),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(AppLocalizations.of(context)!.refereeNameX(m.refereeName ?? "—"),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline)),
-                      ),
-                      if (count > 0) ...[
-                        const Icon(Icons.star, color: Colors.amber, size: 16),
-                        const SizedBox(width: 2),
-                        Text('${avg.toStringAsFixed(1)} ($count)',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold)),
-                      ],
-                      const SizedBox(width: 4),
-                      Icon(Icons.chevron_left,
-                          size: 18, color: Colors.grey[400]),
-                    ],
-                  ),
-                ),
-                // 📝 HINT AR: زر التقييم للمؤهَّلين فقط (منظّم/أدمن/كابتن الفريقين)
-                // ولمرة واحدة؛ غيرهم يرى المتوسط فقط بلا زر.
-                if (_canRate(m)) ...[
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.infinity,
-                    child: _alreadyRated
-                        ? OutlinedButton.icon(
-                            onPressed: null,
-                            icon: const Icon(Icons.check, size: 18),
-                            label: Text(AppLocalizations.of(context)!.ratedThisReferee),
-                          )
-                        : OutlinedButton.icon(
-                            onPressed: () => _rateReferee(m),
-                            icon: const Icon(Icons.star_outline, size: 18),
-                            label: Text(AppLocalizations.of(context)!.rateRefereePerformance),
-                          ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+
 
   Future<void> _rateReferee(MatchModel m) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -621,120 +560,7 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
     );
   }
 
-  // 📝 HINT AR: لوحة تحكّم المنظّم/الأدمن — بدء المباراة، النتيجة اللحظية، إنهاء
-  // الأشواط، والتأكيد النهائي (يفتح ورقة المباراة). تُعرض فقط للمؤهَّل وللمباراة
-  // غير المؤكّدة.
-  Widget _liveControls(MatchModel m) {
-    if (m.status == 'upcoming') {
-      return SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          onPressed: _busy ? null : _startMatch,
-          icon: const Icon(Icons.play_circle_fill),
-          label: Text(AppLocalizations.of(context)!.startMatch),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-          ),
-        ),
-      );
-    }
-    if (m.status != 'live') return const SizedBox.shrink();
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? AppColors.surfaceDark
-            : Colors.grey[100],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        children: [
-          Text(AppLocalizations.of(context)!.liveMatchControl,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              _liveTeamStepper(m.homeTeamName, m.homeScore, true),
-              Container(
-                  width: 1,
-                  height: 50,
-                  color: Colors.grey.withValues(alpha: 0.3)),
-              _liveTeamStepper(m.awayTeamName, m.awayScore, false),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
-            children: [
-              OutlinedButton.icon(
-                onPressed: _busy ? null : _confirmHalf,
-                icon: const Icon(Icons.flag, size: 16),
-                label: Text(AppLocalizations.of(context)!.endHalfX(m.currentHalf),
-                    style: const TextStyle(fontSize: 12)),
-              ),
-              if (m.currentHalf < _halves)
-                OutlinedButton.icon(
-                  onPressed: _busy ? null : _startNextHalf,
-                  icon: const Icon(Icons.fast_forward, size: 16),
-                  label: Text(AppLocalizations.of(context)!.startHalfX(m.currentHalf + 1),
-                      style: const TextStyle(fontSize: 12)),
-                ),
-              ElevatedButton.icon(
-                onPressed: _busy ? null : _openFinalEntry,
-                icon: const Icon(Icons.sports_score, size: 16),
-                label: Text(AppLocalizations.of(context)!.endAndConfirmResult,
-                    style: const TextStyle(fontSize: 12)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _liveTeamStepper(String name, int score, bool isHome) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: _busy ? null : () => _changeLiveScore(isHome, -1),
-                icon: const Icon(Icons.remove_circle_outline),
-                color: Colors.red,
-                visualDensity: VisualDensity.compact,
-              ),
-              Text('$score',
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold)),
-              IconButton(
-                onPressed: _busy ? null : () => _changeLiveScore(isHome, 1),
-                icon: const Icon(Icons.add_circle),
-                color: Colors.green,
-                visualDensity: VisualDensity.compact,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _scoreHeader(MatchModel m) {
     return Container(
@@ -776,289 +602,4 @@ class _MatchDetailScreenState extends State<MatchDetailScreen> {
       ),
     );
   }
-
-  Widget _lineupCard(MatchModel m) {
-    // تجميع الأحداث حسب اللاعب
-    final Map<String, List<Map<String, dynamic>>> byPlayer = {};
-    for (final raw in m.events) {
-      final e = Map<String, dynamic>.from(raw);
-      final pid = (e['playerId'] as String?) ?? '';
-      if (pid.isEmpty) continue;
-      byPlayer.putIfAbsent(pid, () => []).add(e);
-    }
-
-    if (byPlayer.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(AppLocalizations.of(context)!.noEventsRecorded,
-              style: TextStyle(color: Colors.grey[600])),
-        ),
-      );
-    }
-
-    final homePlayers = <String>[];
-    final awayPlayers = <String>[];
-    for (final entry in byPlayer.entries) {
-      final teamId = entry.value.first['teamId'] as String? ?? '';
-      if (teamId == m.homeTeamId) {
-        homePlayers.add(entry.key);
-      } else {
-        awayPlayers.add(entry.key);
-      }
-    }
-
-    final maxRows = homePlayers.length > awayPlayers.length
-        ? homePlayers.length
-        : awayPlayers.length;
-
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(m.homeTeamName,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 13)),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Text(m.awayTeamName,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 13)),
-                ),
-              ],
-            ),
-            Divider(height: 16, color: Colors.grey.shade300),
-            ...List.generate(maxRows, (i) {
-              final homeId = i < homePlayers.length ? homePlayers[i] : null;
-              final awayId = i < awayPlayers.length ? awayPlayers[i] : null;
-              return _playerRow(
-                homeId != null
-                    ? _PData(_displayName(homeId), _photos[homeId],
-                        byPlayer[homeId]!)
-                    : null,
-                awayId != null
-                    ? _PData(_displayName(awayId), _photos[awayId],
-                        byPlayer[awayId]!)
-                    : null,
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _playerRow(_PData? home, _PData? away) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // الفريق المضيف: الاسم على اليمين، الأيقونات تجاه المنتصف
-          Expanded(
-            child: home != null
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      _iconsRow(home.events),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          home.name,
-                          textAlign: TextAlign.end,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 13),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      _playerAvatar(home.photo),
-                    ],
-                  )
-                : const SizedBox.shrink(),
-          ),
-          // خط فاصل مركزي
-          Container(
-            width: 1,
-            height: 28,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            color: Colors.grey.shade200,
-          ),
-          // الفريق الضيف: الاسم على اليسار، الأيقونات تجاه المنتصف
-          Expanded(
-            child: away != null
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      _playerAvatar(away.photo),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          away.name,
-                          textAlign: TextAlign.start,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 13),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      _iconsRow(away.events),
-                    ],
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 📝 HINT AR: صورة لاعب صغيرة (assets أو شبكة cache-first) أو أيقونة افتراضية.
-  Widget _playerAvatar(String? photo) {
-    ImageProvider? provider;
-    if (photo != null && photo.isNotEmpty) {
-      provider = photo.startsWith('assets/')
-          ? AssetImage(photo) as ImageProvider
-          : ImageHelper.getProvider(photo);
-    }
-    return CircleAvatar(
-      radius: 11,
-      backgroundColor: Colors.grey.shade200,
-      backgroundImage: provider,
-      child: provider == null
-          ? Icon(Icons.person, size: 12, color: Colors.grey.shade500)
-          : null,
-    );
-  }
-
-  Widget _iconsRow(List<Map<String, dynamic>> events) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: events.map((e) {
-        final minute = (e['minute'] as int?) ?? 0;
-        // 📝 HINT AR: هدف من ركلة جزاء يُخزَّن type=goal+penalty — نعرضه بأيقونة ركلة جزاء.
-        var type = e['type'] as String? ?? '';
-        if (type == 'goal' && e['penalty'] == true) type = 'penalty';
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _eventIcon(type),
-              if (minute > 0)
-                Text(
-                  "$minute'",
-                  style: const TextStyle(
-                      fontSize: 9, color: Colors.grey, height: 1.2),
-                ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  // ── أيقونات الأحداث ───────────────────────────────────────────────
-  static Widget _eventIcon(String type) {
-    switch (type) {
-      case 'goal':
-        return const Icon(Icons.sports_soccer, color: Colors.green, size: 16);
-      case 'owngoal':
-        return const Icon(Icons.sports_soccer, color: Colors.red, size: 16);
-      case 'assist':
-        return const Text('👟', style: TextStyle(fontSize: 13, height: 1));
-      case 'yellow':
-        return _cardWidget(Colors.amber);
-      case 'red':
-        return _cardWidget(Colors.red);
-      case 'yellow_red':
-        return SizedBox(
-          width: 18,
-          height: 14,
-          child: Stack(
-            children: [
-              Positioned(left: 5, child: _cardWidget(Colors.red)),
-              _cardWidget(Colors.amber),
-            ],
-          ),
-        );
-      case 'sub_in':
-        return const Icon(Icons.arrow_upward_rounded,
-            color: Colors.green, size: 16);
-      case 'sub_out':
-        return const Icon(Icons.arrow_downward_rounded,
-            color: Colors.red, size: 16);
-      case 'injury':
-        return Container(
-          width: 14,
-          height: 14,
-          decoration: const BoxDecoration(
-              color: Colors.red, shape: BoxShape.circle),
-          child: const Icon(Icons.add, color: Colors.white, size: 10),
-        );
-      case 'suspension':
-        return const Icon(Icons.not_interested_rounded,
-            color: Colors.red, size: 16);
-      case 'penalty':
-        return Container(
-          width: 16,
-          height: 16,
-          decoration: BoxDecoration(
-            color: Colors.green.shade100,
-            border: Border.all(color: Colors.green),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: const Icon(Icons.sports_soccer, color: Colors.green, size: 10),
-        );
-      case 'penalty_miss':
-        return Container(
-          width: 16,
-          height: 16,
-          decoration: BoxDecoration(
-            color: Colors.red.shade100,
-            border: Border.all(color: Colors.red),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: const Icon(Icons.close, color: Colors.red, size: 10),
-        );
-      case 'var':
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade500),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: Text('VAR',
-              style: TextStyle(
-                  fontSize: 7,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700])),
-        );
-      default:
-        return const Icon(Icons.circle, size: 6, color: Colors.grey);
-    }
-  }
-
-  static Widget _cardWidget(Color color) {
-    return Container(
-      width: 10,
-      height: 14,
-      decoration:
-          BoxDecoration(color: color, borderRadius: BorderRadius.circular(2)),
-    );
-  }
-}
-
-class _PData {
-  final String name;
-  final String? photo;
-  final List<Map<String, dynamic>> events;
-  _PData(this.name, this.photo, this.events);
 }

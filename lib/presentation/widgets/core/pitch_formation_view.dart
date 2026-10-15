@@ -250,7 +250,7 @@ class _PlayerChip extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-                color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+                color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
           ),
         ),
       ],

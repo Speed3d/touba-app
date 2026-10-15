@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/theme/app_colors.dart';
@@ -18,10 +17,7 @@ class AdminRefereeApplicationsScreen extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context)!;
     try {
-      await FirebaseFirestore.instance
-          .collection('referee_applications')
-          .doc(id)
-          .update({'status': status});
+      await context.read<TournamentRepository>().resolveRefereeApplication(id, status);
       messenger.showSnackBar(ToobaSnackBar.buildSuccess(
           status == 'approved' ? l10n.approvedGrantedReferee : l10n.rejectedApplication));
     } catch (_) {

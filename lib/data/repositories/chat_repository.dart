@@ -80,12 +80,13 @@ class ChatRepository {
     });
   }
 
-  /// رسائل محادثة (بثّ حيّ، تصاعدي بالوقت).
-  Stream<List<ChatMessageModel>> streamMessages(String chatId) {
+  /// رسائل محادثة (بثّ حيّ، تصاعدي بالوقت، مع حد أقصى لترشيد الاستهلاك).
+  Stream<List<ChatMessageModel>> streamMessages(String chatId, {int limit = 100}) {
     return _chats
         .doc(chatId)
         .collection(_msgs)
         .orderBy('sentAt')
+        .limitToLast(limit)
         .snapshots()
         .map((s) => s.docs
             .map((d) => ChatMessageModel.fromJson(d.data(), d.id))

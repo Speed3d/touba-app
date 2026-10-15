@@ -27,6 +27,8 @@ import 'data/repositories/chat_repository.dart';
 import 'data/repositories/challenge_repository.dart';
 import 'data/repositories/subscription_repository.dart';
 import 'data/repositories/tournament_lineup_repository.dart';
+import 'data/repositories/config_repository.dart';
+import 'data/repositories/report_repository.dart';
 import 'presentation/cubits/auth/auth_cubit.dart';
 import 'presentation/cubits/team/team_cubit.dart';
 import 'presentation/cubits/tournament/tournament_cubit.dart';
@@ -108,6 +110,8 @@ class PopularFootballApp extends StatelessWidget {
         RepositoryProvider(create: (_) => ChallengeRepository()),
         RepositoryProvider(create: (_) => SubscriptionRepository()),
         RepositoryProvider(create: (_) => TournamentLineupRepository()),
+        RepositoryProvider(create: (_) => ConfigRepository()),
+        RepositoryProvider(create: (_) => ReportRepository()),
       ],
       child: MultiBlocProvider(
         providers: [

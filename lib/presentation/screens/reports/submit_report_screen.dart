@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../data/models/report_model.dart';
+import '../../../data/repositories/report_repository.dart';
 import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -54,9 +55,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
         description: _descController.text.trim(),
         createdAt: DateTime.now(),
       );
-      await FirebaseFirestore.instance
-          .collection('reports')
-          .add(report.toFirestore());
+      await context.read<ReportRepository>().submitReport(report);
       if (mounted) {
         ToobaSnackBar.success(context, AppLocalizations.of(context)!.reportSentSuccess);
         Navigator.pop(context);

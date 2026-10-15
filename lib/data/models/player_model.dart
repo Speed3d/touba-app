@@ -149,6 +149,26 @@ class PlayerModel extends Equatable {
     };
   }
 
+  /// 📝 HINT AR: لتحديث بيانات اللاعب من طرف الكابتن أو اللاعب نفسه. يستبعد
+  /// الحقول المحسوبة خادمياً وحقول الأمان (careerStats, claimedByUid, teamToken, currentTeamId)
+  /// ليتوافق تماماً مع قواعد أمان Firestore (!touches).
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'name': name,
+      if (photoUrl != null) 'photoUrl': photoUrl,
+      'birthDate': birthDate?.toIso8601String(),
+      'position': position,
+      'shirtNumber': shirtNumber,
+      'preferredFoot': preferredFoot,
+      'height': height,
+      'weight': weight,
+      if (bio != null) 'bio': bio,
+      'gallery': gallery,
+      'status': status,
+      'isStarter': isStarter,
+    };
+  }
+
   PlayerModel copyWith({
     String? name,
     String? photoUrl,

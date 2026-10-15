@@ -1,7 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../data/models/release_request_model.dart';
+import '../../../data/repositories/team_repository.dart';
 import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
 import '../../../l10n/app_localizations.dart';
@@ -11,18 +12,14 @@ import '../../../l10n/app_localizations.dart';
 class AdminDisputesScreen extends StatelessWidget {
   const AdminDisputesScreen({super.key});
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> _stream() {
-    return FirebaseFirestore.instance
-        .collection('release_requests')
-        .where('escalated', isEqualTo: true)
-        .where('status', isEqualTo: 'rejected')
-        .limit(100)
-        .snapshots();
+  Stream<List<ReleaseRequestModel>> _stream(BuildContext context) {
+    return context.read<TeamRepository>().streamDisputes();
   }
 
   Future<void> _forceRelease(BuildContext context, String id) async {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final teamRepo = context.read<TeamRepository>();
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -41,10 +38,7 @@ class AdminDisputesScreen extends StatelessWidget {
     );
     if (ok != true) return;
     try {
-      await FirebaseFirestore.instance
-          .collection('release_requests')
-          .doc(id)
-          .update({'status': 'accepted'});
+      await teamRepo.forceRelease(id);
       messenger.showSnackBar(
           ToobaSnackBar.buildSuccess(l10n.playerReleasedSuccess));
     } catch (_) {
@@ -65,14 +59,14 @@ class AdminDisputesScreen extends StatelessWidget {
       ),
       body: DecoratedBackground(
         showOrbs: false,
-        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: _stream(),
+        child: StreamBuilder<List<ReleaseRequestModel>>(
+          stream: _stream(context),
           builder: (context, snap) {
             if (snap.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-            final docs = snap.data?.docs ?? [];
-            if (docs.isEmpty) {
+            final requests = snap.data ?? [];
+            if (requests.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -88,11 +82,10 @@ class AdminDisputesScreen extends StatelessWidget {
             }
             return ListView.separated(
               padding: const EdgeInsets.all(16),
-              itemCount: docs.length,
+              itemCount: requests.length,
               separatorBuilder: (_, __) => const SizedBox(height: 8),
               itemBuilder: (context, i) {
-                final r = ReleaseRequestModel.fromJson(
-                    docs[i].data(), docs[i].id);
+                final r = requests[i];
                 return Card(
                   elevation: 0,
                   color: isDark ? AppColors.surfaceDark : Colors.white,

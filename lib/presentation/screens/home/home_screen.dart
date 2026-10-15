@@ -1,7 +1,7 @@
 
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../../../data/repositories/config_repository.dart';
 import 'package:marquee/marquee.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -54,19 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _load() {
     _banners = context.read<HomeRepository>().getActiveBanners();
     _news = context.read<HomeRepository>().getPublishedNews(limit: 5);
-    _tournamentsEnabled = _fetchTournamentsEnabled();
-  }
-
-  Future<bool> _fetchTournamentsEnabled() async {
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('settings')
-          .doc('features')
-          .get();
-      return doc.data()?['tournamentsEnabled'] as bool? ?? true;
-    } catch (_) {
-      return true;
-    }
+    _tournamentsEnabled = context.read<ConfigRepository>().isTournamentsEnabled();
   }
 
   Future<void> _reload() async {
@@ -149,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 13,
                   color: context.secondaryTextColor,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.normal,
                 ),
               ),
             ],
@@ -368,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.ongoingTournaments,
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: context.textColor),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.textColor),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.push(context, ToobaRoute.to(const TournamentsScreen())),
@@ -413,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 t['title'] as String,
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: context.textColor),
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.textColor),
                               ),
                               const SizedBox(height: 3),
                               Text(

@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../data/models/report_model.dart';
+import '../../../data/repositories/report_repository.dart';
 import '../../../data/services/functions_service.dart';
 import '../../widgets/core/decorated_background.dart';
 import '../../../core/utils/tooba_snack_bar.dart';
@@ -20,20 +21,12 @@ class AdminReportsScreen extends StatefulWidget {
 class _AdminReportsScreenState extends State<AdminReportsScreen> {
   ReportStatus? _filter; // null = الكل
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> _buildStream() {
-    Query<Map<String, dynamic>> q = FirebaseFirestore.instance
-        .collection('reports')
-        .orderBy('createdAt', descending: true)
-        .limit(100);
-    if (_filter != null) q = q.where('status', isEqualTo: _filter!.name);
-    return q.snapshots();
+  Stream<List<ReportModel>> _buildStream() {
+    return context.read<ReportRepository>().streamReports(filter: _filter);
   }
 
   Future<void> _updateStatus(String id, ReportStatus status) async {
-    await FirebaseFirestore.instance
-        .collection('reports')
-        .doc(id)
-        .update({'status': status.name});
+    await context.read<ReportRepository>().updateReportStatus(id, status);
   }
 
   // 📝 HINT AR: نافذة إجراءات الأدمن — رد كتابي + اختيار العقوبة، تستدعي CF.
@@ -189,13 +182,13 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               ),
             ),
             Expanded(
-              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              child: StreamBuilder<List<ReportModel>>(
                 stream: _buildStream(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -211,14 +204,13 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                     );
                   }
 
-                  final docs = snapshot.data!.docs;
+                  final reports = snapshot.data!;
                   return ListView.separated(
                     padding: const EdgeInsets.all(16),
-                    itemCount: docs.length,
+                    itemCount: reports.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 8),
                     itemBuilder: (context, i) {
-                      final report =
-                          ReportModel.fromFirestore(docs[i]);
+                      final report = reports[i];
                       return _ReportCard(
                         report: report,
                         onReview: () =>

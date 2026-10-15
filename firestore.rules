@@ -25,10 +25,15 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // 📝 HINT AR: قراءة نوع المستخدم من Firestore (fallback عند غياب Custom Claims).
+    // 📝 HINT AR: قراءة نوع وبيانات المستخدم من Firestore (fallback عند غياب Custom Claims).
     function getUserType() {
       let p = /databases/$(database)/documents/users/$(request.auth.uid);
       return exists(p) ? get(p).data.role : null;
+    }
+
+    function getUserData() {
+      let p = /databases/$(database)/documents/users/$(request.auth.uid);
+      return exists(p) ? get(p).data : null;
     }
 
     // 📝 HINT AR: الأدمن — عبر Custom Claim (الأسرع) أو role=='admin' كبديل انتقالي.
@@ -36,14 +41,24 @@ service cloud.firestore {
       return isAuthenticated() && (request.auth.token.admin == true || getUserType() == 'admin');
     }
 
-    // 📝 HINT AR: صلاحية «منظّم بطولة» — Custom Claim organizer أو أدمن (C6).
+    // 📝 HINT AR: صلاحية «منظّم بطولة» — Custom Claim organizer أو أدمن أو وثيقة المستخدم (fallback).
     function isOrganizer() {
-      return isAuthenticated() && (request.auth.token.organizer == true || isAdmin());
+      return isAuthenticated() && (
+        request.auth.token.organizer == true ||
+        isAdmin() ||
+        getUserType() == 'organizer' ||
+        (getUserData() != null && 'adminPermissions' in getUserData() && 'organizer' in getUserData().adminPermissions)
+      );
     }
 
-    // 📝 HINT AR: صلاحية «حكم» — Custom Claim referee أو أدمن (C7، تُستخدم م3).
+    // 📝 HINT AR: صلاحية «حكم» — Custom Claim referee أو أدمن أو وثيقة المستخدم (fallback).
     function isReferee() {
-      return isAuthenticated() && (request.auth.token.referee == true || isAdmin());
+      return isAuthenticated() && (
+        request.auth.token.referee == true ||
+        isAdmin() ||
+        getUserType() == 'referee' ||
+        (getUserData() != null && 'adminPermissions' in getUserData() && 'referee' in getUserData().adminPermissions)
+      );
     }
 
     // 📝 HINT AR: هل المستخدم الحالي كابتن هذا الفريق؟ (قراءة مستند الفريق مرة).
